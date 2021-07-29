@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import { GlobalStyles } from '../styles';
 import { Hero, Head } from './index';
 
@@ -7,8 +8,9 @@ interface IlayoutProps {}
 const Layout: React.FC<IlayoutProps> = ({}) => {
   return (
     <>
-      <Head />
       <GlobalStyles />
+      <Head />
+
       <div id='root'>
         <Hero />
         <main></main>
