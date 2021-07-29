@@ -7,7 +7,7 @@ interface InavProps {}
 
 const StyledNav = styled.nav`
   height: 100px;
-  background-color: var(--color-gray-light);
+  background-color: var(--color-white);
   color: var(--color-black);
   display: flex;
   justify-content: space-between;
@@ -16,7 +16,7 @@ const StyledNav = styled.nav`
 
 const StyledLogo = styled.h1`
   text-transform: uppercase;
-  font-size: var(--fz-md);
+  font-size: var(--fz-sm);
 
   a {
     text-decoration: none;
@@ -30,6 +30,11 @@ const StyledLogo = styled.h1`
     :focus {
       color: var(--color-black);
     }
+
+    :hover {
+      color: var(--color-blue-dark);
+      transition: color 0.2s ease-out;
+    }
   }
 `;
 
@@ -38,14 +43,21 @@ const StyledLinks = styled.div`
     list-style: none;
     display: flex;
 
-    :not(:last-child) {
-      margin-right: var(--mg-md);
+    li:not(:last-child) {
+      margin-right: var(--mg-xl);
     }
   }
 
   a {
+    font-size: var(--fz-sm);
     text-decoration: none;
     color: var(--color-black);
+    font-weight: var(--font-semibold);
+
+    :hover {
+      color: var(--color-blue-dark);
+      transition: color 0.2s ease-out;
+    }
   }
 `;
 
