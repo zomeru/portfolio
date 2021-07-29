@@ -24,6 +24,15 @@ const GlobalStyles = createGlobalStyle`
     --fz-xxl: 22px;
     --fz-heading: 32px;
 
+    // Font weight
+    --font-thin: 100;
+    --font-extralight: 200;
+    --font-light: 300;
+    --font-regular: 400;
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-bold: 700;
+
     // Border
     --border-radius-sm: 4px;
 
@@ -80,8 +89,20 @@ const GlobalStyles = createGlobalStyle`
     background-color: var(--color-white);
     color: var(--color-black);
     font-family: var(--font-sans);
+    font-weight: 400;
     font-size: var(--fz-md);
   }
+
+  a {
+    text-decoration: none;
+  }
+
+  ol,
+  ul {
+    list-style: none;
+  }
+
+  
 `;
 
 export default GlobalStyles;
