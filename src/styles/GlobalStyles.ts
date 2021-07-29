@@ -13,6 +13,8 @@ const GlobalStyles = createGlobalStyle`
     --color-white: #ffffff;
     --color-blue-dark: #1976d2;
     --color-blue-light: #90caf9;
+    --color-blue-dark-o: rgba(25, 118, 210, 0.7);
+    --color-blue-light-o: rgba(144, 202, 249, 0.7);
 
     // Font size
     --fz-xxs: 12px;
@@ -102,7 +104,7 @@ const GlobalStyles = createGlobalStyle`
     list-style: none;
   }
 
-  
+
 `;
 
 export default GlobalStyles;
