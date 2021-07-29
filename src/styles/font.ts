@@ -36,7 +36,10 @@ const tthoves = {
 const createFontFaces = (family: any, style: any = 'normal'): any => {
   let styles = '';
 
-  for (const [weight, formats] of Object.entries(family[style])) {
+  let weight: any;
+  let formats: any;
+
+  for ([weight, formats] of Object.entries(family[style])) {
     const woff = formats[0];
     const woff2 = formats[1];
 
