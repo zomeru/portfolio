@@ -48,8 +48,6 @@ const StyledHeroContent = styled.div`
   }
 `;
 
-interface IHeroProps {}
-
 const one = <h1>Hi, I&rsquo;m Zomer Gregorio</h1>;
 const two = <h2> Fullstack Developer</h2>;
 const three = <h3>I create stuff sometimes</h3>;
@@ -57,7 +55,7 @@ const four = (
   <p>A college student and a Full Stack Developer based in the Philippines.</p>
 );
 
-const Hero: React.FC<IHeroProps> = ({}) => {
+const Hero = () => {
   return (
     <StyledHero>
       <Nav />
