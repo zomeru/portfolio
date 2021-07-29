@@ -29,7 +29,7 @@ const StyledButton = styled.a`
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--color-blue-dark);
+    background-color: var(--color-blue-dark-o);
     z-index: -1;
     transform: scaleX(0.1);
     transform-origin: left;
@@ -49,14 +49,13 @@ const StyledButton = styled.a`
   :hover p {
     margin-left: 20px;
     color: var(--color-white);
-    font-size: var(--fz-md);
   }
 
   .line::before {
     content: '';
     position: absolute;
     background-color: var(--color-black);
-    width: 30px;
+    width: 25px;
     height: 1px;
     top: 50%;
     left: 0;
@@ -71,7 +70,7 @@ const StyledButton = styled.a`
 
   p {
     position: relative;
-    margin-left: 0px;
+    margin-left: -30px;
     z-index: 10;
     transition: all 0.3s ease-in-out;
     /* justify-self: center; */

@@ -24,7 +24,7 @@ const StyledHeroContent = styled.div`
   }
 
   h2 {
-    margin-left: -10px;
+    margin-left: -8px;
     font-weight: var(--font-regular);
     font-size: 90px;
     margin-bottom: var(--mg-md);
