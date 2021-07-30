@@ -38,7 +38,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name='twitter:card' content='summary_large_image' />
         <meta name='twitter:creator' content='Zomer Gregorio' />
       </Head>
-
       <Component {...pageProps} />
     </>
   );
