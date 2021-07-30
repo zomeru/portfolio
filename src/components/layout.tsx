@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { Hero } from './index';
 
@@ -9,10 +9,13 @@ const StyledContent = styled.main`
 `;
 
 const Layout: React.FC<IlayoutProps> = ({ children }) => {
+  const containerRef = useRef(null);
   return (
     <div id='root'>
       <Hero />
-      <StyledContent>{children}</StyledContent>
+      <StyledContent data-scroll-container ref={containerRef}>
+        {children}
+      </StyledContent>
     </div>
   );
 };

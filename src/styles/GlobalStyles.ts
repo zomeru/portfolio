@@ -13,6 +13,7 @@ const GlobalStyles = createGlobalStyle`
   }
 
   html {
+    scroll-behavior: smooth;
     box-sizing: inherit;
     width: 100%;
   }

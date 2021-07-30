@@ -11,7 +11,7 @@ const StyledHero = styled.section`
   width: 100%;
   height: 100vh;
   max-height: 100vh;
-  max-width: 1600px;
+  max-width: 1500px;
   margin: 0 auto;
 `;
 
