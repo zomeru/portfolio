@@ -1,11 +1,8 @@
 import React from 'react';
 import { Nav, Button } from '../index';
 import styled from 'styled-components';
-import {
-  AiFillLinkedin,
-  AiFillGithub,
-  AiOutlineInstagram,
-} from 'react-icons/ai';
+import { AiFillGithub, AiOutlineInstagram } from 'react-icons/ai';
+import { IoLogoLinkedin } from 'react-icons/io';
 
 const StyledHero = styled.section`
   width: 100%;
@@ -62,24 +59,22 @@ const StyledHeroContent = styled.div`
   }
 
   .icons {
-    width: 45px;
-    height: 45px;
+    width: 40px;
+    height: 40px;
+    color: var(--color-black);
   }
 
-  .icon-linkedin {
+  .linkedin-loc {
     left: -140px;
     bottom: -35px;
-    color: #0077b5;
   }
 
-  .icon-github {
-    color: #211f1f;
+  .github-loc {
     right: -15px;
     bottom: 40px;
   }
 
-  .icon-instagram {
-    color: #d6249f;
+  .instagram-loc {
     right: 380px;
     top: -40px;
   }
@@ -104,6 +99,18 @@ const StyledHeroContent = styled.div`
       width: 100px;
       height: 100px;
     }
+
+    :hover .icon-linkedin {
+      color: #0077b5;
+    }
+
+    :hover .icon-github {
+      color: #211f1f;
+    }
+
+    :hover .icon-instagram {
+      color: #d6249f;
+    }
   }
 
   @keyframes floating {
@@ -119,16 +126,16 @@ const StyledHeroContent = styled.div`
   }
 `;
 
-const one = <h1>Hi, I&rsquo;m Zomer Gregorio</h1>;
-const two = <h2> Fullstack Developer</h2>;
-const three = <h3>I create stuff sometimes</h3>;
-const four = (
-  <p className='four'>
-    A college student and a Full Stack Developer based in the Philippines.
-  </p>
-);
-
 const Hero = () => {
+  const one = <h1>Hi, I&rsquo;m Zomer Gregorio</h1>;
+  const two = <h2> Fullstack Developer</h2>;
+  const three = <h3>I create stuff sometimes</h3>;
+  const four = (
+    <p className='four'>
+      A college student and a Full Stack Developer based in the Philippines.
+    </p>
+  );
+
   return (
     <StyledHero>
       <Nav />
@@ -146,25 +153,25 @@ const Hero = () => {
             href='https://linkedin.com/in/zomergregorio'
             target='_blank'
             rel='noreferrer'
-            className='floating-icons icon-linkedin'
+            className='floating-icons linkedin-loc'
           >
-            <AiFillLinkedin className='icons' />
+            <IoLogoLinkedin className='icons icon-linkedin' />
           </a>
           <a
             href='https://github.com/zomeru'
             target='_blank'
             rel='noreferrer'
-            className='floating-icons icon-github'
+            className='floating-icons github-loc'
           >
-            <AiFillGithub className='icons' />
+            <AiFillGithub className='icons icon-github' />
           </a>
           <a
             href='https://instagram.com/zomerusama'
             target='_blank'
             rel='noreferrer'
-            className='floating-icons icon-instagram'
+            className='floating-icons instagram-loc'
           >
-            <AiOutlineInstagram className='icons' />
+            <AiOutlineInstagram className='icons icon-instagram' />
           </a>
         </div>
       </StyledHeroContent>
