@@ -42,7 +42,7 @@ const GlobalStyles = createGlobalStyle`
     background-color: var(--color-white);
     color: var(--color-black);
     font-family: var(--font-sans);
-    font-weight: 400;
+    font-weight: var(--font-regular);
     font-size: var(--fz-md);
   }
 
@@ -54,8 +54,6 @@ const GlobalStyles = createGlobalStyle`
   ul {
     list-style: none;
   }
-
-
 `;
 
 export default GlobalStyles;
