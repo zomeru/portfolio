@@ -24,7 +24,7 @@ const GlobalStyles = createGlobalStyle`
   }
 
   body::-webkit-scrollbar {
-    width: 12px;
+    width: 8px;
   }
 
   body::-webkit-scrollbar-thumb {
