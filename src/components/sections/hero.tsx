@@ -1,33 +1,35 @@
 import React from 'react';
-import { Nav, Button } from '../index';
-import styled from 'styled-components';
 import { AiFillGithub, AiOutlineInstagram } from 'react-icons/ai';
 import { IoLogoLinkedin } from 'react-icons/io';
+import { Button } from '../index';
+import { floatingLinks } from '../../config';
+import styled from 'styled-components';
 
 const StyledHero = styled.section`
   width: 100%;
-  height: 100vh;
-  max-height: 100vh;
+  /* height: calc(100vh - var(--nav-height)); */
+  height: 100%;
+  max-height: calc(100vh - var(--nav-height));
   max-width: 1500px;
   margin: 0 auto;
 `;
 
-const StyledHeroContent = styled.div`
+const StyledHeroContainer = styled.div`
   padding: 0 120px;
-  height: calc(100vh - 100px);
+  padding-bottom: 30px;
+  height: 100%;
   margin: 0 auto;
-  margin-top: -30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+`;
 
-  .content-container {
-    position: relative;
-    height: calc(70%);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
+const StyledHeroContent = styled.div`
+  position: relative;
+  height: calc(70%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
   h1 {
     font-weight: var(--font-regular);
@@ -58,40 +60,27 @@ const StyledHeroContent = styled.div`
     margin-top: var(--mg-xl);
   }
 
-  .icons {
-    width: 40px;
-    height: 40px;
-    color: var(--color-black);
-  }
+  .icon-container {
+    transform: scale(1);
 
-  .linkedin-loc {
-    left: -140px;
-    bottom: -35px;
-  }
-
-  .github-loc {
-    right: -15px;
-    bottom: 40px;
-  }
-
-  .instagram-loc {
-    right: 380px;
-    top: -40px;
+    :hover {
+      transform: scale(2);
+    }
   }
 
   .floating-icons {
-    width: 80px;
-    height: 80px;
+    background-color: rgba(144, 202, 249, 0.25);
     position: absolute;
     animation-name: floating;
     animation-duration: 3s;
     animation-iteration-count: infinite;
     animation-timing-function: ease-in-out;
-    background-color: rgba(144, 202, 249, 0.25);
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 100%;
+    width: 80px;
+    height: 80px;
     transition: all 0.2s ease-in-out;
 
     :hover {
@@ -111,6 +100,27 @@ const StyledHeroContent = styled.div`
     :hover .icon-instagram {
       color: #d6249f;
     }
+  }
+
+  .icons {
+    width: 40px;
+    height: 40px;
+    color: var(--color-black);
+  }
+
+  .linkedin-loc {
+    left: -140px;
+    bottom: -35px;
+  }
+
+  .github-loc {
+    right: -15px;
+    bottom: 40px;
+  }
+
+  .instagram-loc {
+    right: 380px;
+    top: -40px;
   }
 
   @keyframes floating {
@@ -136,12 +146,16 @@ const Hero = () => {
     </p>
   );
 
+  const icon1 = <IoLogoLinkedin className='icons icon-linkedin' />;
+  const icon2 = <AiFillGithub className='icons icon-github' />;
+  const icon3 = <AiOutlineInstagram className='icons icon-instagram' />;
+
+  const iconList = [icon1, icon2, icon3];
+
   return (
     <StyledHero>
-      <Nav />
-
-      <StyledHeroContent>
-        <div className='content-container'>
+      <StyledHeroContainer>
+        <StyledHeroContent>
           {one}
           {two}
           {three}
@@ -149,32 +163,19 @@ const Hero = () => {
           <div className='hero-button'>
             <Button buttonUrl='#contact' buttonText='Say Hello' />
           </div>
-          <a
-            href='https://linkedin.com/in/zomergregorio'
-            target='_blank'
-            rel='noreferrer'
-            className='floating-icons linkedin-loc'
-          >
-            <IoLogoLinkedin className='icons icon-linkedin' />
-          </a>
-          <a
-            href='https://github.com/zomeru'
-            target='_blank'
-            rel='noreferrer'
-            className='floating-icons github-loc'
-          >
-            <AiFillGithub className='icons icon-github' />
-          </a>
-          <a
-            href='https://instagram.com/zomerusama'
-            target='_blank'
-            rel='noreferrer'
-            className='floating-icons instagram-loc'
-          >
-            <AiOutlineInstagram className='icons icon-instagram' />
-          </a>
-        </div>
-      </StyledHeroContent>
+          {floatingLinks.map((link, index) => (
+            <a
+              href={link.url}
+              target='_blank'
+              rel='noreferrer'
+              className={`floating-icons ${link.name}-loc`}
+              key={link.name}
+            >
+              {iconList[index]}
+            </a>
+          ))}
+        </StyledHeroContent>
+      </StyledHeroContainer>
     </StyledHero>
   );
 };

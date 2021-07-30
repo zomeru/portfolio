@@ -37,6 +37,10 @@ const Variables = css`
     --font-semibold: 600;
     --font-bold: 700;
 
+    // Other
+    --nav-height: 100px;
+    --max-width: 1500px;
+
     // Border
     --border-radius-sm: 4px;
 

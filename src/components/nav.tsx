@@ -6,12 +6,14 @@ import { navLinks } from '../config';
 interface InavProps {}
 
 const StyledNav = styled.nav`
-  height: 100px;
+  height: var(--nav-height);
   background-color: var(--color-white);
   color: var(--color-black);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  /* max-width: var(--max-width);
+  margin: 0 auto; */
 `;
 
 const StyledLogo = styled.h1`

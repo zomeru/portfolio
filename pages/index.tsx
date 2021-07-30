@@ -1,4 +1,4 @@
-import { Layout, About, Hero } from '../src/components/index';
+import { Layout, About, Hero, Nav } from '../src/components/index';
 import { GlobalStyles } from '../src/styles';
 
 export default function Home() {
@@ -6,6 +6,7 @@ export default function Home() {
     <>
       <GlobalStyles />
       <Layout>
+        <Nav />
         <Hero />
         <About />
       </Layout>
