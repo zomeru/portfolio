@@ -1,9 +1,9 @@
-import { Layout } from '../src/components/index';
+import { Layout, About } from '../src/components/index';
 
 export default function Home() {
   return (
-    <>
-      <Layout />
-    </>
+    <Layout>
+      <About />
+    </Layout>
   );
 }

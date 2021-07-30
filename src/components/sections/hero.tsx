@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 const StyledHero = styled.section`
   width: 100%;
+  height: 100vh;
   max-height: 100vh;
   max-width: 1600px;
   margin: 0 auto;

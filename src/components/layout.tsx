@@ -1,18 +1,19 @@
 import React from 'react';
-import { Hero, Head } from './index';
+import styled from 'styled-components';
+import { Hero } from './index';
 
 interface IlayoutProps {}
 
-const Layout: React.FC<IlayoutProps> = ({}) => {
-  return (
-    <>
-      <Head />
+const StyledContent = styled.main`
+  min-height: 100vh;
+`;
 
-      <div id='root'>
-        <Hero />
-        <main></main>
-      </div>
-    </>
+const Layout: React.FC<IlayoutProps> = ({ children }) => {
+  return (
+    <div id='root'>
+      <Hero />
+      <StyledContent>{children}</StyledContent>
+    </div>
   );
 };
 
