@@ -7,11 +7,8 @@ import styled from 'styled-components';
 
 const StyledHero = styled.section`
   width: 100%;
-  /* height: calc(100vh - var(--nav-height)); */
-  height: 100%;
   max-height: calc(100vh - var(--nav-height));
   max-width: 1500px;
-  margin: 0 auto;
 `;
 
 const StyledHeroContainer = styled.div`
@@ -34,13 +31,29 @@ const StyledHeroContent = styled.div`
   h1 {
     font-weight: var(--font-regular);
     margin-bottom: var(--mg-md);
+
+    span {
+      background: linear-gradient(
+        to bottom,
+        var(--color-blue-dark-o) 0%,
+        var(--color-blue-dark-o) 100%
+      );
+      background-position: 0 100%;
+      background-repeat: repeat-x;
+      background-size: 4px 1px;
+      transition: background-size 0.2s;
+
+      :hover {
+        background-size: 4px 35px;
+      }
+    }
   }
 
   h2 {
     margin-left: -8px;
-    font-weight: var(--font-regular);
+    font-weight: var(--font-semibold);
     font-size: 90px;
-    margin-bottom: var(--mg-md);
+    margin-bottom: var(--mg-sm);
   }
 
   h3 {
@@ -53,6 +66,7 @@ const StyledHeroContent = styled.div`
   .four {
     font-weight: var(--font-medium);
     margin-left: var(--mg-xxl);
+    color: var(--color-gray-mid);
   }
 
   .hero-button {
@@ -137,7 +151,11 @@ const StyledHeroContent = styled.div`
 `;
 
 const Hero = () => {
-  const one = <h1>Hi, I&rsquo;m Zomer Gregorio</h1>;
+  const one = (
+    <h1>
+      Hi, I&rsquo;m <span>Zomer Gregorio</span>
+    </h1>
+  );
   const two = <h2> Fullstack Developer</h2>;
   const three = <h3>I create stuff sometimes</h3>;
   const four = (
@@ -145,6 +163,8 @@ const Hero = () => {
       A college student and a Full Stack Developer based in the Philippines.
     </p>
   );
+
+  const heroTexts = [one, two, three, four];
 
   const icon1 = <IoLogoLinkedin className='icons icon-linkedin' />;
   const icon2 = <AiFillGithub className='icons icon-github' />;
@@ -156,10 +176,7 @@ const Hero = () => {
     <StyledHero>
       <StyledHeroContainer>
         <StyledHeroContent>
-          {one}
-          {two}
-          {three}
-          {four}
+          {heroTexts.map(text => text)}
           <div className='hero-button'>
             <Button buttonUrl='#contact' buttonText='Say Hello' />
           </div>
