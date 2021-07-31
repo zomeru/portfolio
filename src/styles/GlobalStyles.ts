@@ -21,7 +21,7 @@ const GlobalStyles = createGlobalStyle`
   // Scrollbar styles 
   html {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-gray-dark);
+    scrollbar-color: var(--gray-dark);
   }
 
   body::-webkit-scrollbar {
@@ -29,7 +29,7 @@ const GlobalStyles = createGlobalStyle`
   }
 
   body::-webkit-scrollbar-thumb {
-    background-color: var(--color-gray-dark);
+    background-color: var(--gray-dark);
     border-radius: 10px;
   }
 
@@ -57,7 +57,7 @@ const GlobalStyles = createGlobalStyle`
     margin: 10px 0 40px;
     width: 100%;
     white-space: nowrap;
-    color: var(--color-gray-dark);
+    color: var(--gray-dark);
     font-weight: var(--font-bold);
     font-size: var(--fz-heading);
 
@@ -67,7 +67,7 @@ const GlobalStyles = createGlobalStyle`
       counter-increment: section;
       content: '0' counter(section) '.';
       margin-right: 10px;
-      color: var(--color-blue-dark-o);
+      color: var(--blue-dark);
       font-size: clamp(var(--fz-md), 3vw, var(--fz-xl));
       font-weight: var(--font-medium);
     }
@@ -79,13 +79,11 @@ const GlobalStyles = createGlobalStyle`
 
     :link,
     :active {
-      /* color: var(--color-black); */
       color: var(--gray-dark);
     }
 
     :visited,
     :focus {
-      /* color: var(--color-black); */
       color: var(--gray-dark);
     }
 
