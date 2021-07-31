@@ -33,7 +33,9 @@ const StyledHeroContent = styled.div`
     margin-bottom: var(--mg-md);
 
     span {
-      background: linear-gradient(
+      position: relative;
+      font-weight: var(--font-medium);
+      /* background: linear-gradient(
         to bottom,
         var(--color-blue-dark-o) 0%,
         var(--color-blue-dark-o) 100%
@@ -46,14 +48,37 @@ const StyledHeroContent = styled.div`
       :hover {
         background-size: 4px 35px;
         color: var(--color-white);
+      } */
+
+      :hover {
+        color: #b2b0a9;
+      }
+
+      :hover::after {
+        transform: translate3d(100%, 0, 0);
+      }
+
+      ::before {
+        content: attr(data-letters);
+        position: absolute;
+        z-index: 2;
+        overflow: hidden;
+        color: var(--color-blue-dark-o);
+        white-space: nowrap;
+        width: 0%;
+        transition: width 0.4s 0.3s;
+      }
+
+      :hover::before {
+        width: 100%;
       }
     }
   }
 
   h2 {
     margin-left: -8px;
-    font-weight: var(--font-semibold);
-    font-size: 90px;
+    font-weight: var(--font-bold);
+    font-size: 100px;
     margin-bottom: var(--mg-sm);
   }
 
@@ -155,7 +180,7 @@ const StyledHeroContent = styled.div`
 const Hero = () => {
   const one = (
     <h1>
-      Hi, I&rsquo;m <span>Zomer Gregorio</span>
+      Hi, I&rsquo;m <span data-letters='Zomer Gregorio'>Zomer Gregorio</span>
     </h1>
   );
   const two = <h2>Software Engineer</h2>;
@@ -163,7 +188,7 @@ const Hero = () => {
   const four = (
     <p className='four'>
       A college student and a Software Engineer based in the Philippines.
-      React.js enthusiast, and loves building interactive and responsive web
+      React.js enthusiast and loves building interactive and responsive web
       applications.
     </p>
   );
