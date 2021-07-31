@@ -26,7 +26,7 @@ const Variables = css`
     --fz-lg: 18px;
     --fz-xl: 20px;
     --fz-xxl: 22px;
-    --fz-heading: 32px;
+    --fz-heading: 40px;
 
     // Font weight
     --font-thin: 100;
@@ -39,7 +39,7 @@ const Variables = css`
 
     // Other
     --nav-height: 100px;
-    --max-width: 1500px;
+    --max-width: 1400px;
 
     // Border
     --border-radius-sm: 4px;
