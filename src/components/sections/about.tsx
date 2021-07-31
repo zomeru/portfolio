@@ -1,6 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
 import Image from 'next/image';
+import { TechStacks } from '../index';
+import styled from 'styled-components';
 import zoms from '../../assets/images/zoms.jpg';
 
 const StyledAbout = styled.section`
@@ -98,6 +99,7 @@ const About: React.FC<IaboutProps> = ({}) => {
           </p>
         </div>
       </StyledAboutContent>
+      <TechStacks />
     </StyledAbout>
   );
 };
