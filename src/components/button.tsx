@@ -12,12 +12,12 @@ const StyledButton = styled.a`
   text-align: center;
   justify-content: center;
   align-items: center;
-  border: 1px solid var(--color-black);
+  border: 1px solid var(--gray-dark);
   text-transform: uppercase;
 
   :link,
   :visited {
-    color: var(--color-black);
+    color: var(--gray-dark);
   }
 
   ::before {
@@ -27,7 +27,7 @@ const StyledButton = styled.a`
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: var(--color-blue-dark-o);
+    background-color: var(--blue-dark);
     z-index: -1;
     transform: scaleX(0.1);
     transform-origin: left;
@@ -52,7 +52,7 @@ const StyledButton = styled.a`
   .line::before {
     content: '';
     position: absolute;
-    background-color: var(--color-black);
+    background-color: var(--gray-dark);
     width: 25px;
     height: 1px;
     top: 50%;
@@ -71,7 +71,6 @@ const StyledButton = styled.a`
     margin-left: -30px;
     z-index: 10;
     transition: all 0.3s ease-in-out;
-    font-family: var(--font-sans);
     font-weight: var(--font-semibold);
     font-size: var(--fz-sm);
     /* justify-self: center; */

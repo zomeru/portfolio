@@ -40,7 +40,7 @@ const GlobalStyles = createGlobalStyle`
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: var(--color-white);
-    color: var(--color-black);
+    color: var(--gray-dark);
     font-family: var(--font-sans);
     font-weight: var(--font-regular);
     font-size: var(--fz-md);
@@ -57,7 +57,8 @@ const GlobalStyles = createGlobalStyle`
     margin: 10px 0 40px;
     width: 100%;
     white-space: nowrap;
-    font-weight: var(--font-semibold);
+    color: var(--color-gray-dark);
+    font-weight: var(--font-bold);
     font-size: var(--fz-heading);
 
     &:before {
@@ -74,6 +75,23 @@ const GlobalStyles = createGlobalStyle`
 
   a {
     text-decoration: none;
+    transition: color 0.2s ease-out;
+
+    :link,
+    :active {
+      /* color: var(--color-black); */
+      color: var(--gray-dark);
+    }
+
+    :visited,
+    :focus {
+      /* color: var(--color-black); */
+      color: var(--gray-dark);
+    }
+
+    :hover {
+      color: var(--blue-dark)
+    }
   }
 
   ol,

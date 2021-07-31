@@ -17,6 +17,8 @@ const StyledAboutContent = styled.div`
     position: relative;
     width: 300px;
     height: 422px;
+    border-radius: var(--bdr-md);
+    overflow: hidden;
   }
 
   .about-image {
@@ -65,7 +67,7 @@ const StyledAboutContent = styled.div`
 
     p {
       font-weight: var(--font-medium);
-      color: var(--color-gray-mid);
+      color: var(--gray-light);
     }
   }
 `;

@@ -9,14 +9,12 @@ const Variables = css`
 
     // Colors
     --color-black: #000000;
-    --color-gray-dark: #3d3d3d;
-    --color-gray-mid: #848484;
-    --color-gray-light: #bbbbbb;
     --color-white: #ffffff;
-    --color-blue-dark: #1976d2;
-    --color-blue-light: #90caf9;
-    --color-blue-dark-o: rgba(25, 118, 210, 0.7);
-    --color-blue-light-o: rgba(144, 202, 249, 0.7);
+    --gray-dark: #474745;
+    --gray-light: #8e8d8a;
+    --gray-lightest: #bbbbbb;
+    --blue-dark: rgba(25, 118, 210, 0.7);
+    --blue-light: rgba(144, 202, 249, 0.7);
 
     // Font size
     --fz-xxs: 12px;
@@ -26,7 +24,7 @@ const Variables = css`
     --fz-lg: 18px;
     --fz-xl: 20px;
     --fz-xxl: 22px;
-    --fz-heading: 40px;
+    --fz-heading: 50px;
 
     // Font weight
     --font-thin: 100;
@@ -42,7 +40,14 @@ const Variables = css`
     --max-width: 1400px;
 
     // Border
-    --border-radius-sm: 4px;
+    --bdr-xxs: 1px;
+    --bdr-xs: 2px;
+    --bdr-sm: 3px;
+    --bdr-md: 4px;
+    --bdr-lg: 5px;
+    --bdr-xl: 8px;
+    --bdr-xxl: 10px;
+    --bdr-full: 100px;
 
     // Margins
     --mg-xs: 5px;

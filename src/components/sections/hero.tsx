@@ -36,20 +36,6 @@ const StyledHeroContent = styled.div`
     span {
       position: relative;
       font-weight: var(--font-medium);
-      /* background: linear-gradient(
-        to bottom,
-        var(--color-blue-dark-o) 0%,
-        var(--color-blue-dark-o) 100%
-      );
-      background-position: 0 100%;
-      background-repeat: repeat-x;
-      background-size: 4px 1px;
-      transition: background-size 0.2s;
-
-      :hover {
-        background-size: 4px 35px;
-        color: var(--color-white);
-      } */
 
       :hover {
         color: #b2b0a9;
@@ -64,7 +50,7 @@ const StyledHeroContent = styled.div`
         position: absolute;
         z-index: 2;
         overflow: hidden;
-        color: var(--color-blue-dark-o);
+        color: var(--blue-dark);
         white-space: nowrap;
         width: 0%;
         transition: width 0.4s 0.3s;
@@ -88,13 +74,14 @@ const StyledHeroContent = styled.div`
     font-weight: var(--font-regular);
     font-size: 65px;
     margin-bottom: var(--mg-md);
+    color: var(--gray-light);
   }
 
   .four {
     max-width: 65%;
     font-weight: var(--font-medium);
     margin-left: var(--mg-xxl);
-    color: var(--color-gray-mid);
+    color: var(--gray-light);
   }
 
   .hero-button {
@@ -147,7 +134,7 @@ const StyledHeroContent = styled.div`
   .icons {
     width: 40px;
     height: 40px;
-    color: var(--color-black);
+    color: var(--gray-dark);
   }
 
   .linkedin-loc {
@@ -188,9 +175,8 @@ const Hero = () => {
   const three = <h3>I create stuff sometimes</h3>;
   const four = (
     <p className='four'>
-      A college student and a Software Engineer based in the Philippines.
-      React.js enthusiast and loves building interactive and responsive web
-      applications.
+      A college student and Software Engineer based in the Philippines. React.js
+      enthusiast and loves building interactive and responsive web applications.
     </p>
   );
 
