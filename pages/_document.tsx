@@ -37,19 +37,19 @@ class MyDocument extends Document {
           <link
             rel='preload'
             as='style'
-            href='https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap'
+            href='https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap'
           />
 
           <link
             rel='stylesheet'
-            href='https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap'
+            href='https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap'
             media='print'
             // eslint-disable-next-line react/no-unknown-property
             onload="this.media='all'"
           />
           <noscript>
             <link
-              href='https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700&display=swap'
+              href='https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap'
               rel='stylesheet'
             />
           </noscript>

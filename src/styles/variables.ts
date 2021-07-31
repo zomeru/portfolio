@@ -3,7 +3,7 @@ import { css } from 'styled-components';
 const Variables = css`
   :root {
     // Font
-    --font-sans: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    --font-sans: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI',
       Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
       sans-serif;
 
