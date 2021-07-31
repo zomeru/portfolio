@@ -35,24 +35,9 @@ class MyDocument extends Document {
           <link rel='preconnect' href='https://fonts.googleapis.com' />
           <link rel='preconnect' href='https://fonts.gstatic.com' />
           <link
-            rel='preload'
-            as='style'
             href='https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap'
-          />
-
-          <link
             rel='stylesheet'
-            href='https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap'
-            media='print'
-            // eslint-disable-next-line react/no-unknown-property
-            onload="this.media='all'"
           />
-          <noscript>
-            <link
-              href='https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700&display=swap'
-              rel='stylesheet'
-            />
-          </noscript>
         </Head>
         <body>
           <Main />

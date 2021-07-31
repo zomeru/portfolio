@@ -30,6 +30,7 @@ const StyledHeroContent = styled.div`
 
   h1 {
     font-weight: var(--font-regular);
+    font-size: var(--fz-xxl);
     margin-bottom: var(--mg-md);
 
     span {
@@ -78,19 +79,19 @@ const StyledHeroContent = styled.div`
   h2 {
     margin-left: -8px;
     font-weight: var(--font-bold);
-    font-size: 100px;
+    font-size: 85px;
     margin-bottom: var(--mg-sm);
   }
 
   h3 {
     margin-left: var(--mg-xl);
     font-weight: var(--font-regular);
-    font-size: 70px;
+    font-size: 65px;
     margin-bottom: var(--mg-md);
   }
 
   .four {
-    max-width: 60%;
+    max-width: 65%;
     font-weight: var(--font-medium);
     margin-left: var(--mg-xxl);
     color: var(--color-gray-mid);
@@ -160,8 +161,8 @@ const StyledHeroContent = styled.div`
   }
 
   .instagram-loc {
-    right: 380px;
-    top: -50px;
+    right: 45%;
+    top: -100px;
   }
 
   @keyframes floating {

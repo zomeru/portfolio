@@ -18,7 +18,7 @@ const StyledNav = styled.nav`
 
 const StyledLogo = styled.h1`
   text-transform: uppercase;
-  font-size: var(--fz-md);
+  font-size: var(--fz-sm);
 
   a {
     text-decoration: none;
@@ -51,10 +51,10 @@ const StyledLinks = styled.div`
   }
 
   a {
-    font-size: var(--fz-md);
+    font-size: var(--fz-sm);
     text-decoration: none;
     color: var(--color-black);
-    font-weight: var(--font-semibold);
+    font-weight: var(--font-medium);
 
     :hover {
       color: var(--color-blue-dark);
