@@ -78,7 +78,7 @@ const StyledHeroContent = styled.div`
   }
 
   .four {
-    max-width: 65%;
+    max-width: 60%;
     font-weight: var(--font-medium);
     margin-left: var(--mg-xxl);
     color: var(--gray-light);
@@ -176,7 +176,8 @@ const Hero = () => {
   const four = (
     <p className='four'>
       A college student and Software Engineer based in the Philippines. React.js
-      enthusiast and loves building interactive and responsive web applications.
+      enthusiast and loves building minimalist, elegant and responsive web
+      applications.
     </p>
   );
 
