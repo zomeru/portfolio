@@ -44,6 +44,32 @@ const GlobalStyles = createGlobalStyle`
     font-family: var(--font-sans);
     font-weight: var(--font-regular);
     font-size: var(--fz-md);
+    line-height: 1.3;
+  }
+
+  section {
+    max-width: var(--max-width);
+    height: 100vh;
+    margin: 0 auto;
+  }
+
+  .section-heading {
+    margin: 10px 0 40px;
+    width: 100%;
+    white-space: nowrap;
+    font-weight: var(--font-semibold);
+    font-size: var(--fz-heading);
+
+    &:before {
+      /* position: relative; */
+      bottom: 4px;
+      counter-increment: section;
+      content: '0' counter(section) '.';
+      margin-right: 10px;
+      color: var(--color-blue-dark-o);
+      font-size: clamp(var(--fz-md), 3vw, var(--fz-xl));
+      font-weight: var(--font-medium);
+    }
   }
 
   a {
