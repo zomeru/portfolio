@@ -14,8 +14,6 @@ const StyledButton = styled.a`
   align-items: center;
   border: 1px solid var(--color-black);
   text-transform: uppercase;
-  font-weight: var(--font-medium);
-  font-size: var(--fz-sm);
 
   :link,
   :visited {
@@ -73,6 +71,9 @@ const StyledButton = styled.a`
     margin-left: -30px;
     z-index: 10;
     transition: all 0.3s ease-in-out;
+    font-family: var(--font-sans);
+    font-weight: var(--font-semibold);
+    font-size: var(--fz-sm);
     /* justify-self: center; */
   }
 `;
