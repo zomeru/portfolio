@@ -45,6 +45,7 @@ const StyledHeroContent = styled.div`
 
       :hover {
         background-size: 4px 35px;
+        color: var(--color-white);
       }
     }
   }
@@ -64,6 +65,7 @@ const StyledHeroContent = styled.div`
   }
 
   .four {
+    max-width: 60%;
     font-weight: var(--font-medium);
     margin-left: var(--mg-xxl);
     color: var(--color-gray-mid);
@@ -71,7 +73,7 @@ const StyledHeroContent = styled.div`
 
   .hero-button {
     margin-left: var(--mg-xxl);
-    margin-top: var(--mg-xl);
+    margin-top: var(--mg-lg);
   }
 
   .icon-container {
@@ -134,7 +136,7 @@ const StyledHeroContent = styled.div`
 
   .instagram-loc {
     right: 380px;
-    top: -40px;
+    top: -50px;
   }
 
   @keyframes floating {
@@ -156,11 +158,13 @@ const Hero = () => {
       Hi, I&rsquo;m <span>Zomer Gregorio</span>
     </h1>
   );
-  const two = <h2> Fullstack Developer</h2>;
+  const two = <h2>Software Engineer</h2>;
   const three = <h3>I create stuff sometimes</h3>;
   const four = (
     <p className='four'>
-      A college student and a Full Stack Developer based in the Philippines.
+      A college student and a Software Engineer based in the Philippines.
+      React.js enthusiast, and loves building interactive and responsive web
+      applications.
     </p>
   );
 
