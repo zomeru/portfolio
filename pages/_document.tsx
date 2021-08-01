@@ -34,10 +34,6 @@ class MyDocument extends Document {
     return (
       <Html lang='en'>
         <Head>
-          <meta
-            name='viewport'
-            content='initial-scale=1.0, width=device-width'
-          />
           <meta name='description' content={seo.description} />
 
           <meta property='og:title' content={seo.title} />

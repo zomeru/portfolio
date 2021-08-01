@@ -5,6 +5,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
+        <meta name='viewport' content='initial-scale=1.0, width=device-width' />
         <title>Zomer Gregorio | Zomeru</title>
       </Head>
       <Component {...pageProps} />
