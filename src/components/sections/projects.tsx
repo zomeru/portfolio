@@ -11,7 +11,8 @@ interface IprojectsProps {}
 const Projects: React.FC<IprojectsProps> = ({}) => {
   return (
     <StyledProjects id='projects'>
-      <h2 className='section-heading'>PROJects</h2>
+      <h2 className='section-heading'>Projects</h2>
+      <h3>(Still in development)</h3>
     </StyledProjects>
   );
 };

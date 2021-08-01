@@ -1,4 +1,12 @@
-import { Layout, About, Hero, Nav, Projects } from '../src/components/index';
+import {
+  Layout,
+  About,
+  Hero,
+  Nav,
+  Projects,
+  Contact,
+  Footer,
+} from '../src/components/index';
 import { GlobalStyles } from '../src/styles';
 
 export default function Home() {
@@ -10,6 +18,8 @@ export default function Home() {
         <Hero />
         <About />
         <Projects />
+        <Contact />
+        <Footer />
       </Layout>
     </>
   );
