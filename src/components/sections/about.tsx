@@ -6,12 +6,13 @@ import zoms from '../../assets/images/zoms.jpg';
 
 const StyledAbout = styled.section`
   max-width: 1000px;
-  padding: 50px;
+  padding: 50px 100px;
+  height: auto;
 `;
 
 const StyledAboutContent = styled.div`
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
 
   .image-wrapper {
     position: relative;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 // @ts-ignore
 import { AiFillGithub, AiFillHtml5 } from 'react-icons/ai';
@@ -13,7 +13,6 @@ import { FaReact, FaNodeJs, FaGitAlt } from 'react-icons/fa';
 import { skills } from '../config';
 
 const StyledTechStacks = styled.div`
-  height: 100vh;
   margin: 70px auto 0 auto;
   text-align: center;
 
@@ -28,31 +27,25 @@ const StyledTechStacks = styled.div`
 `;
 
 const StyledTech = styled.div`
-  height: 30vh;
   display: flex;
   justify-content: center;
   margin-top: var(--mg-lg);
 
   ul {
-    max-width: 60%;
+    max-width: 75%;
     display: flex;
-    /* justify-content: space-evenly; */
     flex-flow: wrap;
     justify-content: center;
   }
 
   li {
-    border: 1px solid var(--gray-dark);
+    border: 1px solid var(--gray-light);
     height: 55px;
     width: auto;
     border-radius: 5px;
     overflow: hidden;
     display: inline-block;
-    margin-bottom: 15px;
-
-    :not(:last-child) {
-      margin-right: 30px;
-    }
+    margin: 0 10px 15px 10px;
 
     .tech-content {
       display: flex;
@@ -68,6 +61,7 @@ const StyledTech = styled.div`
 
       p {
         margin-right: 10px;
+        color: var(--gray-light);
       }
     }
   }
