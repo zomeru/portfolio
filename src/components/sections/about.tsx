@@ -6,7 +6,7 @@ import zoms from '../../assets/images/zoms.jpg';
 
 const StyledAbout = styled.section`
   max-width: 1000px;
-  padding: 50px 100px;
+  padding: 40px 100px;
   height: auto;
 `;
 
