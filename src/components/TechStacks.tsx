@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-// @ts-ignore
 import { AiFillGithub, AiFillHtml5 } from 'react-icons/ai';
 import { IoLogoSass } from 'react-icons/io';
 import {
