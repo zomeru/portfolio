@@ -10,3 +10,4 @@
 - React.js
 - Next.js
 - Styled Components
+- React Icons
