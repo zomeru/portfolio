@@ -8,7 +8,7 @@ import styled from 'styled-components';
 const StyledHero = styled.section`
   width: 100%;
   max-height: calc(100vh - var(--nav-height));
-  max-width: 1500px;
+  max-width: var(--max-width);
 `;
 
 const StyledHeroContainer = styled.div`
