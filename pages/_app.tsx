@@ -1,5 +1,4 @@
 import type { AppProps } from 'next/app';
-import { GlobalStyles } from '../src/styles';
 import Head from 'next/head';
 
 //TODO REFACTOR THE HEAD LATER
