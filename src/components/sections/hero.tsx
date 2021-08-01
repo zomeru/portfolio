@@ -168,7 +168,7 @@ const Hero = () => {
   const four = (
     <p className='four'>
       A college student and Software Engineer based in the Philippines. React.js
-      enthusiast and loves building minimalist, elegant and responsive web
+      enthusiast and loves building beautiful, elegant and responsive web
       applications.
     </p>
   );
