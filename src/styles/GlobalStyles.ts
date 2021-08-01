@@ -54,15 +54,15 @@ const GlobalStyles = createGlobalStyle`
   }
 
   .section-heading {
-    margin: 10px 0 40px;
+    /* margin: 10px 0 40px; */
+    margin-bottom: 40px;
     width: 100%;
     white-space: nowrap;
     color: var(--gray-dark);
     font-weight: var(--font-bold);
     font-size: var(--fz-heading);
 
-    &:before {
-      /* position: relative; */
+    /* :before {
       bottom: 4px;
       counter-increment: section;
       content: '0' counter(section) '.';
@@ -70,6 +70,16 @@ const GlobalStyles = createGlobalStyle`
       color: var(--blue-dark);
       font-size: clamp(var(--fz-md), 3vw, var(--fz-xl));
       font-weight: var(--font-medium);
+    } */
+
+    :after {
+      bottom: 4px;
+      counter-increment: section;
+      content: '.';
+      margin-left: 5px;
+      color: var(--blue-dark);
+      font-size: 65px;
+      font-weight: var(--font-bold);
     }
   }
 
