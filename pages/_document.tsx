@@ -1,6 +1,7 @@
 // @ts-nocheck
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
+import { seo } from '../src/config';
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: any) {
@@ -28,10 +29,28 @@ class MyDocument extends Document {
       sheet.seal();
     }
   }
+
   render() {
     return (
       <Html lang='en'>
         <Head>
+          <title>{seo.name}</title>
+          <meta
+            name='viewport'
+            content='initial-scale=1.0, width=device-width'
+          />
+          <meta name='description' content={seo.description} />
+
+          <meta property='og:title' content={seo.title} />
+          <meta property='og:description' content={seo.description} />
+          <meta property='og:image' content={seo.image} />
+          <meta property='og:url' content={seo.url} />
+
+          <meta name='twitter:title' content={seo.title} />
+          <meta name='twitter:description' content={seo.description} />
+          <meta name='twitter:image' content={seo.image} />
+          <meta name='twitter:card' content='summary_large_image' />
+          <meta name='twitter:creator' content={seo.title} />
           <link rel='preconnect' href='https://fonts.googleapis.com' />
           <link rel='preconnect' href='https://fonts.gstatic.com' />
           <link
