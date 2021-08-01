@@ -58,7 +58,7 @@ const Nav: React.FC<InavProps> = ({}) => {
         <ul>
           {navLinks.map(link => (
             <li key={link.name}>
-              <a href={link.url}>{link.name}</a>
+              <Link href={link.url}>{link.name}</Link>
             </li>
           ))}
         </ul>
