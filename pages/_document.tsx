@@ -46,6 +46,10 @@ class MyDocument extends Document {
           <meta name='twitter:image' content={seo.image} />
           <meta name='twitter:card' content='summary_large_image' />
           <meta name='twitter:creator' content={seo.title} />
+          <meta
+            name='google-site-verification'
+            content='jvWN1uM-h3tiEcihL_UdVN3MvownDLRfLFOJP3pF40s'
+          />
           <link rel='preconnect' href='https://fonts.googleapis.com' />
           <link rel='preconnect' href='https://fonts.gstatic.com' />
           <link
