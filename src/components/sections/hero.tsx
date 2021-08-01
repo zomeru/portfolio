@@ -172,7 +172,7 @@ const Hero = () => {
     </h1>
   );
   const two = <h2>Software Engineer</h2>;
-  const three = <h3>I create stuff sometimes</h3>;
+  const three = <h3>I create stuff for the web.</h3>;
   const four = (
     <p className='four'>
       A college student and Software Engineer based in the Philippines. React.js
@@ -193,17 +193,21 @@ const Hero = () => {
     <StyledHero>
       <StyledHeroContainer>
         <StyledHeroContent>
-          {heroTexts.map(text => text)}
-          <div className='hero-button'>
-            <Button buttonUrl='#contact' buttonText='Say Hello' />
-          </div>
+          {heroTexts.map((text, index) => (
+            <React.Fragment key={index}>{text}</React.Fragment>
+          ))}
+          <Button
+            className='hero-button'
+            buttonUrl='#contact'
+            buttonText='Say Hello'
+          />
           {floatingLinks.map((link, index) => (
             <a
+              key={link.name}
               href={link.url}
               target='_blank'
               rel='noreferrer'
               className={`floating-icons ${link.name}-loc`}
-              key={link.name}
             >
               {iconList[index]}
             </a>
