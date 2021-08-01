@@ -21,6 +21,10 @@ const StyledTechStacks = styled.div`
     font-size: 30px;
     margin-bottom: var(--mg-sm);
   }
+
+  > p {
+    color: var(--gray-light);
+  }
 `;
 
 const StyledTech = styled.div`
