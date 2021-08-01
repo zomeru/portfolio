@@ -32,34 +32,6 @@ const StyledHeroContent = styled.div`
     font-weight: var(--font-regular);
     font-size: var(--fz-xxl);
     margin-bottom: var(--mg-md);
-
-    span {
-      position: relative;
-      font-weight: var(--font-medium);
-
-      :hover {
-        color: #b2b0a9;
-      }
-
-      :hover::after {
-        transform: translate3d(100%, 0, 0);
-      }
-
-      ::before {
-        content: attr(data-letters);
-        position: absolute;
-        z-index: 2;
-        overflow: hidden;
-        color: var(--blue-dark);
-        white-space: nowrap;
-        width: 0%;
-        transition: width 0.4s 0.3s;
-      }
-
-      :hover::before {
-        width: 100%;
-      }
-    }
   }
 
   h2 {
@@ -67,12 +39,36 @@ const StyledHeroContent = styled.div`
     font-weight: var(--font-bold);
     font-size: 85px;
     margin-bottom: var(--mg-sm);
+    position: relative;
+
+    :hover {
+      color: var(--gray-light);
+    }
+
+    :hover::after {
+      transform: translate3d(100%, 0, 0);
+    }
+
+    ::before {
+      content: attr(data-letters);
+      position: absolute;
+      z-index: 2;
+      overflow: hidden;
+      color: var(--blue-dark);
+      white-space: nowrap;
+      width: 0%;
+      transition: width 0.4s 0.3s;
+    }
+
+    :hover::before {
+      width: 100%;
+    }
   }
 
   h3 {
     margin-left: var(--mg-xl);
-    font-weight: var(--font-regular);
-    font-size: 65px;
+    font-weight: var(--font-bold);
+    font-size: 55px;
     margin-bottom: var(--mg-md);
     color: var(--gray-light);
   }
@@ -166,13 +162,9 @@ const StyledHeroContent = styled.div`
 `;
 
 const Hero = () => {
-  const one = (
-    <h1>
-      Hi, I&rsquo;m <span data-letters='Zomer Gregorio'>Zomer Gregorio</span>
-    </h1>
-  );
-  const two = <h2>Software Engineer</h2>;
-  const three = <h3>I create stuff for the web.</h3>;
+  const one = <h1>Hi there, I am</h1>;
+  const two = <h2 data-letters='Zomer Gregorio.'>Zomer Gregorio.</h2>;
+  const three = <h3>A self-taught web developer.</h3>;
   const four = (
     <p className='four'>
       A college student and Software Engineer based in the Philippines. React.js
