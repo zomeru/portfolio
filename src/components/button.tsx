@@ -80,11 +80,12 @@ const StyledButton = styled.a`
 interface IButton {
   buttonText: string;
   buttonUrl: string;
+  className: string | undefined;
 }
 
-const Button: React.FC<IButton> = ({ buttonText, buttonUrl }) => {
+const Button: React.FC<IButton> = ({ buttonText, buttonUrl, className }) => {
   return (
-    <StyledButton href={buttonUrl}>
+    <StyledButton href={buttonUrl} className={className}>
       <div className='line'></div>
       <p>{buttonText}</p>
     </StyledButton>
