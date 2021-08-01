@@ -1,14 +1,14 @@
-import { INavLinks } from './types';
+import { INavLinks, ISeo } from './types';
 
 export const navLinks: INavLinks[] = [
   {
     name: 'About',
     url: '#about',
   },
-  {
-    name: 'Experience',
-    url: '#experience',
-  },
+  // {
+  //   name: 'Experience',
+  //   url: '#experience',
+  // },
   {
     name: 'Projects',
     url: '#projects',
@@ -76,3 +76,12 @@ export const skills = [
     color: '#F1502F',
   },
 ];
+
+export const seo: ISeo = {
+  title: 'Zomer Gregorio',
+  description:
+    'Zomer Gregorio is a college student and Software Engineer based in the Philippines. React.js enthusiast and loves building beautiful, elegant and responsive web applications.',
+  image:
+    'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/screenshot.png',
+  url: 'https://zomergregorio.live/',
+};
