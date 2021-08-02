@@ -51,13 +51,14 @@ const GlobalStyles = createGlobalStyle`
     max-width: var(--max-width);
     height: 100vh;
     margin: 0 auto;
+    margin-bottom: 50px;
   }
 
   .section-heading {
     /* margin: 10px 0 40px; */
     margin-bottom: 40px;
     width: 100%;
-    white-space: nowrap;
+    white-space: normal;
     color: var(--gray-dark);
     font-weight: var(--font-bold);
     font-size: var(--fz-heading);
