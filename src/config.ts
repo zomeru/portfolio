@@ -1,4 +1,4 @@
-import { INavLinks, ISeo, IProjects } from './types';
+import { INavLinks, ISeo, IProjects, ISocialLinks } from './types';
 import OG from './assets/images/OG.png';
 import {
   zomify1,
@@ -8,6 +8,8 @@ import {
   forkify1,
   forkify2,
 } from './assets/images/projects';
+import { AiOutlineInstagram } from 'react-icons/ai';
+import { FiTwitter, FiLinkedin, FiGithub, FiFacebook } from 'react-icons/fi';
 
 export const navLinks: INavLinks[] = [
   {
@@ -139,5 +141,33 @@ export const projects: IProjects[] = [
       demo: 'https://zomeru-forkify.netlify.app/',
       github: 'https://github.com/zomeru/recipe-app',
     },
+  },
+];
+
+export const socialLinks: ISocialLinks[] = [
+  {
+    name: 'Facebook',
+    url: 'https://facebook.com/Zomeru',
+    Icon: FiFacebook,
+  },
+  {
+    name: 'Instagram',
+    url: 'https://instagram.com/zomerusama',
+    Icon: AiOutlineInstagram,
+  },
+  {
+    name: 'Twitter',
+    url: 'https://twitter.com/zomeru_sama',
+    Icon: FiTwitter,
+  },
+  {
+    name: 'Linkedin',
+    url: 'https://linkedin.com/in/zomergregorio',
+    Icon: FiLinkedin,
+  },
+  {
+    name: 'Github',
+    url: 'https://github.com/zomeru',
+    Icon: FiGithub,
   },
 ];

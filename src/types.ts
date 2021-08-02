@@ -1,3 +1,5 @@
+import { IconType } from 'react-icons/lib';
+
 export interface INavLinks {
   name: string;
   url: string;
@@ -24,4 +26,10 @@ export interface IProjects {
     demo: string;
     github: string;
   };
+}
+
+export interface ISocialLinks {
+  name: string;
+  url: string;
+  Icon: IconType;
 }
