@@ -118,11 +118,11 @@ const Projects: React.FC<IprojectsProps> = ({}) => {
             <li>
               <a href={demo} className='project-image'>
                 <div className='image-1'>
-                  <Image src={img1} alt={alt1} />
+                  <Image src={img1} alt={alt1} placeholder='blur' />
                 </div>
 
                 <div className='image-2'>
-                  <Image src={img2} alt={alt2} />
+                  <Image src={img2} alt={alt2} placeholder='blur' />
                 </div>
               </a>
               <div className='project-details'>
