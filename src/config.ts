@@ -1,5 +1,4 @@
 import { INavLinks, ISeo, IProjects, ISocialLinks } from './types';
-import OG from './assets/images/OG.png';
 import {
   zomify1,
   zomify2,
