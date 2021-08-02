@@ -14,7 +14,7 @@ export interface IProjects {
   name: string;
   images: { img1: StaticImageData; img2: StaticImageData };
   info: string;
-  tech: string[];
+  techs: string[];
   links: {
     demo: string;
     github: string;

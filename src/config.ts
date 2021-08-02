@@ -102,7 +102,7 @@ export const projects: IProjects[] = [
       img2: zomify2,
     },
     info: 'A color palette app inspired by Flat UI Colors.',
-    tech: ['React.js', 'Material UI'],
+    techs: ['React.js', 'Material UI'],
     links: {
       demo: 'https://zomify-colors.netlify.app/',
       github: 'https://github.com/zomeru/zoms-color-palette',
@@ -115,7 +115,7 @@ export const projects: IProjects[] = [
       img2: portfolio2,
     },
     info: 'A very simple portfolio template.',
-    tech: ['Typescript', 'React.js', 'Next.js', 'Tailwind CSS'],
+    techs: ['Typescript', 'React.js', 'Next.js', 'Tailwind CSS'],
     links: {
       demo: 'https://zomeru.vercel.app/',
       github: 'https://github.com/zomeru/portfolio-next-ts',
@@ -128,7 +128,7 @@ export const projects: IProjects[] = [
       img2: forkify2,
     },
     info: 'A color palette app inspired by Flat UI Colors.',
-    tech: ['Javascript', 'Sass', 'HTML'],
+    techs: ['Javascript', 'Sass', 'HTML'],
     links: {
       demo: 'https://zomeru-forkify.netlify.app/',
       github: 'https://github.com/zomeru/recipe-app',
