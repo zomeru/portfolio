@@ -41,7 +41,7 @@ const StyledTech = styled.div`
     border: 1px solid var(--gray-light);
     height: 55px;
     width: auto;
-    border-radius: 5px;
+    border-radius: 3px;
     overflow: hidden;
     display: inline-block;
     margin: 0 10px 15px 10px;
