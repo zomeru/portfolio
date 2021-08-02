@@ -28,8 +28,8 @@ const Contact: React.FC<IcontactProps> = ({}) => {
         I occasionally take on freelance opportunities
       </h1>
       <p className='contact-p'>
-        My inbox is always open. If you have a project where you need some help
-        or just want to tell me something, send me over a message and
+        My inbox is always open. Whether you have a project where you need some
+        help or just want to tell me something, send me over a message and
         let&rsquo;s chat.
       </p>
       <Button

@@ -49,7 +49,11 @@ const Footer: React.FC<IfooterProps> = ({}) => {
           );
         })}
       </StyledSocialLinks>
-      <a href=''>Designed and built by Zomer Gregorio</a>
+      <a href=''>
+        Designed and built by Zomer Gregorio
+        <br />
+        &copy; 2021 - All rights reserved
+      </a>
     </StyledFooter>
   );
 };
