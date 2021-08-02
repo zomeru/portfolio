@@ -5,8 +5,7 @@
 <p align="center">This is my newest website portfolio with a minimalist design (still in development).</p>
 <br>
 
-#Built with
-
+<h2>Built with:</h2>
 - React.js
 - Next.js
 - Styled Components
