@@ -34,6 +34,7 @@ class MyDocument extends Document {
     return (
       <Html lang='en'>
         <Head>
+          <meta charset='UTF-8' />
           <meta name='description' content={seo.description} />
 
           <meta property='og:title' content={seo.title} />
