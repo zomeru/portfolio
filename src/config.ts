@@ -92,7 +92,8 @@ export const seo: ISeo = {
   title: 'Zomer Gregorio',
   description:
     'Zomer Gregorio is a college student and Software Engineer based in the Philippines. React.js enthusiast and loves building beautiful, elegant and responsive web applications.',
-  image: OG,
+  image:
+    'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/OG.png',
   url: 'https://zomergregorio.live/',
 };
 

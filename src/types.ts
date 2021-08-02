@@ -8,7 +8,7 @@ export interface INavLinks {
 export interface ISeo {
   title: string;
   description: string;
-  image: StaticImageData;
+  image: string;
   url: string;
 }
 
