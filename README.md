@@ -3,13 +3,13 @@
 </div> -->
 <h1 align="center"><a href='https://zomergregorio.live/'>zomergregorio.live</a> - portfolio</h1>
 <p align="center">This is my newest website portfolio with a minimalist design (still in development).</p>
-<br/>
+<br>
 # Built with
 
 - React.js
 - Next.js
 - Styled Components
 - React Icons
-  <br/>
-  <img src="https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/fullpage.png" alt="My website full page photo" />
-  <br/>
+
+<br>
+<img src="https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/fullpage.png" alt="My website full page photo" />
