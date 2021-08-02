@@ -34,7 +34,6 @@ const StyledHeroContent = styled.div`
     margin-bottom: var(--mg-md);
   }
 
-  // TODO
   h2 {
     margin-left: -8px;
     font-weight: var(--font-bold);
@@ -193,7 +192,7 @@ const Hero = () => {
           <Button
             className='hero-button'
             buttonUrl='#contact'
-            buttonText='Contact me'
+            buttonText='Get in touch'
           />
           {floatingLinks.map((link, index) => (
             <a
