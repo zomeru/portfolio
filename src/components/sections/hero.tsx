@@ -193,7 +193,7 @@ const Hero = () => {
           <Button
             className='hero-button'
             buttonUrl='#contact'
-            buttonText='Say Hello'
+            buttonText='Contact me'
           />
           {floatingLinks.map((link, index) => (
             <a
