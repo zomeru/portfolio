@@ -10,6 +10,7 @@
 - Next.js
 - Styled Components
 - React Icons
+- Passion and Love ❤
 
 <br>
 <img src="https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/fullpage.png" alt="My website full page photo" />
