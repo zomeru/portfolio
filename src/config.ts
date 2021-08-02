@@ -135,7 +135,7 @@ export const projects: IProjects[] = [
       alt1: 'Design of the forkify website.',
       alt2: 'Design of the forkify website.',
     },
-    info: 'A color palette app inspired by Flat UI Colors.',
+    info: 'Forkify is a recipe app where you can search for recipes for many different dishes.',
     techs: ['Javascript', 'Sass', 'HTML'],
     links: {
       demo: 'https://zomeru-forkify.netlify.app/',
