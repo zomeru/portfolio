@@ -34,12 +34,14 @@ const StyledHeroContent = styled.div`
     margin-bottom: var(--mg-md);
   }
 
+  // TODO
   h2 {
     margin-left: -8px;
     font-weight: var(--font-bold);
     font-size: 85px;
     margin-bottom: var(--mg-sm);
     position: relative;
+    max-width: 720px;
 
     :hover {
       color: var(--gray-light);
