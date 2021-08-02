@@ -37,8 +37,6 @@ const StyledAboutContent = styled.div`
     width: 100%;
     height: 100%;
     background-color: gray;
-    /* -webkit-filter: grayscale(1);
-    filter: grayscale(1); */
     mix-blend-mode: saturation;
     opacity: 1;
     transition: all 0.3s ease-in-out;
@@ -84,7 +82,7 @@ const About: React.FC<IaboutProps> = ({}) => {
           <Image
             className='about-image'
             src={zoms}
-            alt='Zomer Photo'
+            alt='Zomer Gregorio Photo'
             width={300}
             height={422}
             placeholder='blur'
