@@ -49,7 +49,7 @@ const Footer: React.FC<IfooterProps> = ({}) => {
           );
         })}
       </StyledSocialLinks>
-      <a href=''>
+      <a href='https://github.com/zomeru/portfolio'>
         Designed and built by Zomer Gregorio
         <br />
         &copy; 2021 - All rights reserved
