@@ -13,6 +13,7 @@ const StyledButton = styled.a`
   justify-content: center;
   align-items: center;
   border: 1px solid var(--gray-dark);
+  border-radius: 3px;
   text-transform: uppercase;
 
   :link,
