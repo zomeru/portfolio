@@ -1,4 +1,13 @@
-import { INavLinks, ISeo } from './types';
+import { INavLinks, ISeo, IProjects } from './types';
+import OG from './assets/images/OG.png';
+import {
+  zomify1,
+  zomify2,
+  portfolio1,
+  portfolio2,
+  forkify1,
+  forkify2,
+} from './assets/images/projects';
 
 export const navLinks: INavLinks[] = [
   {
@@ -81,7 +90,48 @@ export const seo: ISeo = {
   title: 'Zomer Gregorio',
   description:
     'Zomer Gregorio is a college student and Software Engineer based in the Philippines. React.js enthusiast and loves building beautiful, elegant and responsive web applications.',
-  image:
-    'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/screenshot.png',
+  image: OG,
   url: 'https://zomergregorio.live/',
 };
+
+export const projects: IProjects[] = [
+  {
+    name: 'Zomify Colors',
+    images: {
+      img1: zomify1,
+      img2: zomify2,
+    },
+    info: 'A color palette app inspired by Flat UI Colors.',
+    tech: ['React.js', 'Material UI'],
+    links: {
+      demo: 'https://zomify-colors.netlify.app/',
+      github: 'https://github.com/zomeru/zoms-color-palette',
+    },
+  },
+  {
+    name: 'Simple Portfolio',
+    images: {
+      img1: portfolio1,
+      img2: portfolio2,
+    },
+    info: 'A very simple portfolio template.',
+    tech: ['Typescript', 'React.js', 'Next.js', 'Tailwind CSS'],
+    links: {
+      demo: 'https://zomeru.vercel.app/',
+      github: 'https://github.com/zomeru/portfolio-next-ts',
+    },
+  },
+  {
+    name: 'Forkify',
+    images: {
+      img1: forkify1,
+      img2: forkify2,
+    },
+    info: 'A color palette app inspired by Flat UI Colors.',
+    tech: ['Javascript', 'Sass', 'HTML'],
+    links: {
+      demo: 'https://zomeru-forkify.netlify.app/',
+      github: 'https://github.com/zomeru/recipe-app',
+    },
+  },
+];
