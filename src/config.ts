@@ -100,6 +100,8 @@ export const projects: IProjects[] = [
     images: {
       img1: zomify1,
       img2: zomify2,
+      alt1: 'Landing page of the website.',
+      alt2: 'Custom color palette creator page.',
     },
     info: 'A color palette app inspired by Flat UI Colors.',
     techs: ['React.js', 'Material UI'],
@@ -113,6 +115,8 @@ export const projects: IProjects[] = [
     images: {
       img1: portfolio1,
       img2: portfolio2,
+      alt1: 'Design of the portfolio template.',
+      alt2: 'Design of the portfolio template.',
     },
     info: 'A very simple portfolio template.',
     techs: ['Typescript', 'React.js', 'Next.js', 'Tailwind CSS'],
@@ -126,6 +130,8 @@ export const projects: IProjects[] = [
     images: {
       img1: forkify1,
       img2: forkify2,
+      alt1: 'Design of the forkify website.',
+      alt2: 'Design of the forkify website.',
     },
     info: 'A color palette app inspired by Flat UI Colors.',
     techs: ['Javascript', 'Sass', 'HTML'],

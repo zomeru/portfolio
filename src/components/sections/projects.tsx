@@ -111,17 +111,18 @@ const Projects: React.FC<IprojectsProps> = ({}) => {
       {projects.map(project => {
         const { name, images, info, techs, links } = project;
         const { demo, github } = links;
+        const { img1, img2, alt1, alt2 } = images;
 
         return (
           <StyledProjectGrid key={name}>
             <li>
-              <a href='#' className='project-image'>
+              <a href={demo} className='project-image'>
                 <div className='image-1'>
-                  <Image src={images.img1} alt='Zomer' />
+                  <Image src={img1} alt={alt1} />
                 </div>
 
                 <div className='image-2'>
-                  <Image src={images.img2} alt='ZOmer' />
+                  <Image src={img2} alt={alt2} />
                 </div>
               </a>
               <div className='project-details'>
@@ -131,9 +132,6 @@ const Projects: React.FC<IprojectsProps> = ({}) => {
                   {techs.map(tech => (
                     <span key={tech}>{tech}</span>
                   ))}
-                  {/* <span>Javascript</span>
-                  <span>React.js</span>
-                  <span>Next.js</span> */}
                 </p>
                 <div className='project-buttons'>
                   <a href={demo} target='_blank' rel='noreferrer'>
