@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import { FiGithub } from 'react-icons/fi';
 import { BiLinkExternal } from 'react-icons/bi';
-import { projects } from '../../config';
+import { projects } from '../../data';
 
 const StyledProjects = styled.section`
   height: auto;

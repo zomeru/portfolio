@@ -2,7 +2,7 @@ import React from 'react';
 import { AiFillGithub, AiOutlineInstagram } from 'react-icons/ai';
 import { IoLogoLinkedin } from 'react-icons/io';
 import { Button } from '../index';
-import { floatingLinks } from '../../config';
+import { floatingLinks } from '../../data';
 import styled from 'styled-components';
 
 const StyledHero = styled.section`
