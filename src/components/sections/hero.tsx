@@ -23,15 +23,15 @@ const StyledHeroContainer = styled.div`
   }
 
   @media only screen and (max-width: 768px) {
-    padding: 0 30px 15% 30px;
+    padding: 0 30px 25% 30px;
   }
 
   @media only screen and (max-width: 600px) {
-    padding: 0 20px 15% 20px;
+    padding: 0 20px 30% 20px;
   }
 
   @media only screen and (max-width: 480px) {
-    padding: 0 0 15% 0;
+    padding: 0 0 40% 0;
   }
 `;
 
