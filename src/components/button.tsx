@@ -25,8 +25,12 @@ const StyledButton = styled.a`
   ::before {
     content: '';
     position: absolute;
-    top: -1px;
-    left: 0;
+    min-width: 202px;
+    min-height: 52px;
+    max-width: 202px;
+    max-height: 52px;
+    top: -2px;
+    left: -2px;
     right: 0;
     bottom: 0;
     background-color: var(--blue-dark);
