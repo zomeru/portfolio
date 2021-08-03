@@ -46,6 +46,7 @@ const GlobalStyles = createGlobalStyle`
     font-weight: var(--font-regular);
     font-size: var(--fz-md);
     line-height: 1.3;
+    overflowX: hidden;
 
     @media only screen and (max-width: 768px) {
       padding: 0 40px;
@@ -60,10 +61,8 @@ const GlobalStyles = createGlobalStyle`
   }
 
   .section-heading {
-    /* margin: 10px 0 40px; */
     margin-bottom: 40px;
     width: 100%;
-    /* white-space: normal; */
     color: var(--gray-dark);
     font-weight: var(--font-bold);
     font-size: clamp(30px, 6vw, var(--fz-heading));
