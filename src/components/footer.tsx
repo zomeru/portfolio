@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { socialLinks } from '../config';
+import { socialLinks } from '../data';
 
 const StyledFooter = styled.footer`
   text-align: center;
@@ -49,7 +49,11 @@ const Footer: React.FC<IfooterProps> = ({}) => {
           );
         })}
       </StyledSocialLinks>
-      <a href='https://github.com/zomeru/portfolio'>
+      <a
+        href='https://github.com/zomeru/portfolio'
+        target='_blank'
+        rel='noreferrer'
+      >
         Designed and built by Zomer Gregorio
         <br />
         &copy; 2021 - All rights reserved
