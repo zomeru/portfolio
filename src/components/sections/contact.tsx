@@ -35,6 +35,7 @@ const StyledContact = styled.section`
 
     @media only screen and (max-width: 600px) {
       line-height: 0.6;
+      margin-bottom: 40px;
     }
 
     @media only screen and (max-width: 600px) {

@@ -65,7 +65,11 @@ const GlobalStyles = createGlobalStyle`
     width: 100%;
     color: var(--gray-dark);
     font-weight: var(--font-bold);
-    font-size: clamp(30px, 6vw, var(--fz-heading));
+    font-size: clamp(35px, 6vw, var(--fz-heading));
+
+    @media only screen and (max-width: 600px) {
+      margin-bottom: 20px;
+    }
 
     :after {
       bottom: 4px;

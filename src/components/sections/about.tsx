@@ -17,6 +17,10 @@ const StyledAbout = styled.section`
   @media only screen and (max-width: 900px) {
     padding: 40px 0px;
   }
+
+  @media only screen and (max-width: 768px) {
+    text-align: center;
+  }
 `;
 
 const StyledAboutContent = styled.div`
