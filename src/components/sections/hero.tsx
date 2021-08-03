@@ -176,12 +176,6 @@ const Hero = () => {
 
   const heroTexts = [one, two, three, four];
 
-  const icon1 = <IoLogoLinkedin className='icons icon-linkedin' />;
-  const icon2 = <AiFillGithub className='icons icon-github' />;
-  const icon3 = <AiOutlineInstagram className='icons icon-instagram' />;
-
-  const iconList = [icon1, icon2, icon3];
-
   return (
     <StyledHero>
       <StyledHeroContainer>
@@ -194,17 +188,21 @@ const Hero = () => {
             buttonUrl='#contact'
             buttonText='Get in touch'
           />
-          {floatingLinks.map((link, index) => (
-            <a
-              key={link.name}
-              href={link.url}
-              target='_blank'
-              rel='noreferrer'
-              className={`floating-icons ${link.name}-loc`}
-            >
-              {iconList[index]}
-            </a>
-          ))}
+          {floatingLinks.map(link => {
+            const { name, url, Icon } = link;
+
+            return (
+              <a
+                key={name}
+                href={url}
+                target='_blank'
+                rel='noreferrer'
+                className={`floating-icons ${name}-loc`}
+              >
+                <Icon className={`icons icon-${name}`} />
+              </a>
+            );
+          })}
         </StyledHeroContent>
       </StyledHeroContainer>
     </StyledHero>
