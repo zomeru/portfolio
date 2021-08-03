@@ -4,9 +4,9 @@ import { socialLinks } from '../data';
 
 const StyledFooter = styled.footer`
   text-align: center;
-  width: 50%;
+  width: 100%;
   margin: 0 auto;
-  padding-bottom: 20px;
+  padding-bottom: 30px;
 
   a {
     font-size: var(--fz-sm);
@@ -20,10 +20,18 @@ const StyledSocialLinks = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 10px;
 
   a {
+    padding: 5px;
+    transition: transform 0.2s ease-out;
+
     :not(:last-child) {
-      margin-right: 20px;
+      margin-right: 25px;
+    }
+
+    :hover {
+      transform: translateY(-7px);
     }
   }
 
