@@ -15,6 +15,7 @@ const StyledButton = styled.a`
   border: 1px solid var(--gray-dark);
   border-radius: 3px;
   text-transform: uppercase;
+  overflow: hidden;
 
   :link,
   :visited {
@@ -24,7 +25,7 @@ const StyledButton = styled.a`
   ::before {
     content: '';
     position: absolute;
-    top: 0;
+    top: -1px;
     left: 0;
     right: 0;
     bottom: 0;
