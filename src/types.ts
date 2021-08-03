@@ -5,6 +5,12 @@ export interface INavLinks {
   url: string;
 }
 
+export interface ISkills {
+  name: string;
+  color: string;
+  Icon: IconType;
+}
+
 export interface ISeo {
   title: string;
   description: string;
