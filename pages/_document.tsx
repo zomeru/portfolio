@@ -1,7 +1,7 @@
 // @ts-nocheck
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
-import { seo } from '../src/config';
+import { seo } from '../src/data';
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: any) {
@@ -34,7 +34,7 @@ class MyDocument extends Document {
     return (
       <Html lang='en'>
         <Head>
-          <meta charset='UTF-8' />
+          <meta charSet='UTF-8' />
           <meta name='description' content={seo.description} />
           <meta property='og:title' content={seo.title} />
           <meta property='og:description' content={seo.description} />
