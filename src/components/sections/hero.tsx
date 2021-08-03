@@ -18,7 +18,7 @@ const StyledHeroContainer = styled.div`
   flex-direction: column;
   justify-content: center;
 
-  @media only screen and (max-width: 1060px) {
+  @media only screen and (max-width: 1080px) {
     padding: 0 80px;
   }
 

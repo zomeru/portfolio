@@ -3,16 +3,31 @@ import Image from 'next/image';
 import { TechStacks } from '../index';
 import styled from 'styled-components';
 import zoms from '../../assets/images/zoms.jpg';
+import zomsSquare from '../../assets/images/zoms-square.jpg';
 
 const StyledAbout = styled.section`
   max-width: 1000px;
   padding: 40px 100px;
   height: auto;
+
+  @media only screen and (max-width: 1000px) {
+    padding: 40px 50px;
+  }
+
+  @media only screen and (max-width: 900px) {
+    padding: 40px 0px;
+  }
 `;
 
 const StyledAboutContent = styled.div`
   display: flex;
   justify-content: space-between;
+
+  @media only screen and (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+  }
 
   .image-wrapper {
     position: relative;
@@ -20,6 +35,38 @@ const StyledAboutContent = styled.div`
     height: 422px;
     border-radius: var(--bdr-md);
     overflow: hidden;
+
+    @media only screen and (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  .image-wrapper-square {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    border-radius: var(--bdr-md);
+    overflow: hidden;
+    margin-top: 50px;
+
+    @media only screen and (max-width: 768px) {
+      display: none;
+    }
+
+    @media only screen and (max-width: 480px) {
+      width: 230px;
+      height: 230px;
+    }
+
+    @media only screen and (max-width: 400px) {
+      width: 200px;
+      height: 200px;
+    }
+
+    @media only screen and (max-width: 330px) {
+      width: 170px;
+      height: 170px;
+    }
   }
 
   .about-image {
@@ -46,11 +93,23 @@ const StyledAboutContent = styled.div`
     }
   }
 
+  .hidden-image {
+    display: none;
+
+    @media only screen and (max-width: 768px) {
+      display: block;
+    }
+  }
+
   .about-text {
     width: 50%;
     display: flex;
     flex-direction: column;
     justify-content: center;
+
+    @media only screen and (max-width: 768px) {
+      width: 100%;
+    }
 
     h3 {
       font-size: 40px;
@@ -98,6 +157,17 @@ const About: React.FC<IaboutProps> = ({}) => {
             Information Technology (3rd Year) from STI College. I mostly work on
             personal projects and sometimes on freelance projects.
           </p>
+        </div>
+        <div className='image-wrapper-square hidden-image'>
+          <Image
+            className='about-image'
+            src={zomsSquare}
+            width={300}
+            height={300}
+            alt='Zomer Gregorio Photo'
+            placeholder='blur'
+          />
+          <div className='grayscale' />
         </div>
       </StyledAboutContent>
       <TechStacks />

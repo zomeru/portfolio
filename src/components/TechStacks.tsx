@@ -22,10 +22,18 @@ const StyledTech = styled.div`
   margin-top: var(--mg-lg);
 
   ul {
-    max-width: 75%;
+    max-width: 80%;
     display: flex;
     flex-flow: wrap;
     justify-content: center;
+
+    @media only screen and (max-width: 1080px) {
+      max-width: 85%;
+    }
+
+    @media only screen and (max-width: 768px) {
+      max-width: 100%;
+    }
   }
 
   li {
