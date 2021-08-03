@@ -68,16 +68,6 @@ const GlobalStyles = createGlobalStyle`
     font-weight: var(--font-bold);
     font-size: var(--fz-heading);
 
-    /* :before {
-      bottom: 4px;
-      counter-increment: section;
-      content: '0' counter(section) '.';
-      margin-right: 10px;
-      color: var(--blue-dark);
-      font-size: clamp(var(--fz-md), 3vw, var(--fz-xl));
-      font-weight: var(--font-medium);
-    } */
-
     :after {
       bottom: 4px;
       counter-increment: section;

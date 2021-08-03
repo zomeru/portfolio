@@ -23,11 +23,11 @@ const StyledHeroContainer = styled.div`
   }
 
   @media only screen and (max-width: 768px) {
-    padding: 0 50px;
+    padding: 0 30px;
   }
 
   @media only screen and (max-width: 600px) {
-    padding: 0 30px;
+    padding: 0 20px;
   }
 
   @media only screen and (max-width: 480px) {
@@ -111,6 +111,10 @@ const StyledHeroContent = styled.div`
     @media only screen and (max-width: 1000px) {
       margin-left: 0;
       max-width: 100%;
+    }
+
+    @media only screen and (max-width: 480px) {
+      font-size: var(--fz-sm);
     }
   }
 
