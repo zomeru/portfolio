@@ -12,6 +12,9 @@ const Projects = () => {
   return (
     <StyledProjects id='projects'>
       <h2 className='section-heading'>Projects</h2>
+      <h3 style={{ marginBottom: '20px' }}>
+        (Mobile view is still in development)
+      </h3>
       {projects.map(project => {
         const { name, images, info, techs, links } = project;
         const { demo, github } = links;
