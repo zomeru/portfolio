@@ -63,10 +63,10 @@ const GlobalStyles = createGlobalStyle`
     /* margin: 10px 0 40px; */
     margin-bottom: 40px;
     width: 100%;
-    white-space: normal;
+    /* white-space: normal; */
     color: var(--gray-dark);
     font-weight: var(--font-bold);
-    font-size: var(--fz-heading);
+    font-size: clamp(30px, 6vw, var(--fz-heading));
 
     :after {
       bottom: 4px;
