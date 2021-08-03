@@ -10,7 +10,7 @@ import {
 import { AiOutlineInstagram } from 'react-icons/ai';
 import { FiTwitter, FiLinkedin, FiGithub, FiFacebook } from 'react-icons/fi';
 import { AiFillGithub, AiFillHtml5 } from 'react-icons/ai';
-import { IoLogoSass } from 'react-icons/io';
+import { IoLogoSass, IoLogoLinkedin } from 'react-icons/io';
 import {
   SiTypescript,
   SiTailwindcss,
@@ -38,18 +38,21 @@ export const navLinks: INavLinks[] = [
   },
 ];
 
-export const floatingLinks: INavLinks[] = [
+export const floatingLinks: ISocialLinks[] = [
   {
     name: 'linkedin',
     url: 'https://linkedin.com/in/zomergregorio',
+    Icon: IoLogoLinkedin,
   },
   {
     name: 'github',
     url: 'https://github.com/zomeru',
+    Icon: AiFillGithub,
   },
   {
     name: 'instagram',
     url: 'https://instagram.com/zomerusama',
+    Icon: AiOutlineInstagram,
   },
 ];
 
