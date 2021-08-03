@@ -1,4 +1,4 @@
-import { INavLinks, ISeo, IProjects, ISocialLinks } from './types';
+import { INavLinks, ISeo, IProjects, ISocialLinks, ISkills } from './types';
 import {
   zomify1,
   zomify2,
@@ -9,6 +9,15 @@ import {
 } from './assets/images/projects';
 import { AiOutlineInstagram } from 'react-icons/ai';
 import { FiTwitter, FiLinkedin, FiGithub, FiFacebook } from 'react-icons/fi';
+import { AiFillGithub, AiFillHtml5 } from 'react-icons/ai';
+import { IoLogoSass } from 'react-icons/io';
+import {
+  SiTypescript,
+  SiTailwindcss,
+  SiFirebase,
+  SiJavascript,
+} from 'react-icons/si';
+import { FaReact, FaNodeJs, FaGitAlt } from 'react-icons/fa';
 
 export const navLinks: INavLinks[] = [
   {
@@ -44,46 +53,56 @@ export const floatingLinks: INavLinks[] = [
   },
 ];
 
-export const skills = [
+export const skills: ISkills[] = [
   {
     name: 'HTML5',
     color: '#e34c26',
+    Icon: AiFillHtml5,
   },
   {
     name: 'Sass',
     color: '#c69',
+    Icon: IoLogoSass,
   },
   {
     name: 'Javascript',
     color: '#F0DB4F',
+    Icon: SiJavascript,
   },
   {
     name: 'Typescript',
     color: '#007acc',
+    Icon: SiTypescript,
   },
   {
     name: 'React.js',
     color: '#61DBFB',
+    Icon: FaReact,
   },
   {
     name: 'Tailwind CSS',
     color: 'rgb(6, 182, 212)',
+    Icon: SiTailwindcss,
   },
   {
     name: 'Node.js',
     color: '#539e43',
+    Icon: FaNodeJs,
   },
   {
     name: 'Firebase',
     color: '#FFCB2B',
+    Icon: SiFirebase,
   },
   {
     name: 'Github',
     color: '#211f1f',
+    Icon: AiFillGithub,
   },
   {
     name: 'Git',
     color: '#F1502F',
+    Icon: FaGitAlt,
   },
 ];
 
