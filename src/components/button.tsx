@@ -12,7 +12,7 @@ const StyledButton = styled.a`
   text-align: center;
   justify-content: center;
   align-items: center;
-  border: 1px solid var(--gray-dark);
+  border: 2px solid var(--gray-light);
   border-radius: 3px;
   text-transform: uppercase;
   overflow: hidden;
