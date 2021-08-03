@@ -10,7 +10,7 @@
   <li>Next.js</li>
   <li>Styled Components</li>
   <li>React Icons</li>
-  <li>Passion and Love 😎</li>
+  <li>Passion and Love ❤</li>
 </ul>
 <br>
 <img src="https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/fullpage.png" alt="My website full page photo" />
