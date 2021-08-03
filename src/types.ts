@@ -14,8 +14,9 @@ export interface ISkills {
 export interface ISeo {
   title: string;
   description: string;
-  image: string;
+  image: string | StaticImageData;
   url: string;
+  gsv: string;
 }
 
 export interface IProjects {
