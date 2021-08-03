@@ -1,15 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { AiFillGithub, AiFillHtml5 } from 'react-icons/ai';
-import { IoLogoSass } from 'react-icons/io';
-import {
-  SiTypescript,
-  SiTailwindcss,
-  SiFirebase,
-  SiJavascript,
-} from 'react-icons/si';
-import { FaReact, FaNodeJs, FaGitAlt } from 'react-icons/fa';
-import { skills } from '../config';
+import { skills } from '../data';
 
 const StyledTechStacks = styled.div`
   margin: 70px auto 0 auto;
@@ -67,30 +58,6 @@ const StyledTech = styled.div`
 `;
 
 const TechStacks = () => {
-  const html5 = <AiFillHtml5 className='logo' />;
-  const sass = <IoLogoSass className='logo' />;
-  const js = <SiJavascript className='logo' />;
-  const ts = <SiTypescript className='logo' />;
-  const react = <FaReact className='logo' />;
-  const tailwind = <SiTailwindcss className='logo' />;
-  const node = <FaNodeJs className='logo' />;
-  const firebase = <SiFirebase className='logo' />;
-  const github = <AiFillGithub className='logo' />;
-  const git = <FaGitAlt className='logo' />;
-
-  const iconList = [
-    html5,
-    sass,
-    js,
-    ts,
-    react,
-    tailwind,
-    node,
-    firebase,
-    github,
-    git,
-  ];
-
   return (
     <StyledTechStacks>
       <h1>SKILLS</h1>
@@ -99,12 +66,14 @@ const TechStacks = () => {
       </p>
       <StyledTech>
         <ul>
-          {skills.map((skill, index) => {
+          {skills.map(skill => {
+            const { name, color, Icon } = skill;
+
             return (
-              <li key={skill.name}>
+              <li key={name}>
                 <div className='tech-content'>
-                  <div style={{ color: skill.color }}>{iconList[index]}</div>
-                  <p>{skill.name}</p>
+                  <Icon className='logo' style={{ color: color }} />
+                  <p>{name}</p>
                 </div>
               </li>
             );
