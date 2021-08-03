@@ -2,9 +2,9 @@ import React from 'react';
 import { Nav, Footer } from '.';
 import { StyledLayout } from '../styles/componentStyles';
 
-interface IlayoutProps {}
+interface ILayoutProps {}
 
-const Layout: React.FC<IlayoutProps> = ({ children }) => {
+const Layout: React.FC<ILayoutProps> = ({ children }) => {
   return (
     <StyledLayout id='root'>
       <Nav />

@@ -1,8 +1,6 @@
 import React from 'react';
 
-interface IexperienceProps {}
-
-const Experience: React.FC<IexperienceProps> = ({}) => {
+const Experience = () => {
   return <div>EXPERIENCE</div>;
 };
 
