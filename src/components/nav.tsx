@@ -5,14 +5,18 @@ import { navLinks } from '../data';
 
 interface InavProps {}
 
-const StyledNav = styled.nav`
+const StyledNav = styled.header`
   height: var(--nav-height);
   background-color: var(--color-white);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  /* max-width: var(--max-width);
-  margin: 0 auto; */
+
+  nav {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 `;
 
 const StyledLogo = styled.h1`
@@ -29,6 +33,10 @@ const StyledLogo = styled.h1`
 `;
 
 const StyledLinks = styled.div`
+  @media only screen and (max-width: 768px) {
+    display: none;
+  }
+
   ul {
     display: flex;
 
@@ -51,18 +59,20 @@ const StyledLinks = styled.div`
 const Nav: React.FC<InavProps> = ({}) => {
   return (
     <StyledNav>
-      <StyledLogo>
-        <Link href='/'>Zomeru</Link>
-      </StyledLogo>
-      <StyledLinks>
-        <ul>
-          {navLinks.map(link => (
-            <li key={link.name}>
-              <Link href={link.url}>{link.name}</Link>
-            </li>
-          ))}
-        </ul>
-      </StyledLinks>
+      <nav>
+        <StyledLogo>
+          <Link href='/'>Zomeru</Link>
+        </StyledLogo>
+        <StyledLinks>
+          <ul>
+            {navLinks.map(link => (
+              <li key={link.name}>
+                <Link href={link.url}>{link.name}</Link>
+              </li>
+            ))}
+          </ul>
+        </StyledLinks>
+      </nav>
     </StyledNav>
   );
 };
