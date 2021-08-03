@@ -20,11 +20,16 @@ const Projects = () => {
         return (
           <StyledProjectGrid key={name}>
             <li>
-              <a href={demo} className='project-image'>
+              <a
+                href={demo}
+                target='_blank'
+                rel='noopener noreferrer'
+                className='project-image'
+                aria-label={name}
+              >
                 <div className='image-1'>
                   <Image src={img1} alt={alt1} placeholder='blur' />
                 </div>
-
                 <div className='image-2'>
                   <Image src={img2} alt={alt2} placeholder='blur' />
                 </div>
@@ -38,10 +43,20 @@ const Projects = () => {
                   ))}
                 </p>
                 <div className='project-buttons'>
-                  <a href={demo} target='_blank' rel='noreferrer'>
+                  <a
+                    href={demo}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    aria-label={name}
+                  >
                     <BiLinkExternal className='buttons' />
                   </a>
-                  <a href={github} target='_blank' rel='noreferrer'>
+                  <a
+                    href={github}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    aria-label='Github repository'
+                  >
                     <FiGithub className='buttons' />
                   </a>
                 </div>

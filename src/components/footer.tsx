@@ -10,7 +10,13 @@ const Footer = () => {
           const { name, url, Icon } = social;
 
           return (
-            <a href={url} key={name} target='_blank' rel='noreferrer'>
+            <a
+              href={url}
+              key={name}
+              target='_blank'
+              rel='noopener noreferrer'
+              aria-label={name}
+            >
               <Icon className='icon' />
             </a>
           );
@@ -19,7 +25,8 @@ const Footer = () => {
       <a
         href='https://github.com/zomeru/portfolio'
         target='_blank'
-        rel='noreferrer'
+        rel='noopener noreferrer'
+        aria-label='Github repository of this portfolio website.'
       >
         Designed and built by Zomer Gregorio
         <br />

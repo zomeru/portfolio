@@ -39,9 +39,10 @@ const Hero = () => {
             return (
               <a
                 key={name}
+                aria-label={name}
                 href={url}
                 target='_blank'
-                rel='noreferrer'
+                rel='noopener noreferrer'
                 className={`floating-icons ${name}-loc`}
               >
                 <Icon className={`icons icon-${name}`} />
