@@ -34,6 +34,7 @@ const GlobalStyles = createGlobalStyle`
   }
 
   body {
+    margin: 0 auto;
     width: 100%;
     min-height: 100%;
     padding: 0 60px;
@@ -45,6 +46,10 @@ const GlobalStyles = createGlobalStyle`
     font-weight: var(--font-regular);
     font-size: var(--fz-md);
     line-height: 1.3;
+
+    @media only screen and (max-width: 768px) {
+      padding: 0 40px;
+  }
   }
 
   section {
