@@ -2,7 +2,7 @@
 
 #zoms
 /src/fonts
-/src/styles/fonts.ts
+/src/styles/otherStyles/fonts.ts
 
 # dependencies
 /node_modules

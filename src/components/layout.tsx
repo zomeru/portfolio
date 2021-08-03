@@ -1,14 +1,8 @@
 import React from 'react';
-import styled from 'styled-components';
 import { Nav, Footer } from '.';
+import { StyledLayout } from '../styles/componentStyles';
 
 interface IlayoutProps {}
-
-const StyledLayout = styled.div`
-  height: 100vh;
-  max-width: var(--max-width);
-  margin: 0 auto;
-`;
 
 const Layout: React.FC<IlayoutProps> = ({ children }) => {
   return (

@@ -5,7 +5,7 @@ import {
   Contact,
   Layout,
 } from '../src/components/index';
-import { GlobalStyles } from '../src/styles';
+import GlobalStyles from '../src/styles/otherStyles/GlobalStyles';
 
 export default function Home() {
   return (
