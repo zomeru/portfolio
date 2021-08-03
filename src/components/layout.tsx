@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import { Nav, Footer } from '.';
 
 interface IlayoutProps {}
 
@@ -10,7 +11,13 @@ const StyledLayout = styled.div`
 `;
 
 const Layout: React.FC<IlayoutProps> = ({ children }) => {
-  return <StyledLayout id='root'>{children}</StyledLayout>;
+  return (
+    <StyledLayout id='root'>
+      <Nav />
+      <main>{children}</main>
+      <Footer />
+    </StyledLayout>
+  );
 };
 
 export default Layout;

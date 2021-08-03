@@ -1,11 +1,9 @@
 import {
-  Layout,
   About,
   Hero,
-  Nav,
   Projects,
   Contact,
-  Footer,
+  Layout,
 } from '../src/components/index';
 import { GlobalStyles } from '../src/styles';
 
@@ -14,12 +12,10 @@ export default function Home() {
     <>
       <GlobalStyles />
       <Layout>
-        <Nav />
         <Hero />
         <About />
         <Projects />
         <Contact />
-        <Footer />
       </Layout>
     </>
   );
