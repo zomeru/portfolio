@@ -112,10 +112,6 @@ const StyledHeroContent = styled.div`
       margin-left: 0;
       max-width: 100%;
     }
-
-    @media only screen and (max-width: 480px) {
-      font-size: var(--fz-sm);
-    }
   }
 
   .hero-button {

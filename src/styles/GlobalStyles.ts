@@ -49,8 +49,12 @@ const GlobalStyles = createGlobalStyle`
     overflowX: hidden;
 
     @media only screen and (max-width: 768px) {
+      padding: 0 35px;
+    }
+
+    /* @media only screen and (max-width: 768px) {
       padding: 0 40px;
-  }
+    } */
   }
 
   section {
@@ -79,6 +83,12 @@ const GlobalStyles = createGlobalStyle`
       color: var(--blue-dark);
       font-size: 65px;
       font-weight: var(--font-bold);
+    }
+  }
+
+  p {
+    @media only screen and (max-width: 480px) {
+      font-size: var(--fz-sm);
     }
   }
 
