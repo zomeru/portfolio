@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 
 export const StyledFooter = styled.footer`
+  height: var(--nav-height);
   text-align: center;
   width: 100%;
   margin: 0 auto;
-  padding-bottom: 30px;
+  margin-bottom: 30px;
 
   a {
     font-size: var(--fz-sm);

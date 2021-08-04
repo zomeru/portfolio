@@ -18,7 +18,7 @@ const StyledButton = styled.a`
 
   :link,
   :visited {
-    color: var(--gray-dark);
+    color: var(--gray-light);
   }
 
   ::before {
@@ -57,7 +57,7 @@ const StyledButton = styled.a`
   .line::before {
     content: '';
     position: absolute;
-    background-color: var(--gray-dark);
+    background-color: var(--gray-light);
     width: 25px;
     height: 1px;
     top: 50%;
