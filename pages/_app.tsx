@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import * as gtag from '../lib/gtag';
+import GlobalStyles from '../src/styles/otherStyles/GlobalStyles';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -22,6 +23,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
         <title>Zomer Gregorio | Zomeru</title>
       </Head>
+      <GlobalStyles />
       <Component {...pageProps} />
     </>
   );

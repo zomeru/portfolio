@@ -5,12 +5,10 @@ import {
   Contact,
   Layout,
 } from '../src/components/index';
-import GlobalStyles from '../src/styles/otherStyles/GlobalStyles';
 
 export default function Home() {
   return (
     <>
-      <GlobalStyles />
       <Layout>
         <Hero />
         <About />
@@ -20,3 +18,16 @@ export default function Home() {
     </>
   );
 }
+
+export const getServerSideProps = async ({ req, res }: any) => {
+  res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=10, stale-while-revalidate=59'
+  );
+
+  return {
+    props: {
+      time: new Date().toISOString(),
+    },
+  };
+};
