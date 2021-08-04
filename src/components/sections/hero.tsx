@@ -29,6 +29,7 @@ const Hero = () => {
             <React.Fragment key={index}>{text}</React.Fragment>
           ))}
           <Button
+            isLink={false}
             className='hero-button'
             buttonUrl='#contact'
             buttonText='Get in touch'

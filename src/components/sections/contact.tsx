@@ -14,6 +14,7 @@ const Contact = () => {
         let&rsquo;s chat.
       </p>
       <Button
+        isLink={false}
         className='message-button'
         buttonText='Say hello'
         buttonUrl='mailto:zomergregorio@gmail.com'
