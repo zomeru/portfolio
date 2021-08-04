@@ -8,7 +8,9 @@ const Nav = () => {
     <StyledNav>
       <nav>
         <StyledLogo>
-          <Link href='/'>Zomeru</Link>
+          <Link href='/'>
+            <a>Zomeru</a>
+          </Link>
         </StyledLogo>
         <StyledLinks>
           <ul>
