@@ -1,14 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Nav, Footer, Button } from '../src/components';
-import ToggleTheme from '../src/components/ToggleTheme';
-import { ThemeProvider } from 'styled-components';
-import { useDarkMode } from '../src/hooks/useDarkMode';
-import {
-  GlobalStyles,
-  lightTheme,
-  darkTheme,
-} from '../src/styles/otherStyles/GlobalStyles';
 
 const StyledNotFound = styled.section`
   max-height: 100vh;
@@ -43,8 +35,6 @@ interface INotFoundProps {
 }
 
 const NotFound: React.FC<INotFoundProps> = ({ theme, toggleTheme }) => {
-  // const [theme, toggleTheme] = useDarkMode();
-
   return (
     <StyledNotFound>
       <Nav theme={theme} toggleTheme={toggleTheme} />

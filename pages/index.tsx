@@ -5,20 +5,11 @@ import {
   Contact,
   Layout,
 } from '../src/components/index';
-import {
-  GlobalStyles,
-  lightTheme,
-  darkTheme,
-} from '../src/styles/otherStyles/GlobalStyles';
-import { ThemeProvider } from 'styled-components';
-import { useDarkMode } from '../src/hooks/useDarkMode';
 
 const Home: React.FC<{ theme: any; toggleTheme: any }> = ({
   theme,
   toggleTheme,
 }) => {
-  // const [theme, toggleTheme] = useDarkMode();
-
   return (
     <Layout theme={theme} toggleTheme={toggleTheme}>
       <Hero />
