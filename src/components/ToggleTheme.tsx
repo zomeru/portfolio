@@ -25,7 +25,6 @@ interface IToggleThemeProps {
 }
 
 const ToggleTheme: React.FC<IToggleThemeProps> = ({ theme, toggleTheme }) => {
-  console.log(theme);
   return (
     <StyledToggle onClick={toggleTheme}>
       {theme === 'light' ? (
