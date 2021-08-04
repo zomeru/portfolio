@@ -47,6 +47,32 @@ class MyDocument extends Document {
           <meta name='twitter:card' content='summary_large_image' />
           <meta name='twitter:creator' content={seo.title} />
           <meta name='google-site-verification' content={seo.gsv} />
+          <meta name='theme-color' content='#ffffff' />
+          <link rel='apple-touch-icon' href='/apple-touch-icon.png' />
+          <link
+            rel='apple-touch-icon'
+            sizes='192x192'
+            href='/android-chrome-192x192.png'
+          />
+          <link
+            rel='apple-touch-icon'
+            sizes='512x512'
+            href='/android-chrome-512x512.png'
+          />
+
+          <link
+            rel='icon'
+            type='image/png'
+            sizes='32x32'
+            href='/favicon-32x32.png'
+          />
+          <link
+            rel='icon'
+            type='image/png'
+            sizes='16x16'
+            href='/favicon-16x16.png'
+          />
+          <link rel='mask-icon' href='/mask-icon.svg' color='#474745' />
           <link rel='preconnect' href='https://fonts.googleapis.com' />
           <link
             rel='preconnect'
