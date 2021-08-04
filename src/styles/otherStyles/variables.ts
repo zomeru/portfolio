@@ -17,6 +17,8 @@ const Variables = css`
     --blue-dark: rgba(25, 118, 210, 0.7);
     --blue-light: rgba(144, 202, 249, 0.7);
 
+    --color-body: 
+
     // Font size
     --fz-xxs: 12px;
     --fz-xs: 13px;
@@ -68,3 +70,13 @@ const Variables = css`
 `;
 
 export default Variables;
+
+/* --color-body: ${({ theme }) => theme.body};
+
+    --color-text-main: ${({ theme }) => theme.textMain};
+
+    --color-text-second: ${({ theme }) => theme.textSecond};
+
+    --color-accent-main: ${({ theme }) => theme.accentMain};
+    
+    --color-accent-second: ${({ theme }) => theme.accentSecond}; */

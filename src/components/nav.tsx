@@ -2,8 +2,15 @@ import React from 'react';
 import Link from 'next/link';
 import { navLinks } from '../data';
 import { StyledNav, StyledLogo, StyledLinks } from '../styles/componentStyles';
+import { useDarkMode } from '../hooks/useDarkMode';
+import ToggleTheme from './ToggleTheme';
 
-const Nav = () => {
+interface INavProps {
+  theme: any;
+  toggleTheme: any;
+}
+
+const Nav: React.FC<INavProps> = ({ theme, toggleTheme }) => {
   return (
     <StyledNav>
       <nav>
@@ -19,6 +26,7 @@ const Nav = () => {
                 <Link href={link.url}>{link.name}</Link>
               </li>
             ))}
+            <ToggleTheme theme={theme} toggleTheme={toggleTheme} />
           </ul>
         </StyledLinks>
       </nav>

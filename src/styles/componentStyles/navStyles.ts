@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const StyledNav = styled.header`
   height: var(--nav-height);
-  background-color: var(--color-white);
+  background-color: ${({ theme }) => theme.body};
   display: flex;
   align-items: center;
 
@@ -22,7 +22,7 @@ export const StyledLogo = styled.h1`
     transition: color 0.2s ease-out;
 
     :hover {
-      color: var(--blue-dark);
+      color: ${({ theme }) => theme.accentMain};
     }
   }
 `;
@@ -46,7 +46,7 @@ export const StyledLinks = styled.div`
     transition: color 0.2s ease-out;
 
     :hover {
-      color: var(--blue-dark);
+      color: ${({ theme }) => theme.accentMain};
     }
   }
 `;

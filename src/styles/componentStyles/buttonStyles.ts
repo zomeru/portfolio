@@ -11,14 +11,14 @@ const StyledButton = styled.a`
   text-align: center;
   justify-content: center;
   align-items: center;
-  border: 2px solid var(--gray-light);
+  border: 2px solid ${({ theme }) => theme.textSecond};
   border-radius: 3px;
   text-transform: uppercase;
   overflow: hidden;
 
   :link,
   :visited {
-    color: var(--gray-light);
+    color: ${({ theme }) => theme.textSecond};
   }
 
   ::before {
@@ -32,7 +32,7 @@ const StyledButton = styled.a`
     left: -2px;
     right: 0;
     bottom: 0;
-    background-color: var(--blue-dark);
+    background-color: ${({ theme }) => theme.accentMain};
     z-index: -1;
     transform: scaleX(0.1);
     transform-origin: left;
@@ -46,18 +46,18 @@ const StyledButton = styled.a`
   :hover .line::before {
     opacity: 1;
     transform: scaleX(1);
-    background-color: var(--color-white);
+    background-color: ${({ theme }) => theme.body};
   }
 
   :hover p {
     margin-left: 20px;
-    color: var(--color-white);
+    color: ${({ theme }) => theme.body};
   }
 
   .line::before {
     content: '';
     position: absolute;
-    background-color: var(--gray-light);
+    background-color: ${({ theme }) => theme.body};
     width: 25px;
     height: 1px;
     top: 50%;

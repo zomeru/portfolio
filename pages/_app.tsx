@@ -1,9 +1,15 @@
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import * as gtag from '../lib/gtag';
-import GlobalStyles from '../src/styles/otherStyles/GlobalStyles';
+import {
+  GlobalStyles,
+  lightTheme,
+  darkTheme,
+} from '../src/styles/otherStyles/GlobalStyles';
+import { ThemeProvider } from 'styled-components';
+import { useDarkMode } from '../src/hooks/useDarkMode';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -17,14 +23,25 @@ function MyApp({ Component, pageProps }: AppProps) {
     };
   }, [router.events]);
 
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const [theme, toggleTheme] = useDarkMode();
+  const themeMode = theme === 'light' ? lightTheme : darkTheme;
+
   return (
     <>
       <Head>
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
         <title>Zomer Gregorio | Zomeru</title>
       </Head>
-      <GlobalStyles />
-      <Component {...pageProps} />
+      <ThemeProvider theme={themeMode}>
+        <GlobalStyles />
+        {isMounted && <Component {...pageProps} toggleTheme={toggleTheme} />}
+      </ThemeProvider>
     </>
   );
 }

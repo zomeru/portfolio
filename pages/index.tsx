@@ -5,19 +5,31 @@ import {
   Contact,
   Layout,
 } from '../src/components/index';
+import {
+  GlobalStyles,
+  lightTheme,
+  darkTheme,
+} from '../src/styles/otherStyles/GlobalStyles';
+import { ThemeProvider } from 'styled-components';
+import { useDarkMode } from '../src/hooks/useDarkMode';
 
-export default function Home() {
+const Home: React.FC<{ theme: any; toggleTheme: any }> = ({
+  theme,
+  toggleTheme,
+}) => {
+  // const [theme, toggleTheme] = useDarkMode();
+
   return (
-    <>
-      <Layout>
-        <Hero />
-        <About />
-        <Projects />
-        <Contact />
-      </Layout>
-    </>
+    <Layout theme={theme} toggleTheme={toggleTheme}>
+      <Hero />
+      <About />
+      <Projects />
+      <Contact />
+    </Layout>
   );
-}
+};
+
+export default Home;
 
 export const getServerSideProps = async ({ req, res }: any) => {
   res.setHeader(

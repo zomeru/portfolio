@@ -1,6 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Nav, Footer, Button } from '../src/components';
+import ToggleTheme from '../src/components/ToggleTheme';
+import { ThemeProvider } from 'styled-components';
+import { useDarkMode } from '../src/hooks/useDarkMode';
+import {
+  GlobalStyles,
+  lightTheme,
+  darkTheme,
+} from '../src/styles/otherStyles/GlobalStyles';
 
 const StyledNotFound = styled.section`
   max-height: 100vh;
@@ -29,12 +37,17 @@ const StyledNotFound = styled.section`
   }
 `;
 
-interface INotFoundProps {}
+interface INotFoundProps {
+  theme: any;
+  toggleTheme: any;
+}
 
-const NotFound: React.FC<INotFoundProps> = ({}) => {
+const NotFound: React.FC<INotFoundProps> = ({ theme, toggleTheme }) => {
+  // const [theme, toggleTheme] = useDarkMode();
+
   return (
     <StyledNotFound>
-      <Nav />
+      <Nav theme={theme} toggleTheme={toggleTheme} />
       <div className='notFoundContent'>
         <h1 className='section-heading'>404</h1>
         <h2>Page Not Found</h2>

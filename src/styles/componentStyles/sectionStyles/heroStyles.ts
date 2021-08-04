@@ -92,7 +92,7 @@ export const StyledHeroContent = styled.div`
     /* font-size: 55px; */
     font-size: clamp(20px, 5vw, 55px);
     margin-bottom: var(--mg-md);
-    color: var(--gray-light);
+    color: ${({ theme }) => theme.textSecond};
 
     @media only screen and (max-width: 1000px) {
       margin-left: 0;
@@ -103,7 +103,7 @@ export const StyledHeroContent = styled.div`
     max-width: 60%;
     font-weight: var(--font-medium);
     margin-left: var(--mg-xxl);
-    color: var(--gray-light);
+    color: ${({ theme }) => theme.textSecond};
 
     @media only screen and (max-width: 1000px) {
       margin-left: 0;
@@ -129,7 +129,7 @@ export const StyledHeroContent = styled.div`
   }
 
   .floating-icons {
-    background-color: rgba(144, 202, 249, 0.25);
+    background-color: ${({ theme }) => theme.contentBG};
     position: absolute;
     animation-name: floating;
     animation-duration: 3s;
@@ -148,7 +148,7 @@ export const StyledHeroContent = styled.div`
     }
 
     :hover {
-      background-color: rgba(144, 202, 249, 0.35);
+      background-color: ${({ theme }) => theme.contentBGSec};
       width: 100px;
       height: 100px;
     }
@@ -169,7 +169,7 @@ export const StyledHeroContent = styled.div`
   .icons {
     width: 40px;
     height: 40px;
-    color: var(--gray-dark);
+    color: ${({ theme }) => theme.textMain};
   }
 
   .linkedin-loc {

@@ -10,7 +10,7 @@ export const StyledTechStacks = styled.div`
   }
 
   > p {
-    color: var(--gray-light);
+    color: ${({ theme }) => theme.textSecond};
   }
 `;
 
@@ -35,7 +35,7 @@ export const StyledTech = styled.div`
   }
 
   li {
-    border: 1px solid var(--gray-light);
+    border: 1px solid ${({ theme }) => theme.textSecond};
     height: 55px;
     width: auto;
     border-radius: 3px;
@@ -57,7 +57,7 @@ export const StyledTech = styled.div`
 
       p {
         margin-right: 10px;
-        color: var(--gray-light);
+        color: ${({ theme }) => theme.textSecond};
       }
     }
   }

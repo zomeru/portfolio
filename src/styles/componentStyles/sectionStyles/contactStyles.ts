@@ -43,7 +43,7 @@ const StyledContact = styled.section`
   }
 
   .contact-p {
-    color: var(--gray-light);
+    color: ${({ theme }) => theme.textSecond};
     width: 85%;
 
     @media only screen and (max-width: 600px) {

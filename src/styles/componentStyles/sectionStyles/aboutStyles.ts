@@ -124,7 +124,7 @@ export const StyledAboutContent = styled.div`
 
     p {
       font-weight: var(--font-medium);
-      color: var(--gray-light);
+      color: ${({ theme }) => theme.textSecond};
     }
   }
 `;

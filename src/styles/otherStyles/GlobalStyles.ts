@@ -1,8 +1,32 @@
 import { createGlobalStyle } from 'styled-components';
 import Variables from './variables';
 
-const GlobalStyles = createGlobalStyle`
-  ${Variables};
+export const lightTheme: any = {
+  body: '#FAFAFA',
+  textMain: '#474745',
+  textSecond: '#7d7c79',
+  accentMain: 'rgba(25, 118, 210, 0.7)',
+  accentSecond: 'rgba(144, 202, 249, 0.7)',
+  contentBG: 'rgba(144, 202, 249, 0.25)',
+  contentBGSec: 'rgba(144, 202, 249, 0.35)',
+};
+
+export const darkTheme: any = {
+  body: '#121212',
+  textMain: '#FAFAFA',
+  textSecond: '#9E9E9E',
+  accentMain: '#40C4FF',
+  accentSecond: 'rgba(144, 202, 249, 0.7)',
+  contentBG: 'rgba(158, 158, 158, 0.10)',
+  contentBGSec: 'rgba(158, 158, 158, 0.20)',
+};
+
+export type ThemeProps = {
+  theme: typeof lightTheme | typeof darkTheme;
+};
+
+export const GlobalStyles = createGlobalStyle<ThemeProps>`
+  ${Variables}
 
   *,
   *::before,
@@ -21,7 +45,7 @@ const GlobalStyles = createGlobalStyle`
   // Scrollbar styles 
   html {
     scrollbar-width: thin;
-    scrollbar-color: var(--gray-dark);
+    scrollbar-color: ${({ theme }) => theme.textMain};
   }
 
   body::-webkit-scrollbar {
@@ -29,7 +53,7 @@ const GlobalStyles = createGlobalStyle`
   }
 
   body::-webkit-scrollbar-thumb {
-    background-color: var(--gray-dark);
+    background-color: ${({ theme }) => theme.textMain};
     border-radius: 10px;
   }
 
@@ -40,21 +64,17 @@ const GlobalStyles = createGlobalStyle`
     padding: 0 60px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: var(--color-white);
-    color: var(--gray-dark);
+    background-color: ${({ theme }) => theme.body};
+    color: ${({ theme }) => theme.textMain};
     font-family: var(--font-sans);
     font-weight: var(--font-regular);
     font-size: var(--fz-md);
     line-height: 1.3;
-    overflowX: hidden;
+    overflow-x: hidden;
 
     @media only screen and (max-width: 768px) {
       padding: 0 35px;
     }
-
-    /* @media only screen and (max-width: 768px) {
-      padding: 0 40px;
-    } */
   }
 
   section {
@@ -67,7 +87,7 @@ const GlobalStyles = createGlobalStyle`
   .section-heading {
     margin-bottom: 40px;
     width: 100%;
-    color: var(--gray-dark);
+    color: ${({ theme }) => theme.textMain};
     font-weight: var(--font-bold);
     font-size: clamp(35px, 6vw, var(--fz-heading));
 
@@ -80,7 +100,7 @@ const GlobalStyles = createGlobalStyle`
       counter-increment: section;
       content: '.';
       margin-left: 5px;
-      color: var(--blue-dark);
+      color: ${({ theme }) => theme.accentMain};
       font-size: 65px;
       font-weight: var(--font-bold);
     }
@@ -98,16 +118,16 @@ const GlobalStyles = createGlobalStyle`
 
     :link,
     :active {
-      color: var(--gray-dark);
+      color: ${({ theme }) => theme.textMain};
     }
 
     :visited,
     :focus {
-      color: var(--gray-dark);
+      color: ${({ theme }) => theme.textMain};
     }
 
     :hover {
-      color: var(--blue-dark)
+      color: ${({ theme }) => theme.accentMain};
     }
   }
 
@@ -116,5 +136,3 @@ const GlobalStyles = createGlobalStyle`
     list-style: none;
   }
 `;
-
-export default GlobalStyles;

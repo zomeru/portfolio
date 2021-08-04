@@ -7,9 +7,8 @@ import {
   forkify1,
   forkify2,
 } from './assets/images/projects';
-import { AiOutlineInstagram } from 'react-icons/ai';
+import { AiOutlineInstagram, AiFillHtml5, AiFillGithub } from 'react-icons/ai';
 import { FiTwitter, FiLinkedin, FiGithub, FiFacebook } from 'react-icons/fi';
-import { AiFillGithub, AiFillHtml5 } from 'react-icons/ai';
 import { IoLogoSass, IoLogoLinkedin } from 'react-icons/io';
 import {
   SiTypescript,
@@ -18,6 +17,7 @@ import {
   SiJavascript,
 } from 'react-icons/si';
 import { FaReact, FaNodeJs, FaGitAlt } from 'react-icons/fa';
+import { lightTheme, darkTheme } from './styles/otherStyles/GlobalStyles';
 
 export const navLinks: INavLinks[] = [
   {
@@ -99,8 +99,8 @@ export const skills: ISkills[] = [
   },
   {
     name: 'Github',
-    color: '#211f1f',
-    Icon: AiFillGithub,
+    color: '#7d7c79',
+    Icon: FiGithub,
   },
   {
     name: 'Git',

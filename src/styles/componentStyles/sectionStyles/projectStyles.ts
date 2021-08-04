@@ -27,8 +27,8 @@ export const StyledProjectGrid = styled.ul`
   .project-image {
     padding: 25px 25px 0 25px;
     width: 100%;
-    background-color: rgba(144, 202, 249, 0.25);
-    border: 3px solid rgba(144, 202, 249, 0.35);
+    background-color: ${({ theme }) => theme.contentBG};
+    border: 3px solid ${({ theme }) => theme.contentBGSec};
     border-radius: 5px;
     overflow: hidden;
     grid-column: 1/8;
@@ -67,12 +67,12 @@ export const StyledProjectGrid = styled.ul`
   }
 
   .project-info {
-    color: var(--gray-light);
+    color: ${({ theme }) => theme.textSecond};
     margin-bottom: 20px;
   }
 
   .project-tech {
-    color: var(--gray-light);
+    color: ${({ theme }) => theme.textSecond};
     margin-bottom: 40px;
 
     span {
