@@ -17,7 +17,6 @@ import {
   SiJavascript,
 } from 'react-icons/si';
 import { FaReact, FaNodeJs, FaGitAlt } from 'react-icons/fa';
-import { lightTheme, darkTheme } from './styles/otherStyles/GlobalStyles';
 
 export const navLinks: INavLinks[] = [
   {

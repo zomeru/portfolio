@@ -3,9 +3,9 @@ import { Nav, Footer } from '.';
 import { StyledLayout } from '../styles/componentStyles';
 
 interface ILayoutProps {
-  children?: any;
-  theme: any;
-  toggleTheme: any;
+  children: React.ReactNode;
+  theme: string;
+  toggleTheme: () => void;
 }
 
 const Layout: React.FC<ILayoutProps> = ({ children, theme, toggleTheme }) => {

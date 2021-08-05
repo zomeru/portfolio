@@ -3,13 +3,10 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import * as gtag from '../lib/gtag';
-import {
-  GlobalStyles,
-  lightTheme,
-  darkTheme,
-} from '../src/styles/otherStyles/GlobalStyles';
+import { GlobalStyles } from '../src/styles/GlobalStyles';
 import { ThemeProvider } from 'styled-components';
 import { useDarkMode } from '../src/hooks/useDarkMode';
+import { lightTheme, darkTheme } from '../src/styles/theme';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -23,7 +20,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     };
   }, [router.events]);
 
-  const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState<boolean>(false);
 
   useEffect(() => {
     setIsMounted(true);
@@ -40,7 +37,9 @@ function MyApp({ Component, pageProps }: AppProps) {
       </Head>
       <ThemeProvider theme={themeMode}>
         <GlobalStyles />
-        {isMounted && <Component {...pageProps} toggleTheme={toggleTheme} />}
+        {isMounted && (
+          <Component {...pageProps} toggleTheme={toggleTheme} theme={theme} />
+        )}
       </ThemeProvider>
     </>
   );

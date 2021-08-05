@@ -6,7 +6,7 @@ import {
   Layout,
 } from '../src/components/index';
 
-const Home: React.FC<{ theme: any; toggleTheme: any }> = ({
+const Home: React.FC<{ theme: string; toggleTheme: () => void }> = ({
   theme,
   toggleTheme,
 }) => {

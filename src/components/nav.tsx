@@ -6,8 +6,8 @@ import { useDarkMode } from '../hooks/useDarkMode';
 import ToggleTheme from './ToggleTheme';
 
 interface INavProps {
-  theme: any;
-  toggleTheme: any;
+  theme: string;
+  toggleTheme: () => void;
 }
 
 const Nav: React.FC<INavProps> = ({ theme, toggleTheme }) => {

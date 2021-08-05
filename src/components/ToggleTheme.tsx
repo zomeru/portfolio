@@ -20,8 +20,8 @@ const StyledToggle = styled.div`
 `;
 
 interface IToggleThemeProps {
-  theme: any;
-  toggleTheme: any;
+  theme: string;
+  toggleTheme: () => void;
 }
 
 const ToggleTheme: React.FC<IToggleThemeProps> = ({ theme, toggleTheme }) => {

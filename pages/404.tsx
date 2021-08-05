@@ -30,8 +30,8 @@ const StyledNotFound = styled.section`
 `;
 
 interface INotFoundProps {
-  theme: any;
-  toggleTheme: any;
+  theme: string;
+  toggleTheme: () => void;
 }
 
 const NotFound: React.FC<INotFoundProps> = ({ theme, toggleTheme }) => {
