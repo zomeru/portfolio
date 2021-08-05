@@ -6,12 +6,15 @@ import {
   Layout,
 } from '../src/components/index';
 
-const Home: React.FC<{ theme: string; toggleTheme: () => void }> = ({
-  theme,
-  toggleTheme,
-}) => {
+interface IHomeProps {
+  theme: string;
+  toggleTheme: () => void;
+  isHome: boolean;
+}
+
+const Home: React.FC<IHomeProps> = ({ theme, toggleTheme, isHome }) => {
   return (
-    <Layout theme={theme} toggleTheme={toggleTheme}>
+    <Layout isHome={isHome} theme={theme} toggleTheme={toggleTheme}>
       <Hero />
       <About />
       <Projects />

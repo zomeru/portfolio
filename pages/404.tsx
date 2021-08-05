@@ -32,12 +32,13 @@ const StyledNotFound = styled.section`
 interface INotFoundProps {
   theme: string;
   toggleTheme: () => void;
+  isHome: boolean;
 }
 
-const NotFound: React.FC<INotFoundProps> = ({ theme, toggleTheme }) => {
+const NotFound: React.FC<INotFoundProps> = ({ theme, toggleTheme, isHome }) => {
   return (
     <StyledNotFound>
-      <Nav theme={theme} toggleTheme={toggleTheme} />
+      <Nav isHome={isHome} theme={theme} toggleTheme={toggleTheme} />
       <div className='notFoundContent'>
         <h1 className='section-heading'>404</h1>
         <h2>Page Not Found</h2>

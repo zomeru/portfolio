@@ -20,6 +20,8 @@ function MyApp({ Component, pageProps }: AppProps) {
     };
   }, [router.events]);
 
+  const isHome = router.pathname === '/';
+
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
   useEffect(() => {
@@ -38,7 +40,12 @@ function MyApp({ Component, pageProps }: AppProps) {
       <ThemeProvider theme={themeMode}>
         <GlobalStyles />
         {isMounted && (
-          <Component {...pageProps} toggleTheme={toggleTheme} theme={theme} />
+          <Component
+            {...pageProps}
+            toggleTheme={toggleTheme}
+            theme={theme}
+            isHome={isHome}
+          />
         )}
       </ThemeProvider>
     </>

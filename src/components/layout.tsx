@@ -6,12 +6,18 @@ interface ILayoutProps {
   children: React.ReactNode;
   theme: string;
   toggleTheme: () => void;
+  isHome: boolean;
 }
 
-const Layout: React.FC<ILayoutProps> = ({ children, theme, toggleTheme }) => {
+const Layout: React.FC<ILayoutProps> = ({
+  children,
+  theme,
+  toggleTheme,
+  isHome,
+}) => {
   return (
     <StyledLayout id='root'>
-      <Nav theme={theme} toggleTheme={toggleTheme} />
+      <Nav isHome={isHome} theme={theme} toggleTheme={toggleTheme} />
       <main>{children}</main>
       <Footer />
     </StyledLayout>

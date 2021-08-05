@@ -8,17 +8,21 @@ import ToggleTheme from './ToggleTheme';
 interface INavProps {
   theme: string;
   toggleTheme: () => void;
+  isHome: boolean;
 }
 
-const Nav: React.FC<INavProps> = ({ theme, toggleTheme }) => {
+const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
+  const Logo = isHome ? (
+    <a href='https://zomergregorio.live'>Zomeru</a>
+  ) : (
+    <Link href='/'>
+      <a>Zomeru</a>
+    </Link>
+  );
   return (
     <StyledNav>
       <nav>
-        <StyledLogo>
-          <Link href='/'>
-            <a>Zomeru</a>
-          </Link>
-        </StyledLogo>
+        <StyledLogo>{Logo}</StyledLogo>
         <StyledLinks>
           <ul>
             {navLinks.map(link => (

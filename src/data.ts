@@ -21,7 +21,7 @@ import { FaReact, FaNodeJs, FaGitAlt } from 'react-icons/fa';
 export const navLinks: INavLinks[] = [
   {
     name: 'About',
-    url: '#about',
+    url: '/#about',
   },
   // {
   //   name: 'Experience',
@@ -29,11 +29,11 @@ export const navLinks: INavLinks[] = [
   // },
   {
     name: 'Projects',
-    url: '#projects',
+    url: '/#projects',
   },
   {
     name: 'Contact',
-    url: '#contact',
+    url: '/#contact',
   },
 ];
 
