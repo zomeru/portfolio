@@ -22,11 +22,16 @@ const StyledToggle = styled.div`
 interface IToggleThemeProps {
   theme: string;
   toggleTheme: () => void;
+  className?: string;
 }
 
-const ToggleTheme: React.FC<IToggleThemeProps> = ({ theme, toggleTheme }) => {
+const ToggleTheme: React.FC<IToggleThemeProps> = ({
+  theme,
+  toggleTheme,
+  className,
+}) => {
   return (
-    <StyledToggle onClick={toggleTheme}>
+    <StyledToggle className={className} onClick={toggleTheme}>
       {theme === 'light' ? (
         <RiMoonClearLine className='icons' />
       ) : (
