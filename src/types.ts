@@ -6,8 +6,8 @@ export interface INavLinks {
 }
 
 export interface ISkills {
+  id: string;
   name: string;
-  color: string;
   Icon: IconType;
 }
 

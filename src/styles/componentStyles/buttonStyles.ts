@@ -11,7 +11,7 @@ const StyledButton = styled.a`
   text-align: center;
   justify-content: center;
   align-items: center;
-  border: 2px solid ${({ theme }) => theme.textSecond};
+  border: 2px solid ${({ theme }) => theme.accentMain};
   border-radius: 3px;
   text-transform: uppercase;
   overflow: hidden;
@@ -46,12 +46,12 @@ const StyledButton = styled.a`
   :hover .line::before {
     opacity: 1;
     transform: scaleX(1);
-    background-color: ${({ theme }) => theme.body};
+    background-color: #f1f8f7;
   }
 
   :hover p {
     margin-left: 20px;
-    color: ${({ theme }) => theme.body};
+    color: #f1f8f7;
   }
 
   .line::before {

@@ -57,53 +57,53 @@ export const floatingLinks: ISocialLinks[] = [
 
 export const skills: ISkills[] = [
   {
+    id: 'html',
     name: 'HTML5',
-    color: '#e34c26',
     Icon: AiFillHtml5,
   },
   {
+    id: 'sass',
     name: 'Sass',
-    color: '#c69',
     Icon: IoLogoSass,
   },
   {
+    id: 'javascript',
     name: 'Javascript',
-    color: '#F0DB4F',
     Icon: SiJavascript,
   },
   {
+    id: 'typescript',
     name: 'Typescript',
-    color: '#007acc',
     Icon: SiTypescript,
   },
   {
+    id: 'react',
     name: 'React.js',
-    color: '#61DBFB',
     Icon: FaReact,
   },
   {
+    id: 'tailwind',
     name: 'Tailwind CSS',
-    color: 'rgb(6, 182, 212)',
     Icon: SiTailwindcss,
   },
   {
+    id: 'node',
     name: 'Node.js',
-    color: '#539e43',
     Icon: FaNodeJs,
   },
   {
+    id: 'firebase',
     name: 'Firebase',
-    color: '#FFCB2B',
     Icon: SiFirebase,
   },
   {
+    id: 'github',
     name: 'Github',
-    color: '#7d7c79',
-    Icon: FiGithub,
+    Icon: AiFillGithub,
   },
   {
+    id: 'git',
     name: 'Git',
-    color: '#F1502F',
     Icon: FaGitAlt,
   },
 ];

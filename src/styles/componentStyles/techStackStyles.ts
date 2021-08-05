@@ -55,6 +55,37 @@ export const StyledTech = styled.div`
         height: 30px;
       }
 
+      .html {
+        color: #e34c26;
+      }
+      .sass {
+        color: #c69;
+      }
+      .javascript {
+        color: #f0db4f;
+      }
+      .typescript {
+        color: #007acc;
+      }
+      .react {
+        color: #61dbfb;
+      }
+      .tailwind {
+        color: rgb(6, 182, 212);
+      }
+      .node {
+        color: #539e43;
+      }
+      .firebase {
+        color: #ffcb2b;
+      }
+      .github {
+        color: ${({ theme }) => theme.github};
+      }
+      .git {
+        color: #f1502f;
+      }
+
       p {
         margin-right: 10px;
         color: ${({ theme }) => theme.textSecond};

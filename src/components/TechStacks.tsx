@@ -12,12 +12,12 @@ const TechStacks = () => {
       <StyledTech>
         <ul>
           {skills.map(skill => {
-            const { name, color, Icon } = skill;
+            const { name, Icon, id } = skill;
 
             return (
-              <li key={name}>
+              <li key={id}>
                 <div className='tech-content'>
-                  <Icon className='logo' style={{ color: color }} />
+                  <Icon className={`logo ${id}`} />
                   <p>{name}</p>
                 </div>
               </li>
