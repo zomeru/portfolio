@@ -105,10 +105,7 @@ const StyledMenu = styled.div`
 
       a {
         padding: 20px 45px;
-      }
-
-      li {
-        font-size: var(--fz-lg);
+        font-size: 25px;
       }
     }
   }
