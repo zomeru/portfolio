@@ -51,6 +51,7 @@ export const StyledProjectGrid = styled.ul`
       grid-column: 1/13;
       grid-row: 1;
       border: 0px solid ${({ theme }) => theme.contentBGSec};
+      padding: 0px;
     }
   }
 
