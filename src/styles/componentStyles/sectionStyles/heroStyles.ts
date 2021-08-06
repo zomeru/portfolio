@@ -56,40 +56,15 @@ export const StyledHeroContent = styled.div`
   h2 {
     margin-left: -8px;
     font-weight: var(--font-bold);
-    /* font-size: 85px; */
     font-size: clamp(24px, 7vw, 85px);
     margin-bottom: var(--mg-sm);
     position: relative;
     max-width: 720px;
-
-    /* :hover {
-      color: var(--gray-light);
-    }
-
-    :hover::after {
-      transform: translate3d(100%, 0, 0);
-    }
-
-    ::before {
-      content: attr(data-letters);
-      position: absolute;
-      z-index: 2;
-      overflow: hidden;
-      color: var(--blue-dark);
-      white-space: nowrap;
-      width: 0%;
-      transition: width 0.4s 0.3s;
-    }
-
-    :hover::before {
-      width: 100%;
-    } */
   }
 
   h3 {
     margin-left: var(--mg-xl);
     font-weight: var(--font-bold);
-    /* font-size: 55px; */
     font-size: clamp(20px, 5vw, 55px);
     margin-bottom: var(--mg-md);
     color: ${({ theme }) => theme.textSecond};

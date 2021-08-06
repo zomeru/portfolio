@@ -58,13 +58,3 @@ const Variables = css`
 `;
 
 export default Variables;
-
-/* --color-body: ${({ theme }) => theme.body};
-
-    --color-text-main: ${({ theme }) => theme.textMain};
-
-    --color-text-second: ${({ theme }) => theme.textSecond};
-
-    --color-accent-main: ${({ theme }) => theme.accentMain};
-    
-    --color-accent-second: ${({ theme }) => theme.accentSecond}; */

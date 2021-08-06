@@ -23,9 +23,7 @@ export interface IProjects {
   name: string;
   images: {
     img1: StaticImageData;
-    img2: StaticImageData;
     alt1: string;
-    alt2: string;
   };
   info: string;
   techs: string[];

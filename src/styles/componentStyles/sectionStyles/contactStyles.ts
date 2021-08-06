@@ -4,7 +4,6 @@ const StyledContact = styled.section`
   height: auto;
   padding: 50px 300px;
   text-align: center;
-  /* margin: 0 auto; */
   margin-bottom: 200px;
   display: flex;
   flex-direction: column;

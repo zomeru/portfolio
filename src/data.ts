@@ -1,12 +1,5 @@
 import { INavLinks, ISeo, IProjects, ISocialLinks, ISkills } from './types';
-import {
-  zomify1,
-  zomify2,
-  portfolio1,
-  portfolio2,
-  forkify1,
-  forkify2,
-} from './assets/images/projects';
+import { zomify1, portfolio1, forkify1 } from './assets/images/projects';
 import { AiOutlineInstagram, AiFillHtml5, AiFillGithub } from 'react-icons/ai';
 import { FiTwitter, FiLinkedin, FiGithub, FiFacebook } from 'react-icons/fi';
 import { IoLogoSass, IoLogoLinkedin } from 'react-icons/io';
@@ -123,9 +116,7 @@ export const projects: IProjects[] = [
     name: 'Zomify Colors',
     images: {
       img1: zomify1,
-      img2: zomify2,
       alt1: 'Landing page of the website.',
-      alt2: 'Custom color palette creator page.',
     },
     info: 'A color palette app inspired by Flat UI Colors.',
     techs: ['React.js', 'Material UI'],
@@ -138,9 +129,7 @@ export const projects: IProjects[] = [
     name: 'Simple Portfolio',
     images: {
       img1: portfolio1,
-      img2: portfolio2,
       alt1: 'Design of the portfolio template.',
-      alt2: 'Design of the portfolio template.',
     },
     info: 'A very simple portfolio template.',
     techs: ['Typescript', 'React.js', 'Next.js', 'Tailwind CSS'],
@@ -153,9 +142,7 @@ export const projects: IProjects[] = [
     name: 'Forkify',
     images: {
       img1: forkify1,
-      img2: forkify2,
       alt1: 'Design of the forkify website.',
-      alt2: 'Design of the forkify website.',
     },
     info: 'Forkify is a recipe app where you can search for recipes for many different dishes.',
     techs: ['Javascript', 'Sass', 'HTML'],

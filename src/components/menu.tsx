@@ -14,10 +14,6 @@ const StyledMenu = styled.div`
     display: block;
   }
 
-  /* @media only screen and (max-width: 600px) {
-    right: 35px;
-  } */
-
   .hamburger-button {
     position: absolute;
     top: 50%;
@@ -46,7 +42,6 @@ const StyledMenu = styled.div`
     height: 4px;
     background: ${(props: any) =>
       props.open ? '#f1f8f7' : props.theme.textMain};
-    /* box-shadow: 0 5px 15px rgb(0 0 0 / 50%); */
     opacity: 1;
     transition: transform 0.3s, top 0.3s, opacity 0.3s;
     transition-delay: 0s, 0.3s, 0.3s;
@@ -138,12 +133,7 @@ const Menu: React.FC<IMenuProps> = ({
   toggleTheme,
 }) => {
   const [menuOpen, setMenuOpen] = React.useState<boolean>(false);
-  console.log(menuOpen);
-  const size = window.innerWidth;
 
-  React.useEffect(() => {
-    console.log(size);
-  }, [size]);
   return (
     // @ts-ignore
     <StyledMenu menuOpen={menuOpen}>

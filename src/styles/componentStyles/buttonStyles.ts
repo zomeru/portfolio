@@ -78,7 +78,6 @@ const StyledButton = styled.a`
     transition: all 0.3s ease-in-out;
     font-weight: var(--font-semibold);
     font-size: var(--fz-sm);
-    /* justify-self: center; */
   }
 `;
 

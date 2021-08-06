@@ -15,7 +15,7 @@ const Projects = () => {
       {projects.map(project => {
         const { name, images, info, techs, links } = project;
         const { demo, github } = links;
-        const { img1, img2, alt1, alt2 } = images;
+        const { img1, alt1 } = images;
 
         return (
           <StyledProjectGrid key={name}>
