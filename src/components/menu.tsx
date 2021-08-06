@@ -7,7 +7,7 @@ import Link from 'next/link';
 const StyledMenu = styled.div`
   display: none;
   position: ${(props: any) => (props.menuOpen ? 'fixed' : 'absolute')};
-  right: 45px;
+  right: 35px;
   z-index: 99;
 
   @media only screen and (max-width: 768px) {
@@ -140,7 +140,7 @@ const Menu: React.FC<IMenuProps> = ({
   theme,
   toggleTheme,
 }) => {
-  const [menuOpen, setMenuOpen] = React.useState(false);
+  const [menuOpen, setMenuOpen] = React.useState<boolean>(false);
   console.log(menuOpen);
   const size = window.innerWidth;
 
