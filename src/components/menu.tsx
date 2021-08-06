@@ -160,7 +160,12 @@ const Menu: React.FC<IMenuProps> = ({
       </ul>
       {open && (
         <>
-          <StyledSidebar onClick={openHamburger} />
+          <StyledSidebar
+            onClick={() => {
+              setMenuOpen(false);
+              openHamburger();
+            }}
+          />
           <nav>
             <ul>
               <ToggleTheme
