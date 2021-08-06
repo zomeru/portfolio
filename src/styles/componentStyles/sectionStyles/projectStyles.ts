@@ -14,6 +14,14 @@ export const StyledProjectGrid = styled.ul`
 
   :not(:last-child) {
     margin-bottom: 35px;
+
+    @media only screen and (max-width: 600px) {
+      margin-bottom: 20px;
+    }
+
+    @media only screen and (max-width: 427px) {
+      margin-bottom: 10px;
+    }
   }
 
   li {
