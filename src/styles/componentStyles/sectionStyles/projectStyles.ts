@@ -30,7 +30,6 @@ export const StyledProjectGrid = styled.ul`
     grid-gap: 12px;
     position: relative;
     border-radius: 3px;
-    overflow: hidden;
 
     @media only screen and (max-width: 900px) {
       grid-gap: 5px;
@@ -83,12 +82,13 @@ export const StyledProjectGrid = styled.ul`
 
   .project-details {
     z-index: 88;
-    margin-left: 20px;
+    margin-left: 15px;
     width: 100%;
     grid-column: 8 / 13;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    padding-right: 15px;
 
     @media only screen and (max-width: 768px) {
       width: 80%;
@@ -147,6 +147,7 @@ export const StyledProjectGrid = styled.ul`
   .project-tech {
     color: ${({ theme }) => theme.textSecond};
     margin-bottom: 40px;
+    overflow-wrap: anywhere;
 
     @media only screen and (max-width: 900px) {
       margin-bottom: 30px;
