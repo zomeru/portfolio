@@ -37,7 +37,9 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
                 <Link href={link.url}>{link.name}</Link>
               </li>
             ))}
-            <ToggleTheme theme={theme} toggleTheme={toggleTheme} />
+            <li>
+              <ToggleTheme theme={theme} toggleTheme={toggleTheme} />
+            </li>
           </ul>
         </StyledLinks>
         <Menu
