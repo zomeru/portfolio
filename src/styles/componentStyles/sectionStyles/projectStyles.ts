@@ -90,6 +90,10 @@ export const StyledProjectGrid = styled.ul`
       justify-self: center;
       align-self: center;
     }
+
+    @media only screen and (max-width: 480px) {
+      margin: -10px 0 0 -10px;
+    }
   }
 
   .project-name {
