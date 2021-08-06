@@ -108,6 +108,10 @@ export const StyledProjectGrid = styled.ul`
     @media only screen and (max-width: 480px) {
       font-size: 20px;
     }
+
+    @media only screen and (max-width: 427px) {
+      margin-bottom: 5px;
+    }
   }
 
   .project-info {
@@ -121,6 +125,10 @@ export const StyledProjectGrid = styled.ul`
     @media only screen and (max-width: 768px) {
       color: #cfe7e4;
     }
+
+    @media only screen and (max-width: 427px) {
+      margin-bottom: 5px;
+    }
   }
 
   .project-tech {
@@ -133,6 +141,10 @@ export const StyledProjectGrid = styled.ul`
 
     @media only screen and (max-width: 768px) {
       color: #cfe7e4;
+    }
+
+    @media only screen and (max-width: 427px) {
+      margin-bottom: 10px;
     }
 
     span {
@@ -163,11 +175,21 @@ export const StyledProjectGrid = styled.ul`
         color: #f1f8f7;
         width: 30px;
         height: 30px;
+        transition: color 0.3s ease-in-out;
+
+        :hover {
+          color: ${({ theme }) => theme.accentMain};
+        }
       }
 
       @media only screen and (max-width: 480px) {
         width: 23px;
         height: 23px;
+      }
+
+      @media only screen and (max-width: 420px) {
+        width: 20px;
+        height: 20px;
       }
     }
   }
