@@ -23,8 +23,8 @@ const StyledMenu = styled.div`
     top: 50%;
     left: 50%;
     transform: translate(-35px, -50%);
-    width: 45px;
-    height: 45px;
+    width: 35px;
+    height: 35px;
     border: 2px solid ${({ theme }) => theme.textMain};
     cursor: pointer;
     z-index: 15;
@@ -148,6 +148,7 @@ const Menu: React.FC<IMenuProps> = ({
     console.log(size);
   }, [size]);
   return (
+    // @ts-ignore
     <StyledMenu menuOpen={menuOpen}>
       <ul
         onClick={() => {
