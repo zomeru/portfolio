@@ -12,9 +12,6 @@ const Projects = () => {
   return (
     <StyledProjects id='projects'>
       <h2 className='section-heading'>Projects</h2>
-      <h3 style={{ marginBottom: '20px' }}>
-        (Mobile view is still in development)
-      </h3>
       {projects.map(project => {
         const { name, images, info, techs, links } = project;
         const { demo, github } = links;
@@ -30,13 +27,9 @@ const Projects = () => {
                 className='project-image'
                 aria-label={name}
               >
-                <div className='image-1'>
-                  <Image src={img1} alt={alt1} placeholder='blur' />
-                </div>
-                <div className='image-2'>
-                  <Image src={img2} alt={alt2} placeholder='blur' />
-                </div>
+                <Image src={img1} alt={alt1} placeholder='blur' />
               </a>
+              <div className='opaque-bg' />
               <div className='project-details'>
                 <h3 className='project-name'>{name}</h3>
                 <p className='project-info'>{info}</p>
