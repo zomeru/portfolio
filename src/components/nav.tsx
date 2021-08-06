@@ -1,9 +1,9 @@
 import React from 'react';
-import Link from 'next/link';
 import { navLinks } from '../data';
 import { StyledNav, StyledLogo, StyledLinks } from '../styles/componentStyles';
-import { useDarkMode } from '../hooks/useDarkMode';
 import ToggleTheme from './ToggleTheme';
+import Menu from './menu';
+import Link from 'next/link';
 
 interface INavProps {
   theme: string;
@@ -12,6 +12,12 @@ interface INavProps {
 }
 
 const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
+  const [open, setOpen] = React.useState<boolean>(false);
+
+  const openHamburger = () => {
+    setOpen(open => !open);
+  };
+
   const Logo = isHome ? (
     <a href='https://zomergregorio.live'>Zomeru</a>
   ) : (
@@ -19,6 +25,7 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
       <a>Zomeru</a>
     </Link>
   );
+
   return (
     <StyledNav>
       <nav>
@@ -33,6 +40,12 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
             <ToggleTheme theme={theme} toggleTheme={toggleTheme} />
           </ul>
         </StyledLinks>
+        <Menu
+          theme={theme}
+          toggleTheme={toggleTheme}
+          open={open}
+          openHamburger={openHamburger}
+        />
       </nav>
     </StyledNav>
   );

@@ -13,9 +13,9 @@ const StyledToggle = styled.div`
   }
 
   .icons {
-    height: 25px;
-    width: 25px;
-    color: ${({ theme }) => theme.textMain};
+    height: 100%;
+    width: 100%;
+    color: ${(props: any) => (props.isMenu ? '#f1f8f7' : props.theme.textMain)};
   }
 `;
 
