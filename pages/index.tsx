@@ -25,15 +25,15 @@ const Home: React.FC<IHomeProps> = ({ theme, toggleTheme, isHome }) => {
 
 export default Home;
 
-// export const getServerSideProps = async ({ req, res }: any) => {
-//   res.setHeader(
-//     'Cache-Control',
-//     'public, s-maxage=10, stale-while-revalidate=59'
-//   );
+export const getServerSideProps = async ({ req, res }: any) => {
+  res.setHeader(
+    'Cache-Control',
+    'public, s-maxage=10, stale-while-revalidate=59'
+  );
 
-//   return {
-//     props: {
-//       time: new Date().toISOString(),
-//     },
-//   };
-// };
+  return {
+    props: {
+      time: new Date().toISOString(),
+    },
+  };
+};
