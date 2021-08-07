@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '../index';
-import { floatingLinks } from '../../data';
+import { floatingLinks } from '../../configs/data';
 import {
   StyledHero,
   StyledHeroContainer,

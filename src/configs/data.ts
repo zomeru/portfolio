@@ -1,5 +1,5 @@
 import { INavLinks, ISeo, IProjects, ISocialLinks, ISkills } from './types';
-import { zomify1, portfolio1, forkify1 } from './assets/images/projects';
+import { zomify1, portfolio1, forkify1 } from '../assets/images/projects';
 import { AiOutlineInstagram, AiFillHtml5, AiFillGithub } from 'react-icons/ai';
 import { FiTwitter, FiLinkedin, FiGithub, FiFacebook } from 'react-icons/fi';
 import { IoLogoSass, IoLogoLinkedin } from 'react-icons/io';

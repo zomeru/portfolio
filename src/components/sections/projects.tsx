@@ -2,7 +2,7 @@ import React from 'react';
 import Image from 'next/image';
 import { FiGithub } from 'react-icons/fi';
 import { BiLinkExternal } from 'react-icons/bi';
-import { projects } from '../../data';
+import { projects } from '../../configs/data';
 import {
   StyledProjects,
   StyledProjectGrid,

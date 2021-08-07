@@ -1,5 +1,5 @@
 import React from 'react';
-import { socialLinks } from '../data';
+import { socialLinks } from '../configs/data';
 import { StyledFooter, StyledSocialLinks } from '../styles/componentStyles';
 
 const Footer = () => {

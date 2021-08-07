@@ -1,5 +1,5 @@
 import React from 'react';
-import { skills } from '../data';
+import { skills } from '../configs/data';
 import { StyledTechStacks, StyledTech } from '../styles/componentStyles';
 
 const TechStacks = () => {

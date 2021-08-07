@@ -1,7 +1,7 @@
 // @ts-nocheck
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
-import { seo } from '../src/data';
+import { seo } from '../src/configs/data';
 import { GA_TRACKING_ID } from '../lib/gtag';
 
 class MyDocument extends Document {

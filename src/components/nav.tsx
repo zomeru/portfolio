@@ -1,5 +1,5 @@
 import React from 'react';
-import { navLinks } from '../data';
+import { navLinks } from '../configs/data';
 import { StyledNav, StyledLogo, StyledLinks } from '../styles/componentStyles';
 import ToggleTheme from './ToggleTheme';
 import Menu from './menu';

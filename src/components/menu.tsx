@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import ToggleTheme from './ToggleTheme';
-import { navLinks } from '../data';
+import { navLinks } from '../configs/data';
 import Link from 'next/link';
 
 const StyledMenu = styled.div`
