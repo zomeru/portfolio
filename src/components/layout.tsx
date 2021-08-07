@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Nav, Footer, Loader } from '.';
 import { StyledLayout } from '../styles/componentStyles';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface ILayoutProps {
   children: React.ReactNode;
@@ -17,18 +17,11 @@ const Layout: React.FC<ILayoutProps> = ({
   isHome,
 }) => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-  const [notLoaded, setNotLoaded] = useState<boolean>(true);
 
   useEffect(() => {
     setTimeout(() => {
       setIsLoaded(true);
-
-      if (isLoaded) {
-        setTimeout(() => {
-          setNotLoaded(false);
-        }, 1000);
-      }
-    }, 4000);
+    }, 3500);
   }, []);
 
   const loaderVar = {
@@ -40,9 +33,10 @@ const Layout: React.FC<ILayoutProps> = ({
     },
     exit: {
       opacity: 0,
+      y: 300,
       transition: {
-        duration: 1.5,
-        ease: [0.25, -0.77, 0.81, 0.68],
+        ease: 'easeInOut',
+        duration: 1,
       },
     },
   };
@@ -51,14 +45,17 @@ const Layout: React.FC<ILayoutProps> = ({
     <StyledLayout id='root'>
       <AnimatePresence>
         {!isLoaded && (
-          <Loader
-            variants={loaderVar}
-            initial='initial'
-            animate='animate'
-            exit='exit'
-            notLoaded={notLoaded}
-            isLoaded={isLoaded}
-          />
+          <motion.div
+            exit={{
+              opacity: 0,
+              transition: {
+                ease: 'easeInOut',
+                duration: 0.5,
+              },
+            }}
+          >
+            <Loader />
+          </motion.div>
         )}
       </AnimatePresence>
       {isLoaded && (

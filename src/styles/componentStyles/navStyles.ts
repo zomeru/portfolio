@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
 export const StyledNav = styled.header`
   height: var(--nav-height);
@@ -14,7 +15,7 @@ export const StyledNav = styled.header`
   }
 `;
 
-export const StyledLogo = styled.h1`
+export const StyledLogo = styled(motion.h1)`
   text-transform: uppercase;
   font-size: var(--fz-sm);
 

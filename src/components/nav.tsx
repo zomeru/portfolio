@@ -4,6 +4,7 @@ import { StyledNav, StyledLogo, StyledLinks } from '../styles/componentStyles';
 import ToggleTheme from './ToggleTheme';
 import Menu from './menu';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 
 interface INavProps {
   theme: string;
@@ -26,16 +27,45 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
     </Link>
   );
 
+  //? ANIMATIONS
+  const logoVar = {
+    initial: {
+      opacity: 0,
+      y: -20,
+    },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.3,
+        ease: 'easeInOut',
+      },
+    },
+  };
+
   return (
     <StyledNav>
       <nav>
-        <StyledLogo>{Logo}</StyledLogo>
+        <StyledLogo variants={logoVar} initial='initial' animate='animate'>
+          {Logo}
+        </StyledLogo>
         <StyledLinks>
           <ul>
-            {navLinks.map(link => (
-              <li key={link.name}>
+            {navLinks.map((link, i) => (
+              <motion.li
+                initial={{ opacity: 0, y: -20 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    delay: 0.5 + i * 0.1,
+                    ease: 'easeInOut',
+                  },
+                }}
+                key={link.name}
+              >
                 <Link href={link.url}>{link.name}</Link>
-              </li>
+              </motion.li>
             ))}
             <li>
               <ToggleTheme theme={theme} toggleTheme={toggleTheme} />

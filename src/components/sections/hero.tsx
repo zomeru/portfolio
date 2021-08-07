@@ -6,6 +6,7 @@ import {
   StyledHeroContainer,
   StyledHeroContent,
 } from '../../styles/componentStyles';
+import { motion } from 'framer-motion';
 
 const Hero = () => {
   const one = <h1>Hi there, I am</h1>;
@@ -21,24 +22,66 @@ const Hero = () => {
 
   const heroTexts = [one, two, three, four];
 
+  const heroButtonVariants = {
+    initial: {
+      opacity: 0,
+      y: 30,
+    },
+    animate: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        ease: 'easeInOut',
+        delay: 1.3,
+      },
+    },
+  };
+
   return (
     <StyledHero>
       <StyledHeroContainer>
         <StyledHeroContent>
-          {heroTexts.map((text, index) => (
-            <React.Fragment key={index}>{text}</React.Fragment>
+          {heroTexts.map((text, i) => (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                transition: {
+                  delay: 0.9 + i * 0.1,
+                  ease: 'easeInOut',
+                },
+              }}
+              key={i}
+            >
+              {text}
+            </motion.div>
           ))}
-          <Button
-            isLink={false}
-            className='hero-button'
-            buttonUrl='#contact'
-            buttonText='Get in touch'
-          />
-          {floatingLinks.map(link => {
+          <motion.div
+            variants={heroButtonVariants}
+            initial='initial'
+            animate='animate'
+          >
+            <Button
+              isLink={false}
+              className='hero-button'
+              buttonUrl='#contact'
+              buttonText='Get in touch'
+            />
+          </motion.div>
+          {floatingLinks.map((link, i) => {
             const { name, url, Icon } = link;
 
             return (
-              <a
+              <motion.a
+                initial={{ opacity: 0 }}
+                animate={{
+                  opacity: 1,
+                  transition: {
+                    delay: 1.4 + i * 0.2,
+                    ease: 'easeInOut',
+                  },
+                }}
                 key={name}
                 aria-label={name}
                 href={url}
@@ -47,7 +90,7 @@ const Hero = () => {
                 className={`floating-icons ${name}-loc`}
               >
                 <Icon className={`icons icon-${name}`} />
-              </a>
+              </motion.a>
             );
           })}
         </StyledHeroContent>

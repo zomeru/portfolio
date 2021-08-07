@@ -4,37 +4,22 @@ import NameLoader from './icons/NameLoader';
 import { motion } from 'framer-motion';
 
 const StyledLoader = styled(motion.section)`
-  /* margin-bottom: 0px; */
-  height: 100vh;
+  height: calc(100vh - 50px);
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0 100px 0 100px;
+
+  @media only screen and (max-width: 480px) {
+    padding: 0 50px 0 50px;
+  }
 `;
 
-interface IloaderProps {
-  isLoaded: boolean;
-  notLoaded: boolean;
-  variants: any;
-  initial: string;
-  animate: string;
-  exit: string;
-}
+interface IloaderProps {}
 
-const Loader: React.FC<IloaderProps> = ({
-  isLoaded,
-  notLoaded,
-  variants,
-  initial,
-  animate,
-  exit,
-}) => {
+const Loader: React.FC<IloaderProps> = ({}) => {
   return (
-    <StyledLoader
-      variants={variants}
-      initial={initial}
-      animate={animate}
-      exit={exit}
-    >
+    <StyledLoader>
       <NameLoader />
     </StyledLoader>
   );
