@@ -67,8 +67,8 @@ export const StyledProjectGrid = styled.ul`
     width: 100%;
     height: 100%;
     background-color: #102039;
-    filter: blur(4px);
-    -webkit-filter: blur(4px);
+    /* filter: blur(4px);
+    -webkit-filter: blur(4px); */
     overflow: hidden;
     z-index: 66;
     opacity: 0.85;
