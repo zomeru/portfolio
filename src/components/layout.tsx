@@ -43,7 +43,7 @@ const Layout: React.FC<ILayoutProps> = ({
 
   return (
     <StyledLayout id='root'>
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {!isLoaded && (
           <motion.div
             exit={{
@@ -57,8 +57,8 @@ const Layout: React.FC<ILayoutProps> = ({
             <Loader />
           </motion.div>
         )}
-      </AnimatePresence>
-      {isLoaded && (
+      </AnimatePresence> */}
+      {true && (
         <>
           <Nav isHome={isHome} theme={theme} toggleTheme={toggleTheme} />
           <main>{children}</main>
