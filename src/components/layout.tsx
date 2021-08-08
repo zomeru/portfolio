@@ -58,7 +58,7 @@ const Layout: React.FC<ILayoutProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
-      {true && (
+      {isLoaded && (
         <>
           <Nav isHome={isHome} theme={theme} toggleTheme={toggleTheme} />
           <main>{children}</main>
