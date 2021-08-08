@@ -14,9 +14,9 @@ const Hero = () => {
   const three = <h3>A self-taught web developer.</h3>;
   const four = (
     <p className='four'>
-      A college student and Software Engineer based in the Philippines. React.js
-      enthusiast and loves building beautiful, elegant and responsive web
-      applications.
+      A college student and self-taught web developer from the Philippines.
+      React.js enthusiast and loves building beautiful, elegant and responsive
+      web applications.
     </p>
   );
 

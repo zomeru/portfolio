@@ -25,12 +25,13 @@ const About = () => {
           <h3>Zomer Gregorio</h3>
           <h4>Self-taught Web Developer</h4>
           <p>
-            Hello! I am highly motivated, passionate, and self-taught web
-            developer. I&rsquo;m a college student and currently pursuing a
-            bachelors degree in Information Technology (3rd Year) from STI
-            College Alabang. My main focus as of now is building responsive and
-            beautiful looking web applications. I mostly work on personal
-            projects and sometimes on freelance projects.
+            Hello! I am a Philomath, highly motivated, passionate, and
+            self-taught web developer. I&rsquo;m a college student and currently
+            pursuing a bachelors degree in Information Technology (3rd Year)
+            from STI College Alabang. My main focus these days are building
+            responsive and beautiful looking web applications and learning
+            modern technologies for the web. I mostly work on personal projects
+            and sometimes on freelance projects.
           </p>
         </div>
         <div className='image-wrapper-square hidden-image'>
