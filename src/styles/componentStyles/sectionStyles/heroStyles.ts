@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
 export const StyledHero = styled.section`
   width: 100%;
@@ -32,7 +33,7 @@ export const StyledHeroContainer = styled.div`
   }
 `;
 
-export const StyledHeroContent = styled.div`
+export const StyledHeroContent = styled(motion.div)`
   position: relative;
   height: 70%;
   display: flex;

@@ -4,7 +4,7 @@ import { StyledNav, StyledLogo, StyledLinks } from '../styles/componentStyles';
 import ToggleTheme from './ToggleTheme';
 import Menu from './menu';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 
 interface INavProps {
   theme: string;
@@ -28,48 +28,47 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
   );
 
   //? ANIMATIONS
-  const logoVar = {
-    initial: {
-      opacity: 0,
-      y: -20,
-    },
-    animate: {
+  const navVariants: Variants = {
+    hidden: { opacity: isHome ? 0 : 1 },
+    visible: {
       opacity: 1,
-      y: 0,
       transition: {
-        duration: 0.3,
+        delay: 0.1,
+        staggerChildren: 0.1,
+        when: 'beforeChildren',
+      },
+    },
+  };
+
+  const navItemVariants: Variants = {
+    hidden: {
+      y: isHome ? -20 : 0,
+      opacity: isHome ? 0 : 1,
+    },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
         ease: 'easeInOut',
+        duration: 0.2,
       },
     },
   };
 
   return (
     <StyledNav>
-      <nav>
-        <StyledLogo variants={logoVar} initial='initial' animate='animate'>
-          {Logo}
-        </StyledLogo>
+      <motion.nav variants={navVariants} initial='hidden' animate='visible'>
+        <StyledLogo variants={navItemVariants}>{Logo}</StyledLogo>
         <StyledLinks>
           <ul>
             {navLinks.map((link, i) => (
-              <motion.li
-                initial={{ opacity: 0, y: -20 }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                  transition: {
-                    delay: 0.5 + i * 0.1,
-                    ease: 'easeInOut',
-                  },
-                }}
-                key={link.name}
-              >
+              <motion.li variants={navItemVariants} key={link.name}>
                 <Link href={link.url}>{link.name}</Link>
               </motion.li>
             ))}
-            <li>
+            <motion.li variants={navItemVariants}>
               <ToggleTheme theme={theme} toggleTheme={toggleTheme} />
-            </li>
+            </motion.li>
           </ul>
         </StyledLinks>
         <Menu
@@ -78,7 +77,7 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
           open={open}
           openHamburger={openHamburger}
         />
-      </nav>
+      </motion.nav>
     </StyledNav>
   );
 };

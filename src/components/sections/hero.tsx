@@ -22,17 +22,32 @@ const Hero = () => {
 
   const heroTexts = [one, two, three, four];
 
-  const heroButtonVariants = {
-    initial: {
+  const heroContainerVariants = {
+    hidden: {
       opacity: 0,
-      y: 30,
     },
-    animate: {
+    visible: {
+      opacity: 1,
+      transition: {
+        delay: 0.65,
+        staggerChildren: 0.2,
+        when: 'beforeChildren',
+      },
+    },
+  };
+
+  const heroItemsVariants = {
+    hidden: {
+      opacity: 0,
+      y: 20,
+    },
+    visible: {
       opacity: 1,
       y: 0,
       transition: {
+        staggerChildren: 0.2,
+        when: 'beforeChildren',
         ease: 'easeInOut',
-        delay: 1.3,
       },
     },
   };
@@ -40,27 +55,33 @@ const Hero = () => {
   return (
     <StyledHero>
       <StyledHeroContainer>
-        <StyledHeroContent>
+        <StyledHeroContent
+          variants={heroContainerVariants}
+          initial='hidden'
+          animate='visible'
+        >
           {heroTexts.map((text, i) => (
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{
-                opacity: 1,
-                y: 0,
-                transition: {
-                  delay: 0.9 + i * 0.1,
-                  ease: 'easeInOut',
-                },
-              }}
+              variants={heroItemsVariants}
+              // initial={{ opacity: 0, y: 30 }}
+              // animate={{
+              //   opacity: 1,
+              //   y: 0,
+              //   transition: {
+              //     delay: 0.9 + i * 0.1,
+              //     ease: 'easeInOut',
+              //   },
+              // }}
               key={i}
             >
               {text}
             </motion.div>
           ))}
           <motion.div
-            variants={heroButtonVariants}
-            initial='initial'
-            animate='animate'
+            variants={heroItemsVariants}
+            // variants={heroButtonVariants}
+            // initial='initial'
+            // animate='animate'
           >
             <Button
               isLink={false}
@@ -74,14 +95,15 @@ const Hero = () => {
 
             return (
               <motion.a
-                initial={{ opacity: 0 }}
-                animate={{
-                  opacity: 1,
-                  transition: {
-                    delay: 1.4 + i * 0.2,
-                    ease: 'easeInOut',
-                  },
-                }}
+                variants={heroItemsVariants}
+                // initial={{ opacity: 0 }}
+                // animate={{
+                //   opacity: 1,
+                //   transition: {
+                //     delay: 1.4 + 1 * 0.2,
+                //     ease: 'easeInOut',
+                //   },
+                // }}
                 key={name}
                 aria-label={name}
                 href={url}

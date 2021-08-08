@@ -31,28 +31,8 @@ const ToggleTheme: React.FC<IToggleThemeProps> = ({
   toggleTheme,
   className,
 }) => {
-  const toggleVar = {
-    initial: {
-      opacity: 0,
-      y: -20,
-    },
-    animate: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: 0.8,
-        ease: 'easeInOut',
-      },
-    },
-  };
   return (
-    <StyledToggle
-      variants={toggleVar}
-      initial='initial'
-      animate='animate'
-      className={className}
-      onClick={toggleTheme}
-    >
+    <StyledToggle className={className} onClick={toggleTheme}>
       {theme === 'light' ? (
         <RiMoonClearLine className='icons' />
       ) : (
