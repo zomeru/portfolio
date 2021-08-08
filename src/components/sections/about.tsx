@@ -27,8 +27,8 @@ const About = () => {
           <p>
             Hello! I am highly motivated, passionate, and self-taught web
             developer. I&rsquo;m currently pursuing a bachelors degree in
-            Information Technology (3rd Year) from STI College. I mostly work on
-            personal projects and sometimes on freelance projects.
+            Information Technology (3rd Year) from STI College Alabang. I mostly
+            work on personal projects and sometimes on freelance projects.
           </p>
         </div>
         <div className='image-wrapper-square hidden-image'>
