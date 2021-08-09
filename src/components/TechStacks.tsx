@@ -1,51 +1,12 @@
 import React, { useEffect } from 'react';
 import { skills } from '../configs/data';
 import { StyledTechStacks, StyledTech } from '../styles/componentStyles';
-import { motion, useAnimation } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
+import { motion } from 'framer-motion';
+import useScrollReveal from '../hooks/useScrollReveal';
+import { parentVar, fadeUp } from '../configs/animations';
 
 const TechStacks = () => {
-  const { ref, inView } = useInView({
-    // threshold: 1,
-    triggerOnce: true,
-    root: null,
-    rootMargin: '-100px 0px',
-  });
-  const controls = useAnimation();
-
-  useEffect(() => {
-    if (inView) {
-      controls.start('visible');
-    }
-    if (!inView) {
-      controls.start('hidden');
-    }
-  }, [inView, controls]);
-
-  const parentVar = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.2,
-        when: 'beforeChildren',
-      },
-    },
-  };
-
-  const fadeUp = {
-    hidden: {
-      y: 20,
-      opacity: 0,
-    },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.3,
-        ease: 'easeInOut',
-      },
-    },
-  };
+  const [ref, controls] = useScrollReveal(-100);
 
   return (
     <StyledTechStacks

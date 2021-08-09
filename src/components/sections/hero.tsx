@@ -7,6 +7,7 @@ import {
   StyledHeroContent,
 } from '../../styles/componentStyles';
 import { motion } from 'framer-motion';
+import { fadeUp } from '../../configs/animations';
 
 const Hero = () => {
   const one = <h1>Hi there, I am</h1>;
@@ -29,7 +30,7 @@ const Hero = () => {
       opacity: 1,
       transition: {
         delay: 1.3,
-        staggerChildren: 0.2,
+        staggerChildren: 0.32,
         when: 'beforeChildren',
       },
     },
@@ -44,7 +45,7 @@ const Hero = () => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.2,
+        duration: 0.3,
         ease: 'easeInOut',
       },
     },
@@ -59,11 +60,11 @@ const Hero = () => {
           animate='visible'
         >
           {heroTexts.map((text, i) => (
-            <motion.div variants={heroItemsVariants} key={i}>
+            <motion.div variants={fadeUp} key={i}>
               {text}
             </motion.div>
           ))}
-          <motion.div variants={heroItemsVariants}>
+          <motion.div variants={fadeUp}>
             <Button
               isLink={false}
               className='hero-button'
@@ -76,7 +77,7 @@ const Hero = () => {
 
             return (
               <motion.a
-                variants={heroItemsVariants}
+                variants={fadeUp}
                 key={name}
                 aria-label={name}
                 href={url}

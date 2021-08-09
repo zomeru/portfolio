@@ -1,72 +1,17 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import { TechStacks } from '../index';
 import zoms from '../../assets/images/zoms.jpg';
 import zomsSquare from '../../assets/images/zoms-square.jpg';
 import { StyledAbout, StyledAboutContent } from '../../styles/componentStyles';
-import { motion, useAnimation } from 'framer-motion';
-import { useInView } from 'react-intersection-observer';
+import { motion } from 'framer-motion';
+import useScrollReveal from '../../hooks/useScrollReveal';
+import { parentVar, fadeUp, fadeLeft } from '../../configs/animations';
 
 const About = () => {
-  const { ref, inView } = useInView({
-    // threshold: 1,
-    triggerOnce: true,
-    root: null,
-    rootMargin: '-300px 0px',
-  });
-  const controls = useAnimation();
+  const [ref, controls] = useScrollReveal(-250);
 
-  useEffect(() => {
-    if (inView) {
-      controls.start('visible');
-    }
-    if (!inView) {
-      controls.start('hidden');
-    }
-  }, [inView, controls]);
-
-  const parentVar = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.4,
-        when: 'beforeChildren',
-      },
-    },
-  };
-
-  const fadeUp = {
-    hidden: {
-      y: 20,
-      opacity: 0,
-    },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.3,
-        ease: 'easeInOut',
-      },
-    },
-  };
-
-  const aboutInfoVar = {
-    hidden: {
-      x: 20,
-      opacity: 0,
-    },
-    visible: {
-      x: 0,
-      opacity: 1,
-      transition: {
-        delay: 0.4,
-        duration: 0.3,
-        ease: 'easeInOut',
-      },
-    },
-  };
-
-  const imageVar = {
+  const hiddenImageVar = {
     hidden: {
       y: 20,
       opacity: 0,
@@ -114,7 +59,7 @@ const About = () => {
           <div className='grayscale' />
         </motion.div>
         <motion.div
-          variants={aboutInfoVar}
+          variants={fadeLeft}
           ref={ref}
           animate={controls}
           className='about-text'
@@ -134,7 +79,7 @@ const About = () => {
         <motion.div
           ref={ref}
           initial='initial'
-          variants={imageVar}
+          variants={hiddenImageVar}
           animate={controls}
           className='image-wrapper-square hidden-image'
         >
