@@ -15,6 +15,18 @@ export const StyledHeroContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  @media only screen and (max-width: 680px) {
+    padding: 0 50px;
+  }
+
+  @media only screen and (max-width: 500px) {
+    padding: 0 20px;
+  }
+
+  @media only screen and (max-width: 400px) {
+    padding: 0 0px;
+  }
 `;
 
 export const StyledHeroContent = styled(motion.div)`
