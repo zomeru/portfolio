@@ -42,7 +42,7 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
       opacity: 1,
       transition: {
         ease: 'easeInOut',
-        duration: 0.2,
+        duration: 0.3,
       },
     },
   };
