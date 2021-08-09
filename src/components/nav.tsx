@@ -48,18 +48,18 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
   };
 
   const Logo = () =>
-    !isHome ? (
-      <a href='https://zomergregorio.live'>Zomeru</a>
+    isHome ? (
+      <a href='https://zomergregorio.live'>zoms</a>
     ) : (
       <Link href='/' passHref>
-        <a>Zomeru</a>
+        <a>Zoms</a>
       </Link>
     );
 
   return (
     <StyledNav>
       <motion.nav variants={navVariants} initial='hidden' animate='visible'>
-        <motion.span variants={navItemVariants}>
+        <motion.span className='logo' variants={navItemVariants}>
           <Logo />
         </motion.span>
         <StyledLinks>
