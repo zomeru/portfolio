@@ -29,7 +29,7 @@ const Hero = () => {
     visible: {
       opacity: 1,
       transition: {
-        delay: 0.65,
+        delay: 1.3,
         staggerChildren: 0.2,
         when: 'beforeChildren',
       },
@@ -45,8 +45,7 @@ const Hero = () => {
       opacity: 1,
       y: 0,
       transition: {
-        staggerChildren: 0.2,
-        when: 'beforeChildren',
+        duration: 0.2,
         ease: 'easeInOut',
       },
     },
@@ -61,28 +60,11 @@ const Hero = () => {
           animate='visible'
         >
           {heroTexts.map((text, i) => (
-            <motion.div
-              variants={heroItemsVariants}
-              // initial={{ opacity: 0, y: 30 }}
-              // animate={{
-              //   opacity: 1,
-              //   y: 0,
-              //   transition: {
-              //     delay: 0.9 + i * 0.1,
-              //     ease: 'easeInOut',
-              //   },
-              // }}
-              key={i}
-            >
+            <motion.div variants={heroItemsVariants} key={i}>
               {text}
             </motion.div>
           ))}
-          <motion.div
-            variants={heroItemsVariants}
-            // variants={heroButtonVariants}
-            // initial='initial'
-            // animate='animate'
-          >
+          <motion.div variants={heroItemsVariants}>
             <Button
               isLink={false}
               className='hero-button'
@@ -90,20 +72,12 @@ const Hero = () => {
               buttonText='Get in touch'
             />
           </motion.div>
-          {floatingLinks.map((link, i) => {
+          {floatingLinks.map(link => {
             const { name, url, Icon } = link;
 
             return (
               <motion.a
                 variants={heroItemsVariants}
-                // initial={{ opacity: 0 }}
-                // animate={{
-                //   opacity: 1,
-                //   transition: {
-                //     delay: 1.4 + 1 * 0.2,
-                //     ease: 'easeInOut',
-                //   },
-                // }}
                 key={name}
                 aria-label={name}
                 href={url}

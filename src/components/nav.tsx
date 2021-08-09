@@ -34,7 +34,7 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
       opacity: 1,
       transition: {
         delay: 0.1,
-        staggerChildren: 0.1,
+        staggerChildren: 0.2,
         when: 'beforeChildren',
       },
     },
