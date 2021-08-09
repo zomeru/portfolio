@@ -1,6 +1,6 @@
 import React from 'react';
 import { navLinks } from '../configs/data';
-import { StyledNav, StyledLogo, StyledLinks } from '../styles/componentStyles';
+import { StyledNav, StyledLinks } from '../styles/componentStyles';
 import ToggleTheme from './ToggleTheme';
 import Menu from './menu';
 import Link from 'next/link';
@@ -18,14 +18,6 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
   const openHamburger = () => {
     setOpen(open => !open);
   };
-
-  const Logo = isHome ? (
-    <a href='https://zomergregorio.live'>Zomeru</a>
-  ) : (
-    <Link href='/'>
-      <a>Zomeru</a>
-    </Link>
-  );
 
   //? ANIMATIONS
   const navVariants: Variants = {
@@ -55,10 +47,21 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
     },
   };
 
+  const Logo = () =>
+    !isHome ? (
+      <a href='https://zomergregorio.live'>Zomeru</a>
+    ) : (
+      <Link href='/' passHref>
+        <a>Zomeru</a>
+      </Link>
+    );
+
   return (
     <StyledNav>
       <motion.nav variants={navVariants} initial='hidden' animate='visible'>
-        <StyledLogo variants={navItemVariants}>{Logo}</StyledLogo>
+        <motion.span variants={navItemVariants}>
+          <Logo />
+        </motion.span>
         <StyledLinks>
           <ul>
             {navLinks.map((link, i) => (

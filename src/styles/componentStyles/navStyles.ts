@@ -13,13 +13,10 @@ export const StyledNav = styled.header`
     justify-content: space-between;
     align-items: center;
   }
-`;
-
-export const StyledLogo = styled(motion.h1)`
-  text-transform: uppercase;
-  font-size: var(--fz-sm);
 
   a {
+    font-weight: var(--font-medium);
+    font-size: var(--fz-md);
     transition: color 0.2s ease-out;
 
     :hover {
@@ -27,6 +24,20 @@ export const StyledLogo = styled(motion.h1)`
     }
   }
 `;
+
+// export const StyledLogo = styled(motion.a)`
+//   /* text-transform: uppercase; */
+//   font-weight: var(--font-regular);
+//   font-size: var(--fz-md);
+
+//   a {
+//     transition: color 0.2s ease-out;
+
+//     :hover {
+//       color: ${({ theme }) => theme.accentMain};
+//     }
+//   }
+// `;
 
 export const StyledLinks = styled.div`
   @media only screen and (max-width: 768px) {
@@ -41,13 +52,13 @@ export const StyledLinks = styled.div`
     }
   }
 
-  a {
-    font-size: var(--fz-sm);
+  /* a {
+    font-size: var(--fz-md);
     font-weight: var(--font-medium);
     transition: color 0.2s ease-out;
 
     :hover {
       color: ${({ theme }) => theme.accentMain};
     }
-  }
+  } */
 `;
