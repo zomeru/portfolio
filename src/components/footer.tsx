@@ -28,9 +28,7 @@ const Footer = () => {
         rel='noopener noreferrer'
         aria-label='Github repository of this portfolio website.'
       >
-        Designed and built by Zomer Gregorio
-        <br />
-        &copy; 2021 - All rights reserved
+        &copy; 2021 Zomer Gregorio. All rights reserved.
       </a>
     </StyledFooter>
   );
