@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
-export const StyledTechStacks = styled.div`
+export const StyledTechStacks = styled(motion.div)`
   margin: 70px auto 0 auto;
   text-align: center;
 
@@ -14,7 +15,7 @@ export const StyledTechStacks = styled.div`
   }
 `;
 
-export const StyledTech = styled.div`
+export const StyledTech = styled(motion.div)`
   display: flex;
   justify-content: center;
   margin-top: var(--mg-lg);

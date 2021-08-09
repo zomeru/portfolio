@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
-export const StyledAbout = styled.section`
+export const StyledAbout = styled(motion.section)`
   max-width: 1000px;
   padding: 40px 100px;
   height: auto;
@@ -18,7 +19,7 @@ export const StyledAbout = styled.section`
   }
 `;
 
-export const StyledAboutContent = styled.div`
+export const StyledAboutContent = styled(motion.div)`
   display: flex;
   justify-content: space-between;
 
