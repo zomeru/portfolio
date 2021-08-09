@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
-const StyledContact = styled.section`
+const StyledContact = styled(motion.section)`
   height: auto;
   padding: 50px 300px;
   text-align: center;
