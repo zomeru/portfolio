@@ -4,11 +4,14 @@
 <h1 align="center"><a href='https://zomergregorio.live/'>zomergregorio.live</a></h1>
 <p align="center">This is my newest website portfolio with a minimalist design (still in development).</p>
 <br>
-<h2>Built with:</h2>
+<h2>Built with awesome frameworks and libraries:</h2>
 <ul>
+  <li>Typescript</li>
   <li>React.js</li>
   <li>Next.js</li>
   <li>Styled Components</li>
+  <li>Framer Motion</li>
+  <li>React Intersection Observer</li>
   <li>React Icons</li>
   <li>Passion and Love ❤</li>
 </ul>
