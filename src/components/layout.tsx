@@ -24,23 +24,6 @@ const Layout: React.FC<ILayoutProps> = ({
     }, 3500);
   }, []);
 
-  const loaderVar = {
-    initial: {
-      opacity: 0,
-    },
-    animate: {
-      opacity: 1,
-    },
-    exit: {
-      opacity: 0,
-      y: 300,
-      transition: {
-        ease: 'easeInOut',
-        duration: 1,
-      },
-    },
-  };
-
   return (
     <StyledLayout id='root'>
       <AnimatePresence>
@@ -58,7 +41,7 @@ const Layout: React.FC<ILayoutProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
-      {isLoaded && (
+      {isLoaded && isHome && (
         <>
           <Nav isHome={isHome} theme={theme} toggleTheme={toggleTheme} />
           <main>{children}</main>
