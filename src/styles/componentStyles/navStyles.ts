@@ -13,10 +13,10 @@ export const StyledNav = styled.header`
     align-items: center;
   }
 
-  .logo a {
+  /* .logo a {
     text-transform: uppercase;
     font-size: var(--fz-lg);
-  }
+  } */
 
   a {
     font-weight: var(--font-medium);
