@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
 export const StyledHero = styled.section`
+  align-items: center;
   width: 100%;
   max-height: calc(100vh - var(--nav-height));
   max-width: var(--max-width);
@@ -9,33 +10,15 @@ export const StyledHero = styled.section`
 
 export const StyledHeroContainer = styled.div`
   padding: 0 120px;
-  padding-bottom: 30px;
-  height: 100%;
+  height: calc(100% - 50px);
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
-
-  @media only screen and (max-width: 1080px) {
-    padding: 0 80px;
-  }
-
-  @media only screen and (max-width: 768px) {
-    padding: 0 30px 25% 30px;
-  }
-
-  @media only screen and (max-width: 600px) {
-    padding: 0 20px 30% 20px;
-  }
-
-  @media only screen and (max-width: 480px) {
-    padding: 0 0 40% 0;
-  }
 `;
 
 export const StyledHeroContent = styled(motion.div)`
   position: relative;
-  height: 70%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -64,7 +47,6 @@ export const StyledHeroContent = styled(motion.div)`
   }
 
   h3 {
-    margin-left: var(--mg-xl);
     font-weight: var(--font-bold);
     font-size: clamp(20px, 5vw, 55px);
     margin-bottom: var(--mg-md);
@@ -78,7 +60,6 @@ export const StyledHeroContent = styled(motion.div)`
   .four {
     max-width: 60%;
     font-weight: var(--font-medium);
-    margin-left: var(--mg-xxl);
     color: ${({ theme }) => theme.textSecond};
 
     @media only screen and (max-width: 1000px) {
@@ -88,7 +69,6 @@ export const StyledHeroContent = styled(motion.div)`
   }
 
   .hero-button {
-    margin-left: var(--mg-xxl);
     margin-top: var(--mg-lg);
 
     @media only screen and (max-width: 1000px) {
@@ -105,7 +85,6 @@ export const StyledHeroContent = styled(motion.div)`
   }
 
   .floating-icons {
-    background-color: ${({ theme }) => theme.contentBG};
     position: absolute;
     animation-name: floating;
     animation-duration: 3s;
@@ -117,16 +96,25 @@ export const StyledHeroContent = styled(motion.div)`
     border-radius: 100%;
     width: 80px;
     height: 80px;
-    transition: all 0.2s ease-in-out;
+
+    :hover ::after {
+      transform: scale(1.3);
+      background-color: ${({ theme }) => theme.contentBGSec};
+    }
+
+    ::after {
+      content: '';
+      position: absolute;
+      border-radius: 100px;
+      background-color: ${({ theme }) => theme.contentBG};
+      width: 80px;
+      height: 80px;
+      transition: all 0.2s ease-in-out;
+      z-index: -1;
+    }
 
     @media only screen and (max-width: 1000px) {
       display: none;
-    }
-
-    :hover {
-      background-color: ${({ theme }) => theme.contentBGSec};
-      width: 100px;
-      height: 100px;
     }
 
     :hover .icon-linkedin {
@@ -143,6 +131,7 @@ export const StyledHeroContent = styled(motion.div)`
   }
 
   .icons {
+    z-index: 33;
     width: 40px;
     height: 40px;
     color: ${({ theme }) => theme.textMain};
@@ -150,17 +139,21 @@ export const StyledHeroContent = styled(motion.div)`
 
   .linkedin-loc {
     left: -140px;
-    bottom: -35px;
+    bottom: -10px;
   }
 
   .github-loc {
-    right: -15px;
-    bottom: 40px;
+    right: 50px;
+    bottom: 120px;
+
+    @media only screen and (max-width: 1100px) {
+      right: -30px;
+    }
   }
 
   .instagram-loc {
-    right: 45%;
-    top: -100px;
+    right: 35%;
+    top: -50px;
   }
 
   @keyframes floating {
