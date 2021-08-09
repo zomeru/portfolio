@@ -15,5 +15,5 @@ export {
 export { default as StyledButton } from './buttonStyles';
 export { StyledFooter, StyledSocialLinks } from './footerStyles';
 export { default as StyledLayout } from './layoutStyles';
-export { StyledNav, StyledLogo, StyledLinks } from './navStyles';
+export { StyledNav, StyledLinks } from './navStyles';
 export { StyledTechStacks, StyledTech } from './techStackStyles';
