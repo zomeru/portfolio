@@ -49,10 +49,10 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
 
   const Logo = () =>
     isHome ? (
-      <a href='https://zomergregorio.live'>zoms</a>
+      <a href='https://zomergregorio.live'>Zomer</a>
     ) : (
       <Link href='/' passHref>
-        <a>Zoms</a>
+        <a>Zomer</a>
       </Link>
     );
 
