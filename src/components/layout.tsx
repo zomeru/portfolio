@@ -21,13 +21,13 @@ const Layout: React.FC<ILayoutProps> = ({
   useEffect(() => {
     setTimeout(() => {
       setIsLoaded(true);
-    }, 3500);
+    }, 2500);
   }, []);
 
   return (
     <StyledLayout id='root'>
       <AnimatePresence>
-        {!isLoaded && (
+        {!isLoaded && isHome && (
           <motion.div
             exit={{
               opacity: 0,
