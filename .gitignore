@@ -3,6 +3,7 @@
 #zoms
 /src/fonts
 /src/styles/otherStyles/fonts.ts
+/public
 
 # dependencies
 /node_modules
