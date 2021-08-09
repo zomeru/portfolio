@@ -17,3 +17,6 @@ export { StyledFooter, StyledSocialLinks } from './footerStyles';
 export { default as StyledLayout } from './layoutStyles';
 export { StyledNav, StyledLinks } from './navStyles';
 export { StyledTechStacks, StyledTech } from './techStackStyles';
+export { StyledLoader } from './loaderStyles';
+export { StyledMenu, StyledSidebar } from './menuStyles';
+export { StyledToggle } from './toggleThemeStyles';
