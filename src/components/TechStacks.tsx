@@ -32,7 +32,7 @@ const TechStacks = () => {
             return (
               <motion.li key={id} variants={fadeUp}>
                 <div className='tech-content'>
-                  <Icon className={`logo ${id}`} />
+                  <Icon className={`logo`} />
                   <p>{name}</p>
                 </div>
               </motion.li>

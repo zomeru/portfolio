@@ -110,15 +110,14 @@ export const StyledHeroContent = styled(motion.div)`
     height: 80px;
 
     :hover ::after {
-      transform: scale(1.3);
-      background-color: ${({ theme }) => theme.contentBGSec};
+      transform: scale(1.4);
     }
 
     ::after {
       content: '';
       position: absolute;
       border-radius: 100px;
-      background-color: ${({ theme }) => theme.contentBG};
+      background-color: ${({ theme }) => theme.floatBG};
       width: 80px;
       height: 80px;
       transition: all 0.2s ease-in-out;
@@ -127,18 +126,6 @@ export const StyledHeroContent = styled(motion.div)`
 
     @media only screen and (max-width: 1000px) {
       display: none;
-    }
-
-    :hover .icon-linkedin {
-      color: #0077b5;
-    }
-
-    :hover .icon-github {
-      color: #211f1f;
-    }
-
-    :hover .icon-instagram {
-      color: #d6249f;
     }
   }
 

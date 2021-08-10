@@ -21,7 +21,7 @@ const Layout: React.FC<ILayoutProps> = ({
   useEffect(() => {
     setTimeout(() => {
       setIsLoaded(true);
-    }, 2500);
+    }, 2600);
   }, []);
 
   return (
