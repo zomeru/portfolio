@@ -155,8 +155,8 @@ export const StyledHeroContent = styled(motion.div)`
   }
 
   .github-loc {
-    right: 50px;
-    bottom: 120px;
+    right: 40px;
+    bottom: 100px;
 
     @media only screen and (max-width: 1100px) {
       right: -30px;
