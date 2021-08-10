@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
-import { skills } from '../configs/data';
-import { StyledTechStacks, StyledTech } from '../styles/componentStyles';
+import React from 'react';
 import { motion } from 'framer-motion';
 import useScrollReveal from '../hooks/useScrollReveal';
 import { parentVar, fadeUp } from '../configs/animations';
+import { skills } from '../configs/data';
+import { StyledTechStacks, StyledTech } from '../styles/componentStyles';
 
 const TechStacks = () => {
   const [ref, controls] = useScrollReveal(-100);

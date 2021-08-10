@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button } from '../';
-import { StyledContact } from '../../styles/componentStyles';
 import { motion } from 'framer-motion';
 import useScrollReveal from '../../hooks/useScrollReveal';
 import { parentVar, fadeUp } from '../../configs/animations';
+import { Button } from '../';
+import { StyledContact } from '../../styles/componentStyles';
 
 const Contact = () => {
   const [ref, controls] = useScrollReveal(-250);

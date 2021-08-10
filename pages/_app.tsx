@@ -3,10 +3,10 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import * as gtag from '../lib/gtag';
-import { GlobalStyles } from '../src/styles/GlobalStyles';
 import { ThemeProvider } from 'styled-components';
 import { useDarkMode } from '../src/hooks/useDarkMode';
 import { lightTheme, darkTheme } from '../src/styles/theme';
+import { GlobalStyles } from '../src/styles/GlobalStyles';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();

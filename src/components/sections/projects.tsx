@@ -1,16 +1,16 @@
 import React from 'react';
+import Image from 'next/image';
 import { FiGithub } from 'react-icons/fi';
 import { BiLinkExternal } from 'react-icons/bi';
+import { parentVar, fadeUp } from '../../configs/animations';
+import { motion } from 'framer-motion';
+import useScrollReveal from '../../hooks/useScrollReveal';
 import { projects } from '../../configs/data';
 import {
   StyledProjects,
   StyledProjectCardContainer,
   StyledProjectCardImage,
 } from '../../styles/componentStyles';
-import Image from 'next/image';
-import useScrollReveal from '../../hooks/useScrollReveal';
-import { parentVar, fadeUp } from '../../configs/animations';
-import { motion } from 'framer-motion';
 
 const Projects = () => {
   const [ref, controls] = useScrollReveal(-250);

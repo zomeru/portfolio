@@ -1,10 +1,10 @@
 import React from 'react';
-import { navLinks } from '../configs/data';
-import { StyledNav, StyledLinks } from '../styles/componentStyles';
-import ToggleTheme from './ToggleTheme';
-import Menu from './menu';
 import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
+import { navLinks } from '../configs/data';
+import ToggleTheme from './ToggleTheme';
+import Menu from './menu';
+import { StyledNav, StyledLinks } from '../styles/componentStyles';
 
 interface INavProps {
   theme: string;

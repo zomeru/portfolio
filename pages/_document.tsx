@@ -1,8 +1,9 @@
 // @ts-nocheck
 import Document, { Html, Head, Main, NextScript } from 'next/document';
-import { ServerStyleSheet } from 'styled-components';
-import { seo } from '../src/configs/data';
+import Script from 'next/script';
 import { GA_TRACKING_ID } from '../lib/gtag';
+import { seo } from '../src/configs/data';
+import { ServerStyleSheet } from 'styled-components';
 
 class MyDocument extends Document {
   static async getInitialProps(ctx: any) {
@@ -147,8 +148,7 @@ class MyDocument extends Document {
               href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'
             />
           </noscript>
-          <script
-            async
+          <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
           />
           <script

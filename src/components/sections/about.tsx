@@ -1,12 +1,12 @@
 import React from 'react';
 import Image from 'next/image';
-import { TechStacks } from '../index';
 import zoms from '../../assets/images/zoms.jpg';
 import zomsSquare from '../../assets/images/zoms-square.jpg';
-import { StyledAbout, StyledAboutContent } from '../../styles/componentStyles';
 import { motion } from 'framer-motion';
 import useScrollReveal from '../../hooks/useScrollReveal';
 import { parentVar, fadeUp, fadeLeft } from '../../configs/animations';
+import { TechStacks } from '../index';
+import { StyledAbout, StyledAboutContent } from '../../styles/componentStyles';
 
 const About = () => {
   const [ref, controls] = useScrollReveal(-250);

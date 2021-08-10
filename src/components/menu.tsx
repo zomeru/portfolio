@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import ToggleTheme from './ToggleTheme';
 import { navLinks } from '../configs/data';
+import ToggleTheme from './ToggleTheme';
 import { StyledMenu, StyledSidebar } from '../styles/componentStyles';
 
 interface IMenuProps {

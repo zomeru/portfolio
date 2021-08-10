@@ -1,13 +1,13 @@
 import React from 'react';
-import { Button } from '../index';
+import { motion } from 'framer-motion';
+import { fadeUp } from '../../configs/animations';
 import { floatingLinks } from '../../configs/data';
+import { Button } from '../index';
 import {
   StyledHero,
   StyledHeroContainer,
   StyledHeroContent,
 } from '../../styles/componentStyles';
-import { motion } from 'framer-motion';
-import { fadeUp } from '../../configs/animations';
 
 const Hero = () => {
   const one = <h1>Hi there, I am</h1>;

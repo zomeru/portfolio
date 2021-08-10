@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyledButton } from '../styles/componentStyles';
 import Link from 'next/link';
+import { StyledButton } from '../styles/componentStyles';
 
 interface IButton {
   buttonText: string;

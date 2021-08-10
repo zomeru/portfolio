@@ -1,10 +1,10 @@
-import {
-  About,
-  Hero,
-  Projects,
-  Contact,
-  Layout,
-} from '../src/components/index';
+import loadable from '@loadable/component';
+
+const Layout = loadable(() => import('../src/components/layout'));
+const About = loadable(() => import('../src/components/sections/about'));
+const Hero = loadable(() => import('../src/components/sections/hero'));
+const Projects = loadable(() => import('../src/components/sections/projects'));
+const Contact = loadable(() => import('../src/components/sections/contact'));
 
 interface IHomeProps {
   theme: string;

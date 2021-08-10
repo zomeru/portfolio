@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { Nav, Footer, Loader } from '.';
 import { StyledLayout } from '../styles/componentStyles';
-import { AnimatePresence, motion } from 'framer-motion';
 
 interface ILayoutProps {
   children: React.ReactNode;
