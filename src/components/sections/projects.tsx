@@ -8,17 +8,40 @@ import {
   StyledProjectCardImage,
 } from '../../styles/componentStyles';
 import Image from 'next/image';
+import useScrollReveal from '../../hooks/useScrollReveal';
+import { parentVar, fadeUp } from '../../configs/animations';
+import { motion } from 'framer-motion';
 
 const Projects = () => {
+  const [ref, controls] = useScrollReveal(-250);
+
   return (
-    <StyledProjects id='projects'>
-      <h2 className='section-heading'>Projects</h2>
-      <StyledProjectCardContainer>
+    <StyledProjects>
+      <motion.h2
+        variants={fadeUp}
+        initial='hidden'
+        animate={controls}
+        ref={ref}
+        className='section-heading'
+      >
+        Projects
+      </motion.h2>
+      <StyledProjectCardContainer
+        variants={parentVar}
+        initial='hidden'
+        animate={controls}
+        ref={ref}
+      >
         {projects.map(project => {
           const { name, image, info, techs, links, alt } = project;
 
           return (
-            <li key={name} className='project-card'>
+            <motion.li
+              variants={fadeUp}
+              ref={ref}
+              key={name}
+              className='project-card'
+            >
               <div className='project-details'>
                 <h3 className='project-title'>{name}</h3>
                 <p className='project-info'>{info}</p>
@@ -48,7 +71,7 @@ const Projects = () => {
                 />
                 <div className='overlay'></div>
               </StyledProjectCardImage>
-            </li>
+            </motion.li>
           );
         })}
       </StyledProjectCardContainer>

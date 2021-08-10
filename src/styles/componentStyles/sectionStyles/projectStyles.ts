@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
-export const StyledProjects = styled.section`
+export const StyledProjects = styled(motion.section)`
   height: auto;
   padding: 50px 100px 0 100px;
 
@@ -25,7 +26,7 @@ export const StyledProjects = styled.section`
   }
 `;
 
-export const StyledProjectCardContainer = styled.ul`
+export const StyledProjectCardContainer = styled(motion.ul)`
   height: auto;
   width: 100%;
   display: grid;
