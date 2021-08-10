@@ -54,12 +54,19 @@ const Projects = () => {
                 </p>
                 <div className='project-buttons'>
                   <a
+                    target='_blank'
+                    rel='noreferrer'
                     aria-label={`Github repository of ${name}`}
                     href={links.github}
                   >
                     <FiGithub className='project-button' />
                   </a>
-                  <a aria-label={`Live demo of ${name}`} href={links.demo}>
+                  <a
+                    target='_blank'
+                    rel='noreferrer'
+                    aria-label={`Live demo of ${name}`}
+                    href={links.demo}
+                  >
                     <BiLinkExternal className='project-button' />
                   </a>
                 </div>
