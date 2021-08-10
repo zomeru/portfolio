@@ -18,8 +18,6 @@ const Variables = css`
     --fz-heading: 50px;
 
     // Font weight
-    --font-thin: 100;
-    --font-extralight: 200;
     --font-light: 300;
     --font-regular: 400;
     --font-medium: 500;
