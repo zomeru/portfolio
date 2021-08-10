@@ -117,13 +117,13 @@ class MyDocument extends Document {
             href='/icons/favicon-16x16.png'
           />
           <link rel='manifest' href='/site.webmanifest' />
-          <meta name='msapplication-TileColor' content='#102039' />
+          <meta name='msapplication-TileColor' content='#0d1a25' />
           <meta
             name='msapplication-TileImage'
             content='/icons/ms-icon-144x144.png'
           />
-          <meta name='theme-color' content='#102039' />
-          <link rel='mask-icon' href='/icons/mask-icon.svg' color='#102039' />
+          <meta name='theme-color' content='#0d1a25' />
+          <link rel='mask-icon' href='/icons/mask-icon.svg' color='#0d1a25' />
           <link rel='preconnect' href='https://fonts.googleapis.com' />
           <link
             rel='preconnect'
