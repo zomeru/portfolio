@@ -26,7 +26,7 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
       opacity: 1,
       transition: {
         delay: 0.1,
-        staggerChildren: 0.2,
+        staggerChildren: 0.1,
         when: 'beforeChildren',
       },
     },
@@ -42,7 +42,7 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
       opacity: 1,
       transition: {
         ease: 'easeInOut',
-        duration: 0.3,
+        duration: 0.2,
       },
     },
   };
@@ -81,6 +81,7 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
           </ul>
         </StyledLinks>
         <Menu
+          variants={navItemVariants}
           theme={theme}
           toggleTheme={toggleTheme}
           open={open}

@@ -9,6 +9,7 @@ interface IMenuProps {
   open: boolean;
   theme: string;
   toggleTheme: () => void;
+  variants?: any;
 }
 
 const Menu: React.FC<IMenuProps> = ({
@@ -16,12 +17,13 @@ const Menu: React.FC<IMenuProps> = ({
   open,
   theme,
   toggleTheme,
+  variants,
 }) => {
   const [menuOpen, setMenuOpen] = React.useState<boolean>(false);
 
   return (
     // @ts-ignore
-    <StyledMenu menuOpen={menuOpen}>
+    <StyledMenu variants={variants} menuOpen={menuOpen}>
       <ul
         onClick={() => {
           setMenuOpen(!menuOpen);

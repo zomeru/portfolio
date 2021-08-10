@@ -1,6 +1,7 @@
 import styled from 'styled-components';
+import { motion } from 'framer-motion';
 
-export const StyledMenu = styled.div`
+export const StyledMenu = styled(motion.div)`
   display: none;
   position: ${(props: any) => (props.menuOpen ? 'fixed' : 'absolute')};
   right: 35px;
