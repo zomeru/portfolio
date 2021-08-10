@@ -1,28 +1,18 @@
-//   accentMain: 'rgba(25, 118, 210, 0.7)',
-//   accentSecond: 'rgba(144, 202, 249, 0.7)',
-//   accentMain: '#40C4FF',
-
 export const lightTheme: any = {
-  body: '#f1f8f7',
-  textMain: '#102039',
-  textSecond: '#607d8b',
-  accentMain: '#e94347',
-  contentBG: 'rgba(233, 67, 71, 0.05)',
-  contentBGSec: 'rgba(233, 67, 71, 0.1)',
-  github: '#211F1F',
-  bgBlur: 'rgba(0, 0, 0, 0.95)',
+  body: '#E8EEF1', // WHITE
+  textMain: '#1E3D58', // NAVY BLUE
+  textSecond: '#607d8b', // BLUE-ISH GRAY
+  accentMain: '#057DCD', // ROYAL BLUE
+  floatBG: '#d3edfe',
   menuNav: '#cfe7e4',
 };
 
 export const darkTheme: any = {
-  body: '#102039',
-  textMain: '#f1f8f7',
-  textSecond: '#a6a6a6',
-  accentMain: '#e94347',
-  contentBG: 'rgba(233, 67, 71, 0.05)',
-  contentBGSec: 'rgba(233, 67, 71, 0.1)',
-  github: '#f1f8f7',
-  bgBlur: '#102039',
+  body: '#0d1a25', // NAVY BLUE
+  textMain: '#E8EEF1', // WHITE
+  textSecond: '#9e9e9e', // GRAY
+  accentMain: '#43B0F1', // BLUE GROTTO
+  floatBG: '#011827',
   menuNav: '#142746',
 };
 
