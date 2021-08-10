@@ -151,7 +151,7 @@ class MyDocument extends Document {
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
           />
-          <script
+          <Script
             dangerouslySetInnerHTML={{
               __html: `
             window.dataLayer = window.dataLayer || [];
