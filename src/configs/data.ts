@@ -1,5 +1,4 @@
 import { INavLinks, ISeo, IProjects, ISocialLinks, ISkills } from './types';
-import { zomify1, portfolio1, forkify1 } from '../assets/images/projects';
 import { AiOutlineInstagram, AiFillHtml5, AiFillGithub } from 'react-icons/ai';
 import { FiTwitter, FiLinkedin, FiGithub, FiFacebook } from 'react-icons/fi';
 import { IoLogoSass, IoLogoLinkedin } from 'react-icons/io';
@@ -114,10 +113,8 @@ export const seo: ISeo = {
 export const projects: IProjects[] = [
   {
     name: 'Zomify Colors',
-    images: {
-      img1: zomify1,
-      alt1: 'Landing page of the website.',
-    },
+    image:
+      'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/projects/zomify-colors-min.webp',
     info: 'A color palette app inspired by Flat UI Colors.',
     techs: ['React.js', 'Material UI'],
     links: {
@@ -127,10 +124,8 @@ export const projects: IProjects[] = [
   },
   {
     name: 'Simple Portfolio',
-    images: {
-      img1: portfolio1,
-      alt1: 'Design of the portfolio template.',
-    },
+    image:
+      'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/projects/simple-portfolio-min.webp',
     info: 'A very simple portfolio template.',
     techs: ['Typescript', 'React.js', 'Next.js', 'Tailwind CSS'],
     links: {
@@ -140,15 +135,24 @@ export const projects: IProjects[] = [
   },
   {
     name: 'Forkify',
-    images: {
-      img1: forkify1,
-      alt1: 'Design of the forkify website.',
-    },
+    image:
+      'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/projects/forkify-min.webp',
     info: 'Forkify is a recipe app where you can search for recipes for many different dishes.',
     techs: ['Javascript', 'Sass', 'HTML'],
     links: {
       demo: 'https://zomeru-forkify.netlify.app/',
       github: 'https://github.com/zomeru/recipe-app',
+    },
+  },
+  {
+    name: 'Pig Dice Game',
+    image:
+      'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/projects/pig-dice-game-min.webp',
+    info: 'Pig is a simple dice game which in its basic form is playable with just a single die. You win by being the first player to score 100 or more points.',
+    techs: ['Javascript', 'CSS', 'HTML'],
+    links: {
+      demo: 'https://zomeru.github.io/pig-dice-game/',
+      github: 'https://github.com/zomeru/pig-dice-game',
     },
   },
 ];

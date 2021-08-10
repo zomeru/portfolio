@@ -21,10 +21,7 @@ export interface ISeo {
 
 export interface IProjects {
   name: string;
-  images: {
-    img1: StaticImageData;
-    alt1: string;
-  };
+  image: string;
   info: string;
   techs: string[];
   links: {
