@@ -139,15 +139,15 @@ export const StyledProjectCardContainer = styled.ul`
 export const StyledProjectCardImage = styled.div`
   height: 100%;
   width: 100%;
-  background-image: ${(props: any) => `url(${props.image})`};
-  background-size: cover;
-  background-position: center;
   z-index: -1;
   position: absolute;
   top: 0;
   left: 0;
 
   .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
     height: 100%;
     width: 100%;
     background-color: #102039;

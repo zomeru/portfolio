@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from 'react';
 import { FiGithub } from 'react-icons/fi';
 import { BiLinkExternal } from 'react-icons/bi';
@@ -8,6 +7,7 @@ import {
   StyledProjectCardContainer,
   StyledProjectCardImage,
 } from '../../styles/componentStyles';
+import Image from 'next/image';
 
 const Projects = () => {
   return (
@@ -15,7 +15,7 @@ const Projects = () => {
       <h2 className='section-heading'>Projects</h2>
       <StyledProjectCardContainer>
         {projects.map(project => {
-          const { name, image, info, techs, links } = project;
+          const { name, image, info, techs, links, alt } = project;
 
           return (
             <li key={name} className='project-card'>
@@ -38,8 +38,14 @@ const Projects = () => {
                   </a>
                 </div>
               </div>
-
-              <StyledProjectCardImage image={image}>
+              <StyledProjectCardImage>
+                <Image
+                  src={image}
+                  alt={alt}
+                  layout='fill'
+                  objectFit='cover'
+                  objectPosition='center'
+                />
                 <div className='overlay'></div>
               </StyledProjectCardImage>
             </li>

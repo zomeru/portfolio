@@ -9,6 +9,7 @@ import {
   SiJavascript,
 } from 'react-icons/si';
 import { FaReact, FaNodeJs, FaGitAlt } from 'react-icons/fa';
+import { zomify, portfolio, forkify, pigdice } from '../assets/images/projects';
 
 export const navLinks: INavLinks[] = [
   {
@@ -113,8 +114,8 @@ export const seo: ISeo = {
 export const projects: IProjects[] = [
   {
     name: 'Zomify Colors',
-    image:
-      'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/projects/zomify-colors-min.webp',
+    image: zomify,
+    alt: 'Landing Page of Zomify Colors',
     info: 'A color palette app inspired by Flat UI Colors.',
     techs: ['React.js', 'Material UI'],
     links: {
@@ -124,8 +125,8 @@ export const projects: IProjects[] = [
   },
   {
     name: 'Simple Portfolio',
-    image:
-      'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/projects/simple-portfolio-min.webp',
+    image: portfolio,
+    alt: 'Resume page of my simple portfolio',
     info: 'A very simple portfolio template.',
     techs: ['Typescript', 'React.js', 'Next.js', 'Tailwind CSS'],
     links: {
@@ -135,8 +136,8 @@ export const projects: IProjects[] = [
   },
   {
     name: 'Forkify',
-    image:
-      'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/projects/forkify-min.webp',
+    image: forkify,
+    alt: 'Website of Forkify',
     info: 'Forkify is a recipe app where you can search for recipes for many different dishes.',
     techs: ['Javascript', 'Sass', 'HTML'],
     links: {
@@ -146,8 +147,8 @@ export const projects: IProjects[] = [
   },
   {
     name: 'Pig Dice Game',
-    image:
-      'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/projects/pig-dice-game-min.webp',
+    image: pigdice,
+    alt: 'Pig Dice Game website',
     info: 'Pig is a simple dice game which in its basic form is playable with just a single die. You win by being the first player to score 100 or more points.',
     techs: ['Javascript', 'CSS', 'HTML'],
     links: {
