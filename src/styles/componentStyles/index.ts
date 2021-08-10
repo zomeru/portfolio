@@ -8,7 +8,8 @@ export {
 } from './sectionStyles/heroStyles';
 export {
   StyledProjects,
-  StyledProjectGrid,
+  StyledProjectCardContainer,
+  StyledProjectCardImage,
 } from './sectionStyles/projectStyles';
 
 // Other Component Styles

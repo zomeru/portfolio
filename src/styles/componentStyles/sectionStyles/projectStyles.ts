@@ -2,209 +2,156 @@ import styled from 'styled-components';
 
 export const StyledProjects = styled.section`
   height: auto;
-  padding: 50px;
+  padding: 50px 100px 0 100px;
 
   @media only screen and (max-width: 1000px) {
-    padding: 0;
+    padding: 50px 50px 0 50px;
+  }
+
+  @media only screen and (max-width: 900px) {
+    padding: 50px 0 0 0;
+  }
+
+  @media only screen and (max-width: 768px) {
+    padding: 50px 100px 0 100px;
+  }
+
+  @media only screen and (max-width: 650px) {
+    padding: 50px 50px 0 50px;
+  }
+
+  @media only screen and (max-width: 600px) {
+    padding: 50px 0 0 0;
   }
 `;
 
-export const StyledProjectGrid = styled.ul`
+export const StyledProjectCardContainer = styled.ul`
+  height: auto;
   width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 30px;
 
-  :not(:last-child) {
-    margin-bottom: 35px;
-
-    @media only screen and (max-width: 600px) {
-      margin-bottom: 20px;
-    }
-
-    @media only screen and (max-width: 427px) {
-      margin-bottom: 10px;
-    }
+  @media only screen and (max-width: 768px) {
+    grid-template-columns: repeat(1, 1fr);
   }
 
-  li {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-gap: 12px;
+  .project-card {
+    height: 300px;
+    border-radius: 4px;
+    overflow: hidden;
     position: relative;
-    border-radius: 3px;
+    display: flex;
+    align-items: center;
 
-    @media only screen and (max-width: 900px) {
-      grid-gap: 5px;
-    }
-  }
-
-  img {
-    width: 100%;
-  }
-
-  .project-image {
-    z-index: 55;
-    padding: 25px;
-    width: 100%;
-    background-color: ${({ theme }) => theme.contentBG};
-    border: 3px solid ${({ theme }) => theme.contentBGSec};
-    border-radius: 5px;
-    overflow: hidden;
-    grid-column: 1/8;
-
-    @media only screen and (max-width: 900px) {
-      padding: 10px;
+    @media only screen and (max-width: 400px) {
+      height: 250px;
     }
 
-    @media only screen and (max-width: 768px) {
-      grid-column: 1/13;
-      grid-row: 1;
-      border: 0px solid ${({ theme }) => theme.contentBGSec};
-      padding: 0px;
+    :hover .overlay {
+      opacity: 0.5;
     }
-  }
 
-  .opaque-bg {
-    display: none;
-    width: 100%;
-    height: 100%;
-    background-color: #102039;
-    /* filter: blur(4px);
-    -webkit-filter: blur(4px); */
-    overflow: hidden;
-    z-index: 66;
-    opacity: 0.85;
+    :hover .project-details {
+      background-color: #102039;
+      opacity: 0.7;
+    }
 
-    @media only screen and (max-width: 768px) {
-      display: block;
-      grid-column: 1/13;
-      grid-row: 1;
+    :hover .project-techs {
+      color: #f1f8f7;
+    }
+
+    :hover .project-info {
+      color: #f1f8f7;
     }
   }
 
   .project-details {
-    z-index: 88;
-    margin-left: 15px;
+    margin: 0 40px;
+    padding: 10px;
+    border-radius: 4px;
+    color: white;
     width: 100%;
-    grid-column: 8 / 13;
+    z-index: 79;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-right: 15px;
+    transition: all 0.3s ease-in-out;
 
-    @media only screen and (max-width: 768px) {
-      width: 80%;
-      height: 60%;
-      margin-top: 20px;
-      grid-column: 1/13;
-      grid-row: 1;
-      justify-self: center;
-      align-self: center;
+    @media only screen and (max-width: 1000px) {
+      margin: 0 25px;
     }
 
-    @media only screen and (max-width: 480px) {
-      margin: -10px 0 0 -10px;
+    @media only screen and (max-width: 900px) {
+      margin: 0 15px;
+    }
+
+    @media only screen and (max-width: 768px) {
+      margin: 0 25px;
+    }
+
+    @media only screen and (max-width: 400px) {
+      margin: 0 10px;
     }
   }
 
-  .project-name {
-    font-size: 30px;
-    margin-bottom: 20px;
-
-    @media only screen and (max-width: 900px) {
-      font-size: 25px;
-      margin-bottom: 15px;
-    }
-
-    @media only screen and (max-width: 768px) {
-      color: #f1f8f7;
-    }
+  .project-title {
+    font-size: 25px;
+    margin-bottom: 10px;
 
     @media only screen and (max-width: 480px) {
       font-size: 20px;
     }
-
-    @media only screen and (max-width: 427px) {
-      margin-bottom: 5px;
-    }
   }
 
   .project-info {
-    color: ${({ theme }) => theme.textSecond};
-    margin-bottom: 20px;
-
-    @media only screen and (max-width: 900px) {
-      margin-bottom: 15px;
-    }
-
-    @media only screen and (max-width: 768px) {
-      color: #cfe7e4;
-    }
-
-    @media only screen and (max-width: 427px) {
-      margin-bottom: 5px;
-    }
+    margin-bottom: 10px;
+    color: #a6a6a6;
+    transition: all 0.2s ease-in-out;
   }
 
-  .project-tech {
-    color: ${({ theme }) => theme.textSecond};
-    margin-bottom: 40px;
-    overflow-wrap: anywhere;
-
-    @media only screen and (max-width: 900px) {
-      margin-bottom: 30px;
-    }
-
-    @media only screen and (max-width: 768px) {
-      color: #cfe7e4;
-    }
-
-    @media only screen and (max-width: 427px) {
-      margin-bottom: 10px;
-    }
-
-    span {
-      :not(:last-child) {
-        margin-right: 15px;
-      }
-    }
+  .project-techs {
+    margin-bottom: 15px;
+    color: #a6a6a6;
+    transition: all 0.2s ease-in-out;
   }
 
-  .project-buttons {
-    display: flex;
-    align-items: center;
+  .project-techs span:not(:last-child) {
+    margin-right: 10px;
+  }
 
-    a :not(:last-child) {
-      margin-right: 15px;
+  .project-buttons a:not(:last-child) {
+    margin-right: 10px;
+  }
+
+  .project-button {
+    width: 25px;
+    height: 25px;
+    color: #f1f8f7;
+    transition: all 0.2s ease-in-out;
+
+    :hover {
+      color: ${({ theme }) => theme.accentMain};
     }
+  }
+`;
 
-    .buttons {
-      width: 30px;
-      height: 30px;
+export const StyledProjectCardImage = styled.div`
+  height: 100%;
+  width: 100%;
+  background-image: ${(props: any) => `url(${props.image})`};
+  background-size: cover;
+  background-position: center;
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  left: 0;
 
-      @media only screen and (max-width: 900px) {
-        width: 25px;
-        height: 25px;
-      }
-
-      @media only screen and (max-width: 768px) {
-        color: #f1f8f7;
-        width: 30px;
-        height: 30px;
-        transition: color 0.3s ease-in-out;
-
-        :hover {
-          color: ${({ theme }) => theme.accentMain};
-        }
-      }
-
-      @media only screen and (max-width: 480px) {
-        width: 23px;
-        height: 23px;
-      }
-
-      @media only screen and (max-width: 420px) {
-        width: 20px;
-        height: 20px;
-      }
-    }
+  .overlay {
+    height: 100%;
+    width: 100%;
+    background-color: #102039;
+    transition: all 0.3s ease-in-out;
+    opacity: 0.9;
   }
 `;

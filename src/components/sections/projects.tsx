@@ -1,66 +1,51 @@
+// @ts-nocheck
 import React from 'react';
-import Image from 'next/image';
 import { FiGithub } from 'react-icons/fi';
 import { BiLinkExternal } from 'react-icons/bi';
 import { projects } from '../../configs/data';
 import {
   StyledProjects,
-  StyledProjectGrid,
+  StyledProjectCardContainer,
+  StyledProjectCardImage,
 } from '../../styles/componentStyles';
 
 const Projects = () => {
   return (
     <StyledProjects id='projects'>
       <h2 className='section-heading'>Projects</h2>
-      {projects.map(project => {
-        const { name, images, info, techs, links } = project;
-        const { demo, github } = links;
-        const { img1, alt1 } = images;
+      <StyledProjectCardContainer>
+        {projects.map(project => {
+          const { name, image, info, techs, links } = project;
 
-        return (
-          <StyledProjectGrid key={name}>
-            <li>
-              <a
-                href={demo}
-                target='_blank'
-                rel='noopener noreferrer'
-                className='project-image'
-                aria-label={name}
-              >
-                <Image src={img1} alt={alt1} placeholder='blur' />
-              </a>
-              <div className='opaque-bg' />
+          return (
+            <li key={name} className='project-card'>
               <div className='project-details'>
-                <h3 className='project-name'>{name}</h3>
+                <h3 className='project-title'>{name}</h3>
                 <p className='project-info'>{info}</p>
-                <p className='project-tech'>
+                <p className='project-techs'>
                   {techs.map(tech => (
-                    <span key={tech}>{tech}</span>
+                    <span className='tech' key={tech}>
+                      {tech}
+                    </span>
                   ))}
                 </p>
                 <div className='project-buttons'>
-                  <a
-                    href={demo}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    aria-label={name}
-                  >
-                    <BiLinkExternal className='buttons' />
+                  <a href={links.github}>
+                    <FiGithub className='project-button' />
                   </a>
-                  <a
-                    href={github}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    aria-label='Github repository'
-                  >
-                    <FiGithub className='buttons' />
+                  <a href={links.demo}>
+                    <BiLinkExternal className='project-button' />
                   </a>
                 </div>
               </div>
+
+              <StyledProjectCardImage image={image}>
+                <div className='overlay'></div>
+              </StyledProjectCardImage>
             </li>
-          </StyledProjectGrid>
-        );
-      })}
+          );
+        })}
+      </StyledProjectCardContainer>
     </StyledProjects>
   );
 };
