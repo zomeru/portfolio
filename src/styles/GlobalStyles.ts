@@ -112,4 +112,25 @@ export const GlobalStyles = createGlobalStyle<ThemeProps>`
   ul {
     list-style: none;
   }
+
+  .link {
+    color: ${({ theme }) => theme.textMain};
+    position: relative;
+
+    :hover ::after {
+      width: 100%;
+    }
+
+    ::after {
+      position: absolute;
+      content: '';
+      left: 0;
+      bottom: -3px;
+      height: 2px;
+      border-radius: 1px;
+      width: 0px;
+      background-color: ${({ theme }) => theme.accentMain};
+      transition: all .2s ease-in-out;
+    }
+  }
 `;

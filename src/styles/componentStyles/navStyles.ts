@@ -13,11 +13,6 @@ export const StyledNav = styled.header`
     align-items: center;
   }
 
-  /* .logo a {
-    text-transform: uppercase;
-    font-size: var(--fz-lg);
-  } */
-
   a {
     font-weight: var(--font-medium);
     font-size: var(--fz-sm);

@@ -64,11 +64,17 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
         </motion.span>
         <StyledLinks>
           <ul>
-            {navLinks.map((link, i) => (
-              <motion.li variants={navItemVariants} key={link.name}>
-                <Link href={link.url}>{link.name}</Link>
-              </motion.li>
-            ))}
+            {navLinks.map(link => {
+              const { name, url } = link;
+
+              return (
+                <motion.li variants={navItemVariants} key={name}>
+                  <Link href={url}>
+                    <a className='link'>{name}</a>
+                  </Link>
+                </motion.li>
+              );
+            })}
             <motion.li variants={navItemVariants}>
               <ToggleTheme theme={theme} toggleTheme={toggleTheme} />
             </motion.li>
