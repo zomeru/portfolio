@@ -41,7 +41,6 @@ interface INotFoundProps {
 }
 
 const NotFound: React.FC<INotFoundProps> = ({ theme, toggleTheme, isHome }) => {
-  const time = 1000;
   const router = useRouter();
   const [redirectDelay, setRedirectDelay] = useState(10);
   useEffect(() => {
@@ -49,10 +48,8 @@ const NotFound: React.FC<INotFoundProps> = ({ theme, toggleTheme, isHome }) => {
       if (redirectDelay > 0) {
         setRedirectDelay(redirectDelay - 1);
       }
-    }, time * 1);
-    setTimeout(() => {
-      router.push('/');
-    }, time * 11);
+    }, 1000);
+    if (redirectDelay === 0) router.push('/');
   }, [redirectDelay, router]);
   return (
     <StyledNotFound>
