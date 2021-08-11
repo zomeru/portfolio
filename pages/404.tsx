@@ -61,7 +61,7 @@ const NotFound: React.FC<INotFoundProps> = ({ theme, toggleTheme, isHome }) => {
         <h1 className='section-heading'>404</h1>
         <h2>Page Not Found</h2>
         <p className='redirect-message'>
-          You will be redirected to home page in {redirectDelay}s.
+          You will be automatically redirected to home page in {redirectDelay}s.
         </p>
         <Button
           isLink={true}
