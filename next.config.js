@@ -17,7 +17,7 @@ module.exports = {
       },
       {
         source: '/tiktok',
-        destination: 'https://instagram.com/zomerusama',
+        destination: 'https://tiktok/@zomeru_sama',
         permanent: true,
       },
       {
