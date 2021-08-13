@@ -1,4 +1,3 @@
-// @ts-nocheck
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import Script from 'next/script';
 import { GA_TRACKING_ID } from '../lib/gtag';
@@ -135,21 +134,11 @@ class MyDocument extends Document {
             href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap'
             rel='preload'
             as='style'
-            crossOrigin='anonymous'
           />
           <link
             href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap'
             rel='stylesheet'
-            media='print'
-            onLoad="this.media='all'"
-            crossOrigin='anonymous'
           />
-          {/* <noscript>
-            <link
-              rel='stylesheet'
-              href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap'
-            />
-          </noscript> */}
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
           />
