@@ -19,13 +19,8 @@ const TechStacks = () => {
       <motion.p variants={fadeUp}>
         Here are some technologies I use for building awesome web applications.
       </motion.p>
-      <StyledTech variants={fadeUp}>
-        <motion.ul
-          ref={ref}
-          variants={parentVar}
-          initial='initial'
-          animate={controls}
-        >
+      <StyledTech>
+        <motion.ul>
           {skills.map(skill => {
             const { name, Icon, id } = skill;
 

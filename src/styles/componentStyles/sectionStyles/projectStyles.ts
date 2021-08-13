@@ -35,6 +35,7 @@ export const StyledProjectCardContainer = styled(motion.ul)`
 
   @media only screen and (max-width: 768px) {
     grid-template-columns: repeat(1, 1fr);
+    grid-gap: 15px;
   }
 
   .project-card {

@@ -16,32 +16,22 @@ const Projects = () => {
   const [ref, controls] = useScrollReveal(-250);
 
   return (
-    <StyledProjects id='projects'>
-      <motion.h2
-        variants={fadeUp}
-        initial='hidden'
-        animate={controls}
-        ref={ref}
-        className='section-heading'
-      >
+    <StyledProjects
+      id='projects'
+      variants={parentVar}
+      initial='hidden'
+      animate={controls}
+      ref={ref}
+    >
+      <motion.h2 variants={fadeUp} className='section-heading'>
         Projects
       </motion.h2>
-      <StyledProjectCardContainer
-        variants={parentVar}
-        initial='hidden'
-        animate={controls}
-        ref={ref}
-      >
+      <StyledProjectCardContainer>
         {projects.map(project => {
           const { name, image, info, techs, links, alt } = project;
 
           return (
-            <motion.li
-              variants={fadeUp}
-              ref={ref}
-              key={name}
-              className='project-card'
-            >
+            <motion.li variants={fadeUp} key={name} className='project-card'>
               <div className='project-details'>
                 <h3 className='project-title'>{name}</h3>
                 <p className='project-info'>{info}</p>

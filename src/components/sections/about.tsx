@@ -4,28 +4,17 @@ import zoms from '../../assets/images/zoms.jpg';
 import zomsSquare from '../../assets/images/zoms-square.jpg';
 import { motion } from 'framer-motion';
 import useScrollReveal from '../../hooks/useScrollReveal';
-import { parentVar, fadeUp, fadeLeft } from '../../configs/animations';
+import {
+  parentVar,
+  fadeUp,
+  fadeLeft,
+  fadeUpDelay,
+} from '../../configs/animations';
 import { TechStacks } from '../index';
 import { StyledAbout, StyledAboutContent } from '../../styles/componentStyles';
 
 const About = () => {
   const [ref, controls] = useScrollReveal(-250);
-
-  const hiddenImageVar = {
-    hidden: {
-      y: 20,
-      opacity: 0,
-    },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        delay: 1,
-        duration: 0.3,
-        ease: 'easeInOut',
-      },
-    },
-  };
 
   return (
     <StyledAbout
@@ -42,12 +31,13 @@ const About = () => {
       >
         About
       </motion.h2>
-      <StyledAboutContent variants={parentVar} ref={ref}>
-        <motion.div
-          className='image-wrapper'
-          variants={fadeUp}
-          animate={controls}
-        >
+      <StyledAboutContent
+        variants={parentVar}
+        initial='hidden'
+        animate={controls}
+        ref={ref}
+      >
+        <motion.div className='image-wrapper' variants={fadeUp}>
           <Image
             className='about-image'
             src={zoms}
@@ -58,12 +48,7 @@ const About = () => {
           />
           <div className='grayscale' />
         </motion.div>
-        <motion.div
-          variants={fadeLeft}
-          ref={ref}
-          animate={controls}
-          className='about-text'
-        >
+        <motion.div variants={fadeLeft} className='about-text'>
           <h3>Zomer Gregorio</h3>
           <h4>Philomath</h4>
           <p>
@@ -79,7 +64,7 @@ const About = () => {
         <motion.div
           ref={ref}
           initial='initial'
-          variants={hiddenImageVar}
+          variants={fadeUpDelay}
           animate={controls}
           className='image-wrapper-square hidden-image'
         >
