@@ -6,13 +6,15 @@ export const StyledToggle = styled(motion.div)`
   height: 25px;
   width: 25px;
 
-  :hover svg {
+  :hover .icons {
     color: ${({ theme }) => theme.accentMain};
   }
 
   .icons {
+    transition: var(--transition2);
     height: 100%;
     width: 100%;
-    color: ${(props: any) => (props.isMenu ? '#f1f8f7' : props.theme.textMain)};
+    color: ${(props: any) =>
+      props.isMenu ? 'var(--white)' : props.theme.textMain};
   }
 `;

@@ -40,28 +40,28 @@ export const StyledHeroContent = styled(motion.div)`
   }
 
   h1 {
-    font-weight: var(--font-regular);
-    font-size: var(--fz-xxl);
-    margin-bottom: var(--mg-md);
+    font-weight: 500;
+    font-size: 22px;
+    margin-bottom: 20px;
 
     @media only screen and (max-width: 600px) {
-      font-size: var(--fz-xl);
+      font-size: 20px;
     }
   }
 
   h2 {
     margin-left: -8px;
-    font-weight: var(--font-bold);
+    font-weight: 700;
     font-size: clamp(24px, 7vw, 85px);
-    margin-bottom: var(--mg-sm);
+    margin-bottom: 10px;
     position: relative;
     max-width: 720px;
   }
 
   h3 {
-    font-weight: var(--font-bold);
+    font-weight: 700;
     font-size: clamp(20px, 5vw, 55px);
-    margin-bottom: var(--mg-md);
+    margin-bottom: 20px;
     color: ${({ theme }) => theme.textSecond};
 
     @media only screen and (max-width: 1000px) {
@@ -71,7 +71,6 @@ export const StyledHeroContent = styled(motion.div)`
 
   .four {
     max-width: 60%;
-    font-weight: var(--font-medium);
     color: ${({ theme }) => theme.textSecond};
 
     @media only screen and (max-width: 1000px) {
@@ -81,10 +80,10 @@ export const StyledHeroContent = styled(motion.div)`
   }
 
   .hero-button {
-    margin-top: var(--mg-lg);
+    margin-top: 30px;
 
     @media only screen and (max-width: 1000px) {
-      margin: var(--mg-lg) auto 0 auto;
+      margin: 30px auto 0 auto;
     }
   }
 
@@ -120,7 +119,7 @@ export const StyledHeroContent = styled(motion.div)`
       background-color: ${({ theme }) => theme.floatBG};
       width: 80px;
       height: 80px;
-      transition: all 0.2s ease-in-out;
+      transition: var(--transition2);
       z-index: -1;
     }
 

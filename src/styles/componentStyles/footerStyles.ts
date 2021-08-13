@@ -9,7 +9,7 @@ export const StyledFooter = styled.footer`
 
   a {
     font-size: var(--fz-sm);
-    font-weight: var(--font-semibold);
+    font-weight: 500;
   }
 `;
 
@@ -23,7 +23,7 @@ export const StyledSocialLinks = styled.div`
 
   a {
     padding: 5px;
-    transition: transform 0.2s ease-out;
+    transition: var(--transition2);
 
     :not(:last-child) {
       margin-right: 25px;

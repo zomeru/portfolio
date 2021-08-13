@@ -38,7 +38,7 @@ export const StyledMenu = styled(motion.div)`
     width: 80%;
     height: 4px;
     background: ${(props: any) =>
-      props.open ? '#f1f8f7' : props.theme.textMain};
+      props.open ? 'var(--white)' : props.theme.textMain};
     opacity: 1;
     transition: transform 0.3s, top 0.3s, opacity 0.3s;
     transition-delay: 0s, 0.3s, 0.3s;
@@ -110,7 +110,7 @@ export const StyledSidebar = styled.div`
   bottom: 0;
   right: 0;
   width: 100%;
-  transition: width 0.3s ease-in-out;
+  transition: var(--transition3);
   background: ${({ theme }) => theme.bgBlur};
 
   opacity: 0.95;

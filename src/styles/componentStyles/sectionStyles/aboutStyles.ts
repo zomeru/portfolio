@@ -33,7 +33,7 @@ export const StyledAboutContent = styled(motion.div)`
     position: relative;
     width: 300px;
     height: 422px;
-    border-radius: var(--bdr-md);
+    border-radius: var(--bdr);
     overflow: hidden;
 
     @media only screen and (max-width: 768px) {
@@ -45,7 +45,7 @@ export const StyledAboutContent = styled(motion.div)`
     position: relative;
     width: 300px;
     height: 300px;
-    border-radius: var(--bdr-md);
+    border-radius: var(--bdr);
     overflow: hidden;
     margin-top: 50px;
 
@@ -86,7 +86,7 @@ export const StyledAboutContent = styled(motion.div)`
     background-color: gray;
     mix-blend-mode: saturation;
     opacity: 1;
-    transition: all 0.3s ease-in-out;
+    transition: var(--transition3);
 
     :hover {
       opacity: 0;
@@ -113,18 +113,17 @@ export const StyledAboutContent = styled(motion.div)`
 
     h3 {
       font-size: 40px;
-      font-weight: var(--font-light);
-      margin-bottom: var(--mg-sm);
+      font-weight: 300;
+      margin-bottom: 10px;
     }
 
     h4 {
       text-transform: uppercase;
       font-size: var(--fz-md);
-      margin-bottom: var(--mg-lg);
+      margin-bottom: 30px;
     }
 
     p {
-      font-weight: var(--font-medium);
       color: ${({ theme }) => theme.textSecond};
     }
   }

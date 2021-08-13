@@ -132,12 +132,12 @@ class MyDocument extends Document {
             crossOrigin='anonymous'
           />
           <link
-            href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'
+            href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap'
             rel='preload'
             as='style'
           />
           <link
-            href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'
+            href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap'
             rel='stylesheet'
             media='print'
             onLoad="this.media='all'"
@@ -145,7 +145,7 @@ class MyDocument extends Document {
           <noscript>
             <link
               rel='stylesheet'
-              href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'
+              href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap'
             />
           </noscript>
           <Script

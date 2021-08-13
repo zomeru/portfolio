@@ -43,8 +43,10 @@ export const GlobalStyles = createGlobalStyle<ThemeProps>`
     -moz-osx-font-smoothing: grayscale;
     background-color: ${({ theme }) => theme.body};
     color: ${({ theme }) => theme.textMain};
-    font-family: var(--font-sans);
-    font-weight: var(--font-regular);
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+      sans-serif;;
+    /* font-weight: 500; */
     font-size: var(--fz-md);
     line-height: 1.3;
     overflow-x: hidden;
@@ -69,7 +71,7 @@ export const GlobalStyles = createGlobalStyle<ThemeProps>`
     margin-bottom: 40px;
     width: 100%;
     color: ${({ theme }) => theme.textMain};
-    font-weight: var(--font-bold);
+    font-weight: 700;
     font-size: clamp(35px, 6vw, var(--fz-heading));
 
     @media only screen and (max-width: 600px) {
@@ -83,8 +85,18 @@ export const GlobalStyles = createGlobalStyle<ThemeProps>`
       margin-left: 5px;
       color: ${({ theme }) => theme.accentMain};
       font-size: 65px;
-      font-weight: var(--font-bold);
+      font-weight: 700;
     }
+  }
+
+  a, p, h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+      sans-serif;
+  }
+
+  a, p {
+    font-weight: 500;
   }
 
   p {
@@ -95,7 +107,7 @@ export const GlobalStyles = createGlobalStyle<ThemeProps>`
 
   a {
     text-decoration: none;
-    transition: color 0.2s ease-out;
+    transition: var(--transition2);
 
     :link,
     :active {
@@ -134,7 +146,7 @@ export const GlobalStyles = createGlobalStyle<ThemeProps>`
       border-radius: 1px;
       width: 0px;
       background-color: ${({ theme }) => theme.accentMain};
-      transition: all .2s ease-in-out;
+      transition: var(--transition2);
     }
   }
 `;

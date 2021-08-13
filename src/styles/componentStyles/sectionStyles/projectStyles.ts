@@ -40,7 +40,7 @@ export const StyledProjectCardContainer = styled(motion.ul)`
 
   .project-card {
     height: 300px;
-    border-radius: 4px;
+    border-radius: var(--bdr);
     overflow: hidden;
     position: relative;
     display: flex;
@@ -55,30 +55,30 @@ export const StyledProjectCardContainer = styled(motion.ul)`
     }
 
     :hover .project-details {
-      background-color: #102039;
+      background-color: var(--navy-blue);
       opacity: 0.7;
     }
 
     :hover .project-techs {
-      color: #f1f8f7;
+      color: var(--white);
     }
 
     :hover .project-info {
-      color: #f1f8f7;
+      color: var(--white);
     }
   }
 
   .project-details {
     margin: 0 40px;
     padding: 10px;
-    border-radius: 4px;
+    border-radius: var(--bdr);
     color: white;
     width: 100%;
     z-index: 79;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    transition: all 0.3s ease-in-out;
+    transition: var(--transition3);
 
     @media only screen and (max-width: 1000px) {
       margin: 0 25px;
@@ -109,13 +109,13 @@ export const StyledProjectCardContainer = styled(motion.ul)`
   .project-info {
     margin-bottom: 10px;
     color: #a6a6a6;
-    transition: all 0.2s ease-in-out;
+    transition: var(--transition2);
   }
 
   .project-techs {
     margin-bottom: 15px;
     color: #a6a6a6;
-    transition: all 0.2s ease-in-out;
+    transition: var(--transition2);
   }
 
   .project-techs span:not(:last-child) {
@@ -129,8 +129,8 @@ export const StyledProjectCardContainer = styled(motion.ul)`
   .project-button {
     width: 25px;
     height: 25px;
-    color: #f1f8f7;
-    transition: all 0.2s ease-in-out;
+    color: var(--white);
+    transition: var(--transition2);
 
     :hover {
       color: ${({ theme }) => theme.accentMain};
@@ -152,8 +152,8 @@ export const StyledProjectCardImage = styled.div`
     left: 0;
     height: 100%;
     width: 100%;
-    background-color: #102039;
-    transition: all 0.3s ease-in-out;
+    background-color: var(--navy-blue);
+    transition: var(--transition3);
     opacity: 0.9;
   }
 `;

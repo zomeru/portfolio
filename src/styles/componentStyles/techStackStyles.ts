@@ -7,7 +7,7 @@ export const StyledTechStacks = styled(motion.div)`
 
   h1 {
     font-size: 30px;
-    margin-bottom: var(--mg-sm);
+    margin-bottom: 10px;
   }
 
   > p {
@@ -18,7 +18,7 @@ export const StyledTechStacks = styled(motion.div)`
 export const StyledTech = styled(motion.div)`
   display: flex;
   justify-content: center;
-  margin-top: var(--mg-lg);
+  margin-top: 30px;
 
   ul {
     max-width: 80%;

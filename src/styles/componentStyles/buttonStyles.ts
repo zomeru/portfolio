@@ -36,7 +36,7 @@ const StyledButton = styled.a`
     z-index: -1;
     transform: scaleX(0.1);
     transform-origin: left;
-    transition: all 0.3s ease-in-out;
+    transition: var(--transition3);
   }
 
   :hover::before {
@@ -46,12 +46,12 @@ const StyledButton = styled.a`
   :hover .line::before {
     opacity: 1;
     transform: scaleX(1);
-    background-color: #f1f8f7;
+    background-color: var(--white);
   }
 
   :hover p {
     margin-left: 20px;
-    color: #f1f8f7;
+    color: var(--white);
   }
 
   .line::before {
@@ -68,15 +68,15 @@ const StyledButton = styled.a`
     transform-origin: left;
     opacity: 0;
     margin-left: 30px;
-    transition: transform 0.3s ease-in-out;
+    transition: var(--transition3);
   }
 
   p {
     position: relative;
     margin-left: -30px;
     z-index: 10;
-    transition: all 0.3s ease-in-out;
-    font-weight: var(--font-semibold);
+    transition: var(--transition3);
+    font-weight: 500;
     font-size: var(--fz-sm);
   }
 `;

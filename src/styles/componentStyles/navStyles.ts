@@ -14,9 +14,8 @@ export const StyledNav = styled.header`
   }
 
   a {
-    font-weight: var(--font-medium);
     font-size: var(--fz-sm);
-    transition: color 0.2s ease-out;
+    transition: var(--transition2);
 
     :hover {
       color: ${({ theme }) => theme.accentMain};
@@ -33,7 +32,7 @@ export const StyledLinks = styled.div`
     display: flex;
 
     li:not(:last-child) {
-      margin-right: var(--mg-xl);
+      margin-right: 50px;
     }
   }
 `;

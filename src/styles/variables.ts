@@ -2,10 +2,9 @@ import { css } from 'styled-components';
 
 const Variables = css`
   :root {
-    // Font
-    --font-sans: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-      Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
-      sans-serif;
+    // Colors
+    --navy-blue: #102039;
+    --white: #f1f8f7;
 
     // Font size
     --fz-xxs: 12px;
@@ -17,41 +16,12 @@ const Variables = css`
     --fz-xxl: 22px;
     --fz-heading: 50px;
 
-    // Font weight
-    --font-light: 300;
-    --font-regular: 400;
-    --font-medium: 500;
-    --font-semibold: 600;
-    --font-bold: 700;
-
     // Other
     --nav-height: 100px;
     --max-width: 1400px;
-
-    // Border
-    --bdr-xxs: 1px;
-    --bdr-xs: 2px;
-    --bdr-sm: 3px;
-    --bdr-md: 4px;
-    --bdr-lg: 5px;
-    --bdr-xl: 8px;
-    --bdr-xxl: 10px;
-    --bdr-full: 100px;
-
-    // Margins
-    --mg-xs: 5px;
-    --mg-sm: 10px;
-    --mg-md: 20px;
-    --mg-lg: 30px;
-    --mg-xl: 50px;
-    --mg-xxl: 100px;
-
-    // Padding
-    --pd-xs: 2px;
-    --pd-sm: 4px;
-    --pd-md: 6px;
-    --pd-lg: 8px;
-    --pd-xl: 10px;
+    --transition3: all 0.3s ease-in-out;
+    --transition2: all 0.2s ease-in-out;
+    --bdr: 4px;
   }
 `;
 
