@@ -43,10 +43,6 @@ export const GlobalStyles = createGlobalStyle<ThemeProps>`
     -moz-osx-font-smoothing: grayscale;
     background-color: ${({ theme }) => theme.body};
     color: ${({ theme }) => theme.textMain};
-    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-      Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
-      sans-serif;;
-    /* font-weight: 500; */
     font-size: var(--fz-md);
     line-height: 1.3;
     overflow-x: hidden;
