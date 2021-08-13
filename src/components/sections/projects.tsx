@@ -16,7 +16,7 @@ const Projects = () => {
   const [ref, controls] = useScrollReveal(-250);
 
   return (
-    <StyledProjects id='#projects'>
+    <StyledProjects id='projects'>
       <motion.h2
         variants={fadeUp}
         initial='hidden'
