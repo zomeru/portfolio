@@ -16,6 +16,11 @@ module.exports = {
         permanent: true,
       },
       {
+        source: '/tiktok',
+        destination: 'https://instagram.com/zomerusama',
+        permanent: true,
+      },
+      {
         source: '/twitter',
         destination: 'https://twitter.com/zomeru_sama',
         permanent: true,
