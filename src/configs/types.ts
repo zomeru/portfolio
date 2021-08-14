@@ -17,6 +17,7 @@ export interface ISeo {
   image: string | undefined;
   url: string;
   gsv: string;
+  gsv2: string;
 }
 
 export interface IProjects {

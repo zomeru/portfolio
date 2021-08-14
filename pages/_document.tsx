@@ -47,6 +47,7 @@ class MyDocument extends Document {
           <meta name='twitter:card' content='summary_large_image' />
           <meta name='twitter:creator' content={seo.title} />
           <meta name='google-site-verification' content={seo.gsv} />
+          <meta name='google-site-verification' content={seo.gsv2} />
           <link
             rel='apple-touch-icon'
             sizes='57x57'
