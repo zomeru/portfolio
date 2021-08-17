@@ -9,7 +9,7 @@ import {
   SiJavascript,
 } from 'react-icons/si';
 import { FaReact, FaNodeJs, FaGitAlt } from 'react-icons/fa';
-import { zomify, portfolio, forkify, pigdice } from '../assets/images/projects';
+import { zomify, portfolio, forkify, zomy } from '../assets/images/projects';
 
 export const navLinks: INavLinks[] = [
   {
@@ -125,6 +125,17 @@ export const projects: IProjects[] = [
     },
   },
   {
+    name: 'Zomy | URL Shortener',
+    image: zomy,
+    alt: 'Zomy  website',
+    info: 'Zomy is a free URL shortening service',
+    techs: ['Typescript', 'React.js', 'Styled Components'],
+    links: {
+      demo: 'https://zomy.ml/',
+      github: 'https://github.com/zomeru/zomy',
+    },
+  },
+  {
     name: 'Simple Portfolio',
     image: portfolio,
     alt: 'Resume page of my simple portfolio',
@@ -144,17 +155,6 @@ export const projects: IProjects[] = [
     links: {
       demo: 'https://zomeru-forkify.netlify.app/',
       github: 'https://github.com/zomeru/recipe-app',
-    },
-  },
-  {
-    name: 'Pig Dice Game',
-    image: pigdice,
-    alt: 'Pig Dice Game website',
-    info: 'Pig is a simple dice game which in its basic form is playable with just a single die. You win by being the first player to score 100 or more points.',
-    techs: ['Javascript', 'CSS', 'HTML'],
-    links: {
-      demo: 'https://zomeru.github.io/pig-dice-game/',
-      github: 'https://github.com/zomeru/pig-dice-game',
     },
   },
 ];
