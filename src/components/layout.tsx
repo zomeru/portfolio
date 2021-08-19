@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Confetti from 'react-confetti';
 import useWindowDimensions from '../hooks/useWindowDimensions';
-import { Nav, Footer, Loader } from '.';
+import { Nav, Footer, Loader, Birthday } from '.';
 import { StyledLayout } from '../styles/componentStyles';
 
 interface ILayoutProps {
@@ -12,6 +12,10 @@ interface ILayoutProps {
   isHome: boolean;
 }
 
+// Check if it's my birthday
+const date = new Date();
+const isMyBirthday = date.getMonth() + 1 === 8 && date.getDate() === 19;
+
 const Layout: React.FC<ILayoutProps> = ({
   children,
   theme,
@@ -19,17 +23,23 @@ const Layout: React.FC<ILayoutProps> = ({
   isHome,
 }) => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [isBdayLoaded, SetIsBdayLoaded] = useState<boolean>(
+    isMyBirthday ? false : true
+  );
 
   const { width, height } = useWindowDimensions();
-
-  const date = new Date();
-  const isMyBirthday = date.getMonth() + 1 === 8 && date.getDate() === 19;
 
   useEffect(() => {
     setTimeout(() => {
       setIsLoaded(true);
-    }, 2450);
+    }, 2500);
   }, []);
+
+  if (isLoaded && isMyBirthday) {
+    setTimeout(() => {
+      SetIsBdayLoaded(true);
+    }, 2000);
+  }
 
   return (
     <StyledLayout id='root'>
@@ -47,10 +57,12 @@ const Layout: React.FC<ILayoutProps> = ({
             <Loader />
           </motion.div>
         )}
+
+        {isLoaded && !isBdayLoaded && <Birthday />}
       </AnimatePresence>
 
       {/* {isLoaded && isHome} */}
-      {isLoaded && isHome && (
+      {isLoaded && isBdayLoaded && isHome && (
         <>
           {/* DISPLAY CONFETTI WHEN IT'S MY BIRTHDAY */}
           {isMyBirthday && (
@@ -58,7 +70,7 @@ const Layout: React.FC<ILayoutProps> = ({
               <Confetti
                 width={width}
                 height={height}
-                numberOfPieces={150}
+                numberOfPieces={100}
                 gravity={0.07}
                 opacity={0.9}
               />

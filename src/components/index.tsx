@@ -9,3 +9,4 @@ export { default as Experience } from './sections/experience';
 export { default as Projects } from './sections/projects';
 export { default as Contact } from './sections/contact';
 export { default as Loader } from './loader';
+export { default as Birthday } from './birthday';
