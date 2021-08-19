@@ -13,6 +13,7 @@ interface ILayoutProps {
 }
 
 // Check if it's my birthday
+// August 19th
 const date = new Date();
 const isMyBirthday = date.getMonth() + 1 === 8 && date.getDate() === 19;
 
