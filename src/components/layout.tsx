@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import Confetti from 'react-confetti';
+import useWindowDimensions from '../hooks/useWindowDimensions';
 import { Nav, Footer, Loader } from '.';
 import { StyledLayout } from '../styles/componentStyles';
 
@@ -17,6 +19,11 @@ const Layout: React.FC<ILayoutProps> = ({
   isHome,
 }) => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
+  const { width, height } = useWindowDimensions();
+
+  const date = new Date();
+  const isMyBirthday = date.getMonth() + 1 === 8 && date.getDate() === 19;
 
   useEffect(() => {
     setTimeout(() => {
@@ -41,8 +48,23 @@ const Layout: React.FC<ILayoutProps> = ({
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* {isLoaded && isHome} */}
       {isLoaded && isHome && (
         <>
+          {/* DISPLAY CONFETTI WHEN IT'S MY BIRTHDAY */}
+          {isMyBirthday && (
+            <div style={{ position: 'fixed', zIndex: 9999, left: 0 }}>
+              <Confetti
+                width={width}
+                height={height}
+                numberOfPieces={150}
+                gravity={0.07}
+                opacity={0.9}
+              />
+            </div>
+          )}
+
           <Nav isHome={isHome} theme={theme} toggleTheme={toggleTheme} />
           <main>{children}</main>
           <Footer />
