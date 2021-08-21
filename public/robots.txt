@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
-Sitemap: https://zomeru.ml/sitemap.zomeru.xml
-Sitemap: https://zomergregorio.live/sitemap.zomergregorio.xml
+Sitemap: https://zomeru.ml/sitemap_index.xml
+Sitemap: https://zomergregorio.live/sitemap_01.xml
