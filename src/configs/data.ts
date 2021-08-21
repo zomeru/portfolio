@@ -109,7 +109,6 @@ export const seo: ISeo = {
     'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/OG.png',
   url: 'https://zomergregorio.live/',
   gsv: 'jvWN1uM-h3tiEcihL_UdVN3MvownDLRfLFOJP3pF40s',
-  gsv2: 'worr2m_gtHi-fESFdhI0YUru0cANaSDTMk-7M6ry9QY',
 };
 
 export const projects: IProjects[] = [
