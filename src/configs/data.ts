@@ -7,6 +7,7 @@ import {
   SiTailwindcss,
   SiFirebase,
   SiJavascript,
+  SiMongodb,
 } from 'react-icons/si';
 import { FaReact, FaNodeJs, FaGitAlt } from 'react-icons/fa';
 import { zomify, portfolio, forkify, zomy } from '../assets/images/projects';
@@ -75,6 +76,11 @@ export const skills: ISkills[] = [
     Icon: FaReact,
   },
   {
+    id: 'react-native',
+    name: 'React Native',
+    Icon: FaReact,
+  },
+  {
     id: 'tailwind',
     name: 'Tailwind CSS',
     Icon: SiTailwindcss,
@@ -83,6 +89,11 @@ export const skills: ISkills[] = [
     id: 'node',
     name: 'Node.js',
     Icon: FaNodeJs,
+  },
+  {
+    id: 'mongodb',
+    name: 'MongoDB',
+    Icon: SiMongodb,
   },
   {
     id: 'firebase',
