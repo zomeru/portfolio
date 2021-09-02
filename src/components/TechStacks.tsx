@@ -17,7 +17,7 @@ const TechStacks = () => {
     >
       <motion.h1 variants={fadeUp}>SKILLS</motion.h1>
       <motion.p variants={fadeUp}>
-        Here are some technologies I use for building awesome web applications.
+        Here are some technologies I use for building awesome applications.
       </motion.p>
       <StyledTech>
         <motion.ul>
