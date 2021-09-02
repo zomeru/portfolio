@@ -115,7 +115,7 @@ export const skills: ISkills[] = [
 export const seo: ISeo = {
   title: 'Zomer Gregorio',
   description:
-    'Zomer Gregorio is a college student and Software Engineer based in the Philippines. React.js enthusiast and loves building beautiful, elegant and responsive web applications.',
+    'Hi! I am Zomer Gregorio, a college student, React.js enthusiast, and freelance developer based in the Philippines. I love building beautiful, elegant and responsive web applications.',
   image:
     'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/OG.png',
   url: 'https://zomergregorio.live/',
