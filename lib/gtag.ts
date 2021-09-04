@@ -1,5 +1,5 @@
 // @ts-nocheck
-export const GA_TRACKING_ID = 'G-P28TD15H8P';
+export const GA_TRACKING_ID = 'G-XNJS2S5JPX';
 
 // https://developers.google.com/analytics/devguides/collection/gtagjs/pages
 export const pageview = url => {
