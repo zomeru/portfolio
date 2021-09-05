@@ -35,7 +35,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <meta name='viewport' content='initial-scale=1.0, width=device-width' />
-        <title>Zomer Gregorio | Zomeru</title>
+        <title>Zomer Gregorio</title>
       </Head>
       <ThemeProvider theme={themeMode}>
         <GlobalStyles />
