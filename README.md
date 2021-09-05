@@ -2,7 +2,7 @@
   <img src="https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/web.png" alt="Logo" width="150px" height="50px"/>
 </div> -->
 <h1 align="center"><a href='https://zomer.xyz/'>zomer.xyz</a></h1>
-<p align="center">This is my newest website portfolio with a minimalist design (still in development).</p>
+<p align="center">This is my newest website portfolio with a minimalist design.</p>
 <br>
 <h2>Built with awesome frameworks and libraries:</h2>
 <ul>
