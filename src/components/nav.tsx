@@ -47,9 +47,11 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
     },
   };
 
+  const hostURL = `${window.location.protocol}//${window.location.host}`;
+
   const Logo = () =>
     isHome ? (
-      <a href='https://zomer.xyz'>Zomer</a>
+      <a href={hostURL}>Zomer</a>
     ) : (
       <Link href='/' passHref>
         <a>Zomer</a>
@@ -67,11 +69,24 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
             {navLinks.map(link => {
               const { name, url } = link;
 
+              const isHashLink = url.startsWith('/#');
+
               return (
                 <motion.li variants={navItemVariants} key={name}>
-                  <Link href={url}>
-                    <a className='link'>{name}</a>
-                  </Link>
+                  {isHashLink ? (
+                    <Link href={url}>
+                      <a className='link'>{name}</a>
+                    </Link>
+                  ) : (
+                    <a
+                      className='link'
+                      href={`${hostURL}${url}`}
+                      target='_blank'
+                      rel='noreferrer'
+                    >
+                      {name}
+                    </a>
+                  )}
                 </motion.li>
               );
             })}

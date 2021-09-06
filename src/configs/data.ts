@@ -29,6 +29,10 @@ export const navLinks: INavLinks[] = [
     name: 'Contact',
     url: '/#contact',
   },
+  {
+    name: 'Resume',
+    url: '/resume.png',
+  },
 ];
 
 export const floatingLinks: ISocialLinks[] = [
