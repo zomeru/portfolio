@@ -31,7 +31,7 @@ export const navLinks: INavLinks[] = [
   },
   {
     name: 'Resume',
-    url: '/resume.png',
+    url: '/resume.pdf',
   },
 ];
 

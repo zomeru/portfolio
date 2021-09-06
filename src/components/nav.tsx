@@ -69,11 +69,11 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
             {navLinks.map(link => {
               const { name, url } = link;
 
-              const isHashLink = url.startsWith('/#');
+              const resume = url.indexOf('resume') > -1;
 
               return (
                 <motion.li variants={navItemVariants} key={name}>
-                  {isHashLink ? (
+                  {!resume ? (
                     <Link href={url}>
                       <a className='link'>{name}</a>
                     </Link>
@@ -83,6 +83,7 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
                       href={`${hostURL}${url}`}
                       target='_blank'
                       rel='noreferrer'
+                      download
                     >
                       {name}
                     </a>
