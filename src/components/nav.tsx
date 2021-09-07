@@ -82,8 +82,7 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
                       className='link'
                       href={url}
                       target='_blank'
-                      rel='noreferrer'
-                      download
+                      rel='noreferrer noopener'
                     >
                       {name}
                     </a>
