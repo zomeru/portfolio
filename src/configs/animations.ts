@@ -32,7 +32,7 @@ export const fadeUpQuick = {
     y: 0,
     opacity: 1,
     transition: {
-      duration: 0.1,
+      duration: 0.2,
       ease: 'easeInOut',
     },
   },
