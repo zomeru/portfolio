@@ -10,7 +10,7 @@ import {
   SiMongodb,
 } from 'react-icons/si';
 import { FaReact, FaNodeJs, FaGitAlt } from 'react-icons/fa';
-import { zomify, portfolio, forkify, zomy } from '../assets/images/projects';
+import { zomify, zomyfile, forkify, zomy } from '../assets/images/projects';
 
 export const navLinks: INavLinks[] = [
   {
@@ -149,14 +149,21 @@ export const projects: IProjects[] = [
     },
   },
   {
-    name: 'Simple Portfolio',
-    image: portfolio,
-    alt: 'Resume page of my simple portfolio',
-    info: 'A very simple portfolio template.',
-    techs: ['Typescript', 'React.js', 'Next.js', 'Tailwind CSS'],
+    name: 'Zomyfile',
+    image: zomyfile,
+    alt: 'A free file sharing web app',
+    info: 'A free file sharing web app',
+    techs: [
+      'Typescript',
+      'React.js',
+      'Next.js',
+      'Tailwind CSS',
+      'Node.js',
+      'MongoDB',
+    ],
     links: {
-      demo: 'https://zomeru.vercel.app/',
-      github: 'https://github.com/zomeru/portfolio-next-ts',
+      demo: 'https://zomyfile.ml/',
+      github: 'https://github.com/zomeru/zomyfile',
     },
   },
   {

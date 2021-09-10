@@ -23,6 +23,21 @@ export const fadeUp = {
   },
 };
 
+export const fadeUpQuick = {
+  hidden: {
+    y: 20,
+    opacity: 0,
+  },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      duration: 0.1,
+      ease: 'easeInOut',
+    },
+  },
+};
+
 export const fadeLeft = {
   hidden: {
     x: 20,
