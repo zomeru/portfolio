@@ -3,8 +3,13 @@ module.exports = {
 };
 
 const withPlugins = require('next-compose-plugins');
-const path = require('path');
 const withPWA = require('next-pwa');
+
+const pwaConfig = {
+  pwa: {
+    dest: 'public',
+  },
+};
 
 const nextRedirect = {
   async redirects() {
@@ -49,20 +54,4 @@ const nextRedirect = {
   },
 };
 
-module.exports = withPlugins(
-  [
-    [
-      withPWA,
-      {
-        pwa: {
-          dest: 'public',
-        },
-        webpack: config => {
-          config.resolve.modules.push(path.resolve('./'));
-          return config;
-        },
-      },
-    ],
-  ],
-  nextRedirect
-);
+module.exports = withPlugins([[withPWA, pwaConfig]], nextRedirect);
