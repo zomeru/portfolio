@@ -1,5 +1,10 @@
 import { INavLinks, ISeo, IProjects, ISocialLinks, ISkills } from './types';
-import { AiOutlineInstagram, AiFillHtml5, AiFillGithub } from 'react-icons/ai';
+import {
+  AiOutlineInstagram,
+  AiFillHtml5,
+  AiFillGithub,
+  AiFillApi,
+} from 'react-icons/ai';
 import { FiTwitter, FiLinkedin, FiGithub, FiFacebook } from 'react-icons/fi';
 import { IoLogoSass, IoLogoLinkedin } from 'react-icons/io';
 import {
@@ -98,6 +103,11 @@ export const skills: ISkills[] = [
     id: 'mongodb',
     name: 'MongoDB',
     Icon: SiMongodb,
+  },
+  {
+    id: 'restapi',
+    name: 'RESTful API',
+    Icon: AiFillApi,
   },
   {
     id: 'firebase',
