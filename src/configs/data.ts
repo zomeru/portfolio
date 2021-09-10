@@ -43,17 +43,17 @@ export const navLinks: INavLinks[] = [
 export const floatingLinks: ISocialLinks[] = [
   {
     name: 'linkedin',
-    url: 'https://linkedin.com/in/zomergregorio',
+    url: '/linkedin',
     Icon: IoLogoLinkedin,
   },
   {
     name: 'github',
-    url: 'https://github.com/zomeru',
+    url: '/github',
     Icon: AiFillGithub,
   },
   {
     name: 'instagram',
-    url: 'https://instagram.com/zomerusama',
+    url: '/instagram',
     Icon: AiOutlineInstagram,
   },
 ];
@@ -192,27 +192,27 @@ export const projects: IProjects[] = [
 export const socialLinks: ISocialLinks[] = [
   {
     name: 'Facebook',
-    url: 'https://facebook.com/Zomeru',
+    url: '/facebook',
     Icon: FiFacebook,
   },
   {
     name: 'Instagram',
-    url: 'https://instagram.com/zomerusama',
+    url: '/instagram',
     Icon: AiOutlineInstagram,
   },
   {
     name: 'Twitter',
-    url: 'https://twitter.com/zomeru_sama',
+    url: '/twitter',
     Icon: FiTwitter,
   },
   {
     name: 'Linkedin',
-    url: 'https://linkedin.com/in/zomergregorio',
+    url: '/linkedin',
     Icon: FiLinkedin,
   },
   {
     name: 'Github',
-    url: 'https://github.com/zomeru',
+    url: '/github',
     Icon: FiGithub,
   },
 ];
