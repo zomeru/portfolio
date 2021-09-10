@@ -14,7 +14,7 @@ module.exports = withPlugins(
       {
         pwa: {
           dest: 'public',
-          // swSrc: 'sw.js',
+          swSrc: 'service-worker.js',
           register: true,
           skipWaiting: true,
           // runtimeCaching,
