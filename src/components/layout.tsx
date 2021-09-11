@@ -27,14 +27,21 @@ const Layout: React.FC<ILayoutProps> = ({
   const [isBdayLoaded, SetIsBdayLoaded] = useState<boolean>(
     isMyBirthday ? false : true
   );
+  const [isTabActive, setIsTabActive] = useState<boolean>(false);
 
   const { width, height } = useWindowDimensions();
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoaded(true);
-    }, 2500);
-  }, []);
+    if (isTabActive) {
+      setTimeout(() => {
+        setIsLoaded(true);
+      }, 2500);
+    }
+
+    if (!isTabActive && !document.hidden) {
+      setIsTabActive(true);
+    }
+  }, [isTabActive]);
 
   if (isLoaded && isMyBirthday) {
     setTimeout(() => {
@@ -45,7 +52,7 @@ const Layout: React.FC<ILayoutProps> = ({
   return (
     <StyledLayout id='root'>
       <AnimatePresence>
-        {!isLoaded && isHome && (
+        {isTabActive && !isLoaded && isHome && (
           <motion.div
             exit={{
               opacity: 0,
