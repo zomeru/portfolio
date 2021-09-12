@@ -34,10 +34,10 @@ export const navLinks: INavLinks[] = [
     name: 'Contact',
     url: '/#contact',
   },
-  {
-    name: 'Resume',
-    url: '/assets/resume.pdf',
-  },
+  // {
+  //   name: 'Resume',
+  //   url: '/assets/resume.pdf',
+  // },
 ];
 
 export const floatingLinks: ISocialLinks[] = [

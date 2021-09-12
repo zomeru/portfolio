@@ -5,10 +5,11 @@ import { StyledButton } from '../styles/componentStyles';
 interface IButton {
   buttonText: string;
   buttonUrl: string;
+  isLink: boolean;
   className?: string;
   target?: string;
   rel?: string;
-  isLink: boolean;
+  download?: boolean;
 }
 
 const Button: React.FC<IButton> = ({
@@ -18,6 +19,7 @@ const Button: React.FC<IButton> = ({
   target,
   rel,
   isLink,
+  download,
 }) => {
   return (
     <>
@@ -34,6 +36,7 @@ const Button: React.FC<IButton> = ({
           target={target}
           rel={rel}
           className={className}
+          download={download}
         >
           <div className='line'></div>
           <p>{buttonText}</p>

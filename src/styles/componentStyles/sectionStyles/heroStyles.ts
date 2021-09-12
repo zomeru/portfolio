@@ -52,7 +52,7 @@ export const StyledHeroContent = styled(motion.div)`
   h2 {
     margin-left: -8px;
     font-weight: 700;
-    font-size: clamp(24px, 7vw, 85px);
+    font-size: clamp(28px, 7vw, 85px);
     margin-bottom: 10px;
     position: relative;
     max-width: 720px;
@@ -79,8 +79,22 @@ export const StyledHeroContent = styled(motion.div)`
     }
   }
 
-  .hero-button {
+  .buttons-container {
+    display: flex;
+
+    @media only screen and (max-width: 600px) {
+      flex-direction: column;
+    }
+  }
+
+  .hero-buttons {
     margin-top: 30px;
+
+    @media only screen and (min-width: 600px) {
+      :not(:last-child) {
+        margin-right: 20px;
+      }
+    }
 
     @media only screen and (max-width: 1000px) {
       margin: 30px auto 0 auto;

@@ -11,7 +11,7 @@ import {
 
 const Hero = () => {
   const one = <h1>Hi there, I am</h1>;
-  const two = <h2 data-letters='Zomer Gregorio.'>Zomer Gregorio.</h2>;
+  const two = <h2>Zomer Gregorio.</h2>;
   const three = <h3>A self-taught web developer.</h3>;
   const four = (
     <p className='four'>
@@ -49,12 +49,19 @@ const Hero = () => {
               {text}
             </motion.div>
           ))}
-          <motion.div variants={fadeUp}>
+          <motion.div className='buttons-container' variants={fadeUp}>
             <Button
               isLink={false}
-              className='hero-button'
+              className='hero-buttons'
               buttonUrl='#contact'
               buttonText='Get in touch'
+            />
+            <Button
+              isLink={false}
+              className='hero-buttons'
+              buttonUrl='/assets/resume.pdf'
+              buttonText='Resume'
+              download
             />
           </motion.div>
           {floatingLinks.map(link => {

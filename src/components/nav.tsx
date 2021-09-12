@@ -69,19 +69,13 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
             {navLinks.map(link => {
               const { name, url } = link;
 
-              const resume = url.indexOf('resume') > -1;
+              // const resume = url.indexOf('resume') > -1;
 
               return (
                 <motion.li variants={navItemVariants} key={name}>
-                  {!resume ? (
-                    <Link href={url}>
-                      <a className='link'>{name}</a>
-                    </Link>
-                  ) : (
-                    <a className='link' href={url} download>
-                      {name}
-                    </a>
-                  )}
+                  <Link href={url}>
+                    <a className='link'>{name}</a>
+                  </Link>
                 </motion.li>
               );
             })}
