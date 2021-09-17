@@ -11,7 +11,10 @@ const pwaConfig = {
   },
 };
 
-const nextRedirect = {
+const nextConfig = {
+  images: {
+    domains: ['cdn.sanity.io', 'zomer.xyz', 'raw.githubusercontent.com'],
+  },
   async redirects() {
     return [
       {
@@ -48,4 +51,4 @@ const nextRedirect = {
   },
 };
 
-module.exports = withPlugins([[withPWA, pwaConfig]], nextRedirect);
+module.exports = withPlugins([[withPWA, pwaConfig]], nextConfig);

@@ -5,6 +5,7 @@ export const lightTheme: any = {
   accentMain: '#057DCD', // ROYAL BLUE
   floatBG: '#d3edfe',
   menuNav: '#cfe7e4',
+  blogTitleCard: 'rgba(232, 238, 241, 0.85)',
 };
 
 export const darkTheme: any = {
@@ -14,6 +15,7 @@ export const darkTheme: any = {
   accentMain: '#43B0F1', // BLUE GROTTO
   floatBG: '#011827',
   menuNav: '#142746',
+  blogTitleCard: 'rgba(13, 26, 37, 0.85)',
 };
 
 export type ThemeProps = {

@@ -5,6 +5,7 @@
 /public/sw.js.map
 /public/workbox-*.js
 /public/workbox-*.js.map
+/portfolioblog
 
 # dependencies
 /node_modules

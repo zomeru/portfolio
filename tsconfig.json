@@ -2,9 +2,13 @@
   "compilerOptions": {
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "baseUrl": "./",
+    "paths": {
+      "@components/*": ["src/components/*"]
+    },
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -15,5 +19,6 @@
     "jsx": "preserve"
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "next.config.js"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "files": ["@types/block-content-to-react.d.ts"]
 }

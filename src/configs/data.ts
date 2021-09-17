@@ -34,6 +34,10 @@ export const navLinks: INavLinks[] = [
     name: 'Contact',
     url: '/#contact',
   },
+  {
+    name: 'Blog',
+    url: '/blog',
+  },
   // {
   //   name: 'Resume',
   //   url: '/assets/resume.pdf',
