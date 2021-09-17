@@ -11,13 +11,6 @@ export interface ISkills {
   Icon: IconType;
 }
 
-export interface ISeo {
-  title: string;
-  description: string;
-  image: string | undefined;
-  url: string;
-}
-
 export interface IProjects {
   name: string;
   image: string | StaticImageData;

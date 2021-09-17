@@ -1,4 +1,5 @@
 import loadable from '@loadable/component';
+import { nextSeo } from '../src/configs/data';
 
 const Layout = loadable(() => import('../src/components/layout'));
 const About = loadable(() => import('../src/components/sections/about'));
@@ -14,7 +15,12 @@ interface IHomeProps {
 
 const Home: React.FC<IHomeProps> = ({ theme, toggleTheme, isHome }) => {
   return (
-    <Layout isHome={isHome} theme={theme} toggleTheme={toggleTheme}>
+    <Layout
+      isHome={isHome}
+      theme={theme}
+      toggleTheme={toggleTheme}
+      seo={{ ...nextSeo }}
+    >
       <Hero />
       <About />
       <Projects />

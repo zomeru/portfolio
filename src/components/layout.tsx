@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Confetti from 'react-confetti';
+import { NextSeo, NextSeoProps } from 'next-seo';
 import useWindowDimensions from '../hooks/useWindowDimensions';
 import { Nav, Footer, Loader, Birthday } from '.';
 import { StyledLayout } from '../styles/componentStyles';
@@ -10,6 +11,7 @@ interface ILayoutProps {
   theme: string;
   toggleTheme: () => void;
   isHome: boolean;
+  seo?: NextSeoProps;
 }
 
 // Check if it's my birthday
@@ -22,6 +24,7 @@ const Layout: React.FC<ILayoutProps> = ({
   theme,
   toggleTheme,
   isHome,
+  seo,
 }) => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
   const [isBdayLoaded, SetIsBdayLoaded] = useState<boolean>(
@@ -44,6 +47,7 @@ const Layout: React.FC<ILayoutProps> = ({
 
   return (
     <StyledLayout id='root'>
+      <NextSeo {...seo} />
       <AnimatePresence>
         {!isLoaded && isHome && (
           <motion.div

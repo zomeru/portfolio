@@ -1,4 +1,4 @@
-import { INavLinks, ISeo, IProjects, ISocialLinks, ISkills } from './types';
+import { INavLinks, IProjects, ISocialLinks, ISkills } from './types';
 import {
   AiOutlineInstagram,
   AiFillHtml5,
@@ -16,6 +16,7 @@ import {
 } from 'react-icons/si';
 import { FaReact, FaNodeJs, FaGitAlt } from 'react-icons/fa';
 import { zomify, zomyfile, forkify, zomy } from '../assets/images/projects';
+import { NextSeoProps } from 'next-seo';
 
 export const navLinks: INavLinks[] = [
   {
@@ -130,13 +131,28 @@ export const skills: ISkills[] = [
   },
 ];
 
-export const seo: ISeo = {
+export const nextSeo: NextSeoProps = {
   title: 'Zomer Gregorio',
   description:
     'Hi! I am Zomer Gregorio, a college student, React.js enthusiast, and freelance developer based in the Philippines. I love building beautiful, elegant and responsive web applications.',
-  image:
-    'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/OG.png',
-  url: 'https://zomer.xyz/',
+  canonical: 'https://zomer.xyz/',
+  openGraph: {
+    url: 'https://zomer.xyz/',
+    title: 'Zomer Gregorio',
+    description:
+      'Hi! I am Zomer Gregorio, a college student, React.js enthusiast, and freelance developer based in the Philippines. I love building beautiful, elegant and responsive web applications.',
+    images: [
+      {
+        url: 'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/OG.png',
+      },
+    ],
+    site_name: 'Zomer Gregorio',
+  },
+  twitter: {
+    handle: '@zomeru_sama',
+    site: 'https://zomer.xyz/',
+    cardType: 'summary_large_image',
+  },
 };
 
 export const projects: IProjects[] = [

@@ -1,7 +1,6 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 import Script from 'next/script';
 import { GA_TRACKING_ID } from '../lib/gtag';
-import { seo } from '../src/configs/data';
 import { ServerStyleSheet } from 'styled-components';
 
 class MyDocument extends Document {
@@ -36,16 +35,6 @@ class MyDocument extends Document {
       <Html lang='en'>
         <Head>
           <meta charSet='UTF-8' />
-          <meta name='description' content={seo.description} />
-          <meta property='og:title' content={seo.title} />
-          <meta property='og:description' content={seo.description} />
-          <meta property='og:image' content={seo.image} />
-          <meta property='og:url' content={seo.url} />
-          <meta name='twitter:title' content={seo.title} />
-          <meta name='twitter:description' content={seo.description} />
-          <meta name='twitter:image' content={seo.image} />
-          <meta name='twitter:card' content='summary_large_image' />
-          <meta name='twitter:creator' content={seo.title} />
           <link
             rel='apple-touch-icon'
             sizes='57x57'
