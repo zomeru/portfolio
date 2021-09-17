@@ -1,6 +1,6 @@
 import loadable from '@loadable/component';
 
-const Layout = loadable(() => import('../src/components/blogLayout'));
+const Layout = loadable(() => import('../src/components/layout'));
 const About = loadable(() => import('../src/components/sections/about'));
 const Hero = loadable(() => import('../src/components/sections/hero'));
 const Projects = loadable(() => import('../src/components/sections/projects'));

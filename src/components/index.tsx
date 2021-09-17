@@ -1,5 +1,6 @@
 export { default as Button } from './button';
-export { default as Layout } from './blogLayout';
+export { default as Layout } from './layout';
+export { default as BlogLayout } from './blogLayout';
 export { default as Nav } from './nav';
 export { default as TechStacks } from './TechStacks';
 export { default as Footer } from './footer';

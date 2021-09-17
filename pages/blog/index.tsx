@@ -4,12 +4,12 @@ import BlogLayout from '@components/blogLayout';
 interface indexProps {
   theme: string;
   toggleTheme: () => void;
-  // isHome: boolean;
+  isHome: boolean;
 }
 
-const index: React.FC<indexProps> = ({ theme, toggleTheme }) => {
+const index: React.FC<indexProps> = ({ theme, toggleTheme, isHome }) => {
   // const router = useRouter();
-  const isHome = window.location.pathname === '/';
+  // const isHome = window.location.pathname === '/';
 
   return (
     <BlogLayout isHome={isHome} theme={theme} toggleTheme={toggleTheme}>
