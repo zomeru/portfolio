@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { GetServerSidePropsContext } from 'next';
 import imageUrlBuilder from '@sanity/image-url';
 import BlockContent from '@sanity/block-content-to-react';
-import Image from 'next/image';
 import styled from 'styled-components';
 import BlogLayout from '@components/blogLayout';
 

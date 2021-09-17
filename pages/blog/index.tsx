@@ -10,7 +10,7 @@ interface indexProps {
 const index: React.FC<indexProps> = ({ theme, toggleTheme, isHome }) => {
   return (
     <BlogLayout isHome={isHome} theme={theme} toggleTheme={toggleTheme}>
-      <h1>THIS IS MY BLOG POSTS</h1>
+      <h2 className='section-heading'>My Blog Posts</h2>
     </BlogLayout>
   );
 };
