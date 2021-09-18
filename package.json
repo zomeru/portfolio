@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@loadable/component": "^5.15.0",
     "@sanity/block-content-to-react": "^3.0.0",
     "@sanity/image-url": "^1.0.1",
     "@types/styled-components": "^5.1.11",
@@ -28,7 +27,6 @@
     "styled-components": "^5.3.0"
   },
   "devDependencies": {
-    "@types/loadable__component": "^5.13.4",
     "@types/react": "17.0.15",
     "babel-plugin-styled-components": "^1.13.2",
     "eslint": "7.31.0",

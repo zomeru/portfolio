@@ -1,26 +1,20 @@
-import loadable from '@loadable/component';
-import { nextSeo, customSeo } from '../src/configs/data';
-import { NextSeo, NextSeoProps } from 'next-seo';
-import PageHead from '@components/pageHead';
-import { CustomSeoProps } from 'src/configs/types';
-
-const Layout = loadable(() => import('../src/components/layout'));
-const About = loadable(() => import('../src/components/sections/about'));
-const Hero = loadable(() => import('../src/components/sections/hero'));
-const Projects = loadable(() => import('../src/components/sections/projects'));
-const Contact = loadable(() => import('../src/components/sections/contact'));
-
+import { customSeo } from '../src/configs/data';
+import { Layout, About, Hero, Projects, Contact } from '../src/components';
 interface IHomeProps {
   theme: string;
   toggleTheme: () => void;
   isHome: boolean;
-
 }
 
 const Home: React.FC<IHomeProps> = ({ theme, toggleTheme, isHome }) => {
   return (
     <>
-      <Layout isHome={isHome} theme={theme} toggleTheme={toggleTheme} seo={{...customSeo}}>
+      <Layout
+        isHome={isHome}
+        theme={theme}
+        toggleTheme={toggleTheme}
+        seo={{ ...customSeo }}
+      >
         <Hero />
         <About />
         <Projects />
