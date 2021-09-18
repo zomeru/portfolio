@@ -1,4 +1,10 @@
-import { INavLinks, IProjects, ISocialLinks, ISkills } from './types';
+import {
+  INavLinks,
+  IProjects,
+  ISocialLinks,
+  ISkills,
+  CustomSeoProps,
+} from './types';
 import {
   AiOutlineInstagram,
   AiFillHtml5,
@@ -130,6 +136,16 @@ export const skills: ISkills[] = [
     Icon: FaGitAlt,
   },
 ];
+
+export const customSeo: CustomSeoProps = {
+  description:
+    'Hi! I am Zomer Gregorio, a college student, React.js enthusiast, and freelance developer based in the Philippines. I love building beautiful, elegant and responsive web applications.',
+  title: 'Zomer Gregorio',
+  image:
+    'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/OG.png',
+  url: 'https://zomer.xyz/',
+  twitterUsername: '@zomeru_sama',
+};
 
 export const nextSeo: NextSeoProps = {
   title: 'Zomer Gregorio',

@@ -1,27 +1,28 @@
 import React from 'react';
 import BlogLayout from '@components/blogLayout';
-import { nextSeo } from 'src/configs/data';
+import { customSeo, nextSeo } from 'src/configs/data';
+import PageHead from '@components/pageHead';
 
-interface indexProps {
+interface BlogProps {
   theme: string;
   toggleTheme: () => void;
   isHome: boolean;
 }
 
-const index: React.FC<indexProps> = ({ theme, toggleTheme, isHome }) => {
-  // const router = useRouter();
-  // const isHome = window.location.pathname === '/';
-
+const Blog: React.FC<BlogProps> = ({ theme, toggleTheme, isHome }) => {
   return (
-    <BlogLayout
-      isHome={isHome}
-      theme={theme}
-      toggleTheme={toggleTheme}
-      seo={{ ...nextSeo }}
-    >
-      <h2 className='section-heading'>My Blog Posts</h2>
-    </BlogLayout>
+    <>
+      <BlogLayout
+        isHome={isHome}
+        theme={theme}
+        toggleTheme={toggleTheme}
+        // seo={{ ...nextSeo }}
+      >
+        {/* <PageHead seo={{ ...customSeo }} /> */}
+        <h2 className='section-heading'>My Blog Posts</h2>
+      </BlogLayout>
+    </>
   );
 };
 
-export default index;
+export default Blog;

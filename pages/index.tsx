@@ -1,5 +1,8 @@
 import loadable from '@loadable/component';
-import { nextSeo } from '../src/configs/data';
+import { nextSeo, customSeo } from '../src/configs/data';
+import { NextSeo, NextSeoProps } from 'next-seo';
+import PageHead from '@components/pageHead';
+import { CustomSeoProps } from 'src/configs/types';
 
 const Layout = loadable(() => import('../src/components/layout'));
 const About = loadable(() => import('../src/components/sections/about'));
@@ -11,21 +14,19 @@ interface IHomeProps {
   theme: string;
   toggleTheme: () => void;
   isHome: boolean;
+
 }
 
 const Home: React.FC<IHomeProps> = ({ theme, toggleTheme, isHome }) => {
   return (
-    <Layout
-      isHome={isHome}
-      theme={theme}
-      toggleTheme={toggleTheme}
-      seo={{ ...nextSeo }}
-    >
-      <Hero />
-      <About />
-      <Projects />
-      <Contact />
-    </Layout>
+    <>
+      <Layout isHome={isHome} theme={theme} toggleTheme={toggleTheme} seo={{...customSeo}}>
+        <Hero />
+        <About />
+        <Projects />
+        <Contact />
+      </Layout>
+    </>
   );
 };
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Head from 'next/head';
 import { NextSeo, NextSeoProps } from 'next-seo';
 import { Nav, Footer } from '.';
 import { StyledLayout } from '../styles/componentStyles';
@@ -20,7 +21,9 @@ const BlogLayout: React.FC<IBlogLayoutProps> = ({
 }) => {
   return (
     <StyledLayout id='root'>
-      <NextSeo {...seo} />
+      <Head>
+        <NextSeo {...seo} />
+      </Head>
       <Nav isHome={isHome} theme={theme} toggleTheme={toggleTheme} />
       <main>{children}</main>
       <Footer />

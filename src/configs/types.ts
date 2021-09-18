@@ -28,3 +28,11 @@ export interface ISocialLinks {
   url: string;
   Icon: IconType;
 }
+
+export interface CustomSeoProps {
+  description: string;
+  image: string;
+  title: string;
+  url: string;
+  twitterUsername: string;
+}
