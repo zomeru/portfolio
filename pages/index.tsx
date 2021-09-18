@@ -1,5 +1,12 @@
 import { customSeo } from '../src/configs/data';
-import { Layout, About, Hero, Projects, Contact } from '../src/components';
+import {
+  Layout,
+  About,
+  Hero,
+  Projects,
+  Contact,
+  PageHead,
+} from '../src/components';
 interface IHomeProps {
   theme: string;
   toggleTheme: () => void;
@@ -9,6 +16,7 @@ interface IHomeProps {
 const Home: React.FC<IHomeProps> = ({ theme, toggleTheme, isHome }) => {
   return (
     <>
+      <PageHead seo={{ ...customSeo }} />
       <Layout
         isHome={isHome}
         theme={theme}
@@ -26,15 +34,15 @@ const Home: React.FC<IHomeProps> = ({ theme, toggleTheme, isHome }) => {
 
 export default Home;
 
-export const getServerSideProps = async ({ req, res }: any) => {
-  res.setHeader(
-    'Cache-Control',
-    'public, s-maxage=10, stale-while-revalidate=59'
-  );
+// export const getServerSideProps = async ({ req, res }: any) => {
+//   res.setHeader(
+//     'Cache-Control',
+//     'public, s-maxage=10, stale-while-revalidate=59'
+//   );
 
-  return {
-    props: {
-      time: new Date().toISOString(),
-    },
-  };
-};
+//   return {
+//     props: {
+//       time: new Date().toISOString(),
+//     },
+//   };
+// };

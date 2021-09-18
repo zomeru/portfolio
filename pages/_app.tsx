@@ -1,6 +1,5 @@
 import type { AppProps } from 'next/app';
 import App from 'next/app';
-import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import * as gtag from '../lib/gtag';
@@ -8,7 +7,6 @@ import { ThemeProvider } from 'styled-components';
 import { useDarkMode } from '../src/hooks/useDarkMode';
 import { lightTheme, darkTheme } from '../src/styles/theme';
 import { GlobalStyles } from '../src/styles/GlobalStyles';
-import PageHead from '@components/pageHead';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -36,23 +34,23 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={themeMode}>
       <GlobalStyles />
-      {isMounted && (
+      {/* {isMounted && (
         <Component
           {...pageProps}
           toggleTheme={toggleTheme}
           theme={theme}
           isHome={isHome}
         />
-      )}
+      )} */}
+
+      <Component
+        {...pageProps}
+        toggleTheme={toggleTheme}
+        theme={theme}
+        isHome={isHome}
+      />
     </ThemeProvider>
   );
 }
-
-MyApp.getInitialProps = async appContext => {
-  // calls page's `getInitialProps` and fills `appProps.pageProps`
-  const appProps = await App.getInitialProps(appContext);
-
-  return { ...appProps };
-};
 
 export default MyApp;
