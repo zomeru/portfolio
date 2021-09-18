@@ -22,7 +22,6 @@ import {
 } from 'react-icons/si';
 import { FaReact, FaNodeJs, FaGitAlt } from 'react-icons/fa';
 import { zomify, zomyfile, forkify, zomy } from '../assets/images/projects';
-import { NextSeoProps } from 'next-seo';
 
 export const navLinks: INavLinks[] = [
   {
@@ -147,7 +146,7 @@ export const customSeo: CustomSeoProps = {
   twitterUsername: '@zomeru_sama',
 };
 
-export const nextSeo: NextSeoProps = {
+export const nextSeo = {
   title: 'Zomer Gregorio',
   description:
     'Hi! I am Zomer Gregorio, a college student, React.js enthusiast, and freelance developer based in the Philippines. I love building beautiful, elegant and responsive web applications.',
