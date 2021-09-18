@@ -126,10 +126,10 @@ export default class MyDocument extends Document {
             href='https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap'
             rel='stylesheet'
           />
-          <Script
+          {/* <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-          />
-          <Script
+          /> */}
+          {/* <Script
             dangerouslySetInnerHTML={{
               __html: `
             
@@ -141,7 +141,7 @@ export default class MyDocument extends Document {
             });
           `,
             }}
-          />
+          /> */}
         </Head>
         <body>
           <Main />
