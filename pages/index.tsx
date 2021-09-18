@@ -54,10 +54,10 @@ const Home: React.FC<IHomeProps> = ({ theme, toggleTheme, isHome }) => {
             toggleTheme={toggleTheme}
             seo={{ ...customSeo }}
           >
-            <Hero />
+            {/* <Hero />
             <About />
             <Projects />
-            <Contact />
+            <Contact /> */}
           </Layout>
         </>
       )}

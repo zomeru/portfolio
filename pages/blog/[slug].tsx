@@ -5,6 +5,7 @@ import imageUrlBuilder from '@sanity/image-url';
 import BlockContent from '@sanity/block-content-to-react';
 import styled from 'styled-components';
 import BlogLayout from '@components/blogLayout';
+import PageHead from '@components/pageHead';
 
 const StyledBlogHero = styled.div`
   width: 100%;
@@ -53,10 +54,14 @@ const StyledBlogHero = styled.div`
   }
 
   .author-image {
-    height: 50px;
-    width: 50px;
+    height: 40px;
+    width: 40px;
     border-radius: 100px;
     margin-right: 15px;
+  }
+
+  .dates {
+    font-size: 14px;
   }
 `;
 
@@ -82,9 +87,12 @@ const StyledBlogContent = styled.div`
 `;
 
 interface SinglePostProps {
-  title: any;
+  title: string;
   body: any;
   image: any;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
   theme: string;
   toggleTheme: () => void;
   isHome: boolean;
@@ -97,8 +105,12 @@ const SinglePost: React.FC<SinglePostProps> = ({
   isHome,
   theme,
   toggleTheme,
+  slug,
+  createdAt,
+  updatedAt,
 }) => {
   const [imageUrl, setImageUrl] = useState<any>('');
+  const [postSeo, setPostSeo] = useState<any>({});
 
   const imageHost = `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/production/`;
   let imgBaseUrl = image.asset._ref.replace('image-', '');
@@ -123,31 +135,42 @@ const SinglePost: React.FC<SinglePostProps> = ({
   }, [image]);
 
   return (
-    <BlogLayout isHome={isHome} theme={theme} toggleTheme={toggleTheme}>
-      <StyledBlogHero imgUrl={imgUrl}>
-        <div className='title-container'>
-          <h1 className='blog-title'>
-            This is just some really long text blah blah blah
-          </h1>
-          <div className='author'>
-            <img
-              className='author-image'
-              src='https://raw.githubusercontent.com/zomeru/zomeru/main/me.png'
-              alt='author image'
-            />
+    <>
+      <PageHead
+        seo={{
+          title: `Zomer Gregorio | Blog | ${title}`,
+          description: 'Some text',
+          image: imgUrl as string,
+          twitterUsername: '@zomeru_sama',
+          url: `https://zomer.xyz/blog/${slug}`,
+        }}
+      />
+      <BlogLayout isHome={isHome} theme={theme} toggleTheme={toggleTheme}>
+        <StyledBlogHero imgUrl={imgUrl}>
+          <div className='title-container'>
+            <h1 className='blog-title'>{title}</h1>
+            <div className='author'>
+              <img
+                className='author-image'
+                src='https://raw.githubusercontent.com/zomeru/zomeru/main/me.png'
+                alt='author image'
+              />
 
-            <p>
-              <span>Zomer Gregorio</span> | <span>Some Date</span>
-            </p>
+              <p className='dates'>
+                <span>Zomer Gregorio</span> |{' '}
+                <span>created: {new Date(createdAt).toLocaleString()}</span> |
+                <span> modified: {new Date(updatedAt).toLocaleString()}</span>
+              </p>
+            </div>
           </div>
-        </div>
-      </StyledBlogHero>
+        </StyledBlogHero>
 
-      <StyledBlogContent>
-        <BlockContent blocks={body} />
-        <div className='end' />
-      </StyledBlogContent>
-    </BlogLayout>
+        <StyledBlogContent>
+          <BlockContent blocks={body} />
+          <div className='end' />
+        </StyledBlogContent>
+      </BlogLayout>
+    </>
   );
 };
 
@@ -172,7 +195,7 @@ export async function getServerSideProps(
   const result = await fetch(url).then(res => res.json());
   const post = result.result[0];
 
-  console.log(post);
+  console.log('POST', post);
 
   if (!post) {
     return {
@@ -184,6 +207,9 @@ export async function getServerSideProps(
         title: post.title,
         body: post.body,
         image: post.mainImage,
+        createdAt: post._createdAt,
+        updatedAt: post._updatedAt,
+        slug: post.slug,
       },
     };
   }

@@ -127,7 +127,7 @@ export default class MyDocument extends Document {
             rel='stylesheet'
           />
           <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=G-XNJS2S5JPX`}
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
           />
           <Script
             dangerouslySetInnerHTML={{
@@ -136,7 +136,7 @@ export default class MyDocument extends Document {
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', 'G-XNJS2S5JPX', {
+            gtag('config', '${GA_TRACKING_ID}', {
               page_path: window.location.pathname,
             });
           `,
