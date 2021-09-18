@@ -34,15 +34,6 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={themeMode}>
       <GlobalStyles />
-      {/* {isMounted && (
-        <Component
-          {...pageProps}
-          toggleTheme={toggleTheme}
-          theme={theme}
-          isHome={isHome}
-        />
-      )} */}
-
       <Component
         {...pageProps}
         toggleTheme={toggleTheme}
