@@ -4,10 +4,7 @@ export const useDarkMode = () => {
   const [theme, setTheme] = useState<string>('light');
 
   const setMode = (mode: string) => {
-    if (process.browser) {
-      window.localStorage.setItem('theme', mode);
-    }
-
+    window.localStorage.setItem('theme', mode);
     setTheme(mode);
   };
 
