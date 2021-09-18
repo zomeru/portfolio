@@ -10,15 +10,15 @@ import { GlobalStyles } from '../src/styles/GlobalStyles';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  // useEffect(() => {
-  //   const handleRouteChange = (url: any) => {
-  //     gtag.pageview(url);
-  //   };
-  //   router.events.on('routeChangeComplete', handleRouteChange);
-  //   return () => {
-  //     router.events.off('routeChangeComplete', handleRouteChange);
-  //   };
-  // }, [router.events]);
+  useEffect(() => {
+    const handleRouteChange = (url: any) => {
+      gtag.pageview(url);
+    };
+    router.events.on('routeChangeComplete', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, [router.events]);
 
   const isHome = router.pathname === '/';
 
