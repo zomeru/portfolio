@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
 import { navLinks } from '../configs/data';
@@ -13,7 +13,8 @@ interface INavProps {
 }
 
 const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
-  const [open, setOpen] = React.useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
+  const [hostURL, setHostURL] = useState<string>('');
 
   const openHamburger = () => {
     setOpen(open => !open);
@@ -47,7 +48,9 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
     },
   };
 
-  const hostURL = `${window.location.protocol}//${window.location.host}`;
+  useEffect(() => {
+    setHostURL(`${window.location.protocol}//${window.location.host}`);
+  }, []);
 
   const Logo = () =>
     isHome ? (

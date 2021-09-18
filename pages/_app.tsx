@@ -1,6 +1,5 @@
 import type { AppProps } from 'next/app';
-import App from 'next/app';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import * as gtag from '../lib/gtag';
 import { ThemeProvider } from 'styled-components';
