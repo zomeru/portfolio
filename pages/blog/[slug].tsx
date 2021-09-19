@@ -69,6 +69,14 @@ const StyledBlogContent = styled.div`
   margin: 0 auto;
   max-width: 800px;
 
+  ul {
+    list-style: inside;
+
+    li {
+      list-style-type: disc;
+    }
+  }
+
   h2 {
     margin-bottom: 20px;
   }
