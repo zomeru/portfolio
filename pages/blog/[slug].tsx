@@ -71,6 +71,7 @@ const StyledBlogContent = styled.div`
 
   ul {
     list-style: inside;
+    margin-left: 20px;
 
     li {
       list-style-type: disc;
