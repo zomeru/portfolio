@@ -84,7 +84,7 @@ const StyledBlogContent = styled.div`
   h4,
   h5,
   h6 {
-    margin-bottom: 20px 0;
+    margin: 20px 0;
   }
 
   p {
