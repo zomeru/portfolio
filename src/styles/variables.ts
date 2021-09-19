@@ -6,6 +6,10 @@ const Variables = css`
     --navy-blue: #102039;
     --white: #f1f8f7;
 
+    --font-main: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+      sans-serif;
+
     // Font size
     --fz-xxs: 12px;
     --fz-xs: 13px;

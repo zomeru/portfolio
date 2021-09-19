@@ -3,7 +3,7 @@ import { ThemeProps } from './theme';
 import Variables from './variables';
 
 export const GlobalStyles = createGlobalStyle<ThemeProps>`
-  ${Variables}
+  ${Variables};
 
   *,
   *::before,
