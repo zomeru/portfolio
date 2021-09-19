@@ -75,6 +75,10 @@ const StyledBlogContent = styled.div`
 
     li {
       list-style-type: disc;
+
+      :not(:last-child) {
+        margin-bottom: 5px;
+      }
     }
   }
 
