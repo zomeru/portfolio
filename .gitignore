@@ -6,6 +6,8 @@
 /public/workbox-*.js
 /public/workbox-*.js.map
 /portfolioblog
+/public/sitemap.xml
+/public/robots.txt
 
 # dependencies
 /node_modules

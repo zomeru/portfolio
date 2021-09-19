@@ -1,4 +1,0 @@
-User-agent: *
-Disallow: 
-Crawl-delay: 2
-Sitemap: https://zomer.xyz/api/my-sitemap
