@@ -97,6 +97,7 @@ const StyledBlogContent = styled.div`
     text-align: justify;
     letter-spacing: 1.2px;
     margin-bottom: 30px;
+    color: ${({ theme }) => theme.textSecond};
   }
 
   .end {
