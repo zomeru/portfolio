@@ -139,7 +139,7 @@ const SinglePost: React.FC<SinglePostProps> = ({
       <PageHead
         seo={{
           title: `Zomer Gregorio | Blog | ${title}`,
-          description: 'Some text',
+          description: title as string,
           image: imgUrl as string,
           twitterUsername: '@zomeru_sama',
           url: `https://zomer.xyz/blog/${slug}`,
