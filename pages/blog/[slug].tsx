@@ -72,6 +72,7 @@ const StyledBlogContent = styled.div`
   ul {
     list-style: inside;
     margin-left: 20px;
+    color: ${({ theme }) => theme.textSecond};
 
     li {
       list-style-type: disc;
