@@ -84,7 +84,7 @@ const StyledBlogContent = styled.div`
   h4,
   h5,
   h6 {
-    margin-bottom: 20px;
+    margin-bottom: 20px 0;
   }
 
   p {
@@ -92,7 +92,7 @@ const StyledBlogContent = styled.div`
     line-height: 30px;
     text-align: justify;
     letter-spacing: 1.2px;
-    margin-bottom: 45px;
+    margin-bottom: 30px;
   }
 
   .end {
