@@ -60,7 +60,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ slug, title, thumbnail }) => {
         />
       </div>
       <div className='card-title-wrapper'>
-        <Link href={`/${slug}`}>
+        <Link href={`/blog/${slug}`}>
           <a>
             <h3 className='card-title'>{title}</h3>
           </a>
