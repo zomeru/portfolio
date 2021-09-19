@@ -46,7 +46,9 @@ export const GlobalStyles = createGlobalStyle<ThemeProps>`
     font-size: var(--fz-md);
     line-height: 1.3;
     overflow-x: hidden;
-    font-family: var(--font-main);
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+      sans-serif;
 
     @media only screen and (max-width: 768px) {
       padding: 0 35px;
@@ -87,7 +89,9 @@ export const GlobalStyles = createGlobalStyle<ThemeProps>`
   }
 
   a, p, h1, h2, h3, h4, h5, h6, li {
-    font-family: var(--font-main);
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+      Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
+      sans-serif;
   }
 
   a, p, li {
