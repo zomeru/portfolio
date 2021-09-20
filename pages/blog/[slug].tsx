@@ -215,8 +215,6 @@ export async function getServerSideProps(
   const result = await fetch(url).then(res => res.json());
   const post = result.result[0];
 
-  console.log('POST', post);
-
   if (!post) {
     return {
       notFound: true,

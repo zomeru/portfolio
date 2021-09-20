@@ -1,6 +1,5 @@
 User-agent: *
 Disallow: 
 Crawl-delay: 10
-Host: https://zomer.xyz
 Sitemap: https://zomer.xyz/my-sitemap.xml
 Sitemap: https://zomer.xyz/server-sitemap.xml
