@@ -148,4 +148,21 @@ export const GlobalStyles = createGlobalStyle<ThemeProps>`
       transition: var(--transition2);
     }
   }
+
+  .active-link {
+    color: ${({ theme }) => theme.textMain};
+    position: relative;
+
+    ::after {
+      position: absolute;
+      content: '';
+      left: 0;
+      bottom: -3px;
+      height: 2px;
+      border-radius: 1px;
+      width: 100%;
+      background-color: ${({ theme }) => theme.accentMain};
+      transition: var(--transition2);
+    }
+  }
 `;

@@ -9,6 +9,8 @@ import { ThemeModeContext } from '../contexts/ThemeModeContext';
 
 interface INavProps {
   isHome: boolean;
+  // prevScrollPos: number;
+  // curScrollPos: number;
 }
 
 const Nav: React.FC<INavProps> = ({ isHome }) => {
@@ -16,6 +18,20 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
 
   const [open, setOpen] = useState<boolean>(false);
   const [hostURL, setHostURL] = useState<string>('');
+
+  const [prevScrollPos, setPrevScrollPos] = useState<number>(1);
+  const [curScrollPos, setCurScrollPos] = useState<number>(0);
+
+  useEffect(() => {
+    setCurScrollPos(window.pageYOffset);
+    console.log('Prev', prevScrollPos);
+    window.onscroll = function () {
+      const e = window.pageYOffset;
+      setCurScrollPos(e);
+      setPrevScrollPos(curScrollPos);
+    };
+    console.log('Cur', curScrollPos);
+  }, [curScrollPos]);
 
   const openHamburger = () => {
     setOpen(open => !open);
@@ -62,26 +78,51 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
       </Link>
     );
 
+  const [innerText, setInnerText] = useState('');
+
+  const activeLinkHandler = e => {
+    console.log(e.target.innerText);
+    setInnerText(e.target.innerText);
+  };
+
   return (
-    <StyledNav>
+    <StyledNav
+      id='nav'
+      prevScrollPos={prevScrollPos}
+      curScrollPos={curScrollPos}
+    >
       <motion.nav variants={navVariants} initial='hidden' animate='visible'>
         <motion.span className='logo' variants={navItemVariants}>
           <Logo />
         </motion.span>
         <StyledLinks>
           <ul>
-            {navLinks.map(link => {
+            {navLinks.map((link, i) => {
               const { name, url } = link;
 
               return (
-                <motion.li variants={navItemVariants} key={name}>
+                <motion.li
+                  onClick={activeLinkHandler}
+                  variants={navItemVariants}
+                  key={i}
+                >
                   <Link href={url}>
-                    <a className='link'>{name}</a>
+                    <a
+                      className={`link ${
+                        name === innerText ? 'active-link' : ''
+                      }`}
+                    >
+                      {name}
+                    </a>
                   </Link>
                 </motion.li>
               );
             })}
-            <motion.li variants={navItemVariants}>
+            <motion.li
+              onClick={activeLinkHandler}
+              key={navLinks.length}
+              variants={navItemVariants}
+            >
               <ToggleTheme theme={theme} toggleTheme={toggleTheme} />
             </motion.li>
           </ul>

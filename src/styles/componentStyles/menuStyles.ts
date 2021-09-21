@@ -6,6 +6,7 @@ export const StyledMenu = styled(motion.div)`
   position: ${(props: any) => (props.menuOpen ? 'fixed' : 'absolute')};
   right: 35px;
   z-index: 99;
+  margin-right: 35px;
 
   @media only screen and (max-width: 768px) {
     display: block;

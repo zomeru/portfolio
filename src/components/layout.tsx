@@ -7,10 +7,18 @@ import { CustomSeoProps } from '../configs/types';
 interface ILayoutProps {
   children: React.ReactNode;
   isHome: boolean;
+  // curScrollPos: number;
+  // prevScrollPos: number;
   seo?: CustomSeoProps;
 }
 
-const Layout: React.FC<ILayoutProps> = ({ children, isHome, seo }) => {
+const Layout: React.FC<ILayoutProps> = ({
+  children,
+  isHome,
+  // prevScrollPos,
+  // curScrollPos,
+  seo,
+}) => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   useEffect(() => {
@@ -21,7 +29,7 @@ const Layout: React.FC<ILayoutProps> = ({ children, isHome, seo }) => {
 
   return (
     <StyledLayout id='root'>
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {!isLoaded && isHome && (
           <motion.div
             exit={{
@@ -35,11 +43,15 @@ const Layout: React.FC<ILayoutProps> = ({ children, isHome, seo }) => {
             <Loader />
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
 
-      {isLoaded && isHome && (
+      {true && isHome && (
         <>
-          <Nav isHome={isHome} />
+          <Nav
+            isHome={isHome}
+            // prevScrollPos={prevScrollPos}
+            // curScrollPos={curScrollPos}
+          />
           <main>{children}</main>
           <Footer />
         </>

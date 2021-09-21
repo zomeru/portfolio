@@ -8,14 +8,17 @@ import {
   Contact,
   PageHead,
 } from '../src/components';
-import Head from 'next/head';
-import Script from 'next/script';
-import { GA_TRACKING_ID } from 'lib/gtag';
 interface IHomeProps {
   isHome: boolean;
+  // curScrollPos: number;
+  // prevScrollPos: number;
 }
 
-const Home: React.FC<IHomeProps> = ({ isHome }) => {
+const Home: React.FC<IHomeProps> = ({
+  isHome,
+  // prevScrollPos,
+  // curScrollPos,
+}) => {
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
   useEffect(() => {
@@ -26,33 +29,17 @@ const Home: React.FC<IHomeProps> = ({ isHome }) => {
     <>
       <PageHead seo={{ ...customSeo }} />
       {isMounted && (
-        <>
-          <Head>
-            <Script
-              async
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-            />
-            <Script>
-              dangerouslySetInnerHTML=
-              {{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${GA_TRACKING_ID}', {
-                  page_path: window.location.pathname,
-              });
-                `,
-              }}
-            </Script>
-          </Head>
-          <Layout isHome={isHome} seo={{ ...customSeo }}>
-            <Hero />
-            <About />
-            <Projects />
-            <Contact />
-          </Layout>
-        </>
+        <Layout
+          isHome={isHome}
+          seo={{ ...customSeo }}
+          // prevScrollPos={prevScrollPos}
+          // curScrollPos={curScrollPos}
+        >
+          <Hero />
+          <About />
+          <Projects />
+          <Contact />
+        </Layout>
       )}
     </>
   );
