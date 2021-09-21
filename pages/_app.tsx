@@ -2,10 +2,8 @@ import type { AppProps } from 'next/app';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import * as gtag from '../lib/gtag';
-import { ThemeProvider } from 'styled-components';
-import { useDarkMode } from '../src/hooks/useDarkMode';
-import { lightTheme, darkTheme } from '../src/styles/theme';
 import { GlobalStyles } from '../src/styles/GlobalStyles';
+import { ThemeModeProvider } from '../src/contexts/ThemeModeContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -21,19 +19,11 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   const isHome = router.pathname === '/';
 
-  const [theme, toggleTheme] = useDarkMode();
-  const themeMode = theme === 'light' ? lightTheme : darkTheme;
-
   return (
-    <ThemeProvider theme={themeMode}>
+    <ThemeModeProvider>
       <GlobalStyles />
-      <Component
-        {...pageProps}
-        toggleTheme={toggleTheme}
-        theme={theme}
-        isHome={isHome}
-      />
-    </ThemeProvider>
+      <Component {...pageProps} isHome={isHome} />
+    </ThemeModeProvider>
   );
 }
 

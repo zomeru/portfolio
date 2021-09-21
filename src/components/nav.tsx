@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import Link from 'next/link';
 import { motion, Variants } from 'framer-motion';
 import { navLinks } from '../configs/data';
 import ToggleTheme from './ToggleTheme';
 import Menu from './menu';
 import { StyledNav, StyledLinks } from '../styles/componentStyles';
+import { ThemeModeContext } from '../contexts/ThemeModeContext';
 
 interface INavProps {
-  theme: string;
-  toggleTheme: () => void;
   isHome: boolean;
 }
 
-const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
+const Nav: React.FC<INavProps> = ({ isHome }) => {
+  const { theme, toggleTheme } = useContext(ThemeModeContext);
+
   const [open, setOpen] = useState<boolean>(false);
   const [hostURL, setHostURL] = useState<string>('');
 
@@ -71,8 +72,6 @@ const Nav: React.FC<INavProps> = ({ theme, toggleTheme, isHome }) => {
           <ul>
             {navLinks.map(link => {
               const { name, url } = link;
-
-              // const resume = url.indexOf('resume') > -1;
 
               return (
                 <motion.li variants={navItemVariants} key={name}>

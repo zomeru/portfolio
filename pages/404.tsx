@@ -35,12 +35,10 @@ const StyledNotFound = styled.section`
 `;
 
 interface INotFoundProps {
-  theme: string;
-  toggleTheme: () => void;
   isHome: boolean;
 }
 
-const NotFound: React.FC<INotFoundProps> = ({ theme, toggleTheme, isHome }) => {
+const NotFound: React.FC<INotFoundProps> = ({ isHome }) => {
   const router = useRouter();
   const [redirectDelay, setRedirectDelay] = useState(10);
   useEffect(() => {
@@ -53,7 +51,7 @@ const NotFound: React.FC<INotFoundProps> = ({ theme, toggleTheme, isHome }) => {
   }, [redirectDelay, router]);
   return (
     <StyledNotFound>
-      <Nav isHome={isHome} theme={theme} toggleTheme={toggleTheme} />
+      <Nav isHome={isHome} />
       <div className='notFoundContent'>
         <h1 className='section-heading'>404</h1>
         <h2>Page Not Found</h2>

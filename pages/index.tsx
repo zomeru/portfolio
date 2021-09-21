@@ -12,12 +12,10 @@ import Head from 'next/head';
 import Script from 'next/script';
 import { GA_TRACKING_ID } from 'lib/gtag';
 interface IHomeProps {
-  theme: string;
-  toggleTheme: () => void;
   isHome: boolean;
 }
 
-const Home: React.FC<IHomeProps> = ({ theme, toggleTheme, isHome }) => {
+const Home: React.FC<IHomeProps> = ({ isHome }) => {
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
   useEffect(() => {
@@ -48,12 +46,7 @@ const Home: React.FC<IHomeProps> = ({ theme, toggleTheme, isHome }) => {
               }}
             </Script>
           </Head>
-          <Layout
-            isHome={isHome}
-            theme={theme}
-            toggleTheme={toggleTheme}
-            seo={{ ...customSeo }}
-          >
+          <Layout isHome={isHome} seo={{ ...customSeo }}>
             <Hero />
             <About />
             <Projects />

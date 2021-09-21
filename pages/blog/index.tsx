@@ -7,8 +7,6 @@ import styled from 'styled-components';
 import BlogCard from '@components/blogCard';
 
 interface BlogProps {
-  theme: string;
-  toggleTheme: () => void;
   isHome: boolean;
   posts: any;
 }
@@ -41,7 +39,7 @@ const blogSeo = {
   twitterUsername: '@zomeru_sama',
 };
 
-const Blog: React.FC<BlogProps> = ({ theme, toggleTheme, isHome, posts }) => {
+const Blog: React.FC<BlogProps> = ({ isHome, posts }) => {
   const [mappedPosts, setMappedPosts] = useState<any>([]);
   const [mappedImages, setMappedImages] = useState<string[]>([]);
 
@@ -74,7 +72,7 @@ const Blog: React.FC<BlogProps> = ({ theme, toggleTheme, isHome, posts }) => {
   return (
     <>
       <PageHead seo={{ ...blogSeo }} />
-      <BlogLayout isHome={isHome} theme={theme} toggleTheme={toggleTheme}>
+      <BlogLayout isHome={isHome}>
         <h2 className='section-heading'>My Blog Posts</h2>
         <StyledPostsContainer>
           <div className='blogcard-container'>

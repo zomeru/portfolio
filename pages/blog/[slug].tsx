@@ -113,8 +113,6 @@ interface SinglePostProps {
   slug: string;
   createdAt: string;
   updatedAt: string;
-  theme: string;
-  toggleTheme: () => void;
   isHome: boolean;
 }
 
@@ -123,14 +121,11 @@ const SinglePost: React.FC<SinglePostProps> = ({
   body,
   image,
   isHome,
-  theme,
-  toggleTheme,
   slug,
   createdAt,
   updatedAt,
 }) => {
   const [imageUrl, setImageUrl] = useState<any>('');
-  const [postSeo, setPostSeo] = useState<any>({});
 
   const imageHost = `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/production/`;
   let imgBaseUrl = image.asset._ref.replace('image-', '');
@@ -165,7 +160,7 @@ const SinglePost: React.FC<SinglePostProps> = ({
           url: `https://zomer.xyz/blog/${slug}`,
         }}
       />
-      <BlogLayout isHome={isHome} theme={theme} toggleTheme={toggleTheme}>
+      <BlogLayout isHome={isHome}>
         <StyledBlogHero imgUrl={imgUrl}>
           <div className='title-container'>
             <h1 className='blog-title'>{title}</h1>
