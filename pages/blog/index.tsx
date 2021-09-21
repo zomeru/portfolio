@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState, useEffect } from 'react';
 import BlogLayout from '@components/blogLayout';
-import PageHead from '@components/pageHead';
 import imageUrlBuilder from '@sanity/image-url';
 import styled from 'styled-components';
 import BlogCard from '@components/blogCard';
@@ -61,7 +60,6 @@ const Blog: React.FC<BlogProps> = ({ isHome, posts }) => {
 
   return (
     <>
-      {/* <PageHead seo={{ ...blogSeo }} /> */}
       <BlogLayout
         isHome={isHome}
         title=''

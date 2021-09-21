@@ -78,7 +78,6 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
   const [innerText, setInnerText] = useState('');
 
   const activeLinkHandler = e => {
-    console.log(e.target.innerText);
     setInnerText(e.target.innerText);
   };
 
