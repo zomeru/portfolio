@@ -10,8 +10,6 @@ import { ThemeModeContext } from '../contexts/ThemeModeContext';
 
 interface INavProps {
   isHome: boolean;
-  // prevScrollPos: number;
-  // curScrollPos: number;
 }
 
 const Nav: React.FC<INavProps> = ({ isHome }) => {
@@ -25,13 +23,11 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
 
   useEffect(() => {
     setCurScrollPos(window.pageYOffset);
-    console.log('Prev', prevScrollPos);
     window.onscroll = function () {
       const e = window.pageYOffset;
       setCurScrollPos(e);
       setPrevScrollPos(curScrollPos);
     };
-    console.log('Cur', curScrollPos);
   }, [curScrollPos]);
 
   const openHamburger = () => {

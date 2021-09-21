@@ -7,23 +7,6 @@ import { ThemeModeProvider } from '../src/contexts/ThemeModeContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
-
-  // const [prevScrollPos, setPrevScrollPos] = useState<number>();
-  // const [curScrollPos, setCurScrollPos] = useState<number>();
-
-  // useEffect(() => {
-  //   setCurScrollPos(window.pageYOffset);
-  //   console.log('Prev', prevScrollPos);
-  //   window.onscroll = function () {
-  //     const e = window.pageYOffset;
-  //     setCurScrollPos(e);
-  //     setPrevScrollPos(curScrollPos);
-  //   };
-  //   console.log('Cur', curScrollPos);
-  // }, [curScrollPos]);
-
-  console.log('RE-RENDER ALL');
-
   useEffect(() => {
     const handleRouteChange = (url: any) => {
       gtag.pageview(url);
@@ -43,8 +26,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         onScroll={() => console.log('ONSCROLL')}
         {...pageProps}
         isHome={isHome}
-        // curScrollPos={curScrollPos}
-        // prevScrollPos={prevScrollPos}
       />
     </ThemeModeProvider>
   );

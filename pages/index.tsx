@@ -10,15 +10,9 @@ import {
 } from '../src/components';
 interface IHomeProps {
   isHome: boolean;
-  // curScrollPos: number;
-  // prevScrollPos: number;
 }
 
-const Home: React.FC<IHomeProps> = ({
-  isHome,
-  // prevScrollPos,
-  // curScrollPos,
-}) => {
+const Home: React.FC<IHomeProps> = ({ isHome }) => {
   const [isMounted, setIsMounted] = useState<boolean>(false);
 
   useEffect(() => {
@@ -29,12 +23,7 @@ const Home: React.FC<IHomeProps> = ({
     <>
       <PageHead seo={{ ...customSeo }} />
       {isMounted && (
-        <Layout
-          isHome={isHome}
-          seo={{ ...customSeo }}
-          // prevScrollPos={prevScrollPos}
-          // curScrollPos={curScrollPos}
-        >
+        <Layout isHome={isHome} seo={{ ...customSeo }}>
           <Hero />
           <About />
           <Projects />
