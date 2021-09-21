@@ -26,7 +26,7 @@ export const StyledNav = styled.header`
       props.prevScrollPos > props.curScrollPos ? '0' : '-100%'};
     /* transform: translateY(300px); */
     /* transition: var(--transition2); */
-    transition: top 0.7s ease-in-out;
+    transition: top 0.55s ease-in-out;
   }
 
   a {
