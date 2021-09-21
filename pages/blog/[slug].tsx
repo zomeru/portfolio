@@ -151,16 +151,13 @@ const SinglePost: React.FC<SinglePostProps> = ({
 
   return (
     <>
-      <PageHead
-        seo={{
-          title: `Zomer Gregorio | Blog | ${title}`,
-          description: title as string,
-          image: imgUrl as string,
-          twitterUsername: '@zomeru_sama',
-          url: `https://zomer.xyz/blog/${slug}`,
-        }}
-      />
-      <BlogLayout isHome={isHome}>
+      <BlogLayout
+        isHome={isHome}
+        title={` | ${title}`}
+        url={`/${slug}`}
+        description={title as string}
+        image={imgUrl as string}
+      >
         <StyledBlogHero imgUrl={imgUrl}>
           <div className='title-container'>
             <h1 className='blog-title'>{title}</h1>

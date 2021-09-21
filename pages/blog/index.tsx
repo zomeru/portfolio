@@ -29,16 +29,6 @@ const StyledPostsContainer = styled.div`
   }
 `;
 
-const blogSeo = {
-  title: 'Zomer Gregorio | Blog',
-  url: 'https://zomer.xyz/blog',
-  description:
-    'Hi! I am Zomer Gregorio, and this my blog. Go read some articles.',
-  image:
-    'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/OG.png',
-  twitterUsername: '@zomeru_sama',
-};
-
 const Blog: React.FC<BlogProps> = ({ isHome, posts }) => {
   const [mappedPosts, setMappedPosts] = useState<any>([]);
   const [mappedImages, setMappedImages] = useState<string[]>([]);
@@ -71,8 +61,14 @@ const Blog: React.FC<BlogProps> = ({ isHome, posts }) => {
 
   return (
     <>
-      <PageHead seo={{ ...blogSeo }} />
-      <BlogLayout isHome={isHome}>
+      {/* <PageHead seo={{ ...blogSeo }} /> */}
+      <BlogLayout
+        isHome={isHome}
+        title=''
+        url=''
+        description='Hi! I am Zomer Gregorio, and this is my blog. Go read some articles.'
+        image='https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/OG-blog.png'
+      >
         <h2 className='section-heading'>My Blog Posts</h2>
         <StyledPostsContainer>
           <div className='blogcard-container'>

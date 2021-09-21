@@ -12,6 +12,7 @@ export const StyledNav = styled.header`
 
   nav {
     width: 100%;
+    max-width: var(--max-width);
     height: var(--nav-height);
     background-color: ${({ theme }) => theme.blogTitleCard};
     display: flex;
