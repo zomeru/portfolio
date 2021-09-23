@@ -77,7 +77,12 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
       prevScrollPos={prevScrollPos}
       curScrollPos={curScrollPos}
     >
-      <motion.nav variants={navVariants} initial='hidden' animate='visible'>
+      <motion.nav
+        className='nav'
+        variants={navVariants}
+        initial='hidden'
+        animate='visible'
+      >
         <motion.span className='logo' variants={navItemVariants}>
           <Logo />
         </motion.span>

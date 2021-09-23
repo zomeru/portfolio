@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { zomy } from '../assets/images/projects/index';
 
 const StyledBlogCard = styled.div`
   height: 250px;
@@ -32,7 +31,7 @@ const StyledBlogCard = styled.div`
     bottom: 0;
     left: 0;
     width: 100%;
-    z-index: 99999;
+    z-index: 200;
     background-color: ${({ theme }) => theme.blogTitleCard};
   }
   .card-title {

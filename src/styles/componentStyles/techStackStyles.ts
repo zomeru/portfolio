@@ -48,6 +48,11 @@ export const StyledTech = styled(motion.div)`
     display: inline-block;
     margin: 0 10px 15px 10px;
 
+    @media only screen and (max-width: 500px) {
+      height: 40px;
+      margin: 0 5px 10px 5px;
+    }
+
     .tech-content {
       display: flex;
       align-items: center;
@@ -59,6 +64,12 @@ export const StyledTech = styled(motion.div)`
         width: 30px;
         height: 30px;
         color: ${({ theme }) => theme.accentMain};
+
+        @media only screen and (max-width: 500px) {
+          width: 20px;
+          height: 20px;
+          margin-right: 10px;
+        }
       }
 
       p {

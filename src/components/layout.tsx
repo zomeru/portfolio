@@ -2,15 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Nav, Footer, Loader } from '.';
 import { StyledLayout } from '../styles/componentStyles';
-import { CustomSeoProps } from '../configs/types';
 
 interface ILayoutProps {
   children: React.ReactNode;
   isHome: boolean;
-  seo?: CustomSeoProps;
 }
 
-const Layout: React.FC<ILayoutProps> = ({ children, isHome, seo }) => {
+const Layout: React.FC<ILayoutProps> = ({ children, isHome }) => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   useEffect(() => {

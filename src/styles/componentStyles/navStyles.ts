@@ -13,7 +13,7 @@ export const StyledNav = styled.header<{
   transition: var(--transition2);
   transition: top 0.2s ease-in-out;
 
-  nav {
+  .nav {
     width: 100%;
     max-width: var(--max-width);
     height: var(--nav-height);

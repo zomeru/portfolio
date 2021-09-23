@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { GetServerSidePropsContext } from 'next';
 import imageUrlBuilder from '@sanity/image-url';
 import BlockContent from '@sanity/block-content-to-react';
+import Link from 'next/link';
 import styled from 'styled-components';
 import BlogLayout from '@components/blogLayout';
-import PageHead from '@components/pageHead';
 
 const StyledBlogHero = styled.div`
   width: 100%;
@@ -19,12 +19,13 @@ const StyledBlogHero = styled.div`
   justify-content: flex-start;
   align-items: center;
   margin-bottom: 70px;
+  margin-top: 30px;
 
   .title-container {
     height: 60%;
     width: 60%;
     background-color: ${({ theme }) => theme.blogTitleCard};
-    padding: 20px;
+    padding: 20px 20px;
     display: flex;
     flex-direction: column;
 
@@ -38,10 +39,14 @@ const StyledBlogHero = styled.div`
       width: 85%;
       height: 75%;
     }
+
+    @media only screen and (max-width: 500px) {
+      padding: 5px 10px;
+    }
   }
 
   .blog-title {
-    font-size: clamp(27px, 5vw, 50px);
+    font-size: clamp(20px, 5vw, 50px);
   }
 
   .author {
@@ -58,6 +63,11 @@ const StyledBlogHero = styled.div`
     width: 40px;
     border-radius: 100px;
     margin-right: 15px;
+
+    @media only screen and (max-width: 500px) {
+      height: 30px;
+      width: 30px;
+    }
   }
 
   .dates {
@@ -65,9 +75,10 @@ const StyledBlogHero = styled.div`
   }
 `;
 
-const StyledBlogContent = styled.div`
+const StyledBlogContent = styled.section`
   margin: 0 auto;
   max-width: 800px;
+  height: auto;
 
   ul {
     list-style: inside;
@@ -95,8 +106,7 @@ const StyledBlogContent = styled.div`
   p {
     text-indent: 50px;
     line-height: 30px;
-    text-align: justify;
-    letter-spacing: 1.2px;
+    letter-spacing: 1px;
     margin-bottom: 30px;
     color: ${({ theme }) => theme.textSecond};
   }
@@ -105,6 +115,21 @@ const StyledBlogContent = styled.div`
     margin-bottom: 200px;
   }
 `;
+
+const monthNames = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
 
 interface SinglePostProps {
   title: string;
@@ -149,6 +174,21 @@ const SinglePost: React.FC<SinglePostProps> = ({
     setImageUrl(imageBuilder.image(image));
   }, [image]);
 
+  const createDate = new Date(createdAt);
+  const modifyDate = new Date(updatedAt);
+  const isModified = updatedAt > createdAt;
+
+  const newCreateDate = `${
+    monthNames[createDate.getMonth()]
+  } ${createDate.getDate()}, ${createDate.getFullYear()}`;
+  const newModifyDate = `${
+    monthNames[modifyDate.getMonth()]
+  } ${modifyDate.getDate()}, ${modifyDate.getFullYear()}`;
+
+  const dateToBeDisplayed = `${
+    isModified ? `Modified: ${newModifyDate}` : `Created: ${newCreateDate}`
+  }`;
+
   return (
     <>
       <BlogLayout
@@ -158,6 +198,10 @@ const SinglePost: React.FC<SinglePostProps> = ({
         description={title as string}
         image={imgUrl as string}
       >
+        <Link href='/blog'>
+          <a className='link go-back'>{'< Go back'}</a>
+        </Link>
+
         <StyledBlogHero imgUrl={imgUrl}>
           <div className='title-container'>
             <h1 className='blog-title'>{title}</h1>
@@ -169,9 +213,7 @@ const SinglePost: React.FC<SinglePostProps> = ({
               />
 
               <p className='dates'>
-                <span>Zomer Gregorio</span> |{' '}
-                <span>created: {new Date(createdAt).toLocaleString()}</span> |
-                <span> modified: {new Date(updatedAt).toLocaleString()}</span>
+                <span>Zomer Gregorio</span> | <span>{dateToBeDisplayed}</span>
               </p>
             </div>
           </div>

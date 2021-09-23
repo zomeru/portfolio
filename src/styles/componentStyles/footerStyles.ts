@@ -5,7 +5,7 @@ export const StyledFooter = styled.footer`
   text-align: center;
   width: 100%;
   margin: 0 auto;
-  /* margin-bottom: 30px; */
+  margin-bottom: 30px;
 
   a {
     font-size: var(--fz-sm);

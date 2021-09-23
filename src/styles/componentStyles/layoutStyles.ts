@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const StyledLayout = styled.div`
-  height: auto;
+  min-height: 100vh;
   max-width: var(--max-width);
   margin: 0 auto;
 `;

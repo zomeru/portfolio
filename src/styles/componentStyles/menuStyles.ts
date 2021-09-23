@@ -3,16 +3,19 @@ import { motion } from 'framer-motion';
 
 export const StyledMenu = styled(motion.div)<{
   menuOpen: boolean;
-  open: boolean;
 }>`
   display: none;
   position: ${({ menuOpen }) => (menuOpen ? 'fixed' : 'absolute')};
   right: 35px;
-  z-index: 99;
+  z-index: 9999;
   margin-right: 35px;
 
+  @media only screen and (max-width: 380px) {
+    margin-right: 5px;
+  }
+
   @media only screen and (max-width: 768px) {
-    display: block;
+    display: ${({ menuOpen }) => (menuOpen ? 'fixed' : 'block')};
   }
 
   .hamburger-button {
@@ -73,7 +76,7 @@ export const StyledMenu = styled(motion.div)<{
     transform: translate(0, -50%) rotate(45deg);
   }
 
-  nav {
+  .menu-nav {
     position: fixed;
     z-index: 14;
     top: 0;

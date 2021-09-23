@@ -10,9 +10,8 @@ interface BlogProps {
   posts: any;
 }
 
-const StyledPostsContainer = styled.div`
-  height: auto;
-  margin-bottom: 60px;
+const StyledPostsContainer = styled.section`
+  height: calc(100vh - (200px));
 
   .blogcard-container {
     margin: 0 auto;
@@ -67,8 +66,8 @@ const Blog: React.FC<BlogProps> = ({ isHome, posts }) => {
         description='Hi! I am Zomer Gregorio, and this is my blog. Go read some articles.'
         image='https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/OG-blog.png'
       >
-        <h2 className='section-heading'>My Blog Posts</h2>
         <StyledPostsContainer>
+          <h2 className='section-heading'>My Blog Posts</h2>
           <div className='blogcard-container'>
             {mappedPosts.length ? (
               mappedPosts.map((p, index) => {

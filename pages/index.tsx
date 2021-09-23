@@ -23,7 +23,7 @@ const Home: React.FC<IHomeProps> = ({ isHome }) => {
     <>
       <PageHead seo={{ ...customSeo }} />
       {isMounted && (
-        <Layout isHome={isHome} seo={{ ...customSeo }}>
+        <Layout isHome={isHome}>
           <Hero />
           <About />
           <Projects />

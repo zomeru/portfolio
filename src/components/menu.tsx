@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { navLinks } from '../configs/data';
 import ToggleTheme from './ToggleTheme';
@@ -10,20 +10,24 @@ interface IMenuProps {
 
 const Menu: React.FC<IMenuProps> = ({ variants }) => {
   const [menuOpen, setMenuOpen] = React.useState<boolean>(false);
-  const [open, setOpen] = React.useState<boolean>(false);
 
-  const openHamburger = () => {
-    setOpen(open => !open);
+  const openMenuHandler = () => {
+    setMenuOpen(!menuOpen);
   };
 
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'visible';
+    }
+  }, [menuOpen]);
+
   return (
-    <StyledMenu variants={variants} open={open} menuOpen={menuOpen}>
+    <StyledMenu variants={variants} menuOpen={menuOpen}>
       <ul
-        onClick={() => {
-          setMenuOpen(!menuOpen);
-          openHamburger();
-        }}
-        className={`hamburger-button ${open ? 'active' : ''}`}
+        onClick={openMenuHandler}
+        className={`hamburger-button ${menuOpen ? 'active' : ''}`}
       >
         <li></li>
         <li></li>
@@ -33,10 +37,9 @@ const Menu: React.FC<IMenuProps> = ({ variants }) => {
         menuOpen={menuOpen}
         onClick={() => {
           setMenuOpen(false);
-          openHamburger();
         }}
       />
-      <nav>
+      <div className='menu-nav'>
         <ul>
           <ToggleTheme className='toggle-icon' />
           {navLinks.map(({ name, url }) => (
@@ -44,7 +47,6 @@ const Menu: React.FC<IMenuProps> = ({ variants }) => {
               key={name}
               onClick={() => {
                 setMenuOpen(false);
-                openHamburger();
               }}
             >
               <Link href={url}>
@@ -53,7 +55,7 @@ const Menu: React.FC<IMenuProps> = ({ variants }) => {
             </li>
           ))}
         </ul>
-      </nav>
+      </div>
     </StyledMenu>
   );
 };

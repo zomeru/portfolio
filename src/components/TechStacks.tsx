@@ -27,7 +27,7 @@ const TechStacks = () => {
             return (
               <motion.li key={id} variants={fadeUpQuick}>
                 <div className='tech-content'>
-                  <Icon className={`logo`} />
+                  <Icon className='logo' />
                   <p>{name}</p>
                 </div>
               </motion.li>
@@ -46,7 +46,7 @@ const TechStacks = () => {
             return (
               <motion.li key={id} variants={fadeUpQuick}>
                 <div className='tech-content'>
-                  <Icon className={`logo`} />
+                  <Icon className='logo' />
                   <p className=''>{name}</p>
                 </div>
               </motion.li>
