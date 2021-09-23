@@ -51,5 +51,4 @@ const nextConfig = {
   },
 };
 
-// module.exports = withPlugins([[withPWA, pwaConfig]], nextConfig);
-module.exports = withPlugins([], nextConfig);
+module.exports = withPlugins([[withPWA, pwaConfig]], nextConfig);
