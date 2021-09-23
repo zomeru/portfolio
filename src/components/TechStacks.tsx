@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import useScrollReveal from '../hooks/useScrollReveal';
 import { parentVar, fadeUp, fadeUpQuick } from '../configs/animations';
-import { skills } from '../configs/data';
+import { skills, softSkills } from '../configs/data';
 import { StyledTechStacks, StyledTech } from '../styles/componentStyles';
 
 const TechStacks = () => {
@@ -29,6 +29,25 @@ const TechStacks = () => {
                 <div className='tech-content'>
                   <Icon className={`logo`} />
                   <p>{name}</p>
+                </div>
+              </motion.li>
+            );
+          })}
+        </motion.ul>
+      </StyledTech>
+      <motion.h1 className='soft-skills' variants={fadeUp}>
+        SOFT SKILLS
+      </motion.h1>
+      <StyledTech>
+        <motion.ul>
+          {softSkills.map(skill => {
+            const { id, name, Icon } = skill;
+
+            return (
+              <motion.li key={id} variants={fadeUpQuick}>
+                <div className='tech-content'>
+                  <Icon className={`logo`} />
+                  <p className=''>{name}</p>
                 </div>
               </motion.li>
             );

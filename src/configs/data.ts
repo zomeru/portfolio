@@ -10,8 +10,12 @@ import {
   AiFillHtml5,
   AiFillGithub,
   AiFillApi,
+  AiOutlineTeam,
+  AiFillMessage,
 } from 'react-icons/ai';
 import { FiTwitter, FiLinkedin, FiGithub, FiFacebook } from 'react-icons/fi';
+import { GiPlayerTime, GiThink } from 'react-icons/gi';
+import { BsArrowRepeat } from 'react-icons/bs';
 import { IoLogoSass, IoLogoLinkedin } from 'react-icons/io';
 import {
   SiTypescript,
@@ -19,8 +23,17 @@ import {
   SiFirebase,
   SiJavascript,
   SiMongodb,
+  SiStyledComponents,
 } from 'react-icons/si';
-import { FaReact, FaNodeJs, FaGitAlt } from 'react-icons/fa';
+import {
+  FaReact,
+  FaNodeJs,
+  FaGitAlt,
+  FaAssistiveListeningSystems,
+  FaFistRaised,
+  FaHandHoldingHeart,
+  FaPuzzlePiece,
+} from 'react-icons/fa';
 import { zomify, zomyfile, forkify, zomy } from '../assets/images/projects';
 
 export const navLinks: INavLinks[] = [
@@ -94,10 +107,15 @@ export const skills: ISkills[] = [
     name: 'React.js',
     Icon: FaReact,
   },
+  // {
+  //   id: 'react-native',
+  //   name: 'React Native',
+  //   Icon: FaReact,
+  // },
   {
-    id: 'react-native',
-    name: 'React Native',
-    Icon: FaReact,
+    id: 'styled-components',
+    name: 'Styled-Components',
+    Icon: SiStyledComponents,
   },
   {
     id: 'tailwind',
@@ -133,6 +151,54 @@ export const skills: ISkills[] = [
     id: 'git',
     name: 'Git',
     Icon: FaGitAlt,
+  },
+];
+
+export const softSkills: ISkills[] = [
+  {
+    id: 'teamplayer',
+    name: 'Team Player',
+    Icon: AiOutlineTeam,
+  },
+  {
+    id: 'fast-independent',
+    name: 'Fast and Independent Learner',
+    Icon: GiPlayerTime,
+  },
+  {
+    id: 'adaptive',
+    name: 'Adaptive',
+    Icon: BsArrowRepeat,
+  },
+  {
+    id: 'listener',
+    name: 'Listener',
+    Icon: FaAssistiveListeningSystems,
+  },
+  {
+    id: 'highly-motivated',
+    name: 'Highly Motivated',
+    Icon: FaFistRaised,
+  },
+  {
+    id: 'passionate',
+    name: 'Passionate',
+    Icon: FaHandHoldingHeart,
+  },
+  {
+    id: 'communication',
+    name: 'Communication',
+    Icon: AiFillMessage,
+  },
+  {
+    id: 'critical-thinker',
+    name: 'Critical Thinker',
+    Icon: GiThink,
+  },
+  {
+    id: 'problem-solver',
+    name: 'Problem Solver',
+    Icon: FaPuzzlePiece,
   },
 ];
 

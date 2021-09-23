@@ -13,6 +13,10 @@ export const StyledTechStacks = styled(motion.div)`
   > p {
     color: ${({ theme }) => theme.textSecond};
   }
+
+  .soft-skills {
+    margin-top: 50px;
+  }
 `;
 
 export const StyledTech = styled(motion.div)`
@@ -21,13 +25,13 @@ export const StyledTech = styled(motion.div)`
   margin-top: 30px;
 
   ul {
-    max-width: 80%;
+    max-width: 90%;
     display: flex;
     flex-flow: wrap;
     justify-content: center;
 
     @media only screen and (max-width: 1080px) {
-      max-width: 85%;
+      max-width: 95%;
     }
 
     @media only screen and (max-width: 768px) {

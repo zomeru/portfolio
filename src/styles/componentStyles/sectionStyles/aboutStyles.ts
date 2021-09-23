@@ -5,6 +5,7 @@ export const StyledAbout = styled(motion.section)`
   max-width: 1000px;
   padding: 40px 100px;
   height: auto;
+  margin-bottom: 0px;
 
   @media only screen and (max-width: 1000px) {
     padding: 40px 50px;
