@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 
-export const StyledNav = styled.header`
+export const StyledNav = styled.header<{
+  prevScrollPos: number;
+  curScrollPos: number;
+}>`
   z-index: 9999;
   display: flex;
   align-items: center;
@@ -23,10 +26,8 @@ export const StyledNav = styled.header`
     user-select: auto !important;
     backdrop-filter: blur(10px);
     position: fixed;
-    top: ${(props: any) =>
-      props.prevScrollPos > props.curScrollPos ? '0' : '-100%'};
-    /* transform: translateY(300px); */
-    /* transition: var(--transition2); */
+    top: ${({ prevScrollPos, curScrollPos }) =>
+      prevScrollPos > curScrollPos ? '0' : '-100%'};
     transition: top 0.55s ease-in-out;
   }
 
