@@ -29,7 +29,7 @@ const BlogLayout: React.FC<IBlogLayoutProps> = ({
     <>
       <PageHead
         seo={{
-          title: `Zomer Gregorio | Blog${title}`,
+          title: `${title}Blog | Zomer Gregorio`,
           url: `https://zomer.xyz/blog${url}`,
           description,
           image,

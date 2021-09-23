@@ -193,7 +193,7 @@ const SinglePost: React.FC<SinglePostProps> = ({
     <>
       <BlogLayout
         isHome={isHome}
-        title={` | ${title}`}
+        title={`${title} | `}
         url={`/${slug}`}
         description={title as string}
         image={imgUrl as string}
