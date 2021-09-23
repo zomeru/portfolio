@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 
-export const StyledToggle = styled(motion.div)`
+export const StyledToggle = styled(motion.div)<{ isMenu: boolean }>`
   cursor: pointer;
   height: 25px;
   width: 25px;
@@ -14,7 +14,6 @@ export const StyledToggle = styled(motion.div)`
     transition: var(--transition2);
     height: 100%;
     width: 100%;
-    color: ${(props: any) =>
-      props.isMenu ? 'var(--white)' : props.theme.textMain};
+    color: ${({ theme, isMenu }) => (isMenu ? 'var(--white)' : theme.textMain)};
   }
 `;

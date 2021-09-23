@@ -14,7 +14,6 @@ interface INavProps {
 const Nav: React.FC<INavProps> = ({ isHome }) => {
   const { theme, toggleTheme } = useContext(ThemeModeContext);
 
-  const [open, setOpen] = useState<boolean>(false);
   const [hostURL, setHostURL] = useState<string>('');
 
   const [prevScrollPos, setPrevScrollPos] = useState<number>(1);
@@ -28,10 +27,6 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
       setPrevScrollPos(curScrollPos);
     };
   }, [curScrollPos]);
-
-  const openHamburger = () => {
-    setOpen(open => !open);
-  };
 
   //? ANIMATIONS
   const navVariants: Variants = {
@@ -126,8 +121,6 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
           variants={navItemVariants}
           theme={theme}
           toggleTheme={toggleTheme}
-          open={open}
-          openHamburger={openHamburger}
         />
       </motion.nav>
     </StyledNav>

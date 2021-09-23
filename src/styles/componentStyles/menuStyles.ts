@@ -1,9 +1,12 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 
-export const StyledMenu = styled(motion.div)`
+export const StyledMenu = styled(motion.div)<{
+  menuOpen: boolean;
+  open: boolean;
+}>`
   display: none;
-  position: ${(props: any) => (props.menuOpen ? 'fixed' : 'absolute')};
+  position: ${({ menuOpen }) => (menuOpen ? 'fixed' : 'absolute')};
   right: 35px;
   z-index: 99;
   margin-right: 35px;
@@ -25,6 +28,7 @@ export const StyledMenu = styled(motion.div)`
 
     :hover {
       border: 2px solid ${({ theme }) => theme.accentMain};
+      transition: var(--transition3);
     }
 
     :hover li {
@@ -38,8 +42,7 @@ export const StyledMenu = styled(motion.div)`
     transform: translate(0, -50%);
     width: 80%;
     height: 4px;
-    background: ${(props: any) =>
-      props.open ? 'var(--white)' : props.theme.textMain};
+    background: ${({ theme }) => theme.textMain};
     opacity: 1;
     transition: transform 0.3s, top 0.3s, opacity 0.3s;
     transition-delay: 0s, 0.3s, 0.3s;
@@ -77,9 +80,11 @@ export const StyledMenu = styled(motion.div)`
     bottom: 0;
     right: 0;
     background: ${({ theme }) => theme.menuNav};
-    width: min(75vw, 400px);
+    width: ${({ menuOpen }) => (menuOpen ? '70vw' : 0)};
     height: 100vh;
     padding-top: 50px;
+    opacity: ${({ menuOpen }) => (menuOpen ? 1 : 0)};
+    transition: var(--transition3);
 
     .toggle-icon {
       width: 50px;
@@ -104,15 +109,15 @@ export const StyledMenu = styled(motion.div)`
   }
 `;
 
-export const StyledSidebar = styled.div`
+export const StyledSidebar = styled.div<{ menuOpen: boolean }>`
   position: fixed;
   z-index: 10;
   top: 0;
   bottom: 0;
   right: 0;
-  width: 100%;
-  transition: var(--transition3);
-  background: ${({ theme }) => theme.bgBlur};
-
-  opacity: 0.95;
+  width: ${({ menuOpen }) => (menuOpen ? '120vw' : '0')};
+  height: 100vh;
+  background: ${({ theme }) => theme.menuNav};
+  opacity: 0.7;
+  transition: var(--transition2);
 `;

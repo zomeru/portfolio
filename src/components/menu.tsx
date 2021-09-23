@@ -5,25 +5,21 @@ import ToggleTheme from './ToggleTheme';
 import { StyledMenu, StyledSidebar } from '../styles/componentStyles';
 
 interface IMenuProps {
-  openHamburger: () => void;
-  open: boolean;
   theme: string;
   toggleTheme: () => void;
   variants?: any;
 }
 
-const Menu: React.FC<IMenuProps> = ({
-  openHamburger,
-  open,
-  theme,
-  toggleTheme,
-  variants,
-}) => {
+const Menu: React.FC<IMenuProps> = ({ theme, toggleTheme, variants }) => {
   const [menuOpen, setMenuOpen] = React.useState<boolean>(false);
+  const [open, setOpen] = React.useState<boolean>(false);
+
+  const openHamburger = () => {
+    setOpen(open => !open);
+  };
 
   return (
-    // @ts-ignore
-    <StyledMenu variants={variants} menuOpen={menuOpen}>
+    <StyledMenu variants={variants} open={open} menuOpen={menuOpen}>
       <ul
         onClick={() => {
           setMenuOpen(!menuOpen);
@@ -35,38 +31,35 @@ const Menu: React.FC<IMenuProps> = ({
         <li></li>
         <li></li>
       </ul>
-      {open && (
-        <>
-          <StyledSidebar
-            onClick={() => {
-              setMenuOpen(false);
-              openHamburger();
-            }}
+      <StyledSidebar
+        menuOpen={menuOpen}
+        onClick={() => {
+          setMenuOpen(false);
+          openHamburger();
+        }}
+      />
+      <nav>
+        <ul>
+          <ToggleTheme
+            className='toggle-icon'
+            theme={theme}
+            toggleTheme={toggleTheme}
           />
-          <nav>
-            <ul>
-              <ToggleTheme
-                className='toggle-icon'
-                theme={theme}
-                toggleTheme={toggleTheme}
-              />
-              {navLinks.map(({ name, url }) => (
-                <li
-                  key={name}
-                  onClick={() => {
-                    setMenuOpen(false);
-                    openHamburger();
-                  }}
-                >
-                  <Link href={url}>
-                    <a>{name}</a>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </>
-      )}
+          {navLinks.map(({ name, url }) => (
+            <li
+              key={name}
+              onClick={() => {
+                setMenuOpen(false);
+                openHamburger();
+              }}
+            >
+              <Link href={url}>
+                <a>{name}</a>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
     </StyledMenu>
   );
 };

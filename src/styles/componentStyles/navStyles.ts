@@ -53,9 +53,5 @@ export const StyledLinks = styled.div`
     li {
       margin-right: 50px;
     }
-
-    /* li:not(:last-child) {
-      margin-right: 50px;
-    } */
   }
 `;
