@@ -109,6 +109,10 @@ const StyledBlogContent = styled.section`
     letter-spacing: 1px;
     margin-bottom: 30px;
     color: ${({ theme }) => theme.textSecond};
+
+    @media only screen and (max-width: 500px) {
+      line-height: normal;
+    }
   }
 
   .end {
