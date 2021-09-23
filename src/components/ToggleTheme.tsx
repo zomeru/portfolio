@@ -1,19 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { RiMoonClearLine } from 'react-icons/ri';
 import { FiSun } from 'react-icons/fi';
 import { StyledToggle } from '../styles/componentStyles';
+import { ThemeModeContext } from 'src/contexts/ThemeModeContext';
 
 interface IToggleThemeProps {
-  theme: string;
-  toggleTheme: () => void;
   className?: string;
 }
 
-const ToggleTheme: React.FC<IToggleThemeProps> = ({
-  theme,
-  toggleTheme,
-  className,
-}) => {
+const ToggleTheme: React.FC<IToggleThemeProps> = ({ className }) => {
+  const { theme, toggleTheme } = useContext(ThemeModeContext);
+
   return (
     <StyledToggle className={className} onClick={toggleTheme}>
       {theme === 'light' ? (

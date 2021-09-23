@@ -5,12 +5,10 @@ import ToggleTheme from './ToggleTheme';
 import { StyledMenu, StyledSidebar } from '../styles/componentStyles';
 
 interface IMenuProps {
-  theme: string;
-  toggleTheme: () => void;
   variants?: any;
 }
 
-const Menu: React.FC<IMenuProps> = ({ theme, toggleTheme, variants }) => {
+const Menu: React.FC<IMenuProps> = ({ variants }) => {
   const [menuOpen, setMenuOpen] = React.useState<boolean>(false);
   const [open, setOpen] = React.useState<boolean>(false);
 
@@ -40,11 +38,7 @@ const Menu: React.FC<IMenuProps> = ({ theme, toggleTheme, variants }) => {
       />
       <nav>
         <ul>
-          <ToggleTheme
-            className='toggle-icon'
-            theme={theme}
-            toggleTheme={toggleTheme}
-          />
+          <ToggleTheme className='toggle-icon' />
           {navLinks.map(({ name, url }) => (
             <li
               key={name}

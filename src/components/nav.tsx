@@ -5,15 +5,11 @@ import { navLinks } from '../configs/data';
 import ToggleTheme from './ToggleTheme';
 import Menu from './menu';
 import { StyledNav, StyledLinks } from '../styles/componentStyles';
-import { ThemeModeContext } from '../contexts/ThemeModeContext';
-
 interface INavProps {
   isHome: boolean;
 }
 
 const Nav: React.FC<INavProps> = ({ isHome }) => {
-  const { theme, toggleTheme } = useContext(ThemeModeContext);
-
   const [hostURL, setHostURL] = useState<string>('');
 
   const [prevScrollPos, setPrevScrollPos] = useState<number>(1);
@@ -113,15 +109,11 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
               key={navLinks.length}
               variants={navItemVariants}
             >
-              <ToggleTheme theme={theme} toggleTheme={toggleTheme} />
+              <ToggleTheme />
             </motion.li>
           </ul>
         </StyledLinks>
-        <Menu
-          variants={navItemVariants}
-          theme={theme}
-          toggleTheme={toggleTheme}
-        />
+        <Menu variants={navItemVariants} />
       </motion.nav>
     </StyledNav>
   );

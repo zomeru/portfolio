@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 
-export const useDarkMode = () => {
-  const [theme, setTheme] = useState<string>('light');
+type ThemeMode = 'light' | 'dark';
 
-  const setMode = (mode: string) => {
+export const useDarkMode = () => {
+  const [theme, setTheme] = useState<ThemeMode>('light');
+
+  const setMode = (mode: ThemeMode) => {
     window.localStorage.setItem('theme', mode);
     setTheme(mode);
   };
@@ -13,8 +15,10 @@ export const useDarkMode = () => {
   };
 
   useEffect(() => {
-    const localTheme = window.localStorage.getItem('theme');
-    localTheme ? setTheme(localTheme) : setMode('light');
+    const localTheme: ThemeMode = window.localStorage.getItem(
+      'theme'
+    ) as ThemeMode;
+    localTheme ? setTheme(localTheme) : setTheme('light');
   }, []);
 
   return [theme, toggleTheme];
