@@ -11,6 +11,7 @@ const PageHead: React.FC<PageHeadProps> = ({ seo }) => {
   return (
     <Head>
       <meta name='viewport' content='initial-scale=1.0, width=device-width' />
+
       <meta name='description' content={seo.description} />
       <meta name='image' content={seo.image} />
 

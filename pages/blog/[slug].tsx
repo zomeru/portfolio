@@ -270,7 +270,7 @@ export async function getServerSideProps(
         image: post.mainImage,
         createdAt: post._createdAt,
         updatedAt: post._updatedAt,
-        slug: post.slug,
+        slug: post.slug.current,
       },
     };
   }
