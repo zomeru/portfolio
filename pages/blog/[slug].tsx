@@ -103,6 +103,11 @@ const StyledBlogContent = styled.section`
     margin: 20px 0;
   }
 
+  ol,
+  ul {
+    margin-bottom: 30px;
+  }
+
   p {
     text-indent: 50px;
     line-height: 30px;
