@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Nav, Footer, PageHead } from '.';
 import { StyledLayout } from '../styles/componentStyles';
 
@@ -19,12 +19,6 @@ const BlogLayout: React.FC<IBlogLayoutProps> = ({
   description,
   image,
 }) => {
-  const [isMounted, setIsMounted] = useState<boolean>(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   return (
     <>
       <PageHead
@@ -36,13 +30,11 @@ const BlogLayout: React.FC<IBlogLayoutProps> = ({
           twitterUsername: '@zomeru_sama',
         }}
       />
-      {isMounted && (
-        <StyledLayout id='root'>
-          <Nav isHome={isHome} />
-          <main>{children}</main>
-          <Footer />
-        </StyledLayout>
-      )}
+      <StyledLayout id='root'>
+        <Nav isHome={isHome} />
+        <main>{children}</main>
+        <Footer />
+      </StyledLayout>
     </>
   );
 };

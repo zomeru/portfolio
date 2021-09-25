@@ -159,28 +159,17 @@ const SinglePost: React.FC<SinglePostProps> = ({
   createdAt,
   updatedAt,
 }) => {
-  const [imageUrl, setImageUrl] = useState<any>('');
-
-  const imageHost = `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/production/`;
-  let imgBaseUrl = image.asset._ref.replace('image-', '');
-
-  if (imgBaseUrl.indexOf('png') > -1) {
-    imgBaseUrl = imgBaseUrl.replace('-png', '.png');
-  } else if (imgBaseUrl.indexOf('jpg') > -1) {
-    imgBaseUrl = imgBaseUrl.replace('-jpg', '.jpg');
-  } else {
-    imgBaseUrl = imgBaseUrl.replace('-jpeg', '.jpeg');
-  }
-
-  const imgUrl = `${imageHost}${imgBaseUrl}`;
+  const [imageUrl, setImageUrl] = useState<string>('');
 
   useEffect(() => {
-    const imageBuilder = imageUrlBuilder({
-      projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID as string,
-      dataset: 'production',
-    });
+    if (image) {
+      const imageBuilder = imageUrlBuilder({
+        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
+        dataset: 'production',
+      });
 
-    setImageUrl(imageBuilder.image(image));
+      setImageUrl(`${imageBuilder.image(image)}`);
+    }
   }, [image]);
 
   const createDate = new Date(createdAt);
@@ -204,14 +193,14 @@ const SinglePost: React.FC<SinglePostProps> = ({
         isHome={isHome}
         title={`${title} | `}
         url={`/${slug}`}
-        description={title as string}
-        image={imgUrl as string}
+        description={title}
+        image={imageUrl}
       >
         <Link href='/blog'>
           <a className='link go-back'>{'< Go back'}</a>
         </Link>
 
-        <StyledBlogHero imgUrl={imgUrl}>
+        <StyledBlogHero imgUrl={imageUrl}>
           <div className='title-container'>
             <h1 className='blog-title'>{title}</h1>
             <div className='author'>

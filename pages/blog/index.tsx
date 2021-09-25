@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 import React, { useState, useEffect } from 'react';
 import BlogLayout from '@components/blogLayout';
 import imageUrlBuilder from '@sanity/image-url';
@@ -7,7 +6,9 @@ import BlogCard from '@components/blogCard';
 
 interface BlogProps {
   isHome: boolean;
-  posts: any;
+  images: any;
+  titles: Array<string>;
+  slugs: Array<string>;
 }
 
 const StyledPostsContainer = styled.section`
@@ -27,35 +28,23 @@ const StyledPostsContainer = styled.section`
   }
 `;
 
-const Blog: React.FC<BlogProps> = ({ isHome, posts }) => {
-  const [mappedPosts, setMappedPosts] = useState<any>([]);
+const Blog: React.FC<BlogProps> = ({ isHome, images, titles, slugs }) => {
   const [mappedImages, setMappedImages] = useState<string[]>([]);
 
-  const imageHost = `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/production/`;
-
   useEffect(() => {
-    if (posts.length) {
+    if (images.length) {
       const imgBuilder = imageUrlBuilder({
-        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID as string,
+        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
         dataset: 'production',
       });
 
       setMappedImages(
-        posts.map(p => {
-          return `${imgBuilder.image(p.mainImage)}`;
-        })
-      );
-
-      setMappedPosts(
-        posts.map(p => {
-          return {
-            ...p,
-            mainImage: imgBuilder.image(p.mainImage).width(500).height(250),
-          };
+        images.map(image => {
+          return `${imgBuilder.image(image)}`;
         })
       );
     }
-  }, []);
+  }, [images]);
 
   return (
     <>
@@ -69,24 +58,14 @@ const Blog: React.FC<BlogProps> = ({ isHome, posts }) => {
         <StyledPostsContainer>
           <h2 className='section-heading'>My Blog Posts</h2>
           <div className='blogcard-container'>
-            {mappedPosts.length ? (
-              mappedPosts.map((p, index) => {
-                let imgBaseUrl = mappedImages[index].replace('image-', '');
-
-                if (imgBaseUrl.indexOf('png') > -1) {
-                  imgBaseUrl = imgBaseUrl.replace('-png', '.png');
-                } else if (imgBaseUrl.indexOf('jpg') > -1) {
-                  imgBaseUrl = imgBaseUrl.replace('-jpg', '.jpg');
-                } else {
-                  imgBaseUrl = imgBaseUrl.replace('-jpeg', '.jpeg');
-                }
-
+            {mappedImages.length ? (
+              mappedImages.map((image, index) => {
                 return (
                   <BlogCard
-                    slug={p.slug.current}
-                    thumbnail={`${imgBaseUrl}`}
-                    title={p.title}
-                    key={index}
+                    slug={slugs[index]}
+                    thumbnail={image as string}
+                    title={titles[index]}
+                    key={slugs[index]}
                   ></BlogCard>
                 );
               })
@@ -116,7 +95,9 @@ export const getServerSideProps = async pageContext => {
   } else {
     return {
       props: {
-        posts: result.result,
+        images: result.result.map(p => p.mainImage),
+        titles: result.result.map(p => p.title),
+        slugs: result.result.map(p => p.slug.current),
       },
     };
   }

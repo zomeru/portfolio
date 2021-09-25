@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { customSeo } from '../src/configs/data';
 import {
   Layout,
@@ -13,23 +12,15 @@ interface IHomeProps {
 }
 
 const Home: React.FC<IHomeProps> = ({ isHome }) => {
-  const [isMounted, setIsMounted] = useState<boolean>(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   return (
     <>
       <PageHead seo={{ ...customSeo }} />
-      {isMounted && (
-        <Layout isHome={isHome}>
-          <Hero />
-          <About />
-          <Projects />
-          <Contact />
-        </Layout>
-      )}
+      <Layout isHome={isHome}>
+        <Hero />
+        <About />
+        <Projects />
+        <Contact />
+      </Layout>
     </>
   );
 };
