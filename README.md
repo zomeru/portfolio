@@ -13,6 +13,7 @@
   <li>Framer Motion</li>
   <li>React Intersection Observer</li>
   <li>React Icons</li>
+  <li>Sanity (CMS)</li>
   <li>Passion and Love ❤</li>
 </ul>
 <br>
