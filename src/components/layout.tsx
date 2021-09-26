@@ -17,9 +17,14 @@ const Layout: React.FC<ILayoutProps> = ({ children, isHome }) => {
      ** when you came from another page
      */
     if (window.location.hash && isLoaded && isHome) {
-      document
-        .getElementById(`${window.location.hash.substring(1)}`)
-        .scrollIntoView(true);
+      const yOffset = window.location.hash === '#projects' ? -650 : -50;
+      const element = document.getElementById(
+        `${window.location.hash.substring(1)}`
+      );
+      const y =
+        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+      window.scrollTo({ top: y, behavior: 'smooth' });
     }
 
     setTimeout(() => {
