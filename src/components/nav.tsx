@@ -97,7 +97,7 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
                   variants={navItemVariants}
                   key={i}
                 >
-                  <Link href={url}>
+                  <Link href={url} passHref>
                     <a
                       className={`link ${
                         name === innerText ? 'active-link' : ''
