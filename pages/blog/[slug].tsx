@@ -207,12 +207,12 @@ const SinglePost: React.FC<SinglePostProps> = ({
               <img
                 className='author-image'
                 src='https://raw.githubusercontent.com/zomeru/zomeru/main/me.png'
-                alt='author image'
+                alt='Zomer Gregorio Photo'
               />
 
-              <p className='dates'>
+              <h2 className='dates'>
                 <span>Zomer Gregorio</span> | <span>{dateToBeDisplayed}</span>
-              </p>
+              </h2>
             </div>
           </div>
         </StyledBlogHero>
