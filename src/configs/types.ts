@@ -1,8 +1,8 @@
 import { IconType } from 'react-icons/lib';
 
 export interface INavLinks {
-  name: string;
-  url: string;
+  home: Array<{ name: string; url: string }>;
+  otherPage: Array<{ name: string; url: string }>;
 }
 
 export interface ISkills {

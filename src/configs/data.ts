@@ -36,32 +36,40 @@ import {
 } from 'react-icons/fa';
 import { zomify, zomyfile, forkify, zomy } from '../assets/images/projects';
 
-export const navLinks: INavLinks[] = [
-  {
-    name: 'About',
-    url: '/#about',
-  },
-  // {
-  //   name: 'Experience',
-  //   url: '#experience',
-  // },
-  {
-    name: 'Projects',
-    url: '/#projects',
-  },
-  {
-    name: 'Contact',
-    url: '/#contact',
-  },
-  {
-    name: 'Blog',
-    url: '/blog',
-  },
-  // {
-  //   name: 'Resume',
-  //   url: '/assets/resume.pdf',
-  // },
-];
+export const navLinks: INavLinks = {
+  home: [
+    {
+      name: 'About',
+      url: '/#about',
+    },
+    // {
+    //   name: 'Experience',
+    //   url: '#experience',
+    // },
+    {
+      name: 'Projects',
+      url: '/#projects',
+    },
+    {
+      name: 'Contact',
+      url: '/#contact',
+    },
+    {
+      name: 'Blog',
+      url: '/blog',
+    },
+  ],
+  otherPage: [
+    {
+      name: 'Home',
+      url: '/',
+    },
+    {
+      name: 'Blog',
+      url: '/blog',
+    },
+  ],
+};
 
 export const floatingLinks: ISocialLinks[] = [
   {

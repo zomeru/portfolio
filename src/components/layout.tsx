@@ -10,23 +10,7 @@ interface ILayoutProps {
 
 const Layout: React.FC<ILayoutProps> = ({ children, isHome }) => {
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
-
   useEffect(() => {
-    /* Automatically jump to section
-     ** based on hash (if there is any)
-     ** when you came from another page
-     */
-    if (window.location.hash && isLoaded && isHome) {
-      const yOffset = window.location.hash === '#contact' ? -50 : -650;
-      const element = document.getElementById(
-        `${window.location.hash.substring(1)}`
-      );
-      const y =
-        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-
-      window.scrollTo({ top: y, behavior: 'smooth' });
-    }
-
     setTimeout(() => {
       setIsLoaded(true);
     }, 2500);

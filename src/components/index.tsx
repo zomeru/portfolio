@@ -2,7 +2,7 @@ export { default as Button } from './button';
 export { default as Layout } from './layout';
 export { default as BlogLayout } from './blogLayout';
 export { default as Nav } from './nav';
-export { default as TechStacks } from './TechStacks';
+export { default as TechStacks } from '../configs/TechStacks';
 export { default as Footer } from './footer';
 export { default as Hero } from './sections/hero';
 export { default as About } from './sections/about';

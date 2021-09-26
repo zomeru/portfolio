@@ -88,32 +88,28 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
         </motion.span>
         <StyledLinks>
           <ul>
-            {navLinks.map((link, i) => {
-              const { name, url } = link;
-
-              return (
-                <motion.li
-                  onClick={activeLinkHandler}
-                  variants={navItemVariants}
-                  key={i}
-                >
-                  <Link href={url} passHref>
-                    <a
-                      className={`link ${
-                        name === innerText ? 'active-link' : ''
-                      }`}
-                    >
-                      {name}
-                    </a>
-                  </Link>
-                </motion.li>
-              );
-            })}
-            <motion.li
-              onClick={activeLinkHandler}
-              key={navLinks.length}
-              variants={navItemVariants}
-            >
+            {navLinks[`${isHome ? 'home' : 'otherPage'}`].map(
+              ({ name, url }, i) => {
+                return (
+                  <motion.li
+                    onClick={activeLinkHandler}
+                    variants={navItemVariants}
+                    key={i}
+                  >
+                    <Link href={url} passHref>
+                      <a
+                        className={`link ${
+                          name === innerText ? 'active-link' : ''
+                        }`}
+                      >
+                        {name}
+                      </a>
+                    </Link>
+                  </motion.li>
+                );
+              }
+            )}
+            <motion.li onClick={activeLinkHandler} key={`${isHome ? navLinks['home'].length : navLinks['otherPage'].length}`} variants={navItemVariants}>
               <ToggleTheme />
             </motion.li>
           </ul>
