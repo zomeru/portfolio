@@ -5,10 +5,11 @@ import ToggleTheme from './ToggleTheme';
 import { StyledMenu, StyledSidebar } from '../styles/componentStyles';
 
 interface IMenuProps {
+  isHome: boolean;
   variants?: any;
 }
 
-const Menu: React.FC<IMenuProps> = ({ variants }) => {
+const Menu: React.FC<IMenuProps> = ({ variants, isHome }) => {
   const [menuOpen, setMenuOpen] = React.useState<boolean>(false);
 
   const openMenuHandler = () => {
@@ -42,18 +43,20 @@ const Menu: React.FC<IMenuProps> = ({ variants }) => {
       <div className='menu-nav'>
         <ul>
           <ToggleTheme className='toggle-icon' />
-          {navLinks.map(({ name, url }) => (
-            <li
-              key={name}
-              onClick={() => {
-                setMenuOpen(false);
-              }}
-            >
-              <Link href={url}>
-                <a>{name}</a>
-              </Link>
-            </li>
-          ))}
+          {navLinks[`${isHome ? 'home' : 'otherPage'}`].map(({ name, url }) => {
+            return (
+              <li
+                key={name}
+                onClick={() => {
+                  setMenuOpen(false);
+                }}
+              >
+                <Link href={url}>
+                  <a>{name}</a>
+                </Link>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </StyledMenu>

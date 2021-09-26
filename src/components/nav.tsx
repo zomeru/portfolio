@@ -109,12 +109,18 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
                 );
               }
             )}
-            <motion.li onClick={activeLinkHandler} key={`${isHome ? navLinks['home'].length : navLinks['otherPage'].length}`} variants={navItemVariants}>
+            <motion.li
+              onClick={activeLinkHandler}
+              key={`${
+                isHome ? navLinks['home'].length : navLinks['otherPage'].length
+              }`}
+              variants={navItemVariants}
+            >
               <ToggleTheme />
             </motion.li>
           </ul>
         </StyledLinks>
-        <Menu variants={navItemVariants} />
+        <Menu variants={navItemVariants} isHome={isHome} />
       </motion.nav>
     </StyledNav>
   );
