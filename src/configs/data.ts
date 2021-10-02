@@ -24,6 +24,7 @@ import {
   SiJavascript,
   SiMongodb,
   SiStyledComponents,
+  SiRedux,
 } from 'react-icons/si';
 import {
   FaReact,
@@ -114,6 +115,11 @@ export const skills: ISkills[] = [
     id: 'react',
     name: 'React.js',
     Icon: FaReact,
+  },
+  {
+    id: 'redux',
+    name: 'Redux',
+    Icon: SiRedux,
   },
   // {
   //   id: 'react-native',
