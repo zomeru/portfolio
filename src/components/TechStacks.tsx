@@ -1,9 +1,9 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import useScrollReveal from '../hooks/useScrollReveal';
-import { parentVar, fadeUp, fadeUpQuick } from './animations';
-import { skills, softSkills } from './data';
-import { StyledTechStacks, StyledTech } from '../styles/componentStyles';
+import React from "react";
+import { motion } from "framer-motion";
+import useScrollReveal from "../hooks/useScrollReveal";
+import { parentVar, fadeUp, fadeUpQuick } from "../configs/animations";
+import { skills } from "../configs/data";
+import { StyledTechStacks, StyledTech } from "../styles/componentStyles";
 
 const TechStacks = () => {
   const [ref, controls] = useScrollReveal(-100);
@@ -12,7 +12,7 @@ const TechStacks = () => {
     <StyledTechStacks
       ref={ref}
       variants={parentVar}
-      initial='initial'
+      initial="initial"
       animate={controls}
     >
       <motion.h1 variants={fadeUp}>SKILLS</motion.h1>
@@ -21,13 +21,13 @@ const TechStacks = () => {
       </motion.p>
       <StyledTech>
         <motion.ul>
-          {skills.map(skill => {
+          {skills.map((skill) => {
             const { name, Icon, id } = skill;
 
             return (
               <motion.li key={id} variants={fadeUpQuick}>
-                <div className='tech-content'>
-                  <Icon className='logo' />
+                <div className="tech-content">
+                  <Icon className="logo" />
                   <p>{name}</p>
                 </div>
               </motion.li>
@@ -35,7 +35,7 @@ const TechStacks = () => {
           })}
         </motion.ul>
       </StyledTech>
-      <motion.h1 className='soft-skills' variants={fadeUp}>
+      {/* <motion.h1 className='soft-skills' variants={fadeUp}>
         SOFT SKILLS
       </motion.h1>
       <StyledTech>
@@ -53,7 +53,7 @@ const TechStacks = () => {
             );
           })}
         </motion.ul>
-      </StyledTech>
+      </StyledTech> */}
     </StyledTechStacks>
   );
 };

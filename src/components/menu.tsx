@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
-import Link from 'next/link';
-import { navLinks } from '../configs/data';
-import ToggleTheme from './ToggleTheme';
-import { StyledMenu, StyledSidebar } from '../styles/componentStyles';
+import React, { useEffect } from "react";
+import Link from "next/link";
+
+import { navLinks } from "../configs/data";
+import { NavLinksProps } from "@/configs/types";
+import ToggleTheme from "./ToggleTheme";
+import { StyledMenu, StyledSidebar } from "../styles/componentStyles";
 
 interface IMenuProps {
   isHome: boolean;
@@ -18,9 +20,9 @@ const Menu: React.FC<IMenuProps> = ({ variants, isHome }) => {
 
   useEffect(() => {
     if (menuOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'visible';
+      document.body.style.overflow = "visible";
     }
   }, [menuOpen]);
 
@@ -28,7 +30,7 @@ const Menu: React.FC<IMenuProps> = ({ variants, isHome }) => {
     <StyledMenu variants={variants} menuOpen={menuOpen}>
       <ul
         onClick={openMenuHandler}
-        className={`hamburger-button ${menuOpen ? 'active' : ''}`}
+        className={`hamburger-button ${menuOpen ? "active" : ""}`}
       >
         <li></li>
         <li></li>
@@ -40,23 +42,26 @@ const Menu: React.FC<IMenuProps> = ({ variants, isHome }) => {
           setMenuOpen(false);
         }}
       />
-      <div className='menu-nav'>
+      <div className="menu-nav">
         <ul>
-          <ToggleTheme className='toggle-icon' />
-          {navLinks[`${isHome ? 'home' : 'otherPage'}`].map(({ name, url }) => {
-            return (
-              <li
-                key={name}
-                onClick={() => {
-                  setMenuOpen(false);
-                }}
-              >
-                <Link href={url}>
-                  <a>{name}</a>
-                </Link>
-              </li>
-            );
-          })}
+          <ToggleTheme className="toggle-icon" />
+          {/* @ts-ignore */}
+          {navLinks[`${isHome ? "home" : "otherPage"}`].map(
+            ({ name, url }: NavLinksProps) => {
+              return (
+                <li
+                  key={name}
+                  onClick={() => {
+                    setMenuOpen(false);
+                  }}
+                >
+                  <Link href={url}>
+                    <a>{name}</a>
+                  </Link>
+                </li>
+              );
+            }
+          )}
         </ul>
       </div>
     </StyledMenu>

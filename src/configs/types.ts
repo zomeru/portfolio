@@ -1,8 +1,10 @@
-import { IconType } from 'react-icons/lib';
+import { IconType } from "react-icons/lib";
+
+export type NavLinksProps = { name: string; url: string };
 
 export interface INavLinks {
-  home: Array<{ name: string; url: string }>;
-  otherPage: Array<{ name: string; url: string }>;
+  home: NavLinksProps[];
+  otherPage: NavLinksProps[];
 }
 
 export interface ISkills {
