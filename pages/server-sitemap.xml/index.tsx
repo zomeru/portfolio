@@ -1,12 +1,12 @@
-import { GetServerSideProps } from 'next';
-import { getServerSideSitemap, ISitemapField } from 'next-sitemap';
+import { GetServerSideProps } from "next";
+import { getServerSideSitemap, ISitemapField } from "next-sitemap";
 
-export const getServerSideProps: GetServerSideProps = async ctx => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const query = encodeURIComponent('*[ _type == "post" ]');
   const url = `https://${process.env.SANITY_PROJECT_ID}.api.sanity.io/v1/data/query/production?query=${query}`;
-  const result = await fetch(url).then(res => res.json());
+  const result = await fetch(url).then((res) => res.json());
 
-  const fields: ISitemapField[] = result.result.map(post => ({
+  const fields: ISitemapField[] = result.result.map((post: any) => ({
     loc: `https://zomer.xyz/blog/${post.slug.current}`,
     lastmod: post._updatedAt,
   }));

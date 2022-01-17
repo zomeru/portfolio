@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import BlogLayout from '@components/blogLayout';
-import imageUrlBuilder from '@sanity/image-url';
-import styled from 'styled-components';
-import BlogCard from '@components/blogCard';
+import React, { useState, useEffect } from "react";
+import BlogLayout from "@components/blogLayout";
+import imageUrlBuilder from "@sanity/image-url";
+import styled from "styled-components";
+import BlogCard from "@components/blogCard";
 
 interface BlogProps {
   isHome: boolean;
@@ -34,12 +34,12 @@ const Blog: React.FC<BlogProps> = ({ isHome, images, titles, slugs }) => {
   useEffect(() => {
     if (images.length) {
       const imgBuilder = imageUrlBuilder({
-        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-        dataset: 'production',
+        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID as string,
+        dataset: "production",
       });
 
       setMappedImages(
-        images.map(image => {
+        images.map((image: any) => {
           return `${imgBuilder.image(image)}`;
         })
       );
@@ -50,14 +50,14 @@ const Blog: React.FC<BlogProps> = ({ isHome, images, titles, slugs }) => {
     <>
       <BlogLayout
         isHome={isHome}
-        title=''
-        url=''
-        description='Hi! I am Zomer Gregorio, and this is my blog. Go read some articles.'
-        image='https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/OG-blog.png'
+        title=""
+        url=""
+        description="Hi! I am Zomer Gregorio, and this is my blog. Go read some articles."
+        image="https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/OG-blog.png"
       >
         <StyledPostsContainer>
-          <h2 className='section-heading'>My Blog Posts</h2>
-          <div className='blogcard-container'>
+          <h2 className="section-heading">My Blog Posts</h2>
+          <div className="blogcard-container">
             {mappedImages.length ? (
               mappedImages.map((image, index) => {
                 return (
@@ -81,10 +81,10 @@ const Blog: React.FC<BlogProps> = ({ isHome, images, titles, slugs }) => {
 
 export default Blog;
 
-export const getServerSideProps = async pageContext => {
+export const getServerSideProps = async () => {
   const query = encodeURIComponent('*[ _type == "post" ]');
   const url = `https://${process.env.SANITY_PROJECT_ID}.api.sanity.io/v1/data/query/production?query=${query}`;
-  const result = await fetch(url).then(res => res.json());
+  const result = await fetch(url).then((res) => res.json());
 
   if (!result.result || !result.result.length) {
     return {
@@ -95,9 +95,9 @@ export const getServerSideProps = async pageContext => {
   } else {
     return {
       props: {
-        images: result.result.map(p => p.mainImage),
-        titles: result.result.map(p => p.title),
-        slugs: result.result.map(p => p.slug.current),
+        images: result.result.map((p: any) => p.mainImage),
+        titles: result.result.map((p: any) => p.title),
+        slugs: result.result.map((p: any) => p.slug.current),
       },
     };
   }

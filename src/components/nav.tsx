@@ -1,16 +1,19 @@
-import React, { useEffect, useState, useContext } from 'react';
-import Link from 'next/link';
-import { motion, Variants } from 'framer-motion';
-import { navLinks } from '../configs/data';
-import ToggleTheme from './ToggleTheme';
-import Menu from './menu';
-import { StyledNav, StyledLinks } from '../styles/componentStyles';
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
+import { motion, Variants } from "framer-motion";
+
+import ToggleTheme from "./ToggleTheme";
+import Menu from "./menu";
+import { navLinks } from "../configs/data";
+import { StyledNav, StyledLinks } from "../styles/componentStyles";
+import { NavLinksProps } from "@/configs/types";
+
 interface INavProps {
   isHome: boolean;
 }
 
 const Nav: React.FC<INavProps> = ({ isHome }) => {
-  const [hostURL, setHostURL] = useState<string>('');
+  const [hostURL, setHostURL] = useState<string>("");
 
   const [prevScrollPos, setPrevScrollPos] = useState<number>(1);
   const [curScrollPos, setCurScrollPos] = useState<number>(0);
@@ -32,7 +35,7 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
       transition: {
         delay: 0.1,
         staggerChildren: 0.1,
-        when: 'beforeChildren',
+        when: "beforeChildren",
       },
     },
   };
@@ -46,7 +49,7 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
       y: 0,
       opacity: 1,
       transition: {
-        ease: 'easeInOut',
+        ease: "easeInOut",
         duration: 0.2,
       },
     },
@@ -60,36 +63,38 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
     isHome ? (
       <a href={hostURL}>Zomer</a>
     ) : (
-      <Link href='/' passHref>
+      <Link href="/" passHref>
         <a>Zomer</a>
       </Link>
     );
 
-  const [innerText, setInnerText] = useState('');
+  const [innerText, setInnerText] = useState("");
 
-  const activeLinkHandler = e => {
-    setInnerText(e.target.innerText);
+  const activeLinkHandler = (e: React.MouseEvent<HTMLLIElement>): void => {
+    const input = e.target as HTMLElement;
+    setInnerText(input.innerText);
   };
 
   return (
     <StyledNav
-      id='nav'
+      id="nav"
       prevScrollPos={prevScrollPos}
       curScrollPos={curScrollPos}
     >
       <motion.nav
-        className='nav'
+        className="nav"
         variants={navVariants}
-        initial='hidden'
-        animate='visible'
+        initial="hidden"
+        animate="visible"
       >
-        <motion.span className='logo' variants={navItemVariants}>
+        <motion.span className="logo" variants={navItemVariants}>
           <Logo />
         </motion.span>
         <StyledLinks>
           <ul>
-            {navLinks[`${isHome ? 'home' : 'otherPage'}`].map(
-              ({ name, url }, i) => {
+            {/* @ts-ignore */}
+            {navLinks[`${isHome ? "home" : "otherPage"}`].map(
+              ({ url, name }: NavLinksProps, i: number) => {
                 return (
                   <motion.li
                     onClick={activeLinkHandler}
@@ -99,7 +104,7 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
                     <Link href={url} passHref>
                       <a
                         className={`link ${
-                          name === innerText ? 'active-link' : ''
+                          name === innerText ? "active-link" : ""
                         }`}
                       >
                         {name}
@@ -112,7 +117,7 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
             <motion.li
               onClick={activeLinkHandler}
               key={`${
-                isHome ? navLinks['home'].length : navLinks['otherPage'].length
+                isHome ? navLinks["home"].length : navLinks["otherPage"].length
               }`}
               variants={navItemVariants}
             >

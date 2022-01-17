@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useState, useEffect } from 'react';
-import { GetServerSidePropsContext } from 'next';
-import imageUrlBuilder from '@sanity/image-url';
-import BlockContent from '@sanity/block-content-to-react';
-import Link from 'next/link';
-import styled from 'styled-components';
-import BlogLayout from '@components/blogLayout';
+import React, { useState, useEffect } from "react";
+import { GetServerSidePropsContext } from "next";
+import imageUrlBuilder from "@sanity/image-url";
+import BlockContent from "@sanity/block-content-to-react";
+import Link from "next/link";
+import styled from "styled-components";
+import BlogLayout from "@components/blogLayout";
 
 const StyledBlogHero = styled.div`
   width: 100%;
@@ -126,18 +126,18 @@ const StyledBlogContent = styled.section`
 `;
 
 const monthNames = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December',
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 interface SinglePostProps {
@@ -159,13 +159,13 @@ const SinglePost: React.FC<SinglePostProps> = ({
   createdAt,
   updatedAt,
 }) => {
-  const [imageUrl, setImageUrl] = useState<string>('');
+  const [imageUrl, setImageUrl] = useState<string>("");
 
   useEffect(() => {
     if (image) {
       const imageBuilder = imageUrlBuilder({
-        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
-        dataset: 'production',
+        projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID as string,
+        dataset: "production",
       });
 
       setImageUrl(`${imageBuilder.image(image)}`);
@@ -196,21 +196,21 @@ const SinglePost: React.FC<SinglePostProps> = ({
         description={title}
         image={imageUrl}
       >
-        <Link href='/blog'>
-          <a className='link go-back'>{'< Go back'}</a>
+        <Link href="/blog">
+          <a className="link go-back">{"< Go back"}</a>
         </Link>
 
         <StyledBlogHero imgUrl={imageUrl}>
-          <div className='title-container'>
-            <h1 className='blog-title'>{title}</h1>
-            <div className='author'>
+          <div className="title-container">
+            <h1 className="blog-title">{title}</h1>
+            <div className="author">
               <img
-                className='author-image'
-                src='https://raw.githubusercontent.com/zomeru/zomeru/main/me.png'
-                alt='Zomer Gregorio Photo'
+                className="author-image"
+                src="https://raw.githubusercontent.com/zomeru/zomeru/main/me.png"
+                alt="Zomer Gregorio Photo"
               />
 
-              <h2 className='dates'>
+              <h2 className="dates">
                 <span>Zomer Gregorio</span> | <span>{dateToBeDisplayed}</span>
               </h2>
             </div>
@@ -219,7 +219,7 @@ const SinglePost: React.FC<SinglePostProps> = ({
 
         <StyledBlogContent>
           <BlockContent blocks={body} />
-          <div className='end' />
+          <div className="end" />
         </StyledBlogContent>
       </BlogLayout>
     </>
@@ -244,7 +244,7 @@ export async function getServerSideProps(
   );
   const url = `https://${process.env.SANITY_PROJECT_ID}.api.sanity.io/v1/data/query/production?query=${query}`;
 
-  const result = await fetch(url).then(res => res.json());
+  const result = await fetch(url).then((res) => res.json());
   const post = result.result[0];
 
   if (!post) {
