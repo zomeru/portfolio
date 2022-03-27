@@ -7,7 +7,7 @@ import {
 } from './types';
 import {
   AiOutlineInstagram,
-  AiFillHtml5,
+  // AiFillHtml5,
   AiFillGithub,
   AiFillApi,
   AiOutlineTeam,
@@ -16,12 +16,13 @@ import {
 import { FiTwitter, FiLinkedin, FiGithub, FiFacebook } from 'react-icons/fi';
 import { GiPlayerTime, GiThink } from 'react-icons/gi';
 import { BsArrowRepeat } from 'react-icons/bs';
-import { IoLogoSass, IoLogoLinkedin } from 'react-icons/io';
+// import { IoLogoSass, IoLogoLinkedin } from 'react-icons/io';
+import { IoLogoLinkedin } from 'react-icons/io';
 import {
   SiTypescript,
   SiTailwindcss,
   SiFirebase,
-  SiJavascript,
+  // SiJavascript,
   SiMongodb,
   SiStyledcomponents,
   SiRedux,
