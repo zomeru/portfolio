@@ -12,6 +12,10 @@ const pwaConfig = {
 };
 
 const nextConfig = {
+  compiler: {
+    styledComponents: true,
+  },
+  swcMinify: true,
   images: {
     domains: ['cdn.sanity.io', 'zomer.xyz', 'raw.githubusercontent.com'],
   },

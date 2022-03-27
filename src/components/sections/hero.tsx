@@ -12,11 +12,12 @@ import {
 const Hero = () => {
   const one = <h1>Hi there, I am</h1>;
   const two = <h2>Zomer Gregorio.</h2>;
-  const three = <h3>A self-taught web developer.</h3>;
+  const three = <h3>I create stuff sometimes.</h3>;
   const four = (
     <p className='four'>
-      A college student and React.js enthusiast. I love building beautiful,
-      elegant and responsive web applications.
+      I&lsquo;m a Software Engineer based in the Philippines. I have profound
+      interest in full-stack web and mobile development, and I&lsquo;m always
+      looking to learn new things.
     </p>
   );
 
