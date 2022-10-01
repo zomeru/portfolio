@@ -33,7 +33,7 @@ const Contact = () => {
           isLink={false}
           className='message-button'
           buttonText='Say hello'
-          buttonUrl='mailto:zomergregorio@gmail.com'
+          buttonUrl='mailto:hello@zomeru.com'
           target='_blank'
           rel='noreferrer'
         />
