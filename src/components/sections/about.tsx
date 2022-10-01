@@ -40,18 +40,20 @@ const About = () => {
         <motion.div className='image-wrapper' variants={fadeUp}>
           <Image
             className='about-image'
-            src={zoms}
+            // src={zoms}
+            src='/assets/me.jpg'
             alt='Zomer Gregorio Photo'
             width={300}
             height={422}
             placeholder='blur'
+            blurDataURL='/assets/me.jpg'
           />
           <div className='grayscale' />
         </motion.div>
         <motion.div variants={fadeLeft} className='about-text'>
           <h3>Zomer Gregorio</h3>
           <p>
-            I&lsquo;m a full-time software engineer at Beyonder Inc. and a 3rd
+            I&lsquo;m a full-time software engineer at Beyonder Inc. and a 4th
             year college student, studying Information Technology at STI
             College. My main focus these days are building responsive and
             elegant web and mobile applications. I also like to learn new stuff
@@ -67,11 +69,12 @@ const About = () => {
         >
           <Image
             className='about-image'
-            src={zomsSquare}
+            src='/assets/me-square.jpg'
             width={300}
             height={300}
             alt='Zomer Gregorio Photo'
             placeholder='blur'
+            blurDataURL='/assets/me-square.jpg'
           />
           <div className='grayscale' />
         </motion.div>

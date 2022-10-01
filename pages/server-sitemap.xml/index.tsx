@@ -7,7 +7,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const result = await fetch(url).then((res) => res.json());
 
   const fields: ISitemapField[] = result.result.map((post: any) => ({
-    loc: `https://zomer.xyz/blog/${post.slug.current}`,
+    loc: `https://zomeru.com/blog/${post.slug.current}`,
     lastmod: post._updatedAt,
   }));
 

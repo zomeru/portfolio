@@ -1,4 +1,4 @@
-const siteUrl = 'https://zomer.xyz';
+const siteUrl = 'https://zomeru.com';
 
 module.exports = {
   siteUrl,

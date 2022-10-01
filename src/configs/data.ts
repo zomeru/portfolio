@@ -225,7 +225,7 @@ export const customSeo: CustomSeoProps = {
   title: 'Zomer Gregorio',
   image:
     'https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/OG.png',
-  url: 'https://zomer.xyz/',
+  url: 'https://zomeru.com/',
   twitterUsername: '@zomeru_sama',
 };
 
@@ -233,9 +233,9 @@ export const nextSeo = {
   title: 'Zomer Gregorio',
   description:
     'Hi! I am Zomer Gregorio, a college student, React.js enthusiast, and freelance developer based in the Philippines. I love building beautiful, elegant and responsive web applications.',
-  canonical: 'https://zomer.xyz/',
+  canonical: 'https://zomeru.com/',
   openGraph: {
-    url: 'https://zomer.xyz/',
+    url: 'https://zomeru.com/',
     title: 'Zomer Gregorio',
     description:
       'Hi! I am Zomer Gregorio, a college student, React.js enthusiast, and freelance developer based in the Philippines. I love building beautiful, elegant and responsive web applications.',
@@ -248,7 +248,7 @@ export const nextSeo = {
   },
   twitter: {
     handle: '@zomeru_sama',
-    site: 'https://zomer.xyz/',
+    site: 'https://zomeru.com/',
     cardType: 'summary_large_image',
   },
 };

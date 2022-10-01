@@ -17,7 +17,7 @@ const nextConfig = {
   },
   swcMinify: true,
   images: {
-    domains: ['cdn.sanity.io', 'zomer.xyz', 'raw.githubusercontent.com'],
+    domains: ['cdn.sanity.io', 'zomeru.com', 'raw.githubusercontent.com'],
   },
   async redirects() {
     return [
