@@ -1,3 +1,4 @@
+import { StaticImageData } from "next/image";
 import { IconType } from "react-icons/lib";
 
 export type NavLinksProps = { name: string; url: string };
