@@ -222,7 +222,7 @@ export const customSeo: CustomSeoProps = {
   description:
     "Hi! I am Zomer Gregorio, a college student, React.js enthusiast, and freelance developer based in the Philippines. I love building beautiful, elegant and responsive web applications.",
   title: "Zomer Gregorio",
-  image: "/assets/OG.png",
+  image: "https://zomeru.com/assets/OG.png",
   url: "https://zomeru.com/",
   twitterUsername: "@zomeru_sama",
 };
@@ -239,7 +239,7 @@ export const nextSeo = {
       "Hi! I am Zomer Gregorio, a college student, React.js enthusiast, and freelance developer based in the Philippines. I love building beautiful, elegant and responsive web applications.",
     images: [
       {
-        url: "/assets/OG.png",
+        url: "https://zomeru.com/assets/OG.png",
       },
     ],
     site_name: "Zomer Gregorio",

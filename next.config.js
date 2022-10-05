@@ -2,12 +2,12 @@ module.exports = {
   reactStrictMode: true,
 };
 
-const withPlugins = require('next-compose-plugins');
-const withPWA = require('next-pwa');
+const withPlugins = require("next-compose-plugins");
+const withPWA = require("next-pwa");
 
 const pwaConfig = {
   pwa: {
-    dest: 'public',
+    dest: "public",
   },
 };
 
@@ -17,38 +17,38 @@ const nextConfig = {
   },
   swcMinify: true,
   images: {
-    domains: ['cdn.sanity.io', 'zomeru.com', 'raw.githubusercontent.com'],
+    domains: ["cdn.sanity.io", "zomeru.com", "raw.githubusercontent.com"],
   },
   async redirects() {
     return [
       {
-        source: '/facebook',
-        destination: 'https://facebook.com/Zomeru',
+        source: "/facebook",
+        destination: "https://facebook.com/Zomeru",
         permanent: false,
       },
       {
-        source: '/instagram',
-        destination: 'https://instagram.com/zomerusama',
+        source: "/instagram",
+        destination: "https://instagram.com/zomerusama",
         permanent: false,
       },
       {
-        source: '/tiktok',
-        destination: 'https://tiktok.com/@zomeru_sama',
+        source: "/tiktok",
+        destination: "https://tiktok.com/@zomeru_sama",
         permanent: false,
       },
       {
-        source: '/twitter',
-        destination: 'https://twitter.com/zomeru_sama',
+        source: "/twitter",
+        destination: "https://twitter.com/zomeru_sama",
         permanent: false,
       },
       {
-        source: '/linkedin',
-        destination: 'https://linkedin.com/in/zomergregorio',
+        source: "/linkedin",
+        destination: "https://linkedin.com/in/zomergregorio",
         permanent: false,
       },
       {
-        source: '/github',
-        destination: 'https://github.com/zomeru',
+        source: "/github",
+        destination: "https://github.com/zomeru",
         permanent: false,
       },
     ];
