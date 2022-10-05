@@ -1,23 +1,24 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { fadeUp } from '../../configs/animations';
-import { floatingLinks } from '../../configs/data';
-import { Button } from '../index';
+import React from "react";
+import { motion } from "framer-motion";
+import { fadeUp } from "../../configs/animations";
+import { floatingLinks } from "../../configs/data";
+import { Button } from "../index";
 import {
   StyledHero,
   StyledHeroContainer,
   StyledHeroContent,
-} from '../../styles/componentStyles';
+} from "../../styles/componentStyles";
 
 const Hero = () => {
   const one = <h1>Hi there, I am</h1>;
   const two = <h2>Zomer Gregorio.</h2>;
   const three = <h3>I create stuff sometimes.</h3>;
   const four = (
-    <p className='four'>
-      I&lsquo;m a Software Engineer based in the Philippines. I have profound
-      interest in full-stack web and mobile development, and I&lsquo;m always
-      looking to learn new things.
+    <p className="four">
+      Experienced Software Engineer based in the Philippines with a demonstrated
+      history of working in the information technology and services industry.
+      Skilled in React, Node, and Typescript and have more than 2 years of
+      professional experience in Full Stack Development.
     </p>
   );
 
@@ -32,7 +33,7 @@ const Hero = () => {
       transition: {
         delay: 1,
         staggerChildren: 0.2,
-        when: 'beforeChildren',
+        when: "beforeChildren",
       },
     },
   };
@@ -42,30 +43,32 @@ const Hero = () => {
       <StyledHeroContainer>
         <StyledHeroContent
           variants={heroContainerVariants}
-          initial='hidden'
-          animate='visible'
+          initial="hidden"
+          animate="visible"
         >
           {heroTexts.map((text, i) => (
             <motion.div variants={fadeUp} key={i}>
               {text}
             </motion.div>
           ))}
-          <motion.div className='buttons-container' variants={fadeUp}>
+          <motion.div className="buttons-container" variants={fadeUp}>
             <Button
               isLink={false}
-              className='hero-buttons'
-              buttonUrl='#contact'
-              buttonText='Get in touch'
+              className="hero-buttons"
+              buttonUrl="#contact"
+              buttonText="Get in touch"
             />
             <Button
               isLink={false}
-              className='hero-buttons'
-              buttonUrl='/assets/resume.pdf'
-              buttonText='Resume'
-              download
+              className="hero-buttons"
+              buttonUrl="/assets/resume.pdf"
+              buttonText="Resume"
+              rel="noopener noreferrer"
+              target="_blank"
+              // download
             />
           </motion.div>
-          {floatingLinks.map(link => {
+          {floatingLinks.map((link) => {
             const { name, url, Icon } = link;
 
             return (
@@ -74,8 +77,8 @@ const Hero = () => {
                 key={name}
                 aria-label={name}
                 href={url}
-                target='_blank'
-                rel='noopener noreferrer'
+                target="_blank"
+                rel="noopener noreferrer"
                 className={`floating-icons ${name}-loc`}
               >
                 <Icon className={`icons icon-${name}`} />
