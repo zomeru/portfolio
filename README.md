@@ -18,7 +18,7 @@
 </ul>
 <br>
 <h3 align="center">Light Mode</h3>
-<img align="center" src="https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/fullpage-light.png" alt="Light mode view of the whole page" />
+<img align="center" src="https://zomeru.com//assets/fullpage-light.png" alt="Light mode view of the whole page" />
 <br>
 <h3 align="center">Dark Mode</h3>
-<img align="center" src="https://raw.githubusercontent.com/zomeru/portfolio/main/src/assets/images/fullpage-dark.png" alt="Dark mode view of the whole page" />
+<img align="center" src="https://zomeru.com/assets/fullpage-dark.png" alt="Dark mode view of the whole page" />
