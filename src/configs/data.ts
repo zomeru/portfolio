@@ -253,6 +253,44 @@ export const nextSeo = {
 
 export const projects: IProjects[] = [
   {
+    name: "STICA LMS",
+    image: "/assets/projects/project-sticalms.png",
+    alt: "STICA LMS website",
+    info: "STICA LMS is my capstone project for my college. It is an online library management system for STI College Alabang.",
+    techs: [
+      "Typescript",
+      "React.js",
+      "Next.js",
+      "Turborepo",
+      "Tailwind CSS",
+      "Firebase",
+      "Algolia",
+    ],
+    links: {
+      demo: "https://sticalms.com/",
+      github: "https://github.com/zomeru/stica-lms",
+    },
+  },
+  {
+    name: "Kokuban",
+    image: "/assets/projects/project-kokuban.png",
+    alt: "Kokuban landing page",
+    info: "Kokuban is meant to assist the teachers in Japan to create online educational materials that their students can access and use from the browser.",
+    techs: [
+      "Typescript",
+      "React.js",
+      "Next.js",
+      "Tailwind CSS",
+      "Node.js",
+      "MongoDB",
+      "Firebase",
+    ],
+    links: {
+      demo: "https://kokuban.vercel.app/",
+      github: "https://github.com/Yumeville/kokuban",
+    },
+  },
+  {
     name: "Zomink",
     image: "/assets/projects/project-zomink.png",
     alt: "Zomink  website",
