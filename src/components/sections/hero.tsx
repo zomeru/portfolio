@@ -12,7 +12,7 @@ import {
 const Hero = () => {
   const one = <h1>Hi there, I am</h1>;
   const two = <h2>Zomer Gregorio.</h2>;
-  const three = <h3>I create stuff sometimes.</h3>;
+  const three = <h3>I create stuff for the web.</h3>;
   const four = (
     <p className="four">
       Experienced Software Engineer based in the Philippines with a demonstrated
