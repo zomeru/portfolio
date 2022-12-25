@@ -13,11 +13,18 @@ import {
   AiOutlineTeam,
   AiFillMessage,
 } from "react-icons/ai";
-import { FiTwitter, FiLinkedin, FiGithub, FiFacebook } from "react-icons/fi";
+import {
+  FiTwitter,
+  FiLinkedin,
+  FiGithub,
+  FiFacebook,
+  FiFigma,
+} from "react-icons/fi";
 import { GiPlayerTime, GiThink } from "react-icons/gi";
 import { BsArrowRepeat } from "react-icons/bs";
 // import { IoLogoSass, IoLogoLinkedin } from 'react-icons/io';
 import { IoLogoLinkedin } from "react-icons/io";
+import { GrGraphQl } from "react-icons/gr";
 import {
   SiTypescript,
   SiTailwindcss,
@@ -36,6 +43,7 @@ import {
   FaFistRaised,
   FaHandHoldingHeart,
   FaPuzzlePiece,
+  FaDocker,
 } from "react-icons/fa";
 
 export const navLinks: INavLinks = {
@@ -149,14 +157,24 @@ export const skills: ISkills[] = [
     Icon: SiPostgresql,
   },
   {
+    id: "graphql",
+    name: "GraphQL",
+    Icon: GrGraphQl,
+  },
+  {
     id: "restapi",
-    name: "RESTful API",
+    name: "REST API",
     Icon: AiFillApi,
   },
   {
     id: "firebase",
     name: "Firebase",
     Icon: SiFirebase,
+  },
+  {
+    id: "docker",
+    name: "Docker",
+    Icon: FaDocker,
   },
   {
     id: "github",
@@ -167,6 +185,11 @@ export const skills: ISkills[] = [
     id: "git",
     name: "Git",
     Icon: FaGitAlt,
+  },
+  {
+    id: "figma",
+    name: "Figma",
+    Icon: FiFigma,
   },
 ];
 

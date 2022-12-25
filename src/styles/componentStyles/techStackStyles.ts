@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import { motion } from 'framer-motion';
+import styled from "styled-components";
+import { motion } from "framer-motion";
 
 export const StyledTechStacks = styled(motion.div)`
   margin: 70px auto 0 auto;
@@ -60,7 +60,7 @@ export const StyledTech = styled(motion.div)`
 
       .logo {
         margin-left: 10px;
-        margin-right: 20px;
+        margin-right: 10px;
         width: 30px;
         height: 30px;
         color: ${({ theme }) => theme.accentMain};
