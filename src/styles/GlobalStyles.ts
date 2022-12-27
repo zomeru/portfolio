@@ -1,6 +1,6 @@
-import { createGlobalStyle } from 'styled-components';
-import { ThemeProps } from './theme';
-import Variables from './variables';
+import { createGlobalStyle } from "styled-components";
+import { ThemeProps } from "./theme";
+import Variables from "./variables";
 
 export const GlobalStyles = createGlobalStyle<ThemeProps>`
   ${Variables};
@@ -164,5 +164,10 @@ export const GlobalStyles = createGlobalStyle<ThemeProps>`
       background-color: ${({ theme }) => theme.accentMain};
       transition: var(--transition2);
     }
+  }
+
+  .unscrollable::-webkit-scrollbar {
+    scrollbar-width: none;
+    overflow: -moz-hidden-unscrollable;
   }
 `;

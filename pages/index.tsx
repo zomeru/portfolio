@@ -1,4 +1,4 @@
-import { customSeo } from '../src/configs/data';
+import { customSeo } from "../src/configs/data";
 import {
   Layout,
   About,
@@ -6,7 +6,8 @@ import {
   Projects,
   Contact,
   PageHead,
-} from '../src/components';
+  ChatAI,
+} from "../src/components";
 interface IHomeProps {
   isHome: boolean;
 }
@@ -17,6 +18,7 @@ const Home: React.FC<IHomeProps> = ({ isHome }) => {
       <PageHead seo={{ ...customSeo }} />
       <Layout isHome={isHome}>
         <Hero />
+        <ChatAI />
         <About />
         <Projects />
         <Contact />
