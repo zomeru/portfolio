@@ -35,8 +35,6 @@ const NameLoader = ({ finishLoading }) => {
   const theme = useTheme();
   const isTabActive = useTabActive();
 
-  console.log("isTabActive", isTabActive);
-
   return (
     <motion.svg
       // pause animation when tab is inactive then resume when tab is active

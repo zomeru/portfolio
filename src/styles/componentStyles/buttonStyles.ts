@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const StyledButton = styled.a`
   position: relative;
@@ -22,7 +22,7 @@ const StyledButton = styled.a`
   }
 
   ::before {
-    content: '';
+    content: "";
     position: absolute;
     min-width: 202px;
     min-height: 52px;
@@ -55,7 +55,7 @@ const StyledButton = styled.a`
   }
 
   .line::before {
-    content: '';
+    content: "";
     position: absolute;
     background-color: ${({ theme }) => theme.body};
     width: 25px;
@@ -78,6 +78,10 @@ const StyledButton = styled.a`
     transition: var(--transition3);
     font-weight: 500;
     font-size: var(--fz-sm);
+
+    @media only screen and (max-width: 480px) {
+      font-size: var(--fz-xs);
+    }
   }
 `;
 
