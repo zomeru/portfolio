@@ -17,8 +17,8 @@ const Hero = () => {
     <p className="four">
       Experienced Software Engineer based in the Philippines with a demonstrated
       history of working in the information technology and services industry.
-      Skilled in React, Node, and Typescript and have more than 2 years of
-      professional experience in Full Stack Development.
+      Skilled in React, Node, Typescript, and other web technologies with 2
+      years of professional experience in Full Stack Development.
     </p>
   );
 

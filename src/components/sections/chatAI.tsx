@@ -29,7 +29,7 @@ const StyledChatAI = styled(motion.div)`
     scrollbar-width: none;
     overflow: hidden;
     margin-right: 10px;
-    background-color: ${({ theme }) => theme.menuNav};
+    background-color: ${({ theme }) => theme.chatGPTInput};
     /* background-color: blue; */
     border: none;
     color: ${({ theme }) => theme.textMain};
@@ -42,7 +42,7 @@ const StyledChatAI = styled(motion.div)`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: ${({ theme }) => theme.menuNav};
+    background-color: ${({ theme }) => theme.chatGPTInput};
     color: ${({ theme }) => theme.textMain};
     border-radius: 10px;
   }
@@ -53,7 +53,7 @@ const StyledChatAI = styled(motion.div)`
   }
 
   .answer {
-    background-color: ${({ theme }) => theme.menuNav};
+    background-color: ${({ theme }) => theme.chatGPTInput};
     padding: 10px;
     border-radius: 10px;
     margin-top: 10px;
