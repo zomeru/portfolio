@@ -243,7 +243,7 @@ export const softSkills: ISkills[] = [
 
 export const customSeo: CustomSeoProps = {
   description:
-    "Hi! I am Zomer Gregorio, a college student, React.js enthusiast, and freelance developer based in the Philippines. I love building beautiful, elegant and responsive web applications.",
+    "Zomer Gregorio is a Software Engineer based in the Philippines. Skilled in React, Node, TypeScript and other web technologies with 2 years of professional experience in Full Stack Development.",
   title: "Zomer Gregorio",
   image: "https://zomeru.com/assets/OG.png",
   url: "https://zomeru.com/",
@@ -253,13 +253,13 @@ export const customSeo: CustomSeoProps = {
 export const nextSeo = {
   title: "Zomer Gregorio",
   description:
-    "Hi! I am Zomer Gregorio, a college student, React.js enthusiast, and freelance developer based in the Philippines. I love building beautiful, elegant and responsive web applications.",
+    "Zomer Gregorio is a Software Engineer based in the Philippines. Skilled in React, Node, TypeScript and other web technologies with 2 years of professional experience in Full Stack Development.",
   canonical: "https://zomeru.com/",
   openGraph: {
     url: "https://zomeru.com/",
     title: "Zomer Gregorio",
     description:
-      "Hi! I am Zomer Gregorio, a college student, React.js enthusiast, and freelance developer based in the Philippines. I love building beautiful, elegant and responsive web applications.",
+      "Zomer Gregorio is a Software Engineer based in the Philippines. Skilled in React, Node, TypeScript and other web technologies with 2 years of professional experience in Full Stack Development.",
     images: [
       {
         url: "https://zomeru.com/assets/OG.png",

@@ -166,8 +166,5 @@ export const GlobalStyles = createGlobalStyle<ThemeProps>`
     }
   }
 
-  .unscrollable::-webkit-scrollbar {
-    scrollbar-width: none;
-    overflow: -moz-hidden-unscrollable;
-  }
+
 `;
