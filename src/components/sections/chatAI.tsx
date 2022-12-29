@@ -67,6 +67,7 @@ const StyledChatAI = styled(motion.div)`
     border: none;
     outline: none;
     color: ${({ theme }) => theme.textMain};
+    cursor: pointer;
   }
 
   .small-text {
@@ -136,37 +137,37 @@ const ChatAI = () => {
     onEnterPress(e as any);
   };
 
+  const handleRequest = async () => {
+    if (!currentValue) return;
+
+    setLoading(true);
+    setTypeComplete(false);
+    setCurrentTypeIndexes([0]);
+
+    try {
+      const res = await fetch("/api/openai", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: currentValue }),
+      });
+      const data = await res.json();
+      if (data.bot) {
+        setAnswer(data.bot);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const onEnterPress = async (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      if (!currentValue) return;
 
-      setLoading(true);
-      setTypeComplete(false);
-      setCurrentTypeIndexes([0]);
-
-      try {
-        const res = await fetch("/api/openai", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ prompt: currentValue }),
-        });
-        const data = await res.json();
-        if (data.bot) {
-          setAnswer(data.bot);
-        }
-        setLoading(false);
-      } catch (error) {
-        console.log(error);
-        setLoading(false);
-      }
-    }
-
-    if (e.key === "Enter" && e.shiftKey) {
-      e.preventDefault();
-      setCurrentValue(currentValue + "");
+      handleRequest();
     }
   };
 
@@ -202,7 +203,7 @@ const ChatAI = () => {
             }}
             onKeyPress={onEnterPress}
           />
-          <button type="submit" className="btn">
+          <button type="submit" className="btn" onClick={handleRequest}>
             <IoSendSharp className="send-icon" />
           </button>
         </div>
