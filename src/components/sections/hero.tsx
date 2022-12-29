@@ -15,10 +15,10 @@ const Hero = () => {
   const three = <h3>I create stuff for the web.</h3>;
   const four = (
     <p className="four">
-      Experienced Software Engineer based in the Philippines with a demonstrated
-      history of working in the information technology and services industry.
-      Skilled in React, Node, Typescript, and other web technologies with 2
-      years of professional experience in Full Stack Development.
+      A Software Engineer based in the Philippines with a demonstrated history
+      of working in the information technology and services industry. Skilled in
+      React, Node, Typescript, and other web technologies with 2 years of
+      professional experience in Full Stack Development.
     </p>
   );
 
