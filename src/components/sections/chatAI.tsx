@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import styled from "styled-components";
 import { IoSendSharp } from "react-icons/io5";
 import ReactTyped from "react-typed";
+
 import { fadeUp, parentVar } from "@/configs/animations";
 import { motion } from "framer-motion";
 import useScrollReveal from "@/hooks/useScrollReveal";
@@ -117,6 +118,7 @@ const StyledChatAI = styled(motion.div)`
 const ChatAI = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [ref, controls] = useScrollReveal(-250);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const [currentValue, setCurrentValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -132,12 +134,9 @@ const ChatAI = () => {
     textareaRef.current.style.height = scrollHeight + "px";
   }, [currentValue]);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    onEnterPress(e as any);
-  };
+  const handleAIRequest = async () => {
+    // onEnterPress(e as any);
 
-  const handleRequest = async () => {
     if (!currentValue) return;
 
     setLoading(true);
@@ -157,6 +156,7 @@ const ChatAI = () => {
         setAnswer(data.bot);
       }
     } catch (error) {
+      setAnswer("Something went wrong! ChatGPT may be down. Try again later.");
       console.log(error);
     } finally {
       setLoading(false);
@@ -167,7 +167,7 @@ const ChatAI = () => {
     if (e.key === "Enter") {
       e.preventDefault();
 
-      handleRequest();
+      buttonRef.current?.click();
     }
   };
 
@@ -190,7 +190,6 @@ const ChatAI = () => {
         ref={ref}
         variants={fadeUp}
         animate={controls}
-        onSubmit={handleSubmit}
         className="form"
       >
         <div className="text-wrapper">
@@ -201,9 +200,14 @@ const ChatAI = () => {
               setCurrentValue(e.target.value);
               //to do something with value, maybe callback?
             }}
-            onKeyPress={onEnterPress}
+            onKeyDown={onEnterPress}
           />
-          <button type="submit" className="btn" onClick={handleRequest}>
+          <button
+            ref={buttonRef}
+            type="button"
+            className="btn"
+            onClick={handleAIRequest}
+          >
             <IoSendSharp className="send-icon" />
           </button>
         </div>
@@ -245,11 +249,11 @@ const ChatAI = () => {
         ref={ref}
         variants={fadeUp}
         animate={controls}
-        href="https://chat.openai.com/"
+        href="https://chat.openai.com/chat"
         target="_blank"
         rel="noopener noreferrer"
       >
-        <div className="small-text">Powered by OpenAI</div>
+        <div className="small-text">Powered by ChatGPT</div>
       </motion.a>
     </StyledChatAI>
   );
