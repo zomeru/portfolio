@@ -1,23 +1,12 @@
-module.exports = {
-  reactStrictMode: true,
-};
-
-const withPlugins = require("next-compose-plugins");
-const withPWA = require("next-pwa");
-
-const pwaConfig = {
-  pwa: {
-    dest: "public",
-  },
-};
-
+/** @type {import('next').NextConfig} */
 const nextConfig = {
-  compiler: {
-    styledComponents: true,
-  },
+  reactStrictMode: true,
   swcMinify: true,
   images: {
     domains: ["cdn.sanity.io", "zomeru.com", "raw.githubusercontent.com"],
+  },
+  compiler: {
+    styledComponents: true,
   },
   async redirects() {
     return [
@@ -28,7 +17,7 @@ const nextConfig = {
       },
       {
         source: "/instagram",
-        destination: "https://instagram.com/zomerusama",
+        destination: "https://instagram.com/zomeruu",
         permanent: false,
       },
       {
@@ -55,4 +44,9 @@ const nextConfig = {
   },
 };
 
-module.exports = withPlugins([[withPWA, pwaConfig]], nextConfig);
+const withPWA = require("next-pwa")({
+  dest: "public",
+});
+
+module.exports =
+  process.env.NODE_ENV === "production" ? withPWA(nextConfig) : nextConfig;

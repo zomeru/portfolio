@@ -21,5 +21,5 @@ export const useDarkMode = () => {
     localTheme ? setTheme(localTheme) : setTheme("light");
   }, []);
 
-  return [theme, toggleTheme];
+  return [theme, toggleTheme] as const;
 };

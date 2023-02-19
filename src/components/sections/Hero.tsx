@@ -1,4 +1,5 @@
 import React from "react";
+import styled, { keyframes } from "styled-components";
 import { motion } from "framer-motion";
 import { fadeUp } from "../../configs/animations";
 import { floatingLinks } from "../../configs/data";
@@ -9,9 +10,37 @@ import {
   StyledHeroContent,
 } from "../../styles/componentStyles";
 
+const gradient = keyframes`
+0% {
+  background-position: 0 50%;
+}
+50% {
+  background-position: 100% 50%;
+}
+100% {
+  background-position: 0 50%;
+}
+`;
+
+const StyledName = styled.h2`
+  margin-left: -8px;
+  font-weight: 700;
+  font-size: clamp(28px, 7vw, 85px);
+  margin-bottom: 10px;
+  position: relative;
+  max-width: 720px;
+  animation: ${gradient} 5s ease-in-out infinite;
+  background: ${({ theme }) =>
+    `linear-gradient(to right, #8b174b, #570f66, #341671, ${theme.accentMain})`};
+  background-size: 300%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`;
+
 const Hero = () => {
   const one = <h1>Hi there, I am</h1>;
-  const two = <h2>Zomer Gregorio.</h2>;
+  const two = <StyledName>Zomer Gregorio.</StyledName>;
   const three = <h3>I create stuff for the web.</h3>;
   const four = (
     <p className="four">

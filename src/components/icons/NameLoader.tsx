@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React from "react";
 import { motion } from "framer-motion";
 import { useTheme } from "styled-components";
@@ -31,7 +30,7 @@ const pathVariants = {
   },
 };
 
-const NameLoader = ({ finishLoading }) => {
+const NameLoader = ({ finishLoading }: { finishLoading: () => void }) => {
   const theme = useTheme();
   const isTabActive = useTabActive();
 

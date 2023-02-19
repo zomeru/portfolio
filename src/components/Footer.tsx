@@ -1,6 +1,6 @@
-import React from 'react';
-import { socialLinks } from '../configs/data';
-import { StyledFooter, StyledSocialLinks } from '../styles/componentStyles';
+import React from "react";
+import { socialLinks } from "../configs/data";
+import { StyledFooter, StyledSocialLinks } from "../styles/componentStyles";
 
 const Footer = () => {
   return (
@@ -13,20 +13,20 @@ const Footer = () => {
             <a
               href={url}
               key={name}
-              target='_blank'
-              rel='noopener noreferrer'
+              target="_blank"
+              rel="noopener noreferrer"
               aria-label={name}
             >
-              <Icon className='icon' />
+              <Icon className="icon" />
             </a>
           );
         })}
       </StyledSocialLinks>
       <a
-        href='https://github.com/zomeru/portfolio'
-        target='_blank'
-        rel='noopener noreferrer'
-        aria-label='Github repository of this portfolio website.'
+        href="https://github.com/zomeru/portfolio"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Github repository of this portfolio website."
       >
         &copy; 2021 Zomer Gregorio. All rights reserved.
       </a>
