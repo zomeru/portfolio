@@ -1,4 +1,15 @@
-export const lightTheme: any = {
+interface Theme {
+  body: string;
+  textMain: string;
+  textSecond: string;
+  accentMain: string;
+  floatBG: string;
+  menuNav: string;
+  chatGPTInput: string;
+  blogTitleCard: string;
+}
+
+export const lightTheme: Theme = {
   body: "#E8EEF1", // WHITE
   textMain: "#1E3D58", // NAVY BLUE
   textSecond: "#607d8b", // BLUE-ISH GRAY
@@ -9,7 +20,7 @@ export const lightTheme: any = {
   blogTitleCard: "rgba(232, 238, 241, 0.85)",
 };
 
-export const darkTheme: any = {
+export const darkTheme: Theme = {
   body: "#0d1a25", // NAVY BLUE
   textMain: "#E8EEF1", // WHITE
   textSecond: "#9e9e9e", // GRAY

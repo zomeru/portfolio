@@ -5,7 +5,7 @@ import imageUrlBuilder from "@sanity/image-url";
 import BlockContent from "@sanity/block-content-to-react";
 import Link from "next/link";
 import styled from "styled-components";
-import BlogLayout from "@components/blogLayout";
+import BlogLayout from "@/components/BlogLayout";
 
 const StyledBlogHero = styled.div`
   width: 100%;

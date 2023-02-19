@@ -1,8 +1,8 @@
-import React from 'react';
-import styled from 'styled-components';
-import Image from 'next/image';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import React from "react";
+import styled from "styled-components";
+import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 const StyledBlogCard = styled.div`
   height: 250px;
@@ -49,19 +49,19 @@ const BlogCard: React.FC<BlogCardProps> = ({ slug, title, thumbnail }) => {
   const router = useRouter();
   return (
     <StyledBlogCard onClick={() => router.push(`/blog/${slug}`)}>
-      <div className='image-container'>
+      <div className="image-container">
         <Image
           src={thumbnail}
           alt={title}
-          layout='fill'
-          objectFit='cover'
-          objectPosition='center'
+          layout="fill"
+          objectFit="cover"
+          objectPosition="center"
         />
       </div>
-      <div className='card-title-wrapper'>
+      <div className="card-title-wrapper">
         <Link href={`/blog/${slug}`}>
           <a>
-            <h3 className='card-title'>{title}</h3>
+            <h3 className="card-title">{title}</h3>
           </a>
         </Link>
       </div>

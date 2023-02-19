@@ -1,6 +1,6 @@
-import React from 'react';
-import { Nav, Footer, PageHead } from '.';
-import { StyledLayout } from '../styles/componentStyles';
+import React from "react";
+import { Nav, Footer, PageHead } from ".";
+import { StyledLayout } from "../styles/componentStyles";
 
 interface IBlogLayoutProps {
   children: React.ReactNode;
@@ -27,10 +27,10 @@ const BlogLayout: React.FC<IBlogLayoutProps> = ({
           url: `https://zomeru.com/blog${url}`,
           description,
           image,
-          twitterUsername: '@zomeru_sama',
+          twitterUsername: "@zomeru_sama",
         }}
       />
-      <StyledLayout id='root'>
+      <StyledLayout id="root">
         <Nav isHome={isHome} />
         <main>{children}</main>
         <Footer />

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
+import styled from "styled-components";
 
 import ToggleTheme from "./ToggleTheme";
-import Menu from "./menu";
+import Menu from "./Menu";
 import { navLinks } from "../configs/data";
 import { StyledNav, StyledLinks } from "../styles/componentStyles";
 import { NavLinksProps } from "@/configs/types";
@@ -11,6 +12,28 @@ import { NavLinksProps } from "@/configs/types";
 interface INavProps {
   isHome: boolean;
 }
+
+const StyledLogo = styled.div`
+  font-weight: bold;
+  font-size: 30px;
+  color: ${({ theme }) => theme.accentMain};
+`;
+
+const Logo = ({ isHome, hostURL }: { isHome: boolean; hostURL: string }) => {
+  return (
+    <>
+      {isHome ? (
+        <a href={hostURL}>
+          <StyledLogo>ZG</StyledLogo>
+        </a>
+      ) : (
+        <Link href="/" passHref>
+          <StyledLogo>ZG</StyledLogo>
+        </Link>
+      )}
+    </>
+  );
+};
 
 const Nav: React.FC<INavProps> = ({ isHome }) => {
   const [hostURL, setHostURL] = useState<string>("");
@@ -59,15 +82,6 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
     setHostURL(`${window.location.protocol}//${window.location.host}`);
   }, []);
 
-  const Logo = () =>
-    isHome ? (
-      <a href={hostURL}>Zomer</a>
-    ) : (
-      <Link href="/" passHref>
-        <a>Zomer</a>
-      </Link>
-    );
-
   const [innerText, setInnerText] = useState("");
 
   const activeLinkHandler = (e: React.MouseEvent<HTMLLIElement>): void => {
@@ -88,7 +102,7 @@ const Nav: React.FC<INavProps> = ({ isHome }) => {
         animate="visible"
       >
         <motion.span className="logo" variants={navItemVariants}>
-          <Logo />
+          <Logo isHome={isHome} hostURL={hostURL} />
         </motion.span>
         <StyledLinks>
           <ul>

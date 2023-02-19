@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import BlogLayout from "@components/blogLayout";
+import BlogLayout from "@/components/BlogLayout";
 import imageUrlBuilder from "@sanity/image-url";
 import styled from "styled-components";
-import BlogCard from "@components/blogCard";
+import BlogCard from "@/components/BlogCard";
 
 interface BlogProps {
   isHome: boolean;
