@@ -1,0 +1,11 @@
+{
+  "extends": "@portfolio/typescript-config/base.json",
+  "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "module": "preserve",
+    "jsx": "preserve",
+    "incremental": true
+  },
+  "include": ["**/*.ts", "sanity.cli.ts", "sanity.config.ts"],
+  "exclude": ["node_modules"]
+}

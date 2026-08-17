@@ -1,0 +1,30 @@
+{
+  "name": "@portfolio/sanity",
+  "private": true,
+  "version": "1.0.0",
+  "main": "package.json",
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "pnpm run with-env sanity build",
+    "deploy": "pnpm run with-env sanity deploy",
+    "deploy-graphql": "pnpm run with-env sanity graphql deploy",
+    "dev": "pnpm run with-env sanity dev",
+    "start": "pnpm run with-env sanity start",
+    "with-env": "pnpm exec dotenv -e ../../.env.local --"
+  },
+  "keywords": [
+    "sanity"
+  ],
+  "dependencies": {
+    "@sanity/vision": "^6.9.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "sanity": "^6.9.2",
+    "styled-components": "^6.1.18"
+  },
+  "devDependencies": {
+    "@portfolio/typescript-config": "workspace:*",
+    "@types/react": "^19.2.14",
+    "typescript": "^5.8"
+  }
+}

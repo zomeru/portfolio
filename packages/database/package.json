@@ -1,0 +1,36 @@
+{
+  "name": "@portfolio/database",
+  "version": "0.1.0",
+  "description": "",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "check-types:watch": "tsc --noEmit --watch",
+    "db:generate": "pnpm run with-env drizzle-kit generate",
+    "db:migrate": "pnpm run with-env drizzle-kit migrate",
+    "db:push": "pnpm run with-env drizzle-kit push",
+    "db:pull": "pnpm run with-env drizzle-kit pull",
+    "db:export": "pnpm run with-env drizzle-kit export",
+    "db:check": "pnpm run with-env drizzle-kit check",
+    "db:up": "pnpm run with-env drizzle-kit up",
+    "db:studio": "pnpm run with-env drizzle-kit studio",
+    "with-env": "pnpm exec dotenv -e ../../.env.local --"
+  },
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "drizzle-orm": "1.0.0-rc.4",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@portfolio/typescript-config": "workspace:*",
+    "@types/node": "^26.2.0",
+    "@types/pg": "^8.21.0",
+    "drizzle-kit": "1.0.0-rc.4",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  }
+}
