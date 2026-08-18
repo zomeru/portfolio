@@ -1,6 +1,6 @@
-import { drizzle } from "drizzle-orm/node-postgres";
+import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 
-export function createDatabase() {
+export function createDatabase(): NodePgDatabase {
   const connectionString = process.env.DATABASE_URL;
 
   if (!connectionString) {
@@ -10,7 +10,7 @@ export function createDatabase() {
   return drizzle(connectionString);
 }
 
-export type Database = ReturnType<typeof createDatabase>;
+export type Database = NodePgDatabase;
 
 let database: Database | undefined;
 
@@ -20,7 +20,7 @@ function getDatabase(): Database {
   return database;
 }
 
-export const db = new Proxy({} as Database, {
+export const db: Database = new Proxy({} as Database, {
   get(_target, property: keyof Database) {
     return getDatabase()[property];
   },

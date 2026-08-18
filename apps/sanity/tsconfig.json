@@ -3,6 +3,7 @@
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,
     "module": "preserve",
+    "moduleResolution": "bundler",
     "jsx": "preserve",
     "incremental": true
   },
