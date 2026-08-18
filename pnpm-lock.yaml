@@ -342,9 +342,9 @@ importers:
 
   packages/database:
     dependencies:
-      dotenv:
-        specifier: ^17.4.2
-        version: 17.4.2
+      '@portfolio/env':
+        specifier: workspace:*
+        version: link:../env
       drizzle-orm:
         specifier: 1.0.0-rc.4
         version: 1.0.0-rc.4(@types/pg@8.21.0)(arktype@2.2.3)(pg@8.23.0)(zod@4.4.3)
@@ -367,6 +367,22 @@ importers:
       tsx:
         specifier: ^4.23.12
         version: 4.23.12
+      typescript:
+        specifier: ^6.0.3
+        version: 6.0.3
+
+  packages/env:
+    dependencies:
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      '@portfolio/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      '@types/node':
+        specifier: ^26.2.0
+        version: 26.2.0
       typescript:
         specifier: ^6.0.3
         version: 6.0.3

@@ -1,4 +1,4 @@
-import "dotenv/config";
+import { env } from "@portfolio/env";
 import { defineConfig } from "drizzle-kit";
 
 export default defineConfig({
@@ -6,7 +6,6 @@ export default defineConfig({
   schema: "./src/db/schema.ts",
   dialect: "postgresql",
   dbCredentials: {
-    // biome-ignore lint/style/noNonNullAssertion: DATABASE_URL is required and loaded from the environment
-    url: process.env.DATABASE_URL!,
+    url: env.DATABASE_URL,
   },
 });
