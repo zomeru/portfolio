@@ -2,7 +2,9 @@
   "$schema": "node_modules/knip/schema.json",
   "tags": ["-lintignore"],
   "workspaces": {
-    ".": {},
+    ".": {
+      "ignore": [".agents/**"]
+    },
     "packages/database": {
       "ignoreDependencies": ["tsx"]
     }
