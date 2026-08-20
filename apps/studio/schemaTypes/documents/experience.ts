@@ -10,7 +10,12 @@ export const experience = defineType({
     defineField({ name: "role", type: "string", validation: (rule) => rule.required() }),
     defineField({ name: "company", type: "string", validation: (rule) => rule.required() }),
     defineField({ name: "location", type: "string" }),
-    defineField({ name: "period", type: "string", validation: (rule) => rule.required() }),
+    defineField({
+      name: "period",
+      description: 'e.g., "Mar. 2025 — Present"',
+      type: "string",
+      validation: (rule) => rule.required(),
+    }),
     defineField({ name: "summary", type: "text", rows: 3 }),
     defineField({ name: "responsibilities", type: "richText" }),
     defineField({

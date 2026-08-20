@@ -2,26 +2,39 @@ import type { Metadata } from "next";
 
 import { ExperienceItem } from "@/components/portfolio/experience-item";
 import { PageHeader } from "@/components/portfolio/page-header";
-import { experience } from "@/data/experience";
-import { profile } from "@/data/profile";
+import { PortableTextContent, portableTextToPlainText } from "@/lib/sanity/portable-text";
+import { getExperience } from "@/lib/sanity/services/experience";
+import { getProfile } from "@/lib/sanity/services/profile";
 
-export const metadata: Metadata = {
-  title: `${profile.name}`,
-  description:
-    "Full-stack software engineer focused on building modern web applications and scalable systems.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const profile = await getProfile();
+  return {
+    title: profile?.name || "About",
+    description: portableTextToPlainText(profile?.biography) || "About this portfolio.",
+  };
+}
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const [profile, experience] = await Promise.all([getProfile(), getExperience()]);
+
   return (
     <>
       <PageHeader
         index="01"
         eyebrow="About"
-        title="I'm Zomer, a full-stack software engineer focused on building modern web applications and scalable systems."
+        title={
+          profile?.biography ? (
+            <PortableTextContent value={profile.biography} variant="inline" />
+          ) : (
+            "Profile content is unavailable."
+          )
+        }
       />
-      <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
-        I work across frontend, backend, databases, infrastructure, and developer tooling.
-      </p>
+      {profile?.aboutContent && (
+        <div className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
+          <PortableTextContent value={profile.aboutContent} />
+        </div>
+      )}
 
       <section aria-labelledby="experience-heading" className="mt-16">
         <h2
@@ -36,10 +49,13 @@ export default function AboutPage() {
             className="absolute bottom-2 left-1 top-2 w-0.5 bg-linear-to-b from-border via-border to-transparent"
           />
           {experience.map((job) => (
-            <li key={`${job.role}-${job.period}`} className="pb-8 last:pb-0">
+            <li key={job._id} className="pb-8 last:pb-0">
               <ExperienceItem job={job} />
             </li>
           ))}
+          {experience.length === 0 && (
+            <li className="pl-7 text-sm text-muted">No experience entries are published yet.</li>
+          )}
         </ol>
       </section>
     </>

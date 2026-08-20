@@ -2,17 +2,20 @@ import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/portfolio/page-header";
-import { profile } from "@/data/profile";
-import { socials } from "@/data/socials";
+import { getProfileSocials } from "@/lib/sanity/profile";
+import { getProfile } from "@/lib/sanity/services/profile";
 
 export const metadata: Metadata = {
   title: "Contact",
   description: "Have a project, opportunity, or interesting idea? Let's talk.",
 };
 
-const elsewhere = socials.filter((social) => social.name !== "Email");
+export default async function ContactPage() {
+  const profile = await getProfile();
+  const elsewhere = profile
+    ? getProfileSocials(profile).filter((social) => social.name !== "Email")
+    : [];
 
-export default function ContactPage() {
   return (
     <>
       <PageHeader
@@ -22,12 +25,16 @@ export default function ContactPage() {
       />
       <p className="mt-4 text-sm leading-relaxed text-muted">Let's talk.</p>
 
-      <a
-        href={`mailto:${profile.email}`}
-        className="mt-8 inline-flex items-center gap-1 text-lg font-medium underline-offset-4 transition-colors duration-200 hover:text-muted motion-reduce:transition-none"
-      >
-        {profile.email} <ArrowUpRight size={16} />
-      </a>
+      {profile?.email ? (
+        <a
+          href={`mailto:${profile.email}`}
+          className="mt-8 inline-flex items-center gap-1 text-lg font-medium underline-offset-4 transition-colors duration-200 hover:text-muted motion-reduce:transition-none"
+        >
+          {profile.email} <ArrowUpRight size={16} />
+        </a>
+      ) : (
+        <p className="mt-8 text-sm text-muted">Contact information is unavailable.</p>
+      )}
 
       <h2 className="mt-16 font-mono text-xs uppercase tracking-widest text-muted">Elsewhere</h2>
       <ul className="mt-2 divide-y divide-border border-t border-border">

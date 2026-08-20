@@ -36,8 +36,10 @@
       "!**/out",
       "!**/graphify-out",
       "!**/drizzle",
+      "!**/sanity.types.ts",
       "!**/routeTree.gen.ts",
-      "!**/worker-configuration*.d.ts"
+      "!**/worker-configuration*.d.ts",
+      "!apps/studio/data"
     ]
   },
   "css": {

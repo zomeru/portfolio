@@ -2,7 +2,16 @@ import { blogPost } from "./documents/blogPost";
 import { experience } from "./documents/experience";
 import { profile } from "./documents/profile";
 import { project } from "./documents/project";
+import { techStack } from "./documents/techStack";
 import { richText } from "./objects/richText";
 import { socialLink } from "./objects/socialLink";
 
-export const schemaTypes = [richText, socialLink, profile, experience, project, blogPost];
+export const schemaTypes = [
+  richText,
+  socialLink,
+  profile,
+  experience,
+  project,
+  blogPost,
+  techStack,
+];

@@ -1,8 +1,27 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { BlogItem } from "@/components/portfolio/blog-item";
 import { PageHeader } from "@/components/portfolio/page-header";
-import { posts } from "@/data/blog";
+import { getBlogPosts } from "@/lib/sanity/services/blog";
+
+const POSTS_PER_PAGE = 10;
+
+type BlogsPageProps = {
+  searchParams: Promise<{ page?: string | string[] }>;
+};
+
+function getCurrentPage(value: string | string[] | undefined, totalPages: number) {
+  const rawPage = Array.isArray(value) ? value[0] : value;
+  const page = Number.parseInt(rawPage ?? "1", 10);
+
+  if (!Number.isInteger(page) || page < 1) return 1;
+  return Math.min(page, totalPages);
+}
+
+function pageHref(page: number) {
+  return `/blogs?page=${page}`;
+}
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -10,8 +29,13 @@ export const metadata: Metadata = {
     "Writing about software engineering, web development, architecture, tooling, and AI.",
 };
 
-export default function BlogsPage() {
-  const years = [...new Set(posts.map((post) => post.date.slice(0, 4)))];
+export default async function BlogsPage({ searchParams }: BlogsPageProps) {
+  const posts = await getBlogPosts();
+  const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
+  const { page } = await searchParams;
+  const currentPage = getCurrentPage(page, totalPages);
+  const start = (currentPage - 1) * POSTS_PER_PAGE;
+  const pagePosts = posts.slice(start, start + POSTS_PER_PAGE);
 
   return (
     <>
@@ -21,26 +45,53 @@ export default function BlogsPage() {
         title="Writing about software engineering, web development, architecture, tooling, and AI."
       />
       <div className="mt-10 divide-y divide-border border-t border-border">
-        {years.map((year) => (
-          <section key={year} aria-labelledby={`year-${year}`} className="py-6 sm:py-8">
-            <h2
-              id={`year-${year}`}
-              className="font-mono text-xs uppercase tracking-widest text-muted"
-            >
-              {year}
-            </h2>
-            <ul className="mt-2 divide-y divide-border">
-              {posts
-                .filter((post) => post.date.startsWith(year))
-                .map((post) => (
-                  <li key={post.slug}>
-                    <BlogItem post={post} />
-                  </li>
-                ))}
-            </ul>
-          </section>
-        ))}
+        {posts.length === 0 && (
+          <p className="py-10 text-sm text-muted">No blog posts are published yet.</p>
+        )}
+        {pagePosts.length > 0 && (
+          <ul className="divide-y divide-border">
+            {pagePosts.map((post) => (
+              <li key={post.slug}>
+                <BlogItem post={post} />
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
+      {posts.length > POSTS_PER_PAGE && (
+        <nav
+          aria-label="Blog pagination"
+          className="mt-8 flex items-center justify-between gap-4 text-sm"
+        >
+          {currentPage > 1 ? (
+            <Link
+              href={pageHref(currentPage - 1)}
+              className="underline-offset-4 transition-colors duration-200 hover:text-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground motion-reduce:transition-none"
+            >
+              ← Newer posts
+            </Link>
+          ) : (
+            <span aria-disabled="true" className="text-muted">
+              ← Newer posts
+            </span>
+          )}
+          <p className="font-mono text-xs text-muted">
+            Page {currentPage} of {totalPages}
+          </p>
+          {currentPage < totalPages ? (
+            <Link
+              href={pageHref(currentPage + 1)}
+              className="underline-offset-4 transition-colors duration-200 hover:text-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground motion-reduce:transition-none"
+            >
+              Older posts →
+            </Link>
+          ) : (
+            <span aria-disabled="true" className="text-muted">
+              Older posts →
+            </span>
+          )}
+        </nav>
+      )}
     </>
   );
 }

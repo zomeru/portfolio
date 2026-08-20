@@ -5,6 +5,9 @@
     ".": {
       "ignore": [".agents/**"]
     },
+    "apps/web": {
+      "ignore": ["src/lib/sanity/sanity.types.ts"]
+    },
     "packages/database": {
       "ignoreDependencies": ["tsx"]
     }

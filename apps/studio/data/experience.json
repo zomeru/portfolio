@@ -1,0 +1,502 @@
+[
+  {
+    "_createdAt": "2026-08-20T14:39:58Z",
+    "_id": "63eb1118-f38b-4b95-a42d-366e237b70f4",
+    "_rev": "H0uafN48mHAAjvTbJHftkh",
+    "_system": {
+      "base": {
+        "id": "63eb1118-f38b-4b95-a42d-366e237b70f4",
+        "rev": "EfB2kIrJQHDYmeHefoj5wQ"
+      }
+    },
+    "_type": "experience",
+    "_updatedAt": "2026-08-20T14:52:27Z",
+    "company": "Seansoft Corporation",
+    "companyUrl": "https://www.seansoftinc.com/",
+    "location": "Makati City, Philippines ",
+    "order": 4,
+    "period": "Jan. 2024 — Apr. 2026",
+    "responsibilities": [
+      {
+        "_key": "b91e33c1648d",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "eef72845ef5e",
+            "_type": "span",
+            "marks": [],
+            "text": "Worked on a mineral management platform for managing mineral assets, maps, reports, and other related workflows."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "8c1a2cb27706",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "1bf154ae36c1",
+            "_type": "span",
+            "marks": [],
+            "text": "Migrated legacy AngularJS features to React, reducing frontend complexity and making development easier to maintain"
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "5bf13307bd9c",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "462e5d7d72ec",
+            "_type": "span",
+            "marks": [],
+            "text": "Improved Leaflet map responsiveness by removing unnecessary markers, layers, and rendering work."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "e560fa5679a5",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "8248a3ade7df",
+            "_type": "span",
+            "marks": [],
+            "text": "Built and improved Django APIs for reports and product workflows, including validation, filtering, and data handling."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "aa22d52a455a",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "1f8ca245c03c",
+            "_type": "span",
+            "marks": [],
+            "text": "Moved custom audit logging toward database-level auditing for more consistent and reliable change tracking."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "7685a642b3d8",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "d5b220b1af70",
+            "_type": "span",
+            "marks": [],
+            "text": "Added and stabilized Cypress E2E tests to catch regressions across critical workflows and React migrations."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "aa814e894d78",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "5736fb87cc99",
+            "_type": "span",
+            "marks": [],
+            "text": "Improved slow reports and database queries by identifying bottlenecks and adding targeted PostgreSQL indexes."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "516cd8572262",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "5744639b180a",
+            "_type": "span",
+            "marks": [],
+            "text": "Used Claude Code for the AngularJS-to-React migration to break larger migrations into tasks, tests, and review changes."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "e950497b2e13",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "d5f102ab4dd8",
+            "_type": "span",
+            "marks": [],
+            "text": "Worked on CodeTest, improving the UI to simplify workflows, keep layouts and styling consistent, and provide a smoother user experience."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "role": "Software Developer",
+    "summary": "Helped modernize and improve a mineral management platform by migrating legacy features to React, optimizing maps and reports, improving APIs and database performance, and strengthening automated testing for a faster, more reliable, and maintainable system.",
+    "technologies": ["React", "Node.js", "Django", "PostgreSQL", "Celery"]
+  },
+  {
+    "_createdAt": "2026-08-20T14:51:56Z",
+    "_id": "90ccbd5c-3613-4ca5-ad34-080e136fce94",
+    "_rev": "H0uafN48mHAAjvTbJHfyKU",
+    "_type": "experience",
+    "_updatedAt": "2026-08-20T14:54:12Z",
+    "company": "Binbooker",
+    "companyUrl": "https://binbooker.com/",
+    "location": "Vancouver, Canada (Remote)",
+    "order": 3,
+    "period": "Mar. 2025 — July. 2025",
+    "responsibilities": [
+      {
+        "_key": "12de616e3f5f",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "a9f6c5343a5c",
+            "_type": "span",
+            "marks": [],
+            "text": "Improved various parts of the BinBooker app using React and SCSS, mostly improving existing workflows and UI."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "ad1a0155ca10",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "79ac05026ec7",
+            "_type": "span",
+            "marks": [],
+            "text": "Built advanced filtering and reporting features that made operational data easier to find, review, and analyze."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "1052016bab48",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "bea1f38ce547",
+            "_type": "span",
+            "marks": [],
+            "text": "Improved Bins Management performance for large datasets by reducing unnecessary rendering and costly frontend work."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "bed64acdce59",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "e4cd8f1624d1",
+            "_type": "span",
+            "marks": [],
+            "text": "Improved Stripe integration and added a system-wide maintenance mode for deployments or maintenance work."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "role": "React Developer",
+    "summary": "Improved the BinBooker app by refining React workflows and UI, building advanced filtering and reporting, optimizing performance for large datasets, and improving Stripe integration for a smoother and more reliable user experience.",
+    "technologies": ["React", "Jest", "SCSS", "Storybook"]
+  },
+  {
+    "_createdAt": "2026-08-20T14:56:00Z",
+    "_id": "13bf32bf-42e3-4082-af39-1a3f202f0e75",
+    "_rev": "H0uafN48mHAAjvTbJHgJEm",
+    "_system": {
+      "base": {
+        "id": "13bf32bf-42e3-4082-af39-1a3f202f0e75",
+        "rev": "Rjpeon0RPqEDfB5i5eFvZP"
+      }
+    },
+    "_type": "experience",
+    "_updatedAt": "2026-08-20T15:01:06Z",
+    "company": "Evelan GmbH",
+    "companyUrl": "https://evelan.de/en",
+    "location": "Hamburg, Germany (Remote)",
+    "order": 2,
+    "period": "Aug. 2023 — Dec. 2023",
+    "responsibilities": [
+      {
+        "_key": "fd3a89aaf8b2",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "8cdd1343333c",
+            "_type": "span",
+            "marks": [],
+            "text": "Worked on PAUL 360, a secure document collaboration platform built with Next.js, tRPC, TypeScript, and PostgreSQL."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "ecefb3d4df1a",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "4c74b75310a3",
+            "_type": "span",
+            "marks": [],
+            "text": "Built responsive, reusable, and strictly-typed UI components using React and Chakra UI."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "77a7736daf7f",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "52a65eeb4bba",
+            "_type": "span",
+            "marks": [],
+            "text": "Built type-safe tRPC APIs sharing frontend contracts, reducing mismatches between API responses and client-side code."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "0c073bc5ecbc",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "dfa8a3d795f1",
+            "_type": "span",
+            "marks": [],
+            "text": "Used shared Zod schemas across client and server validation so the same data rules weren’t maintained separately."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "bcee48fee4e3",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "c33d71778e40",
+            "_type": "span",
+            "marks": [],
+            "text": "Designed and updated PostgreSQL schemas with Prisma to support new application features and data requirements."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "64e2fa057fb1",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "463b33fa400f",
+            "_type": "span",
+            "marks": [],
+            "text": "Added Jest tests around core application logic to catch regressions as features changed."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "role": "Full Stack Developer",
+    "summary": "Helped build and improve PAUL 360 by developing reusable React interfaces, type-safe APIs, shared validation, and database features, resulting in a more consistent, reliable, and maintainable full-stack application.",
+    "technologies": [
+      "React",
+      "Next.js",
+      "TypeScript",
+      "tRPC",
+      "React Query",
+      "Prisma",
+      "PostgreSQL",
+      "Tailwind CSS"
+    ]
+  },
+  {
+    "_createdAt": "2026-08-20T15:01:19Z",
+    "_id": "70ff1c3e-53aa-47a2-8433-d31ec3dcb2e4",
+    "_rev": "Rjpeon0RPqEDfB5i5eITCt",
+    "_type": "experience",
+    "_updatedAt": "2026-08-20T15:04:33Z",
+    "company": "Beyonder Inc.",
+    "companyUrl": "https://www.linkedin.com/company/beyonder-systems/",
+    "location": "Makati City, Philippines ",
+    "order": 1,
+    "period": "Feb. 2022 — Aug. 2023",
+    "responsibilities": [
+      {
+        "_key": "caf912ce64c4",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "c6ce673a3255",
+            "_type": "span",
+            "marks": [],
+            "text": "Shipped multiple web and mobile products using TypeScript, Next.js, React, React Native, Node.js, MongoDB, Firebase, and Supabase, including (Kokuban (MVP), スマホ de マップ, Doko?)."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "9e42f25f4238",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "9ac7643520bb",
+            "_type": "span",
+            "marks": [],
+            "text": "Set up GitHub Actions workflows for build and deployment tasks, reducing the manual work required to release changes."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "707f2325eeff",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "60bc6c657934",
+            "_type": "span",
+            "marks": [],
+            "text": "Took ownership of frontend implementation across projects, keeping patterns consistent and reviewing developers’ work."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "role": "Software Engineer",
+    "summary": "Shipped multiple web and mobile products while taking ownership of frontend development, improving code consistency through reviews, and automating build and deployment workflows for faster and more reliable releases.",
+    "technologies": [
+      "React",
+      "Next.js",
+      "Vue.js",
+      "Tailwind CSS",
+      "React Native",
+      "Firebase",
+      "Node.js",
+      "Express.js",
+      "PostgreSQL",
+      "Supabase"
+    ]
+  },
+  {
+    "_createdAt": "2026-08-20T15:04:42Z",
+    "_id": "35eb2636-db06-4802-bf44-4d0e4735037c",
+    "_rev": "EfB2kIrJQHDYmeHefolJBm",
+    "_type": "experience",
+    "_updatedAt": "2026-08-20T15:06:20Z",
+    "company": "Freelance",
+    "location": "Muntinlupa, Philippines",
+    "order": 0,
+    "period": "Sep. 2021 — Feb. 2022",
+    "responsibilities": [
+      {
+        "_key": "1386a1fa230f",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "6e43a16a609d",
+            "_type": "span",
+            "marks": [],
+            "text": "Built and maintained web and mobile applications for freelance clients, covering frontend and backend development."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "5ebc114dbedc",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "aa4f7e6438b8",
+            "_type": "span",
+            "marks": [],
+            "text": "Worked with a small team including a senior engineer to build and deliver an e-commerce platform."
+          }
+        ],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "role": "Full Stack Developer",
+    "summary": "Built and maintained web and mobile applications for freelance clients, including an e-commerce platform, helping deliver complete frontend and backend solutions in collaboration with a small development team.",
+    "technologies": ["React", "Next.js", "TypeScript", "Firebase", "Node.js", "Tailwind CSS"]
+  }
+]

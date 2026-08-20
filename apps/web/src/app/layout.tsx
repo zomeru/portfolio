@@ -5,7 +5,9 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteNav } from "@/components/layout/site-nav";
 import { ThemeProvider } from "@/components/theme/theme-provider";
-import { profile } from "@/data/profile";
+import { portableTextToPlainText } from "@/lib/sanity/portable-text";
+import { getProfile } from "@/lib/sanity/services/profile";
+import { getTechStack } from "@/lib/sanity/services/tech-stack";
 
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -20,23 +22,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: `${profile.name} — ${profile.role}`,
-    template: `%s — ${profile.name}`,
-  },
-  description:
-    "Full-stack software engineer focused on building modern web applications and scalable systems.",
-  openGraph: {
-    title: `${profile.name} — ${profile.role}`,
-    description:
-      "Full-stack software engineer focused on building modern web applications and scalable systems.",
-    type: "website",
-    siteName: profile.name,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const profile = await getProfile();
+  const name = profile?.name || "Portfolio";
+  const role = profile?.role || "Software Engineer";
+  const description = portableTextToPlainText(profile?.biography) || "Personal portfolio.";
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+  return {
+    title: { default: `${name} — ${role}`, template: `%s — ${name}` },
+    description,
+    openGraph: { title: `${name} — ${role}`, description, type: "website", siteName: name },
+  };
+}
+
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const [profile, techStack] = await Promise.all([getProfile(), getTechStack()]);
+
   return (
     <html
       lang="en"
@@ -47,10 +48,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ThemeProvider>
           <div className="flex min-h-dvh flex-col">
             <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-5 sm:px-8">
-              <SiteHeader />
+              <SiteHeader profile={profile} techStack={techStack} />
               <SiteNav />
               <main className="flex-1 py-12 sm:py-16">{children}</main>
-              <SiteFooter />
+              <SiteFooter profile={profile} />
             </div>
           </div>
         </ThemeProvider>

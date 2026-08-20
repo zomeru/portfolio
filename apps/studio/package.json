@@ -11,6 +11,9 @@
     "dev": "pnpm run with-env sanity dev",
     "start": "pnpm run with-env sanity start",
     "check-types": "tsc --noEmit",
+    "blog:label-code": "tsx scripts/label-blog-code-fences.ts",
+    "seed": "pnpm run with-env tsx scripts/seed.ts",
+    "typegen": "pnpm run with-env sanity schema extract --path schema.json --enforce-required-fields --force && pnpm run with-env sanity typegen generate",
     "with-env": "pnpm exec dotenv -e ../../.env.local --"
   },
   "keywords": [
@@ -27,7 +30,8 @@
   },
   "devDependencies": {
     "@portfolio/typescript-config": "workspace:*",
-    "@types/react": "^19",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.2",
     "typescript": "^6.0.3"
   }
 }

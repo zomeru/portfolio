@@ -1,0 +1,52 @@
+[
+  {
+    "_createdAt": "2026-08-20T13:27:44Z",
+    "_id": "profile",
+    "_rev": "H0uafN48mHAAjvTbJHeq21",
+    "_system": {
+      "base": {
+        "id": "profile",
+        "rev": "H0uafN48mHAAjvTbJHbDOW"
+      }
+    },
+    "_type": "profile",
+    "_updatedAt": "2026-08-20T14:33:32Z",
+    "aboutContent": [
+      {
+        "_key": "df40f1e1ee73",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "0fd5c36ceb19",
+            "_type": "span",
+            "marks": [],
+            "text": "I work across frontend, backend, databases, infrastructure, and developer tooling."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "biography": [
+      {
+        "_key": "aa05f12d656c",
+        "_type": "block",
+        "children": [
+          {
+            "_key": "c19aff73edc9",
+            "_type": "span",
+            "marks": [],
+            "text": "I'm Zomer, a full-stack software engineer focused on building modern web applications and scalable systems."
+          }
+        ],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
+    "email": "zomergregorio@gmail.com",
+    "githubUrl": "https://github.com/zomeru",
+    "linkedinUrl": "https://www.linkedin.com/in/zomergregorio/",
+    "name": "Zomer Gregorio",
+    "role": "Software Engineer"
+  }
+]

@@ -24,7 +24,14 @@ export const blogPost = defineType({
       rows: 3,
       validation: (rule) => rule.required().max(300).warning("Keep excerpts under 300 characters."),
     }),
-    defineField({ name: "body", type: "richText", validation: (rule) => rule.required() }),
+    defineField({
+      name: "body",
+      title: "Body",
+      type: "text",
+      rows: 20,
+      description: "Blog content in Markdown format.",
+      validation: (rule) => rule.required(),
+    }),
     defineField({ name: "publishedAt", type: "datetime", validation: (rule) => rule.required() }),
     defineField({ name: "updatedAt", type: "datetime" }),
     defineField({

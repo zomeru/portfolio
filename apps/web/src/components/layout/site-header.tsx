@@ -1,49 +1,59 @@
 import { ArrowUpRight } from "lucide-react";
-import Image from "next/image";
 
+import { SanityProfileImage } from "@/components/portfolio/sanity-profile-image";
 import { SocialLinks } from "@/components/portfolio/social-links";
 import { TechStack } from "@/components/portfolio/tech-stack";
-import { profile } from "@/data/profile";
+import { getProfileSocials } from "@/lib/sanity/profile";
+import type { Profile, TechStackGroup } from "@/lib/sanity/types";
 
 const AVATAR_SIZE = 96;
 
-export function SiteHeader() {
+type SiteHeaderProps = {
+  profile: Profile | null;
+  techStack: readonly TechStackGroup[];
+};
+
+export function SiteHeader({ profile, techStack }: SiteHeaderProps) {
+  const socials = profile ? getProfileSocials(profile) : [];
+  const resumeUrl = profile?.resumeUrl ?? "/assets/GREGORIO_ZOMER_RESUME.pdf";
+
   return (
     <header className="border-b border-border">
       <div className="grid gap-10 py-10 md:grid-cols-2 md:gap-16 sm:py-12">
         <div className="flex flex-col items-start gap-5">
-          <div className="group relative size-24 overflow-hidden rounded-full border border-border">
-            <Image
-              src="/assets/zomer_sketch.png"
-              alt={`Portrait of ${profile.name}`}
-              width={AVATAR_SIZE}
-              height={AVATAR_SIZE}
-              priority
-              className="block size-full object-cover transition-opacity duration-300 group-hover:opacity-0 motion-reduce:transition-none"
-            />
-            <Image
-              src="/assets/zomer.jpg"
-              alt=""
-              width={AVATAR_SIZE}
-              height={AVATAR_SIZE}
-              className="absolute inset-0 block size-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100 motion-reduce:transition-none"
-            />
-          </div>
+          {profile && (
+            <div className="relative size-24 overflow-hidden rounded-full border border-border">
+              <SanityProfileImage
+                value={profile.photo}
+                size={AVATAR_SIZE}
+                priority
+                className="block size-full object-cover"
+              />
+            </div>
+          )}
+          {profile && (
+            <div>
+              {profile.name && (
+                <p className="text-2xl font-medium tracking-tight">{profile.name}</p>
+              )}
+              {profile.role && <p className="mt-0.5 text-base text-muted">{profile.role}</p>}
+            </div>
+          )}
+          {profile && (
+            <a
+              href={resumeUrl}
+              className="inline-flex items-center gap-1 text-base font-medium underline-offset-4 transition-colors duration-200 hover:text-muted motion-reduce:transition-none"
+            >
+              Resume <ArrowUpRight aria-hidden="true" size={16} />
+            </a>
+          )}
+          {socials.length > 0 && <SocialLinks items={socials} className="flex items-center" />}
+        </div>
+        {techStack.length > 0 && (
           <div>
-            <p className="text-2xl font-medium tracking-tight">{profile.name}</p>
-            <p className="mt-0.5 text-base text-muted">{profile.role}</p>
+            <TechStack groups={techStack} />
           </div>
-          <a
-            href={profile.resumeUrl}
-            className="inline-flex items-center gap-1 text-base font-medium underline-offset-4 transition-colors duration-200 hover:text-muted motion-reduce:transition-none"
-          >
-            Resume <ArrowUpRight size={16} />
-          </a>
-          <SocialLinks className="flex items-center" />
-        </div>
-        <div>
-          <TechStack />
-        </div>
+        )}
       </div>
     </header>
   );

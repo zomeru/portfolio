@@ -1,0 +1,26 @@
+[
+  {
+    "_type": "techStack",
+    "name": "Frontend",
+    "items": ["TypeScript", "React", "Next.js", "TanStack", "Tailwind CSS"],
+    "order": 0
+  },
+  {
+    "_type": "techStack",
+    "name": "Backend",
+    "items": ["Node.js", "Hono", "Express", "Django"],
+    "order": 1
+  },
+  {
+    "_type": "techStack",
+    "name": "Data",
+    "items": ["PostgreSQL", "Redis", "Drizzle", "Prisma"],
+    "order": 2
+  },
+  {
+    "_type": "techStack",
+    "name": "Infrastructure / Tools",
+    "items": ["Docker", "GitHub Actions", "Cloudflare", "Vercel"],
+    "order": 3
+  }
+]

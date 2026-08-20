@@ -1,6 +1,6 @@
 import type { StructureResolver } from "sanity/structure";
 
-const documentTypes = ["experience", "project", "blogPost"] as const;
+const documentTypes = ["experience", "project", "blogPost", "techStack"] as const;
 
 export const structure: StructureResolver = (S) =>
   S.list()

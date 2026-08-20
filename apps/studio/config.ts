@@ -1,3 +1,3 @@
-import { getStudioEnv } from "@portfolio/env/studio";
+import { getSanityEnv } from "@portfolio/env/sanity";
 
-export const studioConfig = getStudioEnv();
+export const studioConfig = getSanityEnv();

@@ -17,4 +17,12 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
   },
+  document: {
+    actions: (previousActions, context) =>
+      context.schemaType === "profile"
+        ? previousActions.filter(({ action }) => action !== "duplicate" && action !== "delete")
+        : previousActions,
+    newDocumentOptions: (previousOptions) =>
+      previousOptions.filter(({ templateId }) => templateId !== "profile"),
+  },
 });

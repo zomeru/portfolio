@@ -2,22 +2,21 @@ import type { LucideIcon } from "lucide-react";
 import { Mail } from "lucide-react";
 
 import { GitHubIcon, LinkedInIcon } from "@/components/icons";
-import type { Social } from "@/data/socials";
-import { socials } from "@/data/socials";
+import type { ProfileSocial } from "@/lib/sanity/types";
 import { cn } from "@/lib/utils";
 
-const socialIcons: Record<Social["name"], LucideIcon | typeof GitHubIcon> = {
+const socialIcons: Record<ProfileSocial["name"], LucideIcon | typeof GitHubIcon> = {
   Email: Mail,
   GitHub: GitHubIcon,
   LinkedIn: LinkedInIcon,
 };
 
 type SocialLinksProps = {
-  items?: readonly Social[];
+  items: readonly ProfileSocial[];
   className?: string;
 };
 
-export function SocialLinks({ items = socials, className }: SocialLinksProps) {
+export function SocialLinks({ items, className }: SocialLinksProps) {
   return (
     <ul className={cn(className, "gap-3")}>
       {items.map((social) => {

@@ -1,0 +1,135 @@
+[
+  {
+    "_type": "project",
+    "title": "Rezumer AI",
+    "year": "2026",
+    "description": "Rezumerai is an AI-assisted resume builder for job seekers who want one workspace to draft, refine, tailor, and export resumes. It combines structured resume editing with AI-powered section optimization, job-description matching, and a scope-aware assistant that can answer public, account, or admin questions based on the current user's access.",
+    "technologies": [
+      "Turborepo",
+      "TypeScript",
+      "Next.js",
+      "React.js",
+      "ElysiaJS",
+      "AI SDK",
+      "Openrouter",
+      "Prisma",
+      "PostgreSQL",
+      "Pgvector"
+    ],
+    "order": 8,
+    "demoUrl": "https://rezumerai.vercel.app/",
+    "repositoryUrl": "https://github.com/zomeru/rezumerai"
+  },
+  {
+    "_type": "project",
+    "title": "Batibot",
+    "year": "2026",
+    "description": "Batibot is an AI-powered messaging companion that helps you find the right information and services for your needs.",
+    "technologies": [
+      "React Native CLI",
+      "Typescript",
+      "Tailwind CSS",
+      "OpenAI API",
+      "ChatGPT",
+      "Supabase"
+    ],
+    "order": 7,
+    "demoUrl": "https://play.google.com/store/apps/details?id=com.zomeru.batibot",
+    "repositoryUrl": "https://github.com/zomeru/batibot-app"
+  },
+  {
+    "_type": "project",
+    "title": "Zomink",
+    "year": "2026",
+    "description": "Zomink is an open-source link management platform with all the features you need in one place. Manage, track, and shorten your URLs with your custom alias.",
+    "technologies": [
+      "Typescript",
+      "React.js",
+      "Next.js",
+      "Tailwind CSS",
+      "tRPC",
+      "Turborepo",
+      "Prisma",
+      "PostgreSQL"
+    ],
+    "order": 6,
+    "demoUrl": "https://zom.ink/",
+    "repositoryUrl": "https://github.com/zomeru/zom.ink"
+  },
+  {
+    "_type": "project",
+    "title": "STICA LMS",
+    "year": "2026",
+    "description": "STICA LMS is my capstone project for my college. It is an online library management system for STI College Alabang.",
+    "technologies": [
+      "Typescript",
+      "React.js",
+      "Next.js",
+      "Turborepo",
+      "Tailwind CSS",
+      "Firebase",
+      "Algolia"
+    ],
+    "order": 5,
+    "demoUrl": "https://sticalms.com/",
+    "repositoryUrl": "https://github.com/zomeru/stica-lms"
+  },
+  {
+    "_type": "project",
+    "title": "Kokuban",
+    "year": "2026",
+    "description": "Kokuban is meant to assist the teachers in Japan to create online educational materials that their students can access and use from the browser.",
+    "technologies": [
+      "Typescript",
+      "React.js",
+      "Next.js",
+      "Tailwind CSS",
+      "Node.js",
+      "MongoDB",
+      "Firebase"
+    ],
+    "order": 4,
+    "demoUrl": "https://kokuban.vercel.app/",
+    "repositoryUrl": "https://github.com/Yumeville/kokuban"
+  },
+  {
+    "_type": "project",
+    "title": "Zomify",
+    "year": "2026",
+    "description": "Zomify is a spotify clone that is built with SvelteKit, Typescript, and Tailwind CSS.",
+    "technologies": ["SvelteKit", "Typescript", "Tailwind CSS", "Spotify API"],
+    "order": 3,
+    "demoUrl": "https://zomify.vercel.app",
+    "repositoryUrl": "https://github.com/zomeru/zomify"
+  },
+  {
+    "_type": "project",
+    "title": "Paymongo.js",
+    "year": "2026",
+    "description": "A lightweight, fully-featured, modular, typescript-compatible javascript library for Paymongo.",
+    "technologies": ["Node.js", "TypeScript", "Paymongo"],
+    "order": 2,
+    "demoUrl": "https://www.npmjs.com/package/paymongo.js",
+    "repositoryUrl": "https://github.com/omsimos/paymongo.js"
+  },
+  {
+    "_type": "project",
+    "title": "Groundwork PH",
+    "year": "2026",
+    "description": "An online B2B platform designed to create and gather networks for business establishments in the Philippines!",
+    "technologies": ["Typescript", "React.js", "Next.js", "Tailwind CSS", "Firebase", "Paymongo"],
+    "order": 1,
+    "demoUrl": "https://shop.groundworkph.com/",
+    "repositoryUrl": "https://github.com/princejoogie/ground-work-ecom"
+  },
+  {
+    "_type": "project",
+    "title": "Zomify Colors",
+    "year": "2026",
+    "description": "A color palette app inspired by Flat UI Colors.",
+    "technologies": ["React.js", "Material UI"],
+    "order": 0,
+    "demoUrl": "https://zomify-colors.netlify.app/",
+    "repositoryUrl": "https://github.com/zomeru/zoms-color-palette"
+  }
+]

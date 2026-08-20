@@ -6,7 +6,8 @@
   "main": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./studio": "./src/studio.ts"
+    "./sanity": "./src/sanity.ts",
+    "./sanity-server": "./src/sanity-server.ts"
   },
   "type": "module",
   "scripts": {

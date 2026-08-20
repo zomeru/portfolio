@@ -1,15 +1,17 @@
-import { profile } from "@/data/profile";
-import { socials } from "@/data/socials";
 import { appVersion } from "@/lib/app-version";
+import { getProfileSocials } from "@/lib/sanity/profile";
+import type { Profile } from "@/lib/sanity/types";
 
-const footerSocials = socials.filter((social) => social.name !== "Email");
-
-export function SiteFooter() {
+export function SiteFooter({ profile }: { profile: Profile | null }) {
+  const footerSocials = profile
+    ? getProfileSocials(profile).filter((social) => social.name !== "Email")
+    : [];
   return (
     <footer className="border-t border-border">
       <div className="flex flex-wrap items-center justify-between gap-3 py-6 text-sm text-muted">
         <p className="flex items-center gap-2">
-          © {new Date().getFullYear()} {profile.name}. <span>v{appVersion}</span>
+          © {new Date().getFullYear()} {profile?.name ? `${profile.name}. ` : ""}
+          <span>v{appVersion}</span>
         </p>
         <ul className="flex items-center gap-3">
           {footerSocials.map((social) => (

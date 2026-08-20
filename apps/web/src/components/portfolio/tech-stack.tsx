@@ -1,12 +1,12 @@
-import { techStack } from "@/data/tech-stack";
+import type { TechStackGroup } from "@/lib/sanity/types";
 
-export function TechStack() {
+export function TechStack({ groups }: { groups: readonly TechStackGroup[] }) {
   return (
     <dl className="grid grid-cols-2 gap-x-6 gap-y-5">
-      {techStack.map((category) => (
-        <div key={category.label}>
+      {groups.map((category) => (
+        <div key={category._id}>
           <dt className="font-mono text-[10px] uppercase tracking-widest text-muted">
-            {category.label}
+            {category.name}
           </dt>
           <dd className="mt-1.5">
             <ul className="space-y-0.5">

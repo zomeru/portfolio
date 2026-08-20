@@ -1,4 +1,4 @@
-import type { Experience } from "@/data/experience";
+import type { Experience } from "@/lib/sanity/types";
 
 export function ExperienceItem({ job }: { job: Experience }) {
   return (
@@ -7,7 +7,9 @@ export function ExperienceItem({ job }: { job: Experience }) {
       <p className="font-mono text-xs text-muted">{job.period}</p>
       <h3 className="mt-1 text-lg font-medium tracking-tight">{job.role}</h3>
       <p className="mt-0.5 text-sm text-muted">{job.company}</p>
-      <p className="mt-2 font-mono text-xs text-muted">{job.tech.join(" · ")}</p>
+      {job.technologies && job.technologies.length > 0 && (
+        <p className="mt-2 font-mono text-xs text-muted">{job.technologies.join(" · ")}</p>
+      )}
     </article>
   );
 }

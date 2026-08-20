@@ -1,7 +1,7 @@
 type PageHeaderProps = {
   index: string;
   eyebrow: string;
-  title: string;
+  title: React.ReactNode;
 };
 
 export function PageHeader({ index, eyebrow, title }: PageHeaderProps) {

@@ -2,34 +2,33 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { posts } from "@/data/blog";
+import { MarkdownContent } from "@/components/portfolio/markdown-content";
+import { getBlogPostBySlug, getBlogPostSlugs } from "@/lib/sanity/services/blog";
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export const dynamicParams = false;
-
-export function generateStaticParams() {
-  return posts.map((post) => ({ slug: post.slug }));
+export async function generateStaticParams() {
+  return await getBlogPostSlugs();
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = posts.find((entry) => entry.slug === slug);
+  const post = await getBlogPostBySlug(slug);
   if (!post) return {};
-  return { title: post.title };
+  return { title: post.title, description: post.description };
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = posts.find((entry) => entry.slug === slug);
+  const post = await getBlogPostBySlug(slug);
   if (!post) notFound();
 
   const date = new Intl.DateTimeFormat("en-US", {
     dateStyle: "long",
     timeZone: "UTC",
-  }).format(new Date(`${post.date}T00:00:00Z`));
+  }).format(new Date(post.date));
 
   return (
     <article>
@@ -43,9 +42,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         {post.title}
       </h1>
       <p className="mt-3 font-mono text-xs text-muted">
-        <time dateTime={post.date}>{date}</time> · {post.tags.join(" · ")}
+        <time dateTime={post.date}>{date}</time>
+        {post.tags && post.tags.length > 0 ? ` · ${post.tags.join(" · ")}` : ""}
       </p>
       <p className="mt-8 max-w-prose text-sm leading-relaxed text-muted">{post.description}</p>
+      <div className="mt-8">
+        <MarkdownContent value={post.body} />
+      </div>
     </article>
   );
 }
