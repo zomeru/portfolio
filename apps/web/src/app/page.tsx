@@ -6,7 +6,7 @@ import { experience } from "@/data/experience";
 import { profile } from "@/data/profile";
 
 export const metadata: Metadata = {
-  title: `About — ${profile.name}`,
+  title: `${profile.name}`,
   description:
     "Full-stack software engineer focused on building modern web applications and scalable systems.",
 };

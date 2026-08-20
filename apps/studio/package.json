@@ -1,5 +1,5 @@
 {
-  "name": "@portfolio/sanity",
+  "name": "@portfolio/studio",
   "private": true,
   "version": "1.0.0",
   "main": "package.json",
@@ -17,6 +17,8 @@
     "sanity"
   ],
   "dependencies": {
+    "@portfolio/env": "workspace:*",
+    "@sanity/icons": "^5.2.1",
     "@sanity/vision": "^6.10.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",

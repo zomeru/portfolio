@@ -1,0 +1,37 @@
+name: Deploy Sanity Studio
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - "apps/studio/**"
+      - "packages/typescript-config/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "pnpm-workspace.yaml"
+      - "turbo.json"
+      - ".github/workflows/deploy-studio.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.ref_name == 'main' && 'production' || 'development' }}
+    env:
+      SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+      SANITY_STUDIO_APP_ID: ${{ vars.SANITY_STUDIO_APP_ID }}
+      SANITY_STUDIO_DATASET: ${{ github.ref_name == 'main' && 'production' || 'development' }}
+      SANITY_STUDIO_PROJECT_ID: ${{ vars.SANITY_STUDIO_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @portfolio/studio check-types
+      - run: pnpm --filter @portfolio/studio build
+      - run: pnpm --filter @portfolio/studio deploy --yes

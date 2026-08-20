@@ -1,16 +1,18 @@
 import { visionTool } from "@sanity/vision";
 import { defineConfig } from "sanity";
 import { structureTool } from "sanity/structure";
+import { studioConfig } from "./config";
 import { schemaTypes } from "./schemaTypes";
+import { structure } from "./structure";
 
 export default defineConfig({
   name: "default",
-  title: "Portfolio Experience",
+  title: "Portfolio CMS",
 
-  projectId: "vap9ch2u",
-  dataset: "production",
+  projectId: studioConfig.projectId,
+  dataset: studioConfig.dataset,
 
-  plugins: [structureTool(), visionTool()],
+  plugins: [structureTool({ structure }), visionTool()],
 
   schema: {
     types: schemaTypes,
