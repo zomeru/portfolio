@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 
+import { BookACallButton } from "@/components/portfolio/book-a-call-button";
 import { PageHeader } from "@/components/portfolio/page-header";
 import { getProfileSocials } from "@/lib/sanity/profile";
 import { getProfile } from "@/lib/sanity/services/profile";
@@ -12,9 +13,9 @@ export const metadata: Metadata = {
 
 export default async function ContactPage() {
   const profile = await getProfile();
-  const elsewhere = profile
-    ? getProfileSocials(profile).filter((social) => social.name !== "Email")
-    : [];
+  const elsewhere = (profile ? getProfileSocials(profile) : []).filter((p) => p.name !== "GitHub");
+
+  console.log("else", elsewhere);
 
   return (
     <>
@@ -23,18 +24,8 @@ export default async function ContactPage() {
         eyebrow="Let's talk"
         title="Have a project, opportunity, or interesting idea?"
       />
-      <p className="mt-4 text-sm leading-relaxed text-muted">Let's talk.</p>
 
-      {profile?.email ? (
-        <a
-          href={`mailto:${profile.email}`}
-          className="mt-8 inline-flex items-center gap-1 text-lg font-medium underline-offset-4 transition-colors duration-200 hover:text-muted motion-reduce:transition-none"
-        >
-          {profile.email} <ArrowUpRight size={16} />
-        </a>
-      ) : (
-        <p className="mt-8 text-sm text-muted">Contact information is unavailable.</p>
-      )}
+      <BookACallButton />
 
       <h2 className="mt-16 font-mono text-xs uppercase tracking-widest text-muted">Elsewhere</h2>
       <ul className="mt-2 divide-y divide-border border-t border-border">
@@ -46,7 +37,7 @@ export default async function ContactPage() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 py-4 text-sm underline-offset-4 transition-colors duration-200 hover:text-muted motion-reduce:transition-none"
             >
-              {social.name} <ArrowUpRight size={14} />
+              {social.name} <ArrowUpRight aria-hidden="true" size={14} />
             </a>
           </li>
         ))}

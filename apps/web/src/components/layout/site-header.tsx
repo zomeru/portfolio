@@ -42,6 +42,8 @@ export function SiteHeader({ profile, techStack }: SiteHeaderProps) {
           {profile && (
             <a
               href={resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-base font-medium underline-offset-4 transition-colors duration-200 hover:text-muted motion-reduce:transition-none"
             >
               Resume <ArrowUpRight aria-hidden="true" size={16} />

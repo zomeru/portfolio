@@ -41,6 +41,9 @@
     },
     "seed": {
       "cache": false
+    },
+    "deploy": {
+      "cache": false
     }
   }
 }

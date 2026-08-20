@@ -2,6 +2,9 @@ packages:
   - "apps/*"
   - "packages/*"
 
+overrides:
+  "@sanity/workbench-cli": "2.0.2"
+
 allowBuilds:
   esbuild: true
   sharp: true
@@ -19,7 +22,7 @@ minimumReleaseAgeExclude:
   - '@sanity/types@6.10.0'
   - '@sanity/util@6.10.0'
   - '@sanity/vision@6.10.0'
-  - '@sanity/workbench-cli@2.0.1'
+  - '@sanity/workbench-cli@2.0.2'
   - '@sanity/workbench@0.1.0-alpha.42'
   - get-it@9.5.0
   - sanity@6.10.0

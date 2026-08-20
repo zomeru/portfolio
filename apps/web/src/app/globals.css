@@ -68,7 +68,6 @@ button {
 }
 
 .markdown-content {
-  max-width: 68ch;
   color: var(--color-muted);
   font-size: 0.875rem;
   line-height: 1.75;

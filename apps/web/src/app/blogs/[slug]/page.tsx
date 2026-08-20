@@ -38,14 +38,14 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       >
         ← Blog
       </Link>
-      <h1 className="mt-6 max-w-2xl text-2xl font-medium leading-snug tracking-tight sm:text-3xl">
+      <h1 className="mt-6 text-2xl font-medium leading-snug tracking-tight sm:text-3xl">
         {post.title}
       </h1>
       <p className="mt-3 font-mono text-xs text-muted">
         <time dateTime={post.date}>{date}</time>
         {post.tags && post.tags.length > 0 ? ` · ${post.tags.join(" · ")}` : ""}
       </p>
-      <p className="mt-8 max-w-prose text-sm leading-relaxed text-muted">{post.description}</p>
+      <p className="mt-8 text-sm leading-relaxed text-muted">{post.description}</p>
       <div className="mt-8">
         <MarkdownContent value={post.body} />
       </div>

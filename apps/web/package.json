@@ -10,6 +10,7 @@
     "with-env": "pnpm exec dotenv -e ../../.env.local --"
   },
   "dependencies": {
+    "@calcom/embed-react": "^1.5.3",
     "@portfolio/env": "workspace:*",
     "@sanity/client": "^7.26.2",
     "@sanity/image-url": "^2.1.1",

@@ -1,33 +1,49 @@
 # Portfolio
 
-## Sanity Studio
+Personal portfolio monorepo built with pnpm and Turborepo.
 
-The Studio lives in `apps/studio` and selects its dataset centrally:
+## Workspaces
 
-- Local development and the `dev` branch use `development`.
-- The `main` branch uses `production`.
-- `SANITY_STUDIO_DATASET` explicitly overrides the branch default.
+- `apps/web` — Next.js portfolio backed by published Sanity content.
+- `apps/studio` — Sanity Studio, content schemas, seed data, and generated web types.
+- `apps/api` — minimal Hono service running on Node.js.
+- `packages/env` — shared Zod-based environment validation.
+- `packages/database` — Drizzle ORM PostgreSQL client, schema, and migrations.
+- `packages/typescript-config` — shared TypeScript presets.
 
-Copy `apps/studio/.env.example` to `apps/studio/.env.local` (or export the variables in your shell), then run:
+## Development
+
+Requires Node.js 24+, pnpm 11.22.0, and access to the configured Sanity project. Install dependencies and start the web app:
 
 ```sh
-pnpm --filter @portfolio/studio dev
+pnpm install
+pnpm dev
 ```
 
-Create the development dataset once before starting the Studio:
+Create `.env.local` at the repository root as needed:
 
 ```sh
-pnpm --filter @portfolio/studio exec sanity dataset create development
+DATABASE_URL=postgresql://...
+NEXT_PUBLIC_SANITY_PROJECT_ID=...
+NEXT_PUBLIC_SANITY_DATASET=development
+NEXT_PUBLIC_SANITY_APP_ID=...
+SANITY_API_TOKEN=...
 ```
 
-The command may prompt for authentication. Configure CORS origins for local Studio development and each hosted Studio in the Sanity project settings.
+The public Sanity values have development defaults in `packages/env`; the API token is required by the web app and Studio seed script. Studio seeding refuses to write outside the `development` dataset.
 
-### GitHub deployment
+Useful commands:
 
-`.github/workflows/deploy-studio.yml` validates, builds, and deploys only when Studio-related files change. It targets the `development` GitHub environment for `dev` and `production` for `main`.
+```sh
+pnpm dev                              # web
+pnpm --filter @portfolio/studio dev   # Sanity Studio
+pnpm --filter @portfolio/api dev:watch
+pnpm build                            # web production build
+pnpm build:all                        # all buildable workspaces
+pnpm check:all                        # lint, dependency, and type checks
+pnpm studio:seed                      # seed development Sanity content
+pnpm db:generate                      # generate a Drizzle migration
+pnpm db:migrate                       # apply Drizzle migrations
+```
 
-For each GitHub environment, add these configuration values:
-
-- `SANITY_AUTH_TOKEN` secret: a Sanity token with permission to deploy the Studio.
-- `SANITY_STUDIO_PROJECT_ID` variable: `vap9ch2u` (or your replacement project ID).
-- `SANITY_STUDIO_APP_ID` variable: the hosted Studio app ID for that environment. Create a separate hosted Studio for development so development deployments cannot replace the production Studio.
+Studio deployments run from `.github/workflows/deploy-studio.yml`: `dev` targets the development GitHub environment and `main` targets production.
