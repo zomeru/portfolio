@@ -3,8 +3,7 @@ import "server-only";
 import { env } from "@portfolio/env";
 import type { Metadata } from "next";
 
-const protocol = env.NODE_ENV === "development" ? "http://" : "https://";
-export const siteUrl = `${protocol}${env.VERCEL_URL}`;
+export const siteUrl = env.NEXT_PUBLIC_SITE_URL;
 
 type PageMetadataOptions = {
   title: string;

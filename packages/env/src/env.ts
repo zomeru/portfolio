@@ -6,18 +6,20 @@ export const envSchema = z
     NODE_ENV: z.enum(["development", "production"]).default("development"),
     DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
     DATABASE_DIRECT_URL: z.string().min(1).optional(),
-    VERCEL_URL: z.string().min(1).optional(),
+    NEXT_PUBLIC_SITE_URL: z.url().min(1).optional(),
   })
   .transform((env) => ({
     ...env,
-    VERCEL_URL: env.VERCEL_URL ?? (env.NODE_ENV === "development" ? "localhost:3000" : undefined),
+    NEXT_PUBLIC_SITE_URL:
+      env.NEXT_PUBLIC_SITE_URL ??
+      (env.NODE_ENV === "development" ? "http://localhost:3000" : undefined),
   }))
   .pipe(
     z.object({
       NODE_ENV: z.enum(["development", "production"]),
       DATABASE_URL: z.string(),
       DATABASE_DIRECT_URL: z.string().optional(),
-      VERCEL_URL: z.string().min(1, "VERCEL_URL is required in production"),
+      NEXT_PUBLIC_SITE_URL: z.url().min(1, "NEXT_PUBLIC_SITE_URL is required in production"),
     }),
   );
 
