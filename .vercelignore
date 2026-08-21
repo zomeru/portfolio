@@ -1,0 +1,14 @@
+.agents
+.changeset
+.claude
+.github
+.husky
+.vscode
+.env.example
+.gitattributes
+.graphifyignore
+README.md
+AGENTS.md
+CLAUDE.md
+renovate.json
+skills-lock.json

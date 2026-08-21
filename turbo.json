@@ -5,7 +5,8 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env*"],
-      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**", "dist/**"],
+      "env": ["DATABASE_URL", "SANITY_API_TOKEN", "NEXT_PUBLIC_SANITY_DATASET"]
     },
     "check-types": {
       "dependsOn": ["^check-types"]
