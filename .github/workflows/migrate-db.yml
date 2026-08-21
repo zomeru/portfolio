@@ -42,8 +42,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Validate Drizzle migrations
-        run: pnpm run db:check
-
-      - name: Apply Drizzle migrations
-        run: pnpm run db:migrate
+      - name: Validate & apply Drizzle migrations
+        run: cd packages/database && pnpm drizzle-kit check && pnpm drizzle-kit migrate
