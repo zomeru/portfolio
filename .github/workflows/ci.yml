@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   changes:
-    name: (CI) Detect relevant changes
+    name: Detect relevant changes
     runs-on: ubuntu-latest
     outputs:
       should_run: ${{ steps.filter.outputs.relevant }}
@@ -42,7 +42,7 @@ jobs:
               - '!skills-lock.json'
 
   check-and-build:
-    name: (CI) Format, Lint, and Build
+    name: Format, Lint, and Build
     needs: changes
     if: needs.changes.outputs.should_run == 'true'
 
