@@ -43,4 +43,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Validate & apply Drizzle migrations
-        run: cd packages/database && pnpm drizzle-kit check && pnpm drizzle-kit migrate
+        working-directory: packages/database
+        run: |
+          pnpm run db:check:ci
+          pnpm run db:migrate:ci

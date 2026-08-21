@@ -17,6 +17,8 @@
     "db:check": "pnpm run with-env drizzle-kit check",
     "db:up": "pnpm run with-env drizzle-kit up",
     "db:studio": "pnpm run with-env drizzle-kit studio",
+    "db:check:ci": "drizzle-kit check",
+    "db:migrate:ci": "drizzle-kit migrate",
     "with-env": "pnpm exec dotenv -e ../../.env.local --"
   },
   "type": "module",

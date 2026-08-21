@@ -1,3 +1,7 @@
 pnpm exec lint-staged
 
 pnpm run deps:check
+
+pnpm run deps:unused
+
+pnpm run check-types
