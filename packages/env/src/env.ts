@@ -5,6 +5,7 @@ export const envSchema = z
   .object({
     NODE_ENV: z.enum(["development", "production"]).default("development"),
     DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
+    DATABASE_DIRECT_URL: z.string().min(1).optional(),
     VERCEL_URL: z.string().min(1).optional(),
   })
   .transform((env) => ({
@@ -15,6 +16,7 @@ export const envSchema = z
     z.object({
       NODE_ENV: z.enum(["development", "production"]),
       DATABASE_URL: z.string(),
+      DATABASE_DIRECT_URL: z.string().optional(),
       VERCEL_URL: z.string().min(1, "VERCEL_URL is required in production"),
     }),
   );
