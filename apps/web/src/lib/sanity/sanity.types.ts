@@ -369,12 +369,13 @@ export type PROFILE_QUERY_RESULT =
 
 // Source: ../web/src/lib/sanity/queries.ts
 // Variable: EXPERIENCE_QUERY
-// Query: *[_type == "experience"] | order(order desc, _id asc) {    _id,    role,    company,    period,    technologies  }
+// Query: *[_type == "experience"] | order(order desc, _id asc) {    _id,    role,    company,    period,    responsibilities,    technologies  }
 export type EXPERIENCE_QUERY_RESULT = Array<{
   _id: string;
   role: string;
   company: string;
   period: string;
+  responsibilities: RichText | null;
   technologies: Array<string> | null;
 }>;
 
@@ -456,7 +457,7 @@ import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
     '\n  *[_id == "profile"][0] {\n    _id,\n    name,\n    role,\n    email,\n    githubUrl,\n    linkedinUrl,\n    biography,\n    aboutContent,\n    photo {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions { width, height }\n        }\n      },\n      alt,\n      hotspot,\n      crop\n    },\n    "resumeUrl": resume.asset->url\n  }\n': PROFILE_QUERY_RESULT;
-    '\n  *[_type == "experience"] | order(order desc, _id asc) {\n    _id,\n    role,\n    company,\n    period,\n    technologies\n  }\n': EXPERIENCE_QUERY_RESULT;
+    '\n  *[_type == "experience"] | order(order desc, _id asc) {\n    _id,\n    role,\n    company,\n    period,\n    responsibilities,\n    technologies\n  }\n': EXPERIENCE_QUERY_RESULT;
     '\n  *[_type == "project"] | order(order desc, _id asc) {\n    _id,\n    title,\n    year,\n    description,\n    image {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions { width, height }\n        }\n      },\n      alt,\n      hotspot,\n      crop\n    },\n    technologies,\n    demoUrl,\n    repositoryUrl,\n    caseStudyUrl\n  }\n': PROJECTS_QUERY_RESULT;
     '\n  *[_type == "blogPost" && defined(slug.current) && defined(publishedAt)]\n  | order(publishedAt desc, _id asc) {\n    _id,\n    title,\n    "slug": slug.current,\n    "date": publishedAt,\n    "description": excerpt,\n    tags\n  }\n': BLOG_POSTS_QUERY_RESULT;
     '\n  *[_type == "blogPost" && slug.current == $slug && defined(publishedAt)][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    "date": publishedAt,\n    "description": excerpt,\n    tags,\n    body,\n    readTime\n  }\n': BLOG_POST_QUERY_RESULT;

@@ -33,6 +33,7 @@ export const EXPERIENCE_QUERY = defineQuery(/* groq */ `
     role,
     company,
     period,
+    responsibilities,
     technologies
   }
 `);
