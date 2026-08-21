@@ -46,4 +46,4 @@ jobs:
         run: pnpm --filter @portfolio/studio build
 
       - name: Deploy
-        run: pnpm --filter @portfolio/studio deploy --yes
+        run: pnpm --filter @portfolio/studio run deploy
