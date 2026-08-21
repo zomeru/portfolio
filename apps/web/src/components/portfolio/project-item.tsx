@@ -1,8 +1,6 @@
-import { ArrowUpRight, ImageIcon } from "lucide-react";
-import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
-import { imageUrlFor } from "@/lib/sanity/image";
 import type { Project } from "@/lib/sanity/types";
 
 type ProjectItemProps = {
@@ -12,27 +10,9 @@ type ProjectItemProps = {
 
 export function ProjectItem({ project, index }: ProjectItemProps) {
   const number = String(index).padStart(2, "0");
-  const blurDataURL = project.image?.asset?.metadata?.lqip;
 
   return (
-    <article className="grid gap-5 py-7 sm:grid-cols-[11rem_minmax(0,1fr)] sm:items-start sm:gap-6 sm:py-8">
-      <div className="relative aspect-4/3 w-full max-w-64 overflow-hidden rounded-md border border-border bg-muted/30  outline-1 outline-black/10 dark:outline-white/10">
-        {project.image?.asset ? (
-          <Image
-            src={imageUrlFor(project.image).width(704).height(528).fit("crop").url()}
-            alt={project.image.alt || project.title}
-            fill
-            sizes="(min-width: 640px) 11rem, min(16rem, calc(100vw - 2rem))"
-            className="object-cover"
-            {...(blurDataURL ? { placeholder: "blur" as const, blurDataURL } : {})}
-          />
-        ) : (
-          <div className="flex size-full flex-col items-center justify-center gap-2 text-muted">
-            <ImageIcon aria-hidden="true" size={24} strokeWidth={1.5} />
-            <span className="text-sm">Project image unavailable</span>
-          </div>
-        )}
-      </div>
+    <article className="py-7 sm:py-8">
       <div className="min-w-0">
         <div className="flex items-baseline justify-between gap-4">
           <p className="font-mono text-xs text-muted">{number}</p>
