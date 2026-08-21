@@ -7,6 +7,30 @@ import { useEffect } from "react";
 const CAL_LINK = "zomer/30min";
 const CAL_NAMESPACE = "30min";
 
+function manageBookingDialogFocus(trigger: HTMLButtonElement) {
+  const startedAt = performance.now();
+  const intervalId = window.setInterval(() => {
+    const modal = document.querySelector("cal-modal-box");
+    const closeButton = modal?.shadowRoot?.querySelector<HTMLButtonElement>(
+      'button[aria-label="Close"]',
+    );
+
+    if (closeButton) {
+      closeButton.focus();
+      closeButton.addEventListener(
+        "click",
+        () => {
+          window.setTimeout(() => trigger.focus());
+        },
+        { once: true },
+      );
+      window.clearInterval(intervalId);
+    } else if (performance.now() - startedAt >= 10_000) {
+      window.clearInterval(intervalId);
+    }
+  }, 50);
+}
+
 export function BookACallButton() {
   useEffect(() => {
     async function configureCalEmbed() {
@@ -19,12 +43,16 @@ export function BookACallButton() {
       });
     }
 
-    void configureCalEmbed();
+    void configureCalEmbed().catch((error: unknown) => {
+      console.error("Failed to initialize the booking widget.", error);
+    });
   }, []);
 
   return (
     <button
       type="button"
+      aria-haspopup="dialog"
+      onClick={(event) => manageBookingDialogFocus(event.currentTarget)}
       data-cal-namespace={CAL_NAMESPACE}
       data-cal-link={CAL_LINK}
       data-cal-config='{"layout":"month_view"}'

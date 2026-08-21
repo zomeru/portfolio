@@ -1,8 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-
 import { getSanityServerEnv } from "@portfolio/env/sanity-server";
+
 import { getCliClient } from "sanity/cli";
 
 type SeedDocument = Record<string, unknown> & { _type: string };
@@ -165,9 +165,12 @@ async function validateWriteAccess(
 }
 
 async function main() {
-  const { token } = getSanityServerEnv();
+  const token = getSanityServerEnv().token;
 
-  const client = getCliClient({ apiVersion: API_VERSION, perspective: "raw" }).withConfig({
+  const client = getCliClient({
+    apiVersion: API_VERSION,
+    perspective: "raw",
+  }).withConfig({
     token,
   });
   const { dataset } = client.config();
@@ -332,8 +335,7 @@ async function main() {
   await createInBatches(client, "Projects", missingProjects);
   await createInBatches(client, "Tech stack groups", missingTechStacks);
 
-  const createdDocumentCount = missingDocuments.length + (profileExists ? 0 : 1);
-  log(`Seed complete. ${createdDocumentCount} document(s) created.`);
+  log(`Seed complete. ${missingDocuments.length} document(s) created.`);
   console.log(JSON.stringify(summary, null, 2));
 }
 

@@ -12,9 +12,19 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 This workspace is the Next.js App Router portfolio. Pages are server-rendered from published Sanity content; reusable UI lives in `src/components`, and Sanity access lives in `src/lib/sanity`.
 
+## Web invariants
+
 - Keep pages and layouts server components unless browser state or effects require a client boundary.
 - Add GROQ in `src/lib/sanity/queries.ts`, fetch through `sanityFetch`, and expose domain reads through `src/lib/sanity/services`. Preserve cache tags and explicit revalidation choices.
+- Build page metadata through `src/lib/metadata.ts` and the site URL contract in `@portfolio/env`.
+- Keep canonical, Open Graph, Twitter, robots, and sitemap URLs consistent.
 - Do not hand-edit `src/lib/sanity/sanity.types.ts`; regenerate it with the Studio `typegen` script after schema/query changes.
 - Reuse the existing layout, portfolio, and theme components and the Tailwind tokens defined in `src/app/globals.css`.
-- Run `pnpm --filter @portfolio/web check-types`; run the workspace `build` for routing, metadata, configuration, or data-fetching changes.
-- Update this file when web behavior, structure, data access, conventions, or workflows change.
+- Preserve keyboard access, visible focus, reduced-motion support, and semantic heading order.
+
+## Web verification
+
+- Run `pnpm --filter @portfolio/web check-types` after TypeScript or route changes.
+- Run `pnpm --filter @portfolio/web build` after routing, metadata, configuration, or data changes.
+- Test affected interactions in a production build when client behavior or accessibility changes.
+- Check affected layouts at desktop and mobile widths after visual changes.

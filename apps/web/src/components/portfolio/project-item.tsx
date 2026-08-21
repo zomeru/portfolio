@@ -12,10 +12,11 @@ type ProjectItemProps = {
 
 export function ProjectItem({ project, index }: ProjectItemProps) {
   const number = String(index).padStart(2, "0");
+  const blurDataURL = project.image?.asset?.metadata?.lqip;
 
   return (
     <article className="grid gap-5 py-7 sm:grid-cols-[11rem_minmax(0,1fr)] sm:items-start sm:gap-6 sm:py-8">
-      <div className="relative aspect-[4/3] w-full max-w-64 overflow-hidden rounded-md border border-border bg-muted/30 outline outline-1 outline-black/10 dark:outline-white/10">
+      <div className="relative aspect-4/3 w-full max-w-64 overflow-hidden rounded-md border border-border bg-muted/30  outline-1 outline-black/10 dark:outline-white/10">
         {project.image?.asset ? (
           <Image
             src={imageUrlFor(project.image).width(704).height(528).fit("crop").url()}
@@ -23,8 +24,7 @@ export function ProjectItem({ project, index }: ProjectItemProps) {
             fill
             sizes="(min-width: 640px) 11rem, min(16rem, calc(100vw - 2rem))"
             className="object-cover"
-            placeholder={project.image.asset.metadata?.lqip ? "blur" : "empty"}
-            blurDataURL={project.image.asset.metadata?.lqip ?? undefined}
+            {...(blurDataURL ? { placeholder: "blur" as const, blurDataURL } : {})}
           />
         ) : (
           <div className="flex size-full flex-col items-center justify-center gap-2 text-muted">

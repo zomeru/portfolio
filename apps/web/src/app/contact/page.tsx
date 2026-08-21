@@ -1,21 +1,20 @@
 import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
-
 import { BookACallButton } from "@/components/portfolio/book-a-call-button";
 import { PageHeader } from "@/components/portfolio/page-header";
+import { createPageMetadata } from "@/lib/metadata";
 import { getProfileSocials } from "@/lib/sanity/profile";
 import { getProfile } from "@/lib/sanity/services/profile";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "Contact",
   description: "Have a project, opportunity, or interesting idea? Let's talk.",
-};
+  path: "/contact",
+});
 
 export default async function ContactPage() {
   const profile = await getProfile();
   const elsewhere = (profile ? getProfileSocials(profile) : []).filter((p) => p.name !== "GitHub");
-
-  console.log("else", elsewhere);
 
   return (
     <>

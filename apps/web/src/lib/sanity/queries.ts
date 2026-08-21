@@ -76,7 +76,7 @@ export const BLOG_POSTS_QUERY = defineQuery(/* groq */ `
 `);
 
 export const BLOG_POST_QUERY = defineQuery(/* groq */ `
-  *[_type == "blogPost" && slug.current == $slug][0] {
+  *[_type == "blogPost" && slug.current == $slug && defined(publishedAt)][0] {
     _id,
     title,
     "slug": slug.current,
@@ -89,7 +89,7 @@ export const BLOG_POST_QUERY = defineQuery(/* groq */ `
 `);
 
 export const BLOG_POST_SLUGS_QUERY = defineQuery(/* groq */ `
-  *[_type == "blogPost" && defined(slug.current)] | order(_id asc) {
+  *[_type == "blogPost" && defined(slug.current) && defined(publishedAt)] | order(_id asc) {
     "slug": slug.current
   }
 `);

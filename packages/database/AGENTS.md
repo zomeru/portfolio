@@ -1,9 +1,26 @@
 # Database guidance
 
-This package provides the shared Drizzle ORM PostgreSQL client and schema. It exports both from `src/index.ts` and initializes the connection lazily from `DATABASE_URL`.
+This package owns the shared Drizzle ORM PostgreSQL client, schema, and migrations.
+
+## Database invariants
 
 - Define tables under `src/db/schema` and re-export them through `src/db/schema.ts`.
-- Never edit files under `drizzle` by hand. After schema changes, run `pnpm db:generate`, review the generated migration, and use `pnpm db:migrate` to apply it.
-- Keep database access environment-driven through `@portfolio/env`; do not embed connection details.
-- Run `pnpm --filter @portfolio/database check-types` after changes. Database commands read the root `.env.local`.
-- Update this file when the exported schema/client contract or migration workflow changes.
+- Re-export the public client and schema contract through `src/index.ts`.
+- Preserve lazy connection initialization unless every consumer is intentionally migrated.
+- Read connection details through `@portfolio/env`. Never embed or log a connection string.
+- Never edit files under `drizzle` by hand.
+
+## Migration workflow
+
+- Run `pnpm db:generate` after schema changes.
+- Review generated SQL and metadata before accepting a migration.
+- Run `pnpm db:check` to validate migration consistency.
+- Do not use `db:migrate`, `db:push`, `db:pull`, or `db:up` without explicit authorization.
+- Confirm the target represented by `DATABASE_URL` before any database operation.
+- Do not apply a migration merely to verify generated output.
+
+## Database verification
+
+- Run `pnpm --filter @portfolio/database check-types` after TypeScript changes.
+- Run the root type check after changing the exported client or schema contract.
+- Database scripts read `.env.local` from the repository root.

@@ -26,7 +26,7 @@ export function SanityProfileImage({
         width={size}
         height={size}
         priority={priority}
-        className={className}
+        {...(className ? { className } : {})}
       />
     );
   }
@@ -40,9 +40,8 @@ export function SanityProfileImage({
       width={size}
       height={size}
       priority={priority}
-      placeholder={blurDataURL ? "blur" : "empty"}
-      blurDataURL={blurDataURL}
-      className={className}
+      {...(blurDataURL ? { placeholder: "blur" as const, blurDataURL } : {})}
+      {...(className ? { className } : {})}
     />
   );
 }

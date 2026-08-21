@@ -24,13 +24,14 @@ Create `.env.local` at the repository root as needed:
 
 ```sh
 DATABASE_URL=postgresql://...
+SITE_URL=https://zomer.vercel.app
 NEXT_PUBLIC_SANITY_PROJECT_ID=...
 NEXT_PUBLIC_SANITY_DATASET=development
 NEXT_PUBLIC_SANITY_APP_ID=...
 SANITY_API_TOKEN=...
 ```
 
-The public Sanity values have development defaults in `packages/env`; the API token is required by the web app and Studio seed script. Studio seeding refuses to write outside the `development` dataset.
+The site URL and public Sanity values have production/development defaults in `packages/env`. `SANITY_API_TOKEN` is optional for published content in a public dataset and required for private reads and Studio seeding. Studio seeding refuses to write outside the `development` dataset. The API reads `PORT` directly from its runtime environment and defaults to `3000`.
 
 Useful commands:
 
@@ -41,9 +42,11 @@ pnpm --filter @portfolio/api dev:watch
 pnpm build                            # web production build
 pnpm build:all                        # all buildable workspaces
 pnpm check:all                        # lint, dependency, and type checks
+pnpm run check:all && pnpm run build:all && pnpm run security:check && pnpm run security:audit
+                                      # complete production verification
 pnpm studio:seed                      # seed development Sanity content
 pnpm db:generate                      # generate a Drizzle migration
 pnpm db:migrate                       # apply Drizzle migrations
 ```
 
-Studio deployments run from `.github/workflows/deploy-studio.yml`: `dev` targets the development GitHub environment and `main` targets production.
+Pull requests and pushes to `dev` or `main` run the complete production verification pipeline in `.github/workflows/ci.yml`. Studio deployments run from `.github/workflows/deploy-studio.yml`: `dev` targets the development GitHub environment and `main` targets production.

@@ -3,6 +3,25 @@ import { PortableText } from "next-sanity";
 
 import type { RichText } from "./sanity.types";
 
+const markComponents: NonNullable<PortableTextComponents["marks"]> = {
+  link: ({ children, value }) => {
+    if (typeof value?.href !== "string") return <>{children}</>;
+
+    const href = value.href;
+    const external = href.startsWith("http://") || href.startsWith("https://");
+
+    return (
+      <a
+        href={href}
+        className="underline underline-offset-4 transition-colors duration-200 hover:text-foreground motion-reduce:transition-none"
+        {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      >
+        {children}
+      </a>
+    );
+  },
+};
+
 const bodyComponents: PortableTextComponents = {
   block: {
     normal: ({ children }) => <p className="mb-4 last:mb-0">{children}</p>,
@@ -13,24 +32,7 @@ const bodyComponents: PortableTextComponents = {
     bullet: ({ children }) => <ul className="mb-4 list-disc space-y-1 pl-5">{children}</ul>,
     number: ({ children }) => <ol className="mb-4 list-decimal space-y-1 pl-5">{children}</ol>,
   },
-  marks: {
-    link: ({ children, value }) => {
-      if (typeof value?.href !== "string") return <>{children}</>;
-
-      const href = value.href;
-      const external = href.startsWith("http://") || href.startsWith("https://");
-
-      return (
-        <a
-          href={href}
-          className="underline underline-offset-4 transition-colors duration-200 hover:text-foreground motion-reduce:transition-none"
-          {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-        >
-          {children}
-        </a>
-      );
-    },
-  },
+  marks: markComponents,
 };
 
 const inlineComponents: PortableTextComponents = {
@@ -39,7 +41,7 @@ const inlineComponents: PortableTextComponents = {
     h2: ({ children }) => <>{children}</>,
     h3: ({ children }) => <>{children}</>,
   },
-  marks: bodyComponents.marks,
+  marks: markComponents,
 };
 
 type PortableTextContentProps = {

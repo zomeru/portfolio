@@ -11,7 +11,7 @@ export const project = defineType({
     defineField({
       name: "year",
       type: "string",
-      validation: (rule) => rule.required().regex(/^\\d{4}$/, { name: "year" }),
+      validation: (rule) => rule.required().regex(/^\d{4}$/, { name: "year" }),
     }),
     defineField({
       name: "description",

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { MarkdownContent } from "@/components/portfolio/markdown-content";
+import { createPageMetadata } from "@/lib/metadata";
 import { getBlogPostBySlug, getBlogPostSlugs } from "@/lib/sanity/services/blog";
 
 type BlogPostPageProps = {
@@ -17,7 +18,22 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const { slug } = await params;
   const post = await getBlogPostBySlug(slug);
   if (!post) return {};
-  return { title: post.title, description: post.description };
+
+  const metadata = await createPageMetadata({
+    title: post.title,
+    description: post.description,
+    path: `/blogs/${post.slug}`,
+  });
+
+  return {
+    ...metadata,
+    openGraph: {
+      ...metadata.openGraph,
+      type: "article",
+      publishedTime: post.date,
+      tags: post.tags ?? undefined,
+    },
+  };
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {

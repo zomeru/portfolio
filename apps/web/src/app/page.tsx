@@ -1,18 +1,8 @@
-import type { Metadata } from "next";
-
 import { ExperienceItem } from "@/components/portfolio/experience-item";
 import { PageHeader } from "@/components/portfolio/page-header";
-import { PortableTextContent, portableTextToPlainText } from "@/lib/sanity/portable-text";
+import { PortableTextContent } from "@/lib/sanity/portable-text";
 import { getExperience } from "@/lib/sanity/services/experience";
 import { getProfile } from "@/lib/sanity/services/profile";
-
-export async function generateMetadata(): Promise<Metadata> {
-  const profile = await getProfile();
-  return {
-    title: profile?.name || "About",
-    description: portableTextToPlainText(profile?.biography) || "About this portfolio.",
-  };
-}
 
 export default async function AboutPage() {
   const [profile, experience] = await Promise.all([getProfile(), getExperience()]);

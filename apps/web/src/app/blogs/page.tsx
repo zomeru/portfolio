@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-
 import { BlogItem } from "@/components/portfolio/blog-item";
 import { PageHeader } from "@/components/portfolio/page-header";
+import { createPageMetadata } from "@/lib/metadata";
 import { getBlogPosts } from "@/lib/sanity/services/blog";
 
 const POSTS_PER_PAGE = 10;
@@ -23,11 +23,12 @@ function pageHref(page: number) {
   return `/blogs?page=${page}`;
 }
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createPageMetadata({
   title: "Blog",
   description:
     "Writing about software engineering, web development, architecture, tooling, and AI.",
-};
+  path: "/blogs",
+});
 
 export default async function BlogsPage({ searchParams }: BlogsPageProps) {
   const posts = await getBlogPosts();

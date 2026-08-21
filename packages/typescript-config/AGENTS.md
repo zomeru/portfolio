@@ -1,8 +1,18 @@
 # TypeScript configuration guidance
 
-This package owns shared strict TypeScript presets: `base.json` for general ESM code, `nextjs.json` for Next.js applications, and `react-library.json` for React libraries.
+This package owns the shared TypeScript presets used across the repository.
 
-- Put repository-wide compiler defaults in `base.json`; keep framework-specific overrides in the matching preset.
-- Preserve strict checking, NodeNext-compatible base resolution, and declaration output unless every consumer is intentionally migrated.
-- Validate changes with `pnpm check-types` from the repository root because this package has no standalone check script.
-- Update this file when preset responsibilities, compiler conventions, or validation workflow changes.
+## Preset responsibilities
+
+- Put repository-wide compiler defaults in `base.json`.
+- Put Next.js-specific overrides in `nextjs.json`.
+- Put React library overrides in `react-library.json`.
+- Preserve strict checking, exact optional properties, and unchecked import and index safeguards.
+- Preserve NodeNext-compatible module resolution and declaration output.
+- Do not weaken a shared check to hide a consumer error.
+
+## TypeScript configuration verification
+
+- Run `pnpm check-types` from the repository root after preset changes.
+- Run `pnpm build:all` after changing modules, resolution, libraries, targets, or declarations.
+- Review every consumer error before changing a shared compiler option.

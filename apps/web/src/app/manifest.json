@@ -1,6 +1,9 @@
 {
   "name": "Zomer Gregorio",
   "short_name": "Zomer",
+  "description": "Software engineer portfolio and blogs by Zomer Gregorio.",
+  "start_url": "/",
+  "scope": "/",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -15,7 +18,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#dadada",
-  "background_color": "#dadada",
+  "theme_color": "#fafafa",
+  "background_color": "#fafafa",
   "display": "standalone"
 }

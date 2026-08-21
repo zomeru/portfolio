@@ -422,7 +422,7 @@ export type BLOG_POSTS_QUERY_RESULT = Array<{
 
 // Source: ../web/src/lib/sanity/queries.ts
 // Variable: BLOG_POST_QUERY
-// Query: *[_type == "blogPost" && slug.current == $slug][0] {    _id,    title,    "slug": slug.current,    "date": publishedAt,    "description": excerpt,    tags,    body,    readTime  }
+// Query: *[_type == "blogPost" && slug.current == $slug && defined(publishedAt)][0] {    _id,    title,    "slug": slug.current,    "date": publishedAt,    "description": excerpt,    tags,    body,    readTime  }
 export type BLOG_POST_QUERY_RESULT = {
   _id: string;
   title: string;
@@ -436,7 +436,7 @@ export type BLOG_POST_QUERY_RESULT = {
 
 // Source: ../web/src/lib/sanity/queries.ts
 // Variable: BLOG_POST_SLUGS_QUERY
-// Query: *[_type == "blogPost" && defined(slug.current)] | order(_id asc) {    "slug": slug.current  }
+// Query: *[_type == "blogPost" && defined(slug.current) && defined(publishedAt)] | order(_id asc) {    "slug": slug.current  }
 export type BLOG_POST_SLUGS_QUERY_RESULT = Array<{
   slug: string;
 }>;
@@ -459,8 +459,8 @@ declare module "@sanity/client" {
     '\n  *[_type == "experience"] | order(order desc, _id asc) {\n    _id,\n    role,\n    company,\n    period,\n    technologies\n  }\n': EXPERIENCE_QUERY_RESULT;
     '\n  *[_type == "project"] | order(order desc, _id asc) {\n    _id,\n    title,\n    year,\n    description,\n    image {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions { width, height }\n        }\n      },\n      alt,\n      hotspot,\n      crop\n    },\n    technologies,\n    demoUrl,\n    repositoryUrl,\n    caseStudyUrl\n  }\n': PROJECTS_QUERY_RESULT;
     '\n  *[_type == "blogPost" && defined(slug.current) && defined(publishedAt)]\n  | order(publishedAt desc, _id asc) {\n    _id,\n    title,\n    "slug": slug.current,\n    "date": publishedAt,\n    "description": excerpt,\n    tags\n  }\n': BLOG_POSTS_QUERY_RESULT;
-    '\n  *[_type == "blogPost" && slug.current == $slug][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    "date": publishedAt,\n    "description": excerpt,\n    tags,\n    body,\n    readTime\n  }\n': BLOG_POST_QUERY_RESULT;
-    '\n  *[_type == "blogPost" && defined(slug.current)] | order(_id asc) {\n    "slug": slug.current\n  }\n': BLOG_POST_SLUGS_QUERY_RESULT;
+    '\n  *[_type == "blogPost" && slug.current == $slug && defined(publishedAt)][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    "date": publishedAt,\n    "description": excerpt,\n    tags,\n    body,\n    readTime\n  }\n': BLOG_POST_QUERY_RESULT;
+    '\n  *[_type == "blogPost" && defined(slug.current) && defined(publishedAt)] | order(_id asc) {\n    "slug": slug.current\n  }\n': BLOG_POST_SLUGS_QUERY_RESULT;
     '\n  *[_type == "techStack"] | order(order asc, _id asc) {\n    _id,\n    name,\n    items,\n    order\n  }\n': TECH_STACK_QUERY_RESULT;
   }
 }

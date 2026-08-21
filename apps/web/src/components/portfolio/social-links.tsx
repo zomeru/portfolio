@@ -18,7 +18,7 @@ type SocialLinksProps = {
 
 export function SocialLinks({ items, className }: SocialLinksProps) {
   return (
-    <ul className={cn(className, "gap-3")}>
+    <ul className={cn(className, "gap-4")}>
       {items.map((social) => {
         const Icon = socialIcons[social.name];
         const isMailto = social.href.startsWith("mailto:");
@@ -30,7 +30,7 @@ export function SocialLinks({ items, className }: SocialLinksProps) {
               className="inline-flex items-center justify-center text-muted transition-colors duration-200 hover:text-foreground motion-reduce:transition-none"
               {...(isMailto ? {} : { target: "_blank", rel: "noopener noreferrer" })}
             >
-              <Icon size={22} />
+              <Icon size={24} />
             </a>
           </li>
         );
