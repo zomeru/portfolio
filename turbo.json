@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/turbo/schema.json",
   "ui": "tui",
+  "globalDependencies": ["package.json", "pnpm-lock.yaml", "pnpm-workspace.yaml"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

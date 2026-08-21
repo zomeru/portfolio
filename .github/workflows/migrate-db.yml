@@ -1,0 +1,49 @@
+name: Migrate Database
+
+on:
+  push:
+    branches: [dev, main]
+    paths:
+      - 'packages/database/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/migrate-db.yml'
+  workflow_dispatch: # allows manual re-runs without needing a new commit
+
+concurrency:
+  group: migrate-${{ github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Migrate Database (${{ github.ref_name == 'main' && 'Production' || 'Preview' }})
+    
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    environment: ${{ github.ref_name == 'main' && 'Production' || 'Preview' }}
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      DATABASE_DIRECT_URL: ${{ secrets.DATABASE_DIRECT_URL }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup pnpm (includes Node.js + cache)
+        uses: pnpm/setup@v1
+        with:
+          cache: true
+          cache-dependency-path: pnpm-lock.yaml
+          install: false
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate Drizzle migrations
+        run: pnpm run db:check
+
+      - name: Apply Drizzle migrations
+        run: pnpm run db:migrate

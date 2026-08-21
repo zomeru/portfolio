@@ -12,7 +12,7 @@ export const envSchema = z
     ...env,
     NEXT_PUBLIC_SITE_URL:
       env.NEXT_PUBLIC_SITE_URL ??
-      (env.NODE_ENV === "development" ? "http://localhost:3000" : undefined),
+      (env.NODE_ENV === "development" || process.env.CI ? "http://localhost:3000" : undefined),
   }))
   .pipe(
     z.object({
