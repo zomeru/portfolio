@@ -8,6 +8,7 @@
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env*"],
       "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**", "dist/**"],
       "env": [
+        "DATABASE_URL",
         "GOOGLE_GENERATIVE_AI_API_KEY",
         "GOOGLE_GENERATIVE_AI_MODEL",
         "CRON_SECRET",
