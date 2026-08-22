@@ -18,7 +18,7 @@ export function SiteFooter({ profile }: { profile: Profile | null }) {
             <li key={social.name}>
               <a
                 href={social.href}
-                className="underline-offset-4 transition-colors duration-200 hover:text-foreground hover:underline motion-reduce:transition-none"
+                className="inline-flex min-h-6 items-center underline-offset-4 transition-colors duration-200 hover:text-foreground hover:underline motion-reduce:transition-none"
                 target="_blank"
                 rel="noopener noreferrer"
               >

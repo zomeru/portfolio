@@ -18,8 +18,14 @@ This workspace is the Next.js App Router portfolio. Pages are server-rendered fr
 - Add GROQ in `src/lib/sanity/queries.ts`, fetch through `sanityFetch`, and expose domain reads through `src/lib/sanity/services`. Preserve cache tags and explicit revalidation choices.
 - Build page metadata through `src/lib/metadata.ts` and the site URL contract in `@portfolio/env`.
 - Keep canonical, Open Graph, Twitter, robots, and sitemap URLs consistent.
+- Keep `src/app/api/[[...route]]/route.ts` as a thin `hono/vercel` adapter for `@portfolio/api`. Backend
+  routes, authentication, AI calls, and Sanity writes belong in `apps/api`.
+- Import API implementation only from server modules. Client-side RPC consumers must use an `import type`
+  from `@portfolio/api/types` and must derive an origin that works in both browser and server contexts.
 - Do not hand-edit `src/lib/sanity/sanity.types.ts`; regenerate it with the Studio `typegen` script after schema/query changes.
 - Reuse the existing layout, portfolio, and theme components and the Tailwind tokens defined in `src/app/globals.css`.
+- Keep `/admin` authentication server-only: verify the secret through the API-owned session helpers,
+  store only a signed `HttpOnly` cookie, and re-authorize every generation Server Action.
 - Preserve keyboard access, visible focus, reduced-motion support, and semantic heading order.
 
 ## Web verification

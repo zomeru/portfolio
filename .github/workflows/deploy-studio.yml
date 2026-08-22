@@ -5,6 +5,7 @@ on:
     branches: [main, dev]
     paths:
       - "apps/studio/**"
+      - "packages/content/**"
       - "packages/env/**"
       - "packages/typescript-config/**"
       - "package.json"

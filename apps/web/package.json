@@ -6,15 +6,18 @@
     "dev": "pnpm run with-env next dev",
     "build": "pnpm run with-env next build",
     "start": "pnpm run with-env next start",
+    "cron:blog": "pnpm run with-env tsx scripts/run-blog-cron.ts",
     "check-types": "next typegen && tsc --noEmit",
     "with-env": "pnpm exec dotenv -e ../../.env.local --"
   },
   "dependencies": {
     "@calcom/embed-react": "^1.5.3",
+    "@portfolio/api": "workspace:*",
     "@portfolio/env": "workspace:*",
     "@sanity/client": "^7.26.2",
     "@sanity/image-url": "^2.1.1",
     "clsx": "^2.1.1",
+    "hono": "^4.13.3",
     "lucide-react": "^1.33.0",
     "next": "16.3.1",
     "next-sanity": "^13.3.3",
@@ -35,6 +38,7 @@
     "@types/react-dom": "^19.2.4",
     "babel-plugin-react-compiler": "1.0.0",
     "tailwindcss": "^4",
+    "tsx": "^4.23.12",
     "typescript": "^6.0.3"
   }
 }

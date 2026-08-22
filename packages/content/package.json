@@ -1,0 +1,17 @@
+{
+  "name": "@portfolio/content",
+  "version": "0.1.0",
+  "description": "Shared content contracts for the portfolio",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./blog": "./src/blog.ts"
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@portfolio/typescript-config": "workspace:*",
+    "typescript": "^6.0.3"
+  }
+}

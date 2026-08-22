@@ -1,4 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    {
+      "path": "/api/blog/generate",
+      "schedule": "0 22 * * 2,4,6"
+    }
+  ],
   "regions": ["sin1"]
 }

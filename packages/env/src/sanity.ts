@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { parseEnv } from "./utils";
+import { parseEnv } from "#utils";
 
 const DEFAULT_PROJECT_ID = "fvmu1iv8";
 const DEFAULT_APP_ID = "c8bcdbwo8f790dksxt7x57yy";

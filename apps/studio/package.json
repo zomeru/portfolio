@@ -13,13 +13,14 @@
     "check-types": "tsc --noEmit",
     "blog:label-code": "tsx scripts/label-blog-code-fences.ts",
     "seed": "pnpm run with-env tsx scripts/seed.ts",
-    "typegen": "pnpm run with-env sanity schema extract --path schema.json --enforce-required-fields --force && pnpm run with-env sanity typegen generate",
+    "typegen": "pnpm run with-env sanity schema extract --workspace development --path schema.json --enforce-required-fields --force && pnpm run with-env sanity typegen generate",
     "with-env": "pnpm exec dotenv -e ../../.env.local --"
   },
   "keywords": [
     "sanity"
   ],
   "dependencies": {
+    "@portfolio/content": "workspace:*",
     "@portfolio/env": "workspace:*",
     "@sanity/icons": "^5.2.1",
     "@sanity/vision": "^6.10.1",

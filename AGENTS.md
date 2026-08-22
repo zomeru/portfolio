@@ -25,7 +25,7 @@ Choose verification based on the affected scope:
 - Run the full production pipeline for production-readiness or security work:
 
 ```sh
-pnpm run check:all && pnpm run build:all && pnpm run security:check && pnpm run security:audit
+pnpm run check:all:build && pnpm run security:check && pnpm run security:audit
 ```
 
 Keep `.github/workflows/ci.yml` and `README.md` aligned with this production pipeline.
@@ -34,4 +34,12 @@ Keep `.github/workflows/ci.yml` and `README.md` aligned with this production pip
 
 Update an `AGENTS.md` only when a durable ownership boundary, invariant, command, or workflow changes. Put feature behavior and user-facing instructions in the appropriate product documentation.
 
-Workspace guidance lives in `apps/api`, `apps/studio`, `apps/web`, `packages/database`, `packages/env`, and `packages/typescript-config`.
+Workspace guidance lives in:
+
+- `apps/api`
+- `apps/studio`
+- `apps/web`
+- `packages/content`
+- `packages/database`
+- `packages/env`
+- `packages/typescript-config`.

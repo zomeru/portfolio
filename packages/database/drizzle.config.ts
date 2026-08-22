@@ -1,5 +1,7 @@
-import { env } from "@portfolio/env";
+import { getDatabaseEnv } from "@portfolio/env/database";
 import { defineConfig } from "drizzle-kit";
+
+const databaseEnv = getDatabaseEnv();
 
 export default defineConfig({
   out: "./drizzle",
@@ -7,6 +9,6 @@ export default defineConfig({
   dialect: "postgresql",
   dbCredentials: {
     // Use direct connection for cli actions if available
-    url: env.DATABASE_DIRECT_URL ?? env.DATABASE_URL,
+    url: databaseEnv.directUrl ?? databaseEnv.url,
   },
 });

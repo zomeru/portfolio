@@ -8,12 +8,15 @@ This workspace owns Sanity Studio, the content model, desk structure, seed data,
 - Keep `structure` aligned with the registered document types.
 - Preserve the singleton `profile` behavior configured in `sanity.config.ts`.
 - Keep project, dataset, and app configuration in `@portfolio/env/sanity`.
+- Keep shared blog field limits aligned through `@portfolio/content/blog`.
 - Keep seed fixtures in `data` and compatible with their schemas.
+- Preserve the read-only `blogPost.generation` metadata used by the API for auditability and idempotency.
 - Do not edit `schema.json` or `apps/web/src/lib/sanity/sanity.types.ts` by hand.
 
 ## Type generation
 
-- Run `pnpm --filter @portfolio/studio typegen` after schema or GROQ query changes.
+- Run `pnpm --filter @portfolio/studio typegen` after schema or GROQ query changes. Schema extraction uses
+  the development workspace because both Studio workspaces share the same schema.
 - Review changes to both `schema.json` and `apps/web/src/lib/sanity/sanity.types.ts`.
 
 ## External writes

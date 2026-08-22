@@ -22,7 +22,7 @@ function log(message: string) {
 }
 
 function normalize(value: unknown) {
-  return typeof value === "string" ? value.trim().toLocaleLowerCase() : "";
+  return typeof value === "string" ? value.trim().toLowerCase() : "";
 }
 
 function getString(document: SeedDocument, field: string) {

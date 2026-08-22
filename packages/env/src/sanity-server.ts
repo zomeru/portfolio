@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { parseEnv } from "./utils";
+import { parseEnv } from "#utils";
 
 const sanityServerSchema = z.object({
   SANITY_API_TOKEN: z.string().min(1, "SANITY_API_TOKEN is required."),

@@ -7,7 +7,7 @@ This package owns the shared Drizzle ORM PostgreSQL client, schema, and migratio
 - Define tables under `src/db/schema` and re-export them through `src/db/schema.ts`.
 - Re-export the public client and schema contract through `src/index.ts`.
 - Preserve lazy connection initialization unless every consumer is intentionally migrated.
-- Read connection details through `@portfolio/env`. Never embed or log a connection string.
+- Read connection details through `@portfolio/env/database`. Never embed or log a connection string.
 - Never edit files under `drizzle` by hand.
 
 ## Migration workflow

@@ -1,9 +1,9 @@
 import "server-only";
 
-import { env } from "@portfolio/env";
+import { getSiteEnv } from "@portfolio/env/site";
 import type { Metadata } from "next";
 
-export const siteUrl = env.NEXT_PUBLIC_SITE_URL;
+export const siteUrl = getSiteEnv().siteUrl;
 
 type PageMetadataOptions = {
   title: string;

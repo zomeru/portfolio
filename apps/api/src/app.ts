@@ -1,10 +1,13 @@
 import { Hono } from "hono";
-import { type RequestIdVariables, requestId } from "hono/request-id";
+import { requestId } from "hono/request-id";
 import { secureHeaders } from "hono/secure-headers";
+import type { ContentfulStatusCode } from "hono/utils/http-status";
+import { ApiError } from "./errors";
+import { log } from "./lib/log";
+import { blogGenerationRoutes } from "./routes/blog-generation";
+import type { ApiEnv } from "./types/hono";
 
-const nodeEnv = process.env.NODE_ENV === "production" ? "production" : "development";
-
-const app = new Hono<{ Variables: RequestIdVariables }>();
+const app = new Hono<ApiEnv>().basePath("/api");
 
 app.use("*", requestId());
 app.use("*", secureHeaders());
@@ -12,37 +15,45 @@ app.use("*", async (c, next) => {
   const startedAt = performance.now();
   await next();
 
-  console.log(
-    JSON.stringify({
-      level: "info",
-      message: "request completed",
+  log("info", "request completed", {
+    requestId: c.get("requestId"),
+    method: c.req.method,
+    path: c.req.path,
+    status: c.res.status,
+    durationMs: Math.round(performance.now() - startedAt),
+  });
+});
+
+export const apiApp = app
+  .get("/", (c) => c.json({ service: "portfolio-api", status: "ok" }))
+  .route("/blog", blogGenerationRoutes);
+
+apiApp.notFound((c) =>
+  c.json(
+    { error: { code: "NOT_FOUND", message: "Not found" }, requestId: c.get("requestId") },
+    404,
+  ),
+);
+
+apiApp.onError((error, c) => {
+  const apiError = error instanceof ApiError ? error : null;
+  const status = (apiError?.status ?? 500) as ContentfulStatusCode;
+
+  log(status >= 500 ? "error" : "warn", "request failed", {
+    requestId: c.get("requestId"),
+    errorType: error.name,
+    errorCode: apiError?.code ?? "INTERNAL_ERROR",
+    status,
+  });
+
+  return c.json(
+    {
+      error: {
+        code: apiError?.code ?? "INTERNAL_ERROR",
+        message: apiError?.message ?? "Internal server error",
+      },
       requestId: c.get("requestId"),
-      method: c.req.method,
-      path: c.req.path,
-      status: c.res.status,
-      durationMs: Math.round(performance.now() - startedAt),
-    }),
+    },
+    status,
   );
 });
-
-app.get("/", (c) => {
-  return c.text("Hello Hono!");
-});
-
-app.notFound((c) => c.json({ error: "Not found", requestId: c.get("requestId") }, 404));
-
-app.onError((error, c) => {
-  console.error(
-    JSON.stringify({
-      level: "error",
-      message: "request failed",
-      requestId: c.get("requestId"),
-      error: error.message,
-      ...(nodeEnv === "development" ? { stack: error.stack } : {}),
-    }),
-  );
-
-  return c.json({ error: "Internal server error", requestId: c.get("requestId") }, 500);
-});
-
-export default app;

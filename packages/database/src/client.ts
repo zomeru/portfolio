@@ -1,8 +1,8 @@
-import { env } from "@portfolio/env";
+import { getDatabaseEnv } from "@portfolio/env/database";
 import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
 
 export function createDatabase(): NodePgDatabase {
-  return drizzle(env.DATABASE_URL);
+  return drizzle(getDatabaseEnv().url);
 }
 
 export type Database = NodePgDatabase;

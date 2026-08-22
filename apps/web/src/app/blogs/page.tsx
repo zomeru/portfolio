@@ -3,7 +3,7 @@ import Link from "next/link";
 import { BlogItem } from "@/components/portfolio/blog-item";
 import { PageHeader } from "@/components/portfolio/page-header";
 import { createPageMetadata } from "@/lib/metadata";
-import { getBlogPosts } from "@/lib/sanity/services/blog";
+import { getBlogPostsPage } from "@/lib/sanity/services/blog";
 
 const POSTS_PER_PAGE = 10;
 
@@ -11,12 +11,12 @@ type BlogsPageProps = {
   searchParams: Promise<{ page?: string | string[] }>;
 };
 
-function getCurrentPage(value: string | string[] | undefined, totalPages: number) {
+function getRequestedPage(value: string | string[] | undefined) {
   const rawPage = Array.isArray(value) ? value[0] : value;
   const page = Number.parseInt(rawPage ?? "1", 10);
 
-  if (!Number.isInteger(page) || page < 1) return 1;
-  return Math.min(page, totalPages);
+  if (!Number.isSafeInteger(page) || page < 1) return 1;
+  return page;
 }
 
 function pageHref(page: number) {
@@ -31,12 +31,17 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default async function BlogsPage({ searchParams }: BlogsPageProps) {
-  const posts = await getBlogPosts();
-  const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE));
   const { page } = await searchParams;
-  const currentPage = getCurrentPage(page, totalPages);
-  const start = (currentPage - 1) * POSTS_PER_PAGE;
-  const pagePosts = posts.slice(start, start + POSTS_PER_PAGE);
+  const requestedPage = getRequestedPage(page);
+  const requestedStart = (requestedPage - 1) * POSTS_PER_PAGE;
+  let pageData = await getBlogPostsPage(requestedStart, requestedStart + POSTS_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(pageData.total / POSTS_PER_PAGE));
+  const currentPage = Math.min(requestedPage, totalPages);
+
+  if (currentPage !== requestedPage) {
+    const currentStart = (currentPage - 1) * POSTS_PER_PAGE;
+    pageData = await getBlogPostsPage(currentStart, currentStart + POSTS_PER_PAGE);
+  }
 
   return (
     <>
@@ -46,12 +51,12 @@ export default async function BlogsPage({ searchParams }: BlogsPageProps) {
         title="Writing about software engineering, web development, architecture, tooling, and AI."
       />
       <div className="mt-10 divide-y divide-border border-t border-border">
-        {posts.length === 0 && (
+        {pageData.total === 0 && (
           <p className="py-10 text-sm text-muted">No blog posts are published yet.</p>
         )}
-        {pagePosts.length > 0 && (
+        {pageData.posts.length > 0 && (
           <ul className="divide-y divide-border">
-            {pagePosts.map((post) => (
+            {pageData.posts.map((post) => (
               <li key={post.slug}>
                 <BlogItem post={post} />
               </li>
@@ -59,7 +64,7 @@ export default async function BlogsPage({ searchParams }: BlogsPageProps) {
           </ul>
         )}
       </div>
-      {posts.length > POSTS_PER_PAGE && (
+      {pageData.total > POSTS_PER_PAGE && (
         <nav
           aria-label="Blog pagination"
           className="mt-8 flex items-center justify-between gap-4 text-sm"
@@ -67,7 +72,7 @@ export default async function BlogsPage({ searchParams }: BlogsPageProps) {
           {currentPage > 1 ? (
             <Link
               href={pageHref(currentPage - 1)}
-              className="underline-offset-4 transition-colors duration-200 hover:text-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground motion-reduce:transition-none"
+              className="inline-flex min-h-6 items-center underline-offset-4 transition-colors duration-200 hover:text-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground motion-reduce:transition-none"
             >
               ← Newer posts
             </Link>
@@ -82,7 +87,7 @@ export default async function BlogsPage({ searchParams }: BlogsPageProps) {
           {currentPage < totalPages ? (
             <Link
               href={pageHref(currentPage + 1)}
-              className="underline-offset-4 transition-colors duration-200 hover:text-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground motion-reduce:transition-none"
+              className="inline-flex min-h-6 items-center underline-offset-4 transition-colors duration-200 hover:text-muted focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground motion-reduce:transition-none"
             >
               Older posts →
             </Link>

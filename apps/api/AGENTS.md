@@ -1,20 +1,33 @@
 # API guidance
 
-This workspace owns the Hono application and its Node.js server lifecycle.
+This workspace owns the reusable Hono backend and server-side business logic. The web workspace mounts
+the exported app but does not own its routes or services.
 
 ## API invariants
 
-- Keep Hono routes and middleware in `src/app.ts`.
-- Keep port validation, startup, shutdown, and signal handling in `src/index.ts`.
+- Compose middleware and feature route modules in `src/app.ts`; keep feature routes under `src/routes`
+  and non-HTTP business logic under `src/services`.
+- Export the Next.js-safe app through the package root and export `AppType` through `./types`. Keep the
+  root export marked with `server-only`; browser consumers may import API types only with `import type`.
+- Export TypeScript source directly as a just-in-time internal package. Next.js owns compilation and
+  bundling; do not add a standalone server entry point or require a separate API build.
+- Preserve Hono route chaining so `AppType` and future RPC consumers retain endpoint inference.
 - Do not couple the API to web interface code.
 - Preserve request IDs, secure headers, structured logging, JSON errors, and graceful shutdown.
 - Keep logs free of credentials, authorization headers, and sensitive request bodies.
+- Read AI, cron, and Sanity configuration through `@portfolio/env` subpath contracts.
+- Read shared blog field and generation limits from `@portfolio/content/blog`; keep prompt wording and
+  provider behavior local to the blog-generation service.
+- Keep AI provider selection under `src/services/ai` so later assistant features can reuse it without
+  coupling to blog generation.
+- Blog generation uses the official `@ai-sdk/google` provider directly. Do not route it through AI
+  Gateway or another provider abstraction without an explicit product change.
+- Do not add RAG, embedding, vector-index, or reindex behavior to blog generation without a separate task.
 - Use Hono request and response APIs.
-- Preserve the ECMAScript module build emitted to `dist`.
 
 ## API verification
 
 - Run `pnpm --filter @portfolio/api check-types` after TypeScript changes.
-- Run `pnpm --filter @portfolio/api build` before validating the production server.
-- Smoke-test the root route and an unknown route after changing routes or middleware.
+- Smoke-test the root route and an unknown route through the Next.js adapter after changing routes or
+  middleware.
 - Confirm request IDs, security headers, status codes, and response formats in smoke tests.

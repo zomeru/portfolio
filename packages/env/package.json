@@ -3,11 +3,16 @@
   "version": "0.1.0",
   "description": "Centralized environment variable validation",
   "private": true,
-  "main": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts",
+    "./ai-server": "./src/ai-server.ts",
+    "./cron": "./src/cron.ts",
+    "./database": "./src/database.ts",
     "./sanity": "./src/sanity.ts",
-    "./sanity-server": "./src/sanity-server.ts"
+    "./sanity-server": "./src/sanity-server.ts",
+    "./site": "./src/site.ts"
+  },
+  "imports": {
+    "#utils": "./src/utils.ts"
   },
   "type": "module",
   "scripts": {

@@ -41,6 +41,13 @@ export type BlogPost = {
   tags?: Array<string>;
   source?: "manual" | "assisted" | "automated";
   readTime?: number;
+  generation?: {
+    provider: string;
+    model: string;
+    key: string;
+    trigger: "scheduled" | "manual";
+    generatedAt: string;
+  };
 };
 
 export type Slug = {

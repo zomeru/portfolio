@@ -1,5 +1,15 @@
 import { defineQuery } from "next-sanity";
 
+const BLOG_POST_FILTER = `_type == "blogPost" && defined(slug.current) && defined(publishedAt)`;
+const BLOG_POST_LIST_PROJECTION = `
+  _id,
+  title,
+  "slug": slug.current,
+  "date": publishedAt,
+  "description": excerpt,
+  tags
+`;
+
 export const PROFILE_QUERY = defineQuery(/* groq */ `
   *[_id == "profile"][0] {
     _id,
@@ -75,6 +85,20 @@ export const BLOG_POSTS_QUERY = defineQuery(/* groq */ `
     tags
   }
 `);
+
+export function createBlogPostsPageQuery(start: number, end: number) {
+  if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start < 0 || end <= start) {
+    throw new RangeError("Blog pagination bounds must be positive safe integers.");
+  }
+
+  return defineQuery(/* groq */ `{
+    "posts": *[${BLOG_POST_FILTER}]
+      | order(publishedAt desc, _id asc)[${start}...${end}] {
+        ${BLOG_POST_LIST_PROJECTION}
+      },
+    "total": count(*[${BLOG_POST_FILTER}])
+  }`);
+}
 
 export const BLOG_POST_QUERY = defineQuery(/* groq */ `
   *[_type == "blogPost" && slug.current == $slug && defined(publishedAt)][0] {
