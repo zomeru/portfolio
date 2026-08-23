@@ -30,6 +30,7 @@ NEXT_PUBLIC_SANITY_PROJECT_ID=...
 NEXT_PUBLIC_SANITY_DATASET=development
 NEXT_PUBLIC_SANITY_APP_ID=...
 SANITY_API_TOKEN=...
+GH_PAT_TOKEN=...
 GOOGLE_GENERATIVE_AI_API_KEY=...
 GOOGLE_GENERATIVE_AI_MODEL=gemini-3.7-flash
 CRON_SECRET=replace-with-at-least-32-random-characters
@@ -46,6 +47,34 @@ The site URL defaults to `http://localhost:3000` in development and is required 
 Sanity identifiers have repository defaults in `packages/env`.
 `SANITY_API_TOKEN` is required by server-side Sanity clients; automatic generation needs a write token
 scoped to the target dataset. Studio seeding refuses to write outside the `development` dataset.
+
+## GitHub contributions
+
+`/github-contributions` renders GitHub profile contributions and an authored-commit feed without
+exposing `GH_PAT_TOKEN` to the browser. Create a fine-grained personal access token whose resource owner
+is the portfolio owner's personal account, grant it access to every owned repository that should appear,
+and give it read-only **Contents** permission; GitHub includes read-only Metadata access automatically.
+For a classic personal access token, use the `repo` and `read:user` scopes so private repositories and
+private contribution counts are available. Store the token only as the server-side `GH_PAT_TOKEN`
+environment variable and give it an expiration.
+
+The contribution calendar comes from GitHub GraphQL's `ContributionsCollection.contributionCalendar`,
+so it follows GitHub's profile-contribution rules and is not reconstructed from commit records. The
+default range is the last 12 months, and `contributionYears` supplies the year filter. Calendar responses
+are cached in-process for one hour.
+
+The commit feed uses REST commit search with `author:<viewer> user:<viewer>` for the all-repositories
+view, or `author:<viewer> repo:<owner/repository>` for a selected repository. This provides one globally
+ordered, server-paginated result set rather than merging unrelated repository pages. GitHub commit search
+only indexes repository default branches and exposes at most the first 1,000 matches; the interface calls
+out that limit when it applies. Owned repository discovery is cached for ten minutes and commit-search
+pages for five minutes. GitHub rate-limit responses become a safe, retryable API error.
+
+Private data is sanitized inside `apps/api` before a response is created. Private commit messages become
+`Private commit`, private repository names become `Private repository`, repository filter values are
+opaque numeric identifiers, and private commit URLs are removed. Public commits retain only the fields
+used by the page. GitHub's author timestamp remains authoritative and is formatted server-side in
+`Asia/Manila` as Philippine Time (PHT / UTC+8).
 
 ## API and automatic blog generation
 

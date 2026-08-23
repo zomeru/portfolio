@@ -59,6 +59,15 @@ export async function GET(): Promise<Response> {
 - Author: ${name}
 - Role: ${role}
 
+## Public Pages
+
+- [Home](${siteUrl}): Portfolio overview with professional experience and skills
+- [Projects](${new URL("/projects", siteUrl).href}): Selected work and case studies
+- [Blog](${new URL("/blogs", siteUrl).href}): Technical writing on software engineering and web development
+- [Ask Zomer AI](${new URL("/ask", siteUrl).href}): AI assistant for questions about Zomer's work, experience, projects, and writing
+- [GitHub Contributions](${new URL("/github-contributions", siteUrl).href}): GitHub contribution activity and commit history across owned repositories
+- [Contact](${new URL("/contact", siteUrl).href}): Ways to get in touch
+
 ## Contact
 
 ${contactLines}

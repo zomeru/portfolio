@@ -13,7 +13,7 @@ export default function AskPage() {
   return (
     <>
       <PageHeader
-        index="04"
+        index="05"
         eyebrow="Ask Zomer AI"
         title="A grounded guide to my experience, projects, and writing."
       />

@@ -9,6 +9,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/",
     "/projects",
     "/blogs",
+    "/github-contributions",
     "/ask",
     "/contact",
     "/llms.txt",

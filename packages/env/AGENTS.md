@@ -13,6 +13,7 @@ This package owns shared Zod validation for runtime-specific configuration.
 - The `./langfuse-server` export contains optional, all-or-none Langfuse tracing configuration.
 - The `./cron` export contains the Vercel Cron authentication contract.
 - The `./database` export contains database connection configuration.
+- The `./github-server` export contains the server-only GitHub personal access token contract.
 - The `./site` export contains the deployment origin and runtime mode.
 - Parse values through `parseEnv` so validation errors retain the shared format.
 - Never expose server-only values through public-prefixed variables or client code.
