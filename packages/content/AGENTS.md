@@ -1,18 +1,20 @@
 # Content package guidance
 
-This package owns stable, cross-workspace content contracts. It must remain runtime-agnostic and export
-TypeScript source directly as a just-in-time internal package.
+This source-exported package owns stable content contracts shared by multiple workspaces. It is
+currently limited to `BLOG_CONTENT_LIMITS` through the `./blog` export.
 
-## Content invariants
+## Invariants
 
-- Add a value only when multiple workspaces share the same content rule or persisted field contract.
-- Keep UI layout values, cache durations, provider prompts, API versions, and feature-local implementation
-  details with their owning workspace.
-- Group exports by content domain through explicit subpaths such as `./blog`.
-- Keep exports dependency-free and safe for server, browser, and Studio consumers.
-- Update every consumer when changing a shared contract.
+- Add a value only when more than one workspace must enforce the same persisted field or content rule.
+- Keep UI layout, cache durations, API versions, prompts, provider options, and feature-local behavior
+  in the owning app.
+- Keep exports dependency-free and safe for API, web, and Studio consumers.
+- Blog limits coordinate the Studio schema and API structured-output validation. Update all consumers
+  and existing fixture assumptions together when changing them.
+- Add explicit domain subpath exports in `package.json`; do not introduce a catch-all barrel.
 
-## Content verification
+## Verification
 
 - Run `pnpm --filter @portfolio/content check-types` after package changes.
-- Run each affected consumer's type check and build after changing an exported contract.
+- Run the API and Studio type checks after changing `BLOG_CONTENT_LIMITS`.
+- Run each affected consumer build when a shared contract changes runtime validation or generated schema.

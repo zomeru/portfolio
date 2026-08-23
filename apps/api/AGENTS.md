@@ -1,36 +1,69 @@
 # API guidance
 
-This workspace owns the reusable Hono backend and server-side business logic. The web workspace mounts
-the exported app but does not own its routes or services.
+This workspace is the reusable Hono backend and all server-side feature orchestration. Next.js
+compiles its TypeScript source and mounts `apiApp`; there is no standalone listener or API build.
 
-## API invariants
+## Package and routing invariants
 
-- Compose middleware and feature route modules in `src/app.ts`; keep feature routes under `src/routes`
-  and non-HTTP business logic under `src/services`.
-- Export the Next.js-safe app through the package root and export `AppType` through `./types`. Keep the
-  root export marked with `server-only`; browser consumers may import API types only with `import type`.
-- Export TypeScript source directly as a just-in-time internal package. Next.js owns compilation and
-  bundling; do not add a standalone server entry point or require a separate API build.
-- Preserve Hono route chaining so `AppType` and future RPC consumers retain endpoint inference.
-- Do not couple the API to web interface code.
-- Preserve request IDs, secure headers, structured logging, JSON errors, and graceful shutdown.
-- Keep logs free of credentials, authorization headers, and sensitive request bodies.
-- Read AI, cron, and Sanity configuration through `@portfolio/env` subpath contracts.
-- Read shared blog field and generation limits from `@portfolio/content/blog`; keep prompt wording and
-  provider behavior local to the blog-generation service.
-- Keep AI provider selection under `src/services/ai` so later assistant features can reuse it without
-  coupling to blog generation.
-- Keep assistant orchestration, retrieval ranking, ingestion, prompts, and evaluation logic under
-  `src/services/assistant`; access PostgreSQL only through repositories exported by `@portfolio/database`.
-- Blog generation uses the official `@ai-sdk/google` provider directly. Do not route it through AI
-  Gateway or another provider abstraction without an explicit product change.
-- Keep Ask Zomer AI ingestion independent from blog generation; publishing a blog must not directly mutate
-  the derived PostgreSQL knowledge index.
-- Use Hono request and response APIs.
+- Compose global middleware and chained feature routers in `src/app.ts`. The app owns the `/api`
+  base path and currently mounts `/ai`, `/admin/ai`, `/blog`, and `/github`.
+- Keep HTTP parsing, validation, status mapping, and response shaping under `src/routes`. Put
+  non-HTTP behavior under `src/services` and shared security/logging helpers under `src/lib`.
+- Preserve route chaining so exported `AppType` retains Hono RPC inference.
+- Export the server implementation only through `src/next.ts` and public client types through
+  `src/types.ts`. Keep the package root guarded by `server-only`.
+- Do not import web components, App Router modules, cookies, or UI state into this workspace.
+- Preserve request IDs, Hono secure headers, structured JSON logs, sanitized error responses, and the
+  redaction pattern in `src/lib/log.ts`. Never log authorization values, prompts, content, keys,
+  tokens, or secrets.
 
-## API verification
+## Feature ownership
+
+- `src/services/github` owns GitHub GraphQL/REST access and in-memory caches. Only return the public
+  response contract: private repository names, commit messages, filter values, and URLs must remain
+  anonymized or omitted as implemented.
+- `src/services/ai/models.ts` is the provider boundary. Blog generation uses `@ai-sdk/google`
+  directly; Ask Zomer chat and embeddings use OpenRouter. Do not replace one provider path as a side
+  effect of work on the other.
+- `src/services/blog-generation` owns prompt/output validation, duplicate detection, idempotency,
+  immediate Sanity publication, generation audit metadata, and the post-publish index attempt. Indexing
+  failure is reported separately and must not roll back a published post.
+- `src/services/assistant` owns intent classification, Sanity normalization, section-aware chunking,
+  embeddings, hybrid/structured retrieval, prompts, chat persistence, rate limiting, indexing, and
+  evaluation support. Keep PostgreSQL calls behind `@portfolio/database` repository exports.
+- Full indexing compares deterministic content hashes, skips unchanged documents unless forced,
+  removes documents no longer published, refuses stale deletion when Sanity unexpectedly returns zero
+  documents, and serializes runs with the ingestion lock. Single-document indexing is used after
+  generated publish.
+- Retrieval uses structured recency/experience strategies when applicable, otherwise semantic and
+  PostgreSQL full-text candidates with reciprocal-rank fusion. Keep the stored embedding dimension and
+  model assertion at 2,048.
+- Conversation persistence is anonymous but not stateless: validate the UUID session key, keep message
+  IDs idempotent, preserve the bounded history/token window, and enforce both per-minute and per-day
+  limits before generation.
+
+## Authentication and telemetry
+
+- Both blog generation methods require the constant-time `CRON_SECRET` bearer check. Manual requests
+  may add the validated idempotency header; scheduled keys are date-based.
+- Admin capabilities are separate. `blog-generation` tokens are signed with `CRON_SECRET`;
+  `ai-reindex` tokens are signed with `OPENROUTER_API_KEY`. Never accept one capability token for
+  the other.
+- `/admin/ai/*` accepts only the signed reindex bearer token. Do not expose raw capability secrets in
+  API responses or client code.
+- Deployed AI calls run inside the Next.js Node telemetry registration when Langfuse is enabled;
+  standalone CLI and evaluation scripts do not initialize it themselves. Chat and blog generation
+  currently record inputs and outputs; evaluation generation disables both. Make recording an
+  explicit privacy decision for every new AI call.
+- Read configuration only from the appropriate `@portfolio/env` subpath and shared blog limits only
+  from `@portfolio/content/blog`.
+
+## Verification
 
 - Run `pnpm --filter @portfolio/api check-types` after TypeScript changes.
-- Smoke-test the root route and an unknown route through the Next.js adapter after changing routes or
-  middleware.
-- Confirm request IDs, security headers, status codes, and response formats in smoke tests.
+- Run `pnpm ai:eval` after intent classification or structured retrieval changes.
+- Use `pnpm ai:eval --live` only against an explicitly authorized migrated/indexed database.
+- After route or middleware changes, exercise the affected path through the Next.js adapter and verify
+  request IDs, security headers, status codes, JSON errors, and streaming behavior where applicable.
+- There is no API build script or general API test suite; validate the consuming web build for bundling
+  or runtime-boundary changes.
