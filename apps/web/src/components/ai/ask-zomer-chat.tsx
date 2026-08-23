@@ -15,7 +15,6 @@ const INITIAL_SUGGESTIONS = [
   "What projects has he built?",
   "What's his backend experience?",
   "What technologies does he use?",
-  "What has he written about?",
 ] as const;
 
 function getOrCreateSessionKey() {
@@ -210,7 +209,7 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
       <ChatMessages loading={!historyReady} messages={messages} />
 
       {historyReady && suggestions.length > 0 ? (
-        <div className="border-t border-border py-4">
+        <div className="py-4">
           <SuggestionList
             disabled={busy || !historyReady}
             onSelect={submit}
@@ -248,7 +247,7 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
       </p>
 
       <form
-        className="border-t border-border py-4"
+        className="py-4"
         onSubmit={(event) => {
           event.preventDefault();
           submit(input);
