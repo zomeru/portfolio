@@ -1,8 +1,10 @@
+import { apiApp } from "@portfolio/api";
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/portfolio/page-header";
-import { isAdminAuthenticated } from "@/lib/admin-session";
+import { getAdminSessionToken } from "@/lib/admin-session";
 import { logoutAdmin } from "./actions";
 import { GenerationForm } from "./generation-form";
+import { KnowledgeIndexForm } from "./knowledge-index-form";
 import { LoginForm } from "./login-form";
 
 export const dynamic = "force-dynamic";
@@ -14,12 +16,44 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+type KnowledgeIndexStatus = {
+  documents: number;
+  chunks: number;
+  latestRun: null | {
+    status: string;
+    startedAt: string;
+    completedAt: string | null;
+  };
+};
+
+async function loadKnowledgeStatus(token: string) {
+  try {
+    const response = await apiApp.request("http://portfolio.internal/api/admin/ai/status", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!response.ok) return null;
+    return (await response.json()) as KnowledgeIndexStatus;
+  } catch {
+    return null;
+  }
+}
+
+function formatIndexDate(value: string | null | undefined) {
+  if (!value) return "Never";
+  return new Intl.DateTimeFormat("en", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "UTC",
+  }).format(new Date(value));
+}
+
 export default async function AdminPage() {
-  const authenticated = await isAdminAuthenticated();
+  const token = await getAdminSessionToken();
+  const status = token ? await loadKnowledgeStatus(token) : null;
 
   return (
     <>
-      <PageHeader index="05" eyebrow="Admin" title="Manage blog publishing." />
+      <PageHeader index="06" eyebrow="Admin" title="Manage portfolio automation." />
 
       <section aria-labelledby="publishing-heading" className="mt-10">
         <h2
@@ -29,7 +63,7 @@ export default async function AdminPage() {
           Blog publishing
         </h2>
 
-        {authenticated ? (
+        {token ? (
           <div className="mt-3 divide-y divide-border border-y border-border">
             <div className="flex min-h-16 items-center justify-between gap-4 py-3">
               <div>
@@ -63,6 +97,44 @@ export default async function AdminPage() {
           <LoginForm />
         )}
       </section>
+
+      {token ? (
+        <section aria-labelledby="knowledge-heading" className="mt-16">
+          <h2
+            id="knowledge-heading"
+            className="font-mono text-xs uppercase tracking-widest text-muted"
+          >
+            AI knowledge index
+          </h2>
+          <div className="mt-3 divide-y divide-border border-y border-border">
+            <div className="grid grid-cols-2 gap-4 py-4 text-sm sm:grid-cols-4">
+              <div>
+                <p className="text-xs text-muted">Documents</p>
+                <p className="mt-1 font-mono">{status?.documents ?? "—"}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted">Chunks</p>
+                <p className="mt-1 font-mono">{status?.chunks ?? "—"}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted">Latest run</p>
+                <p className="mt-1 font-mono capitalize">
+                  {status?.latestRun?.status ?? "Unavailable"}
+                </p>
+              </div>
+              <div>
+                <p className="text-xs text-muted">Last indexed</p>
+                <p className="mt-1 font-mono">
+                  {status?.latestRun?.completedAt
+                    ? `${formatIndexDate(status.latestRun.completedAt)} UTC`
+                    : "Never"}
+                </p>
+              </div>
+            </div>
+            <KnowledgeIndexForm />
+          </div>
+        </section>
+      ) : null}
     </>
   );
 }

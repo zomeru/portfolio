@@ -5,8 +5,10 @@
   "private": true,
   "exports": {
     "./ai-server": "./src/ai-server.ts",
+    "./assistant-server": "./src/assistant-server.ts",
     "./cron": "./src/cron.ts",
     "./database": "./src/database.ts",
+    "./langfuse-server": "./src/langfuse-server.ts",
     "./sanity": "./src/sanity.ts",
     "./sanity-server": "./src/sanity-server.ts",
     "./site": "./src/site.ts"

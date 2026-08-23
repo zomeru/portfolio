@@ -9,6 +9,8 @@ This package owns shared Zod validation for runtime-specific configuration.
 - The `./sanity` export contains public Sanity project, dataset, and app configuration.
 - The `./sanity-server` export contains the private Sanity API token contract.
 - The `./ai-server` export contains server-only Google Generative AI key and model configuration.
+- The `./assistant-server` export contains the server-only OpenRouter key and configurable assistant models.
+- The `./langfuse-server` export contains optional, all-or-none Langfuse tracing configuration.
 - The `./cron` export contains the Vercel Cron authentication contract.
 - The `./database` export contains database connection configuration.
 - The `./site` export contains the deployment origin and runtime mode.

@@ -20,9 +20,12 @@ the exported app but does not own its routes or services.
   provider behavior local to the blog-generation service.
 - Keep AI provider selection under `src/services/ai` so later assistant features can reuse it without
   coupling to blog generation.
+- Keep assistant orchestration, retrieval ranking, ingestion, prompts, and evaluation logic under
+  `src/services/assistant`; access PostgreSQL only through repositories exported by `@portfolio/database`.
 - Blog generation uses the official `@ai-sdk/google` provider directly. Do not route it through AI
   Gateway or another provider abstraction without an explicit product change.
-- Do not add RAG, embedding, vector-index, or reindex behavior to blog generation without a separate task.
+- Keep Ask Zomer AI ingestion independent from blog generation; publishing a blog must not directly mutate
+  the derived PostgreSQL knowledge index.
 - Use Hono request and response APIs.
 
 ## API verification

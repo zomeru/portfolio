@@ -33,6 +33,13 @@ SANITY_API_TOKEN=...
 GOOGLE_GENERATIVE_AI_API_KEY=...
 GOOGLE_GENERATIVE_AI_MODEL=gemini-3.7-flash
 CRON_SECRET=replace-with-at-least-32-random-characters
+OPENROUTER_API_KEY=...
+AI_CHAT_MODEL=thinkingmachines/inkling-small:free
+AI_EMBEDDING_MODEL=nvidia/nemotron-3-embed-1b:free
+# Optional observability; configure both keys or neither.
+LANGFUSE_PUBLIC_KEY=...
+LANGFUSE_SECRET_KEY=...
+LANGFUSE_BASE_URL=https://cloud.langfuse.com
 ```
 
 The site URL defaults to `http://localhost:3000` in development and is required in production. Public
@@ -70,8 +77,40 @@ curl -X POST https://your-site.example/api/blog/generate \
 
 Generation uses AI SDK structured output, rejects invalid or duplicate drafts, writes an immediately
 published `blogPost` document to Sanity, and records provider/model/trigger metadata. Published-content
-reads revalidate within the web app's existing five-minute Sanity cache window. No RAG, embeddings, or
-indexing is part of this flow.
+reads revalidate within the web app's existing five-minute Sanity cache window. Ask Zomer AI indexing is
+a separate derived-data flow and is not coupled to article generation.
+
+## Ask Zomer AI
+
+`/ask` streams general answers directly and grounds portfolio questions in a PostgreSQL search index.
+Sanity remains the source of truth. The index stores normalized documents, section-aware chunks,
+2,048-dimension embeddings, full-text search data, and citation metadata. Retrieval combines structured
+source filters, cosine similarity, keyword ranking, and reciprocal-rank fusion. The API persists anonymous
+browser sessions and messages, then passes only a bounded recent history window to the model so follow-up
+questions retain context.
+
+Apply the generated Drizzle migrations to each intended environment before indexing. They enable pgvector,
+create the assistant tables, and add a cosine HNSW expression index over `halfvec(2048)`. Changing the
+embedding model is safe only when it still emits 2,048 dimensions; a dimension change requires a schema
+migration and a forced reindex. Model IDs are configured with `AI_CHAT_MODEL` and `AI_EMBEDDING_MODEL`.
+OpenRouter's free models have availability and rate limits outside this application's control, so production
+deployments can switch models without changing application code.
+
+Index published Sanity profile, experience, project, tech-stack, and blog content after migrating and
+whenever content changes. The CLI reports each fetch, normalization, embedding, and persistence phase and
+shows per-document progress while it builds the index:
+
+```sh
+pnpm ai:index          # skip documents whose deterministic content hash is unchanged
+pnpm ai:index --force  # rebuild every document and embedding
+pnpm ai:eval           # deterministic intent-classification evaluation
+pnpm ai:eval --live    # retrieval Hit@6/MRR and grounded-answer checks; requires a migrated, indexed DB
+```
+
+The protected `/admin` page reports index counts and the latest ingestion state and can start the same
+idempotent indexing flow. A database lock prevents concurrent runs. Configure all three Langfuse variables
+to export AI SDK and retrieval spans through OpenTelemetry; omit them for local development without
+observability. Prompt and response bodies are not recorded.
 
 Useful commands:
 
@@ -88,6 +127,8 @@ pnpm studio:seed                      # seed development Sanity content
 pnpm --filter @portfolio/studio typegen
 pnpm db:generate                      # generate a Drizzle migration
 pnpm db:migrate                       # apply Drizzle migrations
+pnpm ai:index                         # incrementally index published portfolio knowledge
+pnpm ai:eval                          # run deterministic assistant intent evaluations
 ```
 
 Pull requests, merge-queue checks, and pushes to `main` run the production verification pipeline in

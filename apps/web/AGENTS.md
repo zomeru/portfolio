@@ -25,7 +25,9 @@ This workspace is the Next.js App Router portfolio. Pages are server-rendered fr
 - Do not hand-edit `src/lib/sanity/sanity.types.ts`; regenerate it with the Studio `typegen` script after schema/query changes.
 - Reuse the existing layout, portfolio, and theme components and the Tailwind tokens defined in `src/app/globals.css`.
 - Keep `/admin` authentication server-only: verify the secret through the API-owned session helpers,
-  store only a signed `HttpOnly` cookie, and re-authorize every generation Server Action.
+  store only a signed `HttpOnly` cookie, and re-authorize every generation or indexing Server Action.
+- Keep `/ask` provider, retrieval, persistence, and prompt logic in `apps/api`; the client owns only session
+  identity, streamed presentation, citations, suggestions, and accessible interaction state.
 - Preserve keyboard access, visible focus, reduced-motion support, and semantic heading order.
 
 ## Web verification

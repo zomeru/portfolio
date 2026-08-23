@@ -5,8 +5,13 @@ import { apiApp, verifyAdminSecret } from "@portfolio/api";
 import { getCronEnv } from "@portfolio/env/cron";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { createAdminSession, deleteAdminSession, isAdminAuthenticated } from "@/lib/admin-session";
-import type { GenerationActionState, LoginActionState } from "./action-state";
+import {
+  createAdminSession,
+  deleteAdminSession,
+  getAdminSessionToken,
+  isAdminAuthenticated,
+} from "@/lib/admin-session";
+import type { GenerationActionState, LoginActionState, ReindexActionState } from "./action-state";
 
 type GenerationResponse = {
   created?: boolean;
@@ -72,6 +77,52 @@ export async function triggerBlogGeneration(
     return {
       status: "error",
       message: "Blog generation could not be completed. Try again or inspect server logs.",
+    };
+  }
+}
+
+export async function triggerKnowledgeReindex(
+  _previousState: ReindexActionState,
+  formData: FormData,
+): Promise<ReindexActionState> {
+  const token = await getAdminSessionToken();
+  if (!token) {
+    return { status: "error", message: "Your admin session expired. Refresh and sign in again." };
+  }
+
+  try {
+    const response = await apiApp.request("http://portfolio.internal/api/admin/ai/reindex", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ force: formData.get("force") === "on" }),
+    });
+    const payload = (await response.json()) as {
+      documentsSeen?: number;
+      documentsUnchanged?: number;
+      chunksCreated?: number;
+      error?: { message?: string };
+      status?: string;
+    };
+
+    if (!response.ok || payload.status !== "completed") {
+      return {
+        status: "error",
+        message: payload.error?.message ?? "Knowledge indexing failed. Inspect the server logs.",
+      };
+    }
+
+    revalidatePath("/admin");
+    return {
+      status: "success",
+      message: `Indexed ${payload.documentsSeen ?? 0} documents and created ${payload.chunksCreated ?? 0} chunks. ${payload.documentsUnchanged ?? 0} documents were unchanged.`,
+    };
+  } catch {
+    return {
+      status: "error",
+      message: "Knowledge indexing could not be completed. Try again or inspect server logs.",
     };
   }
 }

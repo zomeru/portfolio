@@ -19,7 +19,7 @@ export default async function ContactPage() {
   return (
     <>
       <PageHeader
-        index="04"
+        index="05"
         eyebrow="Let's talk"
         title="Have a project, opportunity, or interesting idea?"
       />

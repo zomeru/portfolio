@@ -39,7 +39,7 @@ export function LoginForm() {
           aria-busy={isPending}
           className="min-h-10 shrink-0 rounded-md bg-foreground px-4 text-sm font-medium text-background transition-opacity duration-150 hover:opacity-80 disabled:cursor-wait disabled:opacity-50 motion-reduce:transition-none"
         >
-          Sign in
+          {isPending ? "Signing in..." : "Sign in"}
         </button>
       </div>
       {state.error ? (

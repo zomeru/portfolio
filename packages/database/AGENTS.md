@@ -5,10 +5,13 @@ This package owns the shared Drizzle ORM PostgreSQL client, schema, and migratio
 ## Database invariants
 
 - Define tables under `src/db/schema` and re-export them through `src/db/schema.ts`.
-- Re-export the public client and schema contract through `src/index.ts`.
+- Keep Drizzle queries, operators, and transactions inside this package. Application workspaces consume
+  repository functions rather than importing the client, schema tables, or `drizzle-orm` directly.
+- Re-export the public client, schema, and repository contracts through `src/index.ts`.
 - Preserve lazy connection initialization unless every consumer is intentionally migrated.
 - Read connection details through `@portfolio/env/database`. Never embed or log a connection string.
-- Never edit files under `drizzle` by hand.
+- Never edit generated migration SQL or snapshots by hand. SQL files created with Drizzle Kit's `--custom`
+  workflow are intentionally filled in for extension and expression-index operations.
 
 ## Migration workflow
 

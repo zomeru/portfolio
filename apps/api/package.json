@@ -8,11 +8,17 @@
     "./types": "./src/types.ts"
   },
   "scripts": {
-    "check-types": "tsc --noEmit"
+    "ai:eval": "pnpm run with-env tsx src/evaluations/run.ts",
+    "ai:index": "pnpm run with-env tsx src/cli/index-knowledge.ts",
+    "check-types": "tsc --noEmit",
+    "with-env": "pnpm exec dotenv -e ../../.env.local --"
   },
   "dependencies": {
     "@ai-sdk/google": "^4.0.50",
+    "@openrouter/ai-sdk-provider": "^3.0.0",
+    "@opentelemetry/api": "^1.9.1",
     "@portfolio/content": "workspace:*",
+    "@portfolio/database": "workspace:*",
     "@portfolio/env": "workspace:*",
     "@sanity/client": "^7.26.2",
     "ai": "^7.0.74",

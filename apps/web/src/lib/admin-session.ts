@@ -32,6 +32,11 @@ export async function deleteAdminSession() {
 }
 
 export async function isAdminAuthenticated() {
+  return Boolean(await getAdminSessionToken());
+}
+
+export async function getAdminSessionToken() {
   const cookieStore = await cookies();
-  return verifyAdminSessionToken(cookieStore.get(ADMIN_SESSION_COOKIE)?.value);
+  const token = cookieStore.get(ADMIN_SESSION_COOKIE)?.value;
+  return verifyAdminSessionToken(token) ? token : undefined;
 }
