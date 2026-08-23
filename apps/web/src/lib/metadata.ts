@@ -4,6 +4,7 @@ import { getSiteEnv } from "@portfolio/env/site";
 import type { Metadata } from "next";
 
 export const siteUrl = getSiteEnv().siteUrl;
+export const domain = siteUrl.replace(/^https?:\/\//, "");
 
 type PageMetadataOptions = {
   title: string;

@@ -8,9 +8,8 @@ export const contentType = "image/png";
 export default async function OpenGraphImage() {
   const profile = await getProfile();
   const name = profile?.name || "Zomer Gregorio";
-  const description = profile?.role
-    ? `${profile.role} — selected work, technical writing, and a grounded AI guide.`
-    : "Software engineering, selected work, technical writing, and a grounded AI guide.";
+  const role = profile?.role || "Software Engineer";
+  const description = `${role} based in the, building modern web experiences with Next.js, TypeScript, and practical AI integrations`;
 
   return createPortfolioOgImage({
     index: "01",

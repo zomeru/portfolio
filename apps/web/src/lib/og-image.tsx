@@ -1,6 +1,7 @@
 import "server-only";
 
 import { ImageResponse } from "next/og";
+import { domain } from "./metadata";
 
 type PortfolioOgImageOptions = {
   description: string;
@@ -129,7 +130,7 @@ export function createPortfolioOgImage(options: PortfolioOgImageOptions) {
             fontSize: 18,
           }}
         >
-          <span>{options.footer ?? "zomer.dev"}</span>
+          <span>{options.footer ?? domain}</span>
           <span style={{ color: "#a1a1aa" }}>Portfolio / {new Date().getUTCFullYear()}</span>
         </div>
       </div>
