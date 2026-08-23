@@ -19,6 +19,8 @@ export function createPageMetadata({ title, description, path }: PageMetadataOpt
     openGraph: {
       title,
       description,
+      locale: "en_US",
+      siteName: "Zomer Gregorio",
       type: "website",
       url: new URL(path, siteUrl),
     },

@@ -6,7 +6,7 @@ export const contentType = "image/png";
 
 export default function OpenGraphImage() {
   return createPortfolioOgImage({
-    index: "05",
+    index: "06",
     eyebrow: "Let's talk",
     title: "Have a project or interesting idea?",
     description: "Get in touch about software engineering, product work, or collaboration.",
