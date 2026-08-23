@@ -44,6 +44,7 @@ async function respondWithGeneration(
     {
       success: true,
       created: result.created,
+      indexing: result.indexing,
       post: {
         id: result.post._id,
         title: result.post.title,

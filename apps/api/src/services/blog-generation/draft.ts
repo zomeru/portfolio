@@ -4,6 +4,7 @@ import { z } from "zod";
 import { ApiError } from "../../errors";
 import { log } from "../../lib/log";
 import { getBlogLanguageModel } from "../ai/models";
+import type { BlogGenerationTrigger } from "./repository";
 
 const SYSTEM_INSTRUCTION = `You are a principal full-stack software engineer and expert technical writer. Write for experienced software engineers. Be practical, concise, technically credible, and specific. Avoid hype, filler, generic advice, and obvious AI-generated phrasing. Focus on real-world engineering problems, tradeoffs, architecture, and implementation details. Use code only when it materially improves understanding. Prefer TypeScript when code is useful. Return strict JSON only with no extra commentary or Markdown fences.`;
 
@@ -237,7 +238,9 @@ function assertValidDraft(draft: z.infer<typeof generatedBlogSchema>) {
   };
 }
 
-export async function generateBlogDraft(): Promise<GeneratedBlogDraft> {
+export async function generateBlogDraft(
+  trigger: BlogGenerationTrigger,
+): Promise<GeneratedBlogDraft> {
   const { model, modelId, provider } = getBlogLanguageModel();
 
   try {
@@ -254,6 +257,23 @@ export async function generateBlogDraft(): Promise<GeneratedBlogDraft> {
       maxOutputTokens: 8192,
       maxRetries: 2,
       abortSignal: AbortSignal.timeout(60_000),
+      runtimeContext: {
+        model: modelId,
+        provider,
+        trigger,
+        workflow: "blog-generation",
+      },
+      telemetry: {
+        functionId: "blog-generation.generate-draft",
+        includeRuntimeContext: {
+          model: true,
+          provider: true,
+          trigger: true,
+          workflow: true,
+        },
+        recordInputs: true,
+        recordOutputs: true,
+      },
     });
     const draft = result.output;
     const validation = assertValidDraft(draft);

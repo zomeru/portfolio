@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@ai-sdk/google": "^4.0.50",
+    "@langfuse/tracing": "^5.10.1",
     "@openrouter/ai-sdk-provider": "^3.0.0",
     "@opentelemetry/api": "^1.9.1",
     "@portfolio/content": "workspace:*",

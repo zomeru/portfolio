@@ -23,7 +23,7 @@ export function createPageMetadata({ title, description, path }: PageMetadataOpt
       url: new URL(path, siteUrl),
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title,
       description,
     },

@@ -4,8 +4,9 @@ import { createClient, type SanityClient } from "@sanity/client";
 
 const SANITY_API_VERSION = "2026-08-20";
 
-const KNOWLEDGE_QUERY = /* groq */ `
-  *[_type in ["profile", "experience", "project", "blogPost", "techStack"] && !(_id in path("drafts.**"))] {
+const KNOWLEDGE_FILTER = `_type in ["profile", "experience", "project", "blogPost", "techStack"] && !(_id in path("drafts.**"))`;
+
+const KNOWLEDGE_PROJECTION = /* groq */ `{
     _id,
     _type,
     _updatedAt,
@@ -37,7 +38,14 @@ const KNOWLEDGE_QUERY = /* groq */ `
     publishedAt,
     updatedAt,
     tags
-  }
+  }`;
+
+const KNOWLEDGE_QUERY = /* groq */ `
+  *[${KNOWLEDGE_FILTER}] ${KNOWLEDGE_PROJECTION}
+`;
+
+const KNOWLEDGE_BY_ID_QUERY = /* groq */ `
+  *[${KNOWLEDGE_FILTER} && _id == $documentId][0] ${KNOWLEDGE_PROJECTION}
 `;
 
 export type SanityKnowledgeSource = {
@@ -68,4 +76,10 @@ function getReadClient() {
 
 export function fetchSanityKnowledgeSources() {
   return getReadClient().fetch<SanityKnowledgeSource[]>(KNOWLEDGE_QUERY);
+}
+
+export function fetchSanityKnowledgeSource(documentId: string) {
+  return getReadClient().fetch<SanityKnowledgeSource | null>(KNOWLEDGE_BY_ID_QUERY, {
+    documentId,
+  });
 }

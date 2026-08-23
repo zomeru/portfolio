@@ -1,21 +1,17 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
-import { apiApp, verifyAdminSecret } from "@portfolio/api";
+import { type AdminCapability, apiApp, verifyAdminSecret } from "@portfolio/api";
 import { getCronEnv } from "@portfolio/env/cron";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import {
-  createAdminSession,
-  deleteAdminSession,
-  getAdminSessionToken,
-  isAdminAuthenticated,
-} from "@/lib/admin-session";
-import type { GenerationActionState, LoginActionState, ReindexActionState } from "./action-state";
+import { createAdminSession, deleteAdminSession, isAdminAuthenticated } from "@/lib/admin-session";
+import type { GenerationActionState, LoginActionState } from "./action-state";
 
 type GenerationResponse = {
   created?: boolean;
   error?: { message?: string };
+  indexing?: { status?: "failed" | "succeeded" | "unchanged" };
   post?: {
     slug?: string;
     title?: string;
@@ -23,17 +19,22 @@ type GenerationResponse = {
   success?: boolean;
 };
 
+function parseAdminCapability(value: FormDataEntryValue | null): AdminCapability | null {
+  return value === "blog-generation" || value === "ai-reindex" ? value : null;
+}
+
 export async function authenticateAdmin(
   _previousState: LoginActionState,
   formData: FormData,
 ): Promise<LoginActionState> {
   const secret = formData.get("secret");
+  const capability = parseAdminCapability(formData.get("capability"));
 
-  if (typeof secret !== "string" || !verifyAdminSecret(secret)) {
+  if (!capability || typeof secret !== "string" || !verifyAdminSecret(secret, capability)) {
     return { error: "The secret is incorrect." };
   }
 
-  await createAdminSession();
+  await createAdminSession(capability);
   redirect("/admin");
 }
 
@@ -41,7 +42,7 @@ export async function triggerBlogGeneration(
   _previousState: GenerationActionState,
   _formData: FormData,
 ): Promise<GenerationActionState> {
-  if (!(await isAdminAuthenticated())) {
+  if (!(await isAdminAuthenticated("blog-generation"))) {
     return { status: "error", message: "Your admin session expired. Refresh and sign in again." };
   }
 
@@ -68,9 +69,12 @@ export async function triggerBlogGeneration(
 
     return {
       status: "success",
-      message: payload.created
-        ? "The article was generated and published."
-        : "This request resolved to an existing generated article.",
+      message:
+        payload.indexing?.status === "failed"
+          ? "The article was published, but its AI index update failed. Use Reindex AI data below to retry."
+          : payload.created
+            ? "The article was generated, published, and indexed for Ask Zomer AI."
+            : "This request resolved to an existing generated article and refreshed its AI index.",
       post: { slug: payload.post.slug, title: payload.post.title },
     };
   } catch {
@@ -81,53 +85,8 @@ export async function triggerBlogGeneration(
   }
 }
 
-export async function triggerKnowledgeReindex(
-  _previousState: ReindexActionState,
-  formData: FormData,
-): Promise<ReindexActionState> {
-  const token = await getAdminSessionToken();
-  if (!token) {
-    return { status: "error", message: "Your admin session expired. Refresh and sign in again." };
-  }
-
-  try {
-    const response = await apiApp.request("http://portfolio.internal/api/admin/ai/reindex", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ force: formData.get("force") === "on" }),
-    });
-    const payload = (await response.json()) as {
-      documentsSeen?: number;
-      documentsUnchanged?: number;
-      chunksCreated?: number;
-      error?: { message?: string };
-      status?: string;
-    };
-
-    if (!response.ok || payload.status !== "completed") {
-      return {
-        status: "error",
-        message: payload.error?.message ?? "Knowledge indexing failed. Inspect the server logs.",
-      };
-    }
-
-    revalidatePath("/admin");
-    return {
-      status: "success",
-      message: `Indexed ${payload.documentsSeen ?? 0} documents and created ${payload.chunksCreated ?? 0} chunks. ${payload.documentsUnchanged ?? 0} documents were unchanged.`,
-    };
-  } catch {
-    return {
-      status: "error",
-      message: "Knowledge indexing could not be completed. Try again or inspect server logs.",
-    };
-  }
-}
-
-export async function logoutAdmin() {
-  await deleteAdminSession();
+export async function logoutAdmin(formData: FormData) {
+  const capability = parseAdminCapability(formData.get("capability"));
+  if (capability) await deleteAdminSession(capability);
   redirect("/admin");
 }

@@ -4,7 +4,7 @@ import { useChat } from "@ai-sdk/react";
 import type { AskZomerMessage, AskZomerSource } from "@portfolio/api/types";
 import { DefaultChatTransport } from "ai";
 import { ArrowUp, RefreshCw, Square } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -90,20 +90,10 @@ function SuggestionList({
 }
 
 function ChatMessages({ messages }: { messages: AskZomerMessage[] }) {
-  const endRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ block: "nearest" });
-  });
-
   return (
-    <div
-      aria-live="polite"
-      aria-relevant="additions text"
-      className="max-h-[34rem] min-h-72 space-y-6 overflow-y-auto overscroll-contain px-1 py-5 sm:min-h-96"
-    >
+    <div aria-live="polite" aria-relevant="additions text" className="space-y-5 py-6">
       {messages.length === 0 ? (
-        <div className="flex min-h-64 items-center justify-center text-center sm:min-h-80">
+        <div className="flex items-center justify-center py-10 text-center sm:py-14">
           <div className="max-w-md">
             <p className="text-sm font-medium">What would you like to know?</p>
             <p className="mt-2 text-sm leading-relaxed text-muted">
@@ -121,8 +111,8 @@ function ChatMessages({ messages }: { messages: AskZomerMessage[] }) {
               key={message.id}
               className={
                 message.role === "user"
-                  ? "ml-auto max-w-[88%] rounded-2xl rounded-br-sm bg-foreground px-4 py-3 text-sm leading-relaxed text-background sm:max-w-[75%]"
-                  : "max-w-2xl"
+                  ? "chat-message-user ml-auto max-w-[88%] rounded-2xl rounded-br-sm border border-border bg-chat-user-surface px-4 py-3 text-sm leading-relaxed text-foreground sm:max-w-[72%]"
+                  : "chat-message-assistant max-w-2xl"
               }
             >
               <p className="sr-only">{message.role === "user" ? "You" : "Ask Zomer AI"}</p>
@@ -138,7 +128,6 @@ function ChatMessages({ messages }: { messages: AskZomerMessage[] }) {
           );
         })
       )}
-      <div ref={endRef} />
     </div>
   );
 }
@@ -196,7 +185,7 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
     lastAssistant?.metadata?.suggestions ?? (messages.length === 0 ? INITIAL_SUGGESTIONS : []);
 
   return (
-    <section aria-label="Ask Zomer AI conversation" className="mt-8 border-y border-border">
+    <section aria-label="Ask Zomer AI conversation" className="mt-10 border-y border-border">
       {historyWarning ? (
         <p role="status" className="border-b border-border py-3 text-xs text-muted">
           {historyWarning} You can still start a new conversation.
@@ -252,7 +241,7 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
         <label htmlFor="ask-zomer-input" className="sr-only">
           Ask Zomer AI a question
         </label>
-        <div className="flex items-end gap-2 rounded-xl border border-border bg-background p-2 focus-within:border-foreground">
+        <div className="chat-composer flex items-end gap-2 rounded-xl border border-border bg-background p-2">
           <textarea
             id="ask-zomer-input"
             value={input}
@@ -295,14 +284,14 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
   );
 }
 
-export function AskZomerChat() {
+export function AskZomerChatContent() {
   const [sessionKey, setSessionKey] = useState<string>();
 
   useEffect(() => setSessionKey(getOrCreateSessionKey()), []);
 
   if (!sessionKey) {
     return (
-      <div className="mt-8 min-h-96 border-y border-border py-8" aria-busy="true">
+      <div className="mt-10 border-y border-border py-12" aria-busy="true">
         <p className="text-sm text-muted">Preparing your conversation…</p>
       </div>
     );

@@ -15,7 +15,7 @@ import { getAssistantModels } from "../ai/models";
 import { chunkKnowledgeDocument } from "./chunking";
 import { embedKnowledgeChunks } from "./embeddings";
 import { normalizeSanityKnowledge } from "./normalization";
-import { fetchSanityKnowledgeSources } from "./sanity";
+import { fetchSanityKnowledgeSource, fetchSanityKnowledgeSources } from "./sanity";
 import { withAssistantSpan } from "./telemetry";
 import type { NormalizedKnowledgeDocument } from "./types";
 
@@ -132,6 +132,63 @@ async function markRunFailed(runId: string, error: unknown) {
   await failIngestionRun(runId, message);
 }
 
+function createIngestionSummary(runId: string): IngestionSummary {
+  return {
+    runId,
+    documentsSeen: 0,
+    documentsCreated: 0,
+    documentsUpdated: 0,
+    documentsUnchanged: 0,
+    documentsDeleted: 0,
+    chunksCreated: 0,
+  };
+}
+
+async function completeRun(runId: string, summary: IngestionSummary, force: boolean) {
+  const models = getAssistantModels();
+  await completeIngestionRun(runId, {
+    ...summary,
+    force,
+    embeddingModel: models.embeddingModelId,
+  });
+}
+
+async function indexDocument(options: {
+  document: NormalizedKnowledgeDocument;
+  documentCount: number;
+  documentIndex: number;
+  force: boolean;
+  onProgress?: (message: string) => void;
+  summary: IngestionSummary;
+  existingBySanityId: Map<string, { contentHash: string; id: string }>;
+}) {
+  const previous = options.existingBySanityId.get(options.document.sanityDocumentId);
+  const hash = contentHash(options.document);
+  if (!options.force && previous?.contentHash === hash) {
+    options.onProgress?.(
+      `Checking ${options.documentIndex}/${options.documentCount}: ${options.document.title} (unchanged)`,
+    );
+    options.summary.documentsUnchanged += 1;
+    await touchIndexedKnowledgeDocument(previous.id, options.document.sanityUpdatedAt);
+    return;
+  }
+
+  options.onProgress?.(
+    `Embedding ${options.documentIndex}/${options.documentCount}: ${options.document.title} (${previous ? "changed" : "new"})`,
+  );
+  options.summary.chunksCreated += await replaceDocument({
+    document: options.document,
+    hash,
+    documentIndex: options.documentIndex,
+    documentCount: options.documentCount,
+    state: previous ? "changed" : "new",
+    ...(options.onProgress ? { onProgress: options.onProgress } : {}),
+    ...(previous ? { existingId: previous.id } : {}),
+  });
+  if (previous) options.summary.documentsUpdated += 1;
+  else options.summary.documentsCreated += 1;
+}
+
 export async function synchronizePortfolioKnowledge(options: {
   trigger: "cli" | "admin" | "scheduled" | "webhook";
   force?: boolean;
@@ -140,15 +197,7 @@ export async function synchronizePortfolioKnowledge(options: {
   const force = options.force ?? false;
   options.onProgress?.(force ? "Preparing a forced reindex…" : "Preparing an incremental index…");
   const run = await beginIngestionRun(options.trigger, force);
-  const summary: IngestionSummary = {
-    runId: run.id,
-    documentsSeen: 0,
-    documentsCreated: 0,
-    documentsUpdated: 0,
-    documentsUnchanged: 0,
-    documentsDeleted: 0,
-    chunksCreated: 0,
-  };
+  const summary = createIngestionSummary(run.id);
 
   try {
     return await withAssistantSpan(
@@ -168,31 +217,15 @@ export async function synchronizePortfolioKnowledge(options: {
 
         const existingBySanityId = new Map(existing.map((item) => [item.sanityDocumentId, item]));
         for (const [index, document] of documents.entries()) {
-          const previous = existingBySanityId.get(document.sanityDocumentId);
-          const hash = contentHash(document);
-          if (!force && previous?.contentHash === hash) {
-            options.onProgress?.(
-              `Checking ${index + 1}/${documents.length}: ${document.title} (unchanged)`,
-            );
-            summary.documentsUnchanged += 1;
-            await touchIndexedKnowledgeDocument(previous.id, document.sanityUpdatedAt);
-            continue;
-          }
-
-          options.onProgress?.(
-            `Embedding ${index + 1}/${documents.length}: ${document.title} (${previous ? "changed" : "new"})`,
-          );
-          summary.chunksCreated += await replaceDocument({
+          await indexDocument({
             document,
-            hash,
             documentIndex: index + 1,
             documentCount: documents.length,
-            state: previous ? "changed" : "new",
+            existingBySanityId,
+            force,
+            summary,
             ...(options.onProgress ? { onProgress: options.onProgress } : {}),
-            ...(previous ? { existingId: previous.id } : {}),
           });
-          if (previous) summary.documentsUpdated += 1;
-          else summary.documentsCreated += 1;
         }
 
         const sourceIds = documents.map((document) => document.sanityDocumentId);
@@ -202,13 +235,57 @@ export async function synchronizePortfolioKnowledge(options: {
         }
 
         options.onProgress?.("Saving the ingestion summary…");
-        const models = getAssistantModels();
-        await completeIngestionRun(run.id, {
-          ...summary,
-          force,
-          embeddingModel: models.embeddingModelId,
+        await completeRun(run.id, summary, force);
+
+        return summary;
+      },
+    );
+  } catch (error) {
+    await markRunFailed(run.id, error);
+    throw error;
+  }
+}
+
+export async function synchronizePublishedKnowledgeDocument(options: {
+  documentId: string;
+  trigger: "admin" | "scheduled" | "webhook";
+  onProgress?: (message: string) => void;
+}): Promise<IngestionSummary> {
+  options.onProgress?.("Preparing a single-document index…");
+  const run = await beginIngestionRun(options.trigger, false);
+  const summary = createIngestionSummary(run.id);
+
+  try {
+    return await withAssistantSpan(
+      "ask-zomer.ingestion.document",
+      {
+        "ai.ingestion.document.id": options.documentId,
+        "ai.ingestion.run.id": run.id,
+        "ai.ingestion.trigger": options.trigger,
+      },
+      async () => {
+        options.onProgress?.("Fetching the published document from Sanity…");
+        const source = await fetchSanityKnowledgeSource(options.documentId);
+        const [document] = source ? normalizeSanityKnowledge([source]) : [];
+        if (!document) {
+          throw new Error("The published Sanity document is not available for indexing.");
+        }
+        summary.documentsSeen = 1;
+
+        const existing = await listIndexedKnowledgeDocuments();
+        const existingBySanityId = new Map(existing.map((item) => [item.sanityDocumentId, item]));
+        await indexDocument({
+          document,
+          documentCount: 1,
+          documentIndex: 1,
+          existingBySanityId,
+          force: false,
+          summary,
+          ...(options.onProgress ? { onProgress: options.onProgress } : {}),
         });
 
+        options.onProgress?.("Saving the ingestion summary…");
+        await completeRun(run.id, summary, false);
         return summary;
       },
     );

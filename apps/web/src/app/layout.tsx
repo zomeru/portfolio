@@ -41,7 +41,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: name,
       url: siteUrl,
     },
-    twitter: { card: "summary", title: `${name} — ${role}`, description },
+    twitter: { card: "summary_large_image", title: `${name} — ${role}`, description },
   };
 }
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AskZomerChat } from "@/components/ai/ask-zomer-chat";
+import { AskZomerChat } from "@/components/ai/ask-zomer-chat-client";
 import { PageHeader } from "@/components/portfolio/page-header";
 import { createPageMetadata } from "@/lib/metadata";
 
