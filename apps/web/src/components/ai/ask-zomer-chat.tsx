@@ -39,7 +39,7 @@ function SourceList({ sources }: { sources: AskZomerSource[] }) {
   if (sources.length === 0) return null;
 
   return (
-    <details className="mt-3 border-t border-border pt-3 text-xs text-muted">
+    <details className="mt-3 pt-3 text-xs text-muted">
       <summary className="w-fit cursor-pointer rounded-sm py-1 font-mono uppercase tracking-widest hover:text-foreground">
         {sources.length} {sources.length === 1 ? "source" : "sources"}
       </summary>
@@ -239,10 +239,7 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
         </div>
       ) : null}
 
-      <p
-        aria-live="polite"
-        className={busy ? "border-t border-border py-3 text-xs text-muted" : "sr-only"}
-      >
+      <p aria-live="polite" className={busy ? "py-3 text-xs text-muted" : "sr-only"}>
         {busy ? (status === "submitted" ? "Searching the portfolio…" : "Writing a response…") : ""}
       </p>
 
