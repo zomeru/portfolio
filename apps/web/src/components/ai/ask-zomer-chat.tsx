@@ -3,10 +3,11 @@
 import { useChat } from "@ai-sdk/react";
 import type { AskZomerMessage, AskZomerSource } from "@portfolio/api/types";
 import { DefaultChatTransport } from "ai";
-import { ArrowUp, RefreshCw, Square } from "lucide-react";
+import { ArrowUp, LoaderCircle, RefreshCw, Square } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { client } from "@/lib/api";
 
 const SESSION_STORAGE_KEY = "ask-zomer-session";
 const INITIAL_SUGGESTIONS = [
@@ -89,10 +90,22 @@ function SuggestionList({
   );
 }
 
-function ChatMessages({ messages }: { messages: AskZomerMessage[] }) {
+function ChatMessages({ loading, messages }: { loading: boolean; messages: AskZomerMessage[] }) {
   return (
     <div aria-live="polite" aria-relevant="additions text" className="space-y-5 py-6">
-      {messages.length === 0 ? (
+      {loading ? (
+        <div
+          role="status"
+          aria-busy="true"
+          className="flex items-center justify-center gap-2 py-10 text-sm text-muted sm:py-14"
+        >
+          <LoaderCircle
+            aria-hidden="true"
+            className="size-4 animate-spin motion-reduce:animate-none"
+          />
+          Loading messages…
+        </div>
+      ) : messages.length === 0 ? (
         <div className="flex items-center justify-center py-10 text-center sm:py-14">
           <div className="max-w-md">
             <p className="text-sm font-medium">What would you like to know?</p>
@@ -155,11 +168,14 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
     const controller = new AbortController();
     async function restoreHistory() {
       try {
-        const response = await fetch(`/api/ai/sessions/${sessionKey}/messages`, {
-          signal: controller.signal,
-        });
+        const response = await client.api.ai.sessions[":sessionKey"].messages.$get(
+          { param: { sessionKey } },
+          { init: { signal: controller.signal } },
+        );
         if (!response.ok) throw new Error("Conversation history is unavailable.");
-        const payload = (await response.json()) as { messages?: AskZomerMessage[] };
+        const payload = (await (response as Response).json()) as {
+          messages?: AskZomerMessage[];
+        };
         setMessages(payload.messages ?? []);
       } catch (restoreError) {
         if (!(restoreError instanceof DOMException && restoreError.name === "AbortError")) {
@@ -191,9 +207,9 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
           {historyWarning} You can still start a new conversation.
         </p>
       ) : null}
-      <ChatMessages messages={messages} />
+      <ChatMessages loading={!historyReady} messages={messages} />
 
-      {suggestions.length > 0 ? (
+      {historyReady && suggestions.length > 0 ? (
         <div className="border-t border-border py-4">
           <SuggestionList
             disabled={busy || !historyReady}

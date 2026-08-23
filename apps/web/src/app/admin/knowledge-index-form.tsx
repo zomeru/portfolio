@@ -35,6 +35,7 @@ export function KnowledgeIndexForm() {
     setState({ status: "running", message: "Starting portfolio indexing…" });
 
     try {
+      // This Next route keeps the HttpOnly admin token server-side before calling Hono.
       const response = await fetch("/admin/api/ai/reindex", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

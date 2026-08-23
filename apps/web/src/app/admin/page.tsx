@@ -1,7 +1,7 @@
-import { apiApp } from "@portfolio/api";
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/portfolio/page-header";
 import { getAdminSessionToken } from "@/lib/admin-session";
+import { serverClient } from "@/lib/api-server";
 import { logoutAdmin } from "./actions";
 import { GenerationForm } from "./generation-form";
 import { KnowledgeIndexForm } from "./knowledge-index-form";
@@ -28,9 +28,10 @@ type KnowledgeIndexStatus = {
 
 async function loadKnowledgeStatus(token: string) {
   try {
-    const response = await apiApp.request("http://portfolio.internal/api/admin/ai/status", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await serverClient.api.admin.ai.status.$get(
+      {},
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
     if (!response.ok) return null;
     return (await response.json()) as KnowledgeIndexStatus;
   } catch {

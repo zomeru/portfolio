@@ -1,11 +1,12 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
-import { type AdminCapability, apiApp, verifyAdminSecret } from "@portfolio/api";
+import { type AdminCapability, verifyAdminSecret } from "@portfolio/api";
 import { getCronEnv } from "@portfolio/env/cron";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAdminSession, deleteAdminSession, isAdminAuthenticated } from "@/lib/admin-session";
+import { serverClient } from "@/lib/api-server";
 import type { GenerationActionState, LoginActionState } from "./action-state";
 
 type GenerationResponse = {
@@ -43,17 +44,22 @@ export async function triggerBlogGeneration(
   _formData: FormData,
 ): Promise<GenerationActionState> {
   if (!(await isAdminAuthenticated("blog-generation"))) {
-    return { status: "error", message: "Your admin session expired. Refresh and sign in again." };
+    return {
+      status: "error",
+      message: "Your publishing access expired. Refresh and unlock it again.",
+    };
   }
 
   try {
-    const response = await apiApp.request("http://portfolio.internal/api/blog/generate", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${getCronEnv().secret}`,
-        "Idempotency-Key": `admin:${randomUUID()}`,
+    const response = await serverClient.api.blog.generate.$post(
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${getCronEnv().secret}`,
+          "Idempotency-Key": `admin:${randomUUID()}`,
+        },
       },
-    });
+    );
     const payload = (await response.json()) as GenerationResponse;
 
     if (!response.ok || !payload.success || !payload.post?.slug || !payload.post.title) {
