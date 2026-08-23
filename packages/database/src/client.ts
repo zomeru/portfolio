@@ -1,11 +1,13 @@
+import { neon } from "@neondatabase/serverless";
 import { getDatabaseEnv } from "@portfolio/env/database";
-import { drizzle, type NodePgDatabase } from "drizzle-orm/node-postgres";
+import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
 
-export function createDatabase(): NodePgDatabase {
-  return drizzle(getDatabaseEnv().url);
+export function createDatabase(): NeonHttpDatabase {
+  const sql = neon(getDatabaseEnv().url);
+  return drizzle({ client: sql });
 }
 
-export type Database = NodePgDatabase;
+export type Database = NeonHttpDatabase;
 
 let database: Database | undefined;
 

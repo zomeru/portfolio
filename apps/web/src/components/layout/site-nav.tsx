@@ -10,6 +10,8 @@ const links = [
   { href: "/", label: "About" },
   { href: "/projects", label: "Projects" },
   { href: "/blogs", label: "Blogs" },
+  { href: "/github-contributions", label: "GitHub" },
+  { href: "/ask", label: "Ask Zomer AI" },
   { href: "/contact", label: "Let's talk" },
 ] as const;
 

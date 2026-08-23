@@ -6,6 +6,8 @@
   --foreground: #0a0a0a;
   --muted: #52525b;
   --border: #e4e4e7;
+  --chat-user-surface: #f0f0f1;
+  --chat-user-selection: #d4d4d8;
   --grid-dot: rgba(10, 10, 10, 0.16);
 }
 
@@ -15,6 +17,8 @@
   --foreground: #fafafa;
   --muted: #a1a1aa;
   --border: #27272a;
+  --chat-user-surface: #1c1c1f;
+  --chat-user-selection: #3f3f46;
   --grid-dot: rgba(250, 250, 250, 0.08);
 }
 
@@ -23,6 +27,7 @@
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
+  --color-chat-user-surface: var(--chat-user-surface);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -49,9 +54,43 @@ body::before {
   color: var(--color-background);
 }
 
+.chat-message-user::selection {
+  background-color: var(--chat-user-selection);
+  color: var(--color-foreground);
+}
+
+.chat-message-assistant::selection {
+  background-color: var(--color-foreground);
+  color: var(--color-background);
+}
+
 :focus-visible {
   outline: 2px solid var(--color-foreground);
   outline-offset: 2px;
+}
+
+.chat-composer {
+  transition-property: border-color;
+  transition-duration: 150ms;
+}
+
+.chat-composer:focus-within {
+  border-color: var(--color-foreground);
+}
+
+.chat-composer textarea:focus-visible {
+  outline: none;
+}
+
+.chat-composer:has(textarea:focus-visible) {
+  outline: 2px solid var(--color-foreground);
+  outline-offset: 2px;
+}
+
+@media (forced-colors: active) {
+  .chat-composer:has(textarea:focus-visible) {
+    outline-color: CanvasText;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

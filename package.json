@@ -10,6 +10,8 @@
     "dev:all": "turbo run dev",
     "build": "turbo run build --filter=@portfolio/web",
     "build:all": "turbo run build",
+    "ai:eval": "turbo run ai:eval --filter=@portfolio/api --",
+    "ai:index": "turbo run ai:index --filter=@portfolio/api --",
     "cron:blog": "pnpm --filter @portfolio/web run cron:blog",
     "kill:ports": "kill $(lsof -tiTCP:3000-3005 -iTCP:8787 -sTCP:LISTEN 2>/dev/null) 2>/dev/null || true",
     "db:generate": "turbo run db:generate --filter=@portfolio/database",

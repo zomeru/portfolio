@@ -1,45 +1,79 @@
 # Repository guidance
 
-This file defines repository-wide rules. A nested `AGENTS.md` adds workspace-specific rules. When rules conflict, follow the nearest, more-specific file.
+This file defines repository-wide rules. A nested `AGENTS.md` adds scope-specific rules; the nearest
+file wins when instructions differ.
+
+## Workspace boundaries
+
+- `apps/web` is the only deployed Next.js process. It owns UI, App Router files, metadata, and the thin
+  Hono adapter.
+- `apps/api` owns HTTP routes and server-side GitHub, AI, retrieval, indexing, persistence
+  orchestration, and Sanity publishing logic. It is a source-exported just-in-time package, not a
+  separate service.
+- `apps/studio` owns the Sanity schema, Studio workspaces, structure, seed fixtures, and TypeGen
+  workflow.
+- `packages/database` owns all Drizzle schema, client, query, repository, and migration code.
+- `packages/env` owns runtime-scoped environment parsing. Consumers must use its exported subpaths.
+- `packages/content` contains only stable cross-workspace content contracts.
+- `packages/typescript-config` owns shared compiler presets.
+
+Do not bypass a boundary with cross-workspace relative imports. Use declared `workspace:*`
+dependencies and public package exports. Browser code may import API types from
+`@portfolio/api/types`; the API root is server-only.
 
 ## Repository constraints
 
 - Use Node.js 24+ and pnpm 11.22.0. Do not use npm or Yarn for repository tasks.
 - Run supported scripts through pnpm. Use a filtered workspace script when the root has no alias.
 - Keep changes scoped and preserve unrelated working-tree changes.
-- Preserve strict TypeScript and follow the repository Biome configuration.
-- Use two spaces, double quotes, semicolons, and a 100-column code width.
-- Treat generated artifacts as generated. Run the owning workspace command instead of editing them.
-- Never print, expose, or commit values from `.env.local` or other secret sources.
-- Do not deploy, seed content, or mutate a database unless the task explicitly requests it.
-- Before an external write, confirm the target project, dataset, database, or environment.
+- Preserve strict TypeScript and the repository Biome rules: two spaces, double quotes, semicolons, and
+  a 100-column width.
+- Keep package task logic in its owning workspace and let root scripts delegate through `turbo run`.
+- Treat `apps/studio/schema.json`, `apps/web/src/lib/sanity/sanity.types.ts`, Drizzle snapshots,
+  and build output as generated. Use the owning generator instead of editing them.
+- Never print, expose, or commit `.env.local` or other secret values.
+- Do not deploy, seed content, publish, or mutate a database without explicit authorization. Confirm
+  the project, dataset, database, GitHub environment, or deployment target before an external write.
 
-## Verification requirements
+## Architecture invariants
 
-Choose verification based on the affected scope:
+- Sanity is authoritative for published portfolio content. PostgreSQL holds the derived AI index, chat
+  persistence, retrieval events, and ingestion state; do not turn it into a second content source.
+- The web app mounts `@portfolio/api` at `src/app/api/[[...route]]/route.ts`. Keep the adapter thin
+  and the Hono app on its `/api` base path.
+- Server-side web callers use the in-process Hono client in
+  `apps/web/src/lib/api-server.ts`; browser callers use the typed HTTP client in
+  `apps/web/src/lib/api.ts`.
+- Sanity schemas and web GROQ queries are coupled through Studio TypeGen. Regenerate both generated
+  artifacts after schema or query changes.
+- Ask Zomer embeddings are fixed at 2,048 dimensions. A model dimension change requires a schema
+  migration, HNSW review, and forced reindex.
+- Generated blog publication performs a best-effort single-document AI index update. Keep publication
+  success distinct from indexing success.
+- Optional Langfuse configuration exports AI and custom spans. Any call with recorded inputs or outputs
+  may send prompts, retrieved content, and responses to the configured Langfuse project.
 
-- Run the affected workspace's `check-types` script after TypeScript changes.
-- Run the affected workspace's build after routing, bundling, runtime, or configuration changes.
+## Verification
+
+Choose checks by affected scope:
+
+- Run the affected workspace's `check-types` after TypeScript changes.
+- Run the affected workspace's build after routing, bundling, runtime, schema, or configuration changes.
 - Run `pnpm lint` after code or configuration changes.
 - Run `pnpm run check:all` and `pnpm run build:all` after shared package or dependency changes.
+- Run `pnpm ai:eval` after deterministic assistant intent or retrieval-strategy changes; use
+  `--live` only with an authorized, migrated, indexed environment.
 - Run the full production pipeline for production-readiness or security work:
 
 ```sh
 pnpm run check:all:build && pnpm run security:check && pnpm run security:audit
 ```
 
-Keep `.github/workflows/ci.yml` and `README.md` aligned with this production pipeline.
+There is no general unit-test command. Do not document or invoke one unless a real test workspace is
+added. Keep `.github/workflows/ci.yml` and `README.md` aligned with the production pipeline.
 
 ## Instruction maintenance
 
-Update an `AGENTS.md` only when a durable ownership boundary, invariant, command, or workflow changes. Put feature behavior and user-facing instructions in the appropriate product documentation.
-
-Workspace guidance lives in:
-
-- `apps/api`
-- `apps/studio`
-- `apps/web`
-- `packages/content`
-- `packages/database`
-- `packages/env`
-- `packages/typescript-config`.
+Update an `AGENTS.md` only for a durable ownership boundary, invariant, command, or workflow. Keep
+feature explanation in `README.md` or product documentation and avoid repeating root rules in nested
+files.

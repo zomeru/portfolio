@@ -19,11 +19,13 @@ export function createPageMetadata({ title, description, path }: PageMetadataOpt
     openGraph: {
       title,
       description,
+      locale: "en_US",
+      siteName: "Zomer Gregorio",
       type: "website",
       url: new URL(path, siteUrl),
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title,
       description,
     },

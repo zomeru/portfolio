@@ -31,17 +31,22 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     metadataBase: siteUrl,
+    applicationName: name,
     title: { default: `${name} — ${role}`, template: `%s — ${name}` },
     description,
+    authors: [{ name, url: siteUrl }],
+    creator: name,
+    publisher: name,
     alternates: { canonical: "/" },
     openGraph: {
       title: `${name} — ${role}`,
       description,
+      locale: "en_US",
       type: "website",
       siteName: name,
       url: siteUrl,
     },
-    twitter: { card: "summary", title: `${name} — ${role}`, description },
+    twitter: { card: "summary_large_image", title: `${name} — ${role}`, description },
   };
 }
 

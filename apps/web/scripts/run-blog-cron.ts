@@ -1,6 +1,7 @@
 import { getCronEnv } from "@portfolio/env/cron";
 import { getSanityEnv } from "@portfolio/env/sanity";
 import { getSiteEnv } from "@portfolio/env/site";
+import { createApiClient } from "../src/lib/api";
 
 const LOOPBACK_HOSTNAMES = new Set(["127.0.0.1", "[::1]", "::1", "localhost"]);
 
@@ -45,11 +46,14 @@ async function run() {
 
   console.log(`Triggering local blog cron at ${url.toString()}`);
 
-  const response = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${secret}`,
+  const response = await createApiClient(url.origin).api.blog.generate.$get(
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${secret}`,
+      },
     },
-  });
+  );
   const body = await parseResponse(response);
 
   console.log(JSON.stringify({ status: response.status, body }, null, 2));

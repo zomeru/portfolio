@@ -1,6 +1,7 @@
 import "server-only";
 
 export { apiApp } from "./app";
+export type { AdminCapability } from "./lib/admin-session";
 export {
   ADMIN_SESSION_MAX_AGE_SECONDS,
   createAdminSessionToken,
