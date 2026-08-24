@@ -9,8 +9,9 @@ import {
   type ModelMessage,
   streamText,
 } from "ai";
-import type { AskZomerMessage, QueryIntent } from "../../types";
+import type { AskZomerMessage, AskZomerSource, QueryIntent } from "../../types";
 import { getAssistantModels } from "../ai/models";
+import { normalizeCitationStream } from "./citations";
 import {
   enforceSessionRateLimit,
   getOrCreateChatSession,
@@ -20,9 +21,20 @@ import {
 } from "./conversation";
 import { classifyQueryIntent } from "./intent";
 import { buildAssistantSystemPrompt } from "./prompts";
+import { createRetrievalQuery } from "./query";
+import {
+  createBlogCountMessage,
+  createCompanyCountMessage,
+  createExperienceBoundaryMessage,
+  createFilteredBlogListMessage,
+  createLatestBlogMessage,
+  createOldestBlogListMessage,
+  createRecentBlogListMessage,
+} from "./responses";
 import { searchPortfolioKnowledge } from "./retrieval";
 import { createFollowUpSuggestions } from "./suggestions";
 import { withAssistantSpan } from "./telemetry";
+import type { RetrievedKnowledge } from "./types";
 
 function textFromMessage(message: AskZomerMessage) {
   return message.parts
@@ -37,7 +49,7 @@ function textFromMessage(message: AskZomerMessage) {
 
 function noEvidenceMessage(intent: string) {
   if (intent === "blog") {
-    return "I couldn't find matching published blog content in Zomer's indexed portfolio, so I can't identify his latest post.";
+    return "I couldn't find matching published blog evidence in Zomer's indexed portfolio.";
   }
   if (intent === "experience") {
     return "I couldn't find matching work-experience evidence in Zomer's indexed portfolio.";
@@ -45,11 +57,35 @@ function noEvidenceMessage(intent: string) {
   return "I couldn't find portfolio evidence that supports an answer to that question.";
 }
 
-function createNoEvidenceResponse(options: {
+function metadataString(result: RetrievedKnowledge | undefined, key: string) {
+  const value = result?.metadata[key];
+  return typeof value === "string" && value.trim() ? value.trim() : undefined;
+}
+
+function metadataStringList(result: RetrievedKnowledge | undefined, key: string) {
+  const value = result?.metadata[key];
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string" && Boolean(item.trim()))
+    : undefined;
+}
+
+function blogSummaries(results: readonly RetrievedKnowledge[], sources: readonly AskZomerSource[]) {
+  const resultByDocument = new Map(results.map((result) => [result.documentId, result]));
+  return sources.map((source) => {
+    const publishedAt = metadataString(resultByDocument.get(source.id), "publishedAt");
+    return {
+      ...(publishedAt ? { publishedAt } : {}),
+      title: source.title,
+    };
+  });
+}
+
+function createDeterministicResponse(options: {
   content: string;
   intent: QueryIntent;
   model: string;
   sessionId: string;
+  sources?: AskZomerSource[];
   suggestions: string[];
 }) {
   const textPartId = randomUUID();
@@ -57,7 +93,7 @@ function createNoEvidenceResponse(options: {
     createdAt: new Date().toISOString(),
     intent: options.intent,
     model: options.model,
-    sources: [],
+    sources: options.sources ?? [],
     suggestions: options.suggestions,
   };
   const stream = createUIMessageStream<AskZomerMessage>({
@@ -77,7 +113,7 @@ function createNoEvidenceResponse(options: {
         content: options.content,
         intent: options.intent,
         model: options.model,
-        citations: [],
+        citations: (options.sources ?? []) as ChatCitation[],
         suggestions: options.suggestions,
       });
     },
@@ -92,7 +128,7 @@ async function createAssistantChatResponseImpl(options: {
   text: string;
   abortSignal?: AbortSignal;
 }) {
-  updateActiveObservation({ input: [{ role: "user", content: options.text }] });
+  updateActiveObservation({ input: { messageCharacters: options.text.length } });
 
   return propagateAttributes(
     {
@@ -111,6 +147,7 @@ async function createAssistantChatResponseImpl(options: {
           { "langfuse.session.id": options.sessionKey },
           async () => classifyQueryIntent(options.text, history),
         );
+        const retrievalQuery = createRetrievalQuery(options.text, classification, history);
         const userMessage = await saveUserMessage({
           sessionId: session.id,
           providerMessageId: options.messageId,
@@ -120,7 +157,19 @@ async function createAssistantChatResponseImpl(options: {
 
         const retrieval =
           classification.intent === "general"
-            ? { results: [], sources: [], embeddingFailed: false }
+            ? {
+                aggregate: null,
+                results: [],
+                sources: [],
+                embeddingFailed: false,
+                evidence: {
+                  foundNamedTerms: [],
+                  kind: "none" as const,
+                  missingNamedTerms: [],
+                },
+                resultLimit: 0,
+                strategy: "none" as const,
+              }
             : await withAssistantSpan(
                 "ask-zomer.retrieval",
                 {
@@ -129,7 +178,7 @@ async function createAssistantChatResponseImpl(options: {
                 },
                 () =>
                   searchPortfolioKnowledge({
-                    query: options.text,
+                    query: retrievalQuery,
                     classification,
                     sessionId: session.id,
                     messageId: userMessage.id,
@@ -145,11 +194,136 @@ async function createAssistantChatResponseImpl(options: {
           async () => createFollowUpSuggestions(classification, retrieval.results),
         );
         const models = getAssistantModels();
-        if (classification.intent !== "general" && retrieval.results.length === 0) {
-          const content = noEvidenceMessage(classification.intent);
-          updateActiveObservation({ output: [{ role: "assistant", content }] });
+        if (retrieval.aggregate?.kind === "blog-count") {
+          const content = createBlogCountMessage(retrieval.aggregate.value);
+          updateActiveObservation({ output: { responseCharacters: content.length } });
           trace.getActiveSpan()?.end();
-          return createNoEvidenceResponse({
+          return createDeterministicResponse({
+            content,
+            intent: classification.intent,
+            model: models.chatModelId,
+            sessionId: session.id,
+            suggestions,
+          });
+        }
+        if (retrieval.aggregate?.kind === "company-count") {
+          const content = createCompanyCountMessage(retrieval.aggregate.value);
+          updateActiveObservation({ output: { responseCharacters: content.length } });
+          trace.getActiveSpan()?.end();
+          return createDeterministicResponse({
+            content,
+            intent: classification.intent,
+            model: models.chatModelId,
+            sessionId: session.id,
+            suggestions,
+          });
+        }
+        if (
+          (retrieval.strategy === "recent-blogs" || retrieval.strategy === "oldest-blogs") &&
+          retrieval.sources.length > 0
+        ) {
+          const summaries = blogSummaries(retrieval.results, retrieval.sources);
+          const content =
+            retrieval.strategy === "recent-blogs"
+              ? createRecentBlogListMessage(summaries)
+              : createOldestBlogListMessage(summaries);
+          updateActiveObservation({ output: { responseCharacters: content.length } });
+          trace.getActiveSpan()?.end();
+          return createDeterministicResponse({
+            content,
+            intent: classification.intent,
+            model: models.chatModelId,
+            sessionId: session.id,
+            sources: retrieval.sources,
+            suggestions,
+          });
+        }
+        if (
+          (retrieval.strategy === "latest-blog" || retrieval.strategy === "oldest-blog") &&
+          retrieval.sources[0]
+        ) {
+          const summary = blogSummaries(retrieval.results, [retrieval.sources[0]])[0];
+          if (!summary) throw new Error("Structured blog retrieval returned no summary.");
+          const content = createLatestBlogMessage(
+            summary,
+            retrieval.strategy === "latest-blog" ? "latest" : "oldest",
+          );
+          updateActiveObservation({ output: { responseCharacters: content.length } });
+          trace.getActiveSpan()?.end();
+          return createDeterministicResponse({
+            content,
+            intent: classification.intent,
+            model: models.chatModelId,
+            sessionId: session.id,
+            sources: retrieval.sources,
+            suggestions,
+          });
+        }
+        if (
+          (retrieval.strategy === "latest-experience" ||
+            retrieval.strategy === "oldest-experience") &&
+          retrieval.sources[0]
+        ) {
+          const source = retrieval.sources[0];
+          const result = retrieval.results.find((candidate) => candidate.documentId === source.id);
+          const company = metadataString(result, "company");
+          const location = metadataString(result, "location");
+          const period = metadataString(result, "period");
+          const role = metadataString(result, "role");
+          const technologies = metadataStringList(result, "technologies");
+          const content = createExperienceBoundaryMessage(
+            {
+              ...(company ? { company } : {}),
+              ...(location ? { location } : {}),
+              ...(period ? { period } : {}),
+              ...(role ? { role } : {}),
+              ...(technologies ? { technologies } : {}),
+              title: source.title,
+            },
+            retrieval.strategy === "latest-experience" ? "latest" : "oldest",
+          );
+          updateActiveObservation({ output: { responseCharacters: content.length } });
+          trace.getActiveSpan()?.end();
+          return createDeterministicResponse({
+            content,
+            intent: classification.intent,
+            model: models.chatModelId,
+            sessionId: session.id,
+            sources: [source],
+            suggestions,
+          });
+        }
+        if (retrieval.strategy === "blog-filter-list") {
+          const content = createFilteredBlogListMessage({
+            blogs: blogSummaries(retrieval.results, retrieval.sources),
+            terms: retrievalQuery.namedTerms,
+            total:
+              retrieval.aggregate?.kind === "blog-filter-count"
+                ? retrieval.aggregate.value
+                : retrieval.sources.length,
+          });
+          updateActiveObservation({ output: { responseCharacters: content.length } });
+          trace.getActiveSpan()?.end();
+          return createDeterministicResponse({
+            content,
+            intent: classification.intent,
+            model: models.chatModelId,
+            sessionId: session.id,
+            sources: retrieval.sources,
+            suggestions,
+          });
+        }
+        const namedFactIsUnsupported =
+          retrievalQuery.namedTerms.length === 1 &&
+          retrieval.evidence.missingNamedTerms.length === retrievalQuery.namedTerms.length;
+        if (
+          classification.intent !== "general" &&
+          (retrieval.results.length === 0 || namedFactIsUnsupported)
+        ) {
+          const content = noEvidenceMessage(classification.intent);
+          updateActiveObservation({ output: { responseCharacters: content.length } });
+          trace.getActiveSpan()?.end();
+          return createDeterministicResponse({
             content,
             intent: classification.intent,
             model: models.chatModelId,
@@ -158,12 +332,8 @@ async function createAssistantChatResponseImpl(options: {
           });
         }
 
-        const relevantHistory =
-          classification.intent === "general"
-            ? history
-            : history.filter((message) => message.role === "user");
         const messages: ModelMessage[] = [
-          ...relevantHistory.map(
+          ...history.map(
             (message) => ({ role: message.role, content: message.content }) as ModelMessage,
           ),
           { role: "user", content: options.text },
@@ -171,10 +341,14 @@ async function createAssistantChatResponseImpl(options: {
 
         const result = streamText({
           model: models.chat,
-          system: buildAssistantSystemPrompt(classification, retrieval.results),
+          system: buildAssistantSystemPrompt(classification, retrieval.results, {
+            resultLimit: retrieval.resultLimit,
+            strategy: retrieval.strategy,
+          }),
           messages,
           maxOutputTokens: 900,
           maxRetries: 2,
+          ...models.chatGenerationOptions,
           ...(options.abortSignal ? { abortSignal: options.abortSignal } : {}),
           runtimeContext: {
             sessionId: options.sessionKey,
@@ -192,11 +366,12 @@ async function createAssistantChatResponseImpl(options: {
               retrievalCount: true,
               model: true,
             },
-            recordInputs: true,
-            recordOutputs: true,
+            recordInputs: false,
+            recordOutputs: false,
           },
+          experimental_transform: normalizeCitationStream(retrieval.sources.length),
           onEnd: ({ text }) => {
-            updateActiveObservation({ output: [{ role: "assistant", content: text }] });
+            updateActiveObservation({ output: { responseCharacters: text.length } });
             trace.getActiveSpan()?.end();
           },
           onError: ({ error }) => {

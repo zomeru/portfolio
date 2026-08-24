@@ -10,11 +10,15 @@
   "scripts": {
     "ai:eval": "pnpm run with-env tsx src/evaluations/run.ts",
     "ai:index": "pnpm run with-env tsx src/cli/index-knowledge.ts",
+    "ai:index:prod": "pnpm run with-env:prod tsx src/cli/index-knowledge.ts",
     "check-types": "tsc --noEmit",
-    "with-env": "pnpm exec dotenv -e ../../.env.local --"
+    "with-env": "pnpm exec dotenv -e ../../.env.local --",
+    "with-env:prod": "pnpm exec dotenv -e ../../.env.production.local --"
   },
   "dependencies": {
     "@ai-sdk/google": "^4.0.50",
+    "@ai-sdk/groq": "^4.0.30",
+    "@ai-sdk/openai-compatible": "^3.0.35",
     "@langfuse/tracing": "^5.10.1",
     "@openrouter/ai-sdk-provider": "^3.0.0",
     "@opentelemetry/api": "^1.9.1",
@@ -22,7 +26,7 @@
     "@portfolio/database": "workspace:*",
     "@portfolio/env": "workspace:*",
     "@sanity/client": "^7.26.2",
-    "ai": "^7.0.74",
+    "ai": "^7.0.77",
     "hono": "^4.13.3",
     "server-only": "^0.0.1",
     "zod": "^4.4.3"

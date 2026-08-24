@@ -10,6 +10,7 @@ import {
   listStoredChatMessages,
 } from "@portfolio/database";
 import type { AskZomerMessage, QueryIntent } from "../../types";
+import { normalizeAssistantCitations } from "./citations";
 import type { ConversationMessage } from "./types";
 
 const MAX_CONTEXT_TOKENS = 6_000;
@@ -58,7 +59,10 @@ export async function loadConversationMessages(sessionId: string): Promise<Conve
     const nextTokenCount = row.tokenCount || approximateTokenCount(row.content);
     if (selected.length > 0 && tokenCount + nextTokenCount > MAX_CONTEXT_TOKENS) break;
     tokenCount += nextTokenCount;
-    selected.push(row);
+    selected.push({
+      ...row,
+      content: row.role === "assistant" ? normalizeAssistantCitations(row.content) : row.content,
+    });
   }
 
   return selected.reverse();
@@ -93,9 +97,11 @@ export async function saveAssistantMessage(options: {
   citations: ChatCitation[];
   suggestions: string[];
 }) {
+  const content = normalizeAssistantCitations(options.content, options.citations.length);
   await createAssistantChatMessage({
     ...options,
-    tokenCount: approximateTokenCount(options.content),
+    content,
+    tokenCount: approximateTokenCount(content),
   });
 }
 
@@ -106,6 +112,10 @@ export async function loadChatHistory(sessionKey: string): Promise<AskZomerMessa
   const rows = await listStoredChatMessages(session.id, MAX_STORED_HISTORY_MESSAGES);
 
   return rows.reverse().map((message) => {
+    const content =
+      message.role === "assistant"
+        ? normalizeAssistantCitations(message.content, message.citations.length)
+        : message.content;
     const metadata = {
       createdAt: message.createdAt.toISOString(),
       ...(message.intent ? { intent: message.intent } : {}),
@@ -116,7 +126,7 @@ export async function loadChatHistory(sessionKey: string): Promise<AskZomerMessa
     return {
       id: message.providerMessageId ?? message.id,
       role: message.role,
-      parts: [{ type: "text" as const, text: message.content }],
+      parts: [{ type: "text" as const, text: content }],
       metadata,
     };
   });

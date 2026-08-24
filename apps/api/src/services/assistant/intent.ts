@@ -4,15 +4,20 @@ import type { ConversationMessage, IntentClassification } from "./types";
 const PERSONAL_REFERENCE =
   /\b(zomer|zomer's|you|your|yours|yourself|he|his|him|portfolio|resume|cv)\b/i;
 const FOLLOW_UP =
-  /^(and |also |what about|how about|what else|which ones|tell me more|why|when|where)\b/i;
+  /^(?:and\b|also\b|did (?:it|they)\b|how about\b|tell me more\b|what about\b|what else\b|which (?:one|ones)\b|why\b|when\b|where\b|latest\b|recent\b|newest\b|oldest\b|oldes\b|earliest\b)|\b(?:that (?:company|project|role)|those|them)\b/i;
 const BLOG_TERMS = /\b(blog|blogs|article|articles|post|posts|wrote|written|writing|published)\b/i;
-const PROJECT_TERMS = /\b(project|projects|built|build|portfolio work|case stud(?:y|ies))\b/i;
+const PROJECT_TERMS =
+  /\b(project|projects|built|build|made|created|portfolio work|case stud(?:y|ies))\b/i;
 const EXPERIENCE_TERMS =
   /\b(experience|worked|work history|professional|professionally|job|jobs|role|roles|company|companies|career|employment|backend|frontend|full[ -]?stack)\b/i;
+const EXPERIENCE_ACTION = /\bwhat did (?:zomer|he) do at\b/i;
+const PROFILE_ROLE = /\bwhat(?:'s| is) zomer(?:'s)? (?:current )?role\b/i;
 const PROFILE_TERMS = /\b(who|bio|biography|background|introduce|skills|technolog(?:y|ies))\b/i;
 const NAVIGATION_TERMS = /\b(where|find|show|open|link|contact|email|github|linkedin|resume|cv)\b/i;
 const TECH_STACK_TERMS =
   /\b(tech stack|technology stack|technologies|tools|languages|frameworks|libraries|databases|skills)\b/i;
+const IMPLIED_PORTFOLIO_OPERATION =
+  /\b(?:latest|recent|newest|oldest|oldes|earliest|first)\b|\bhow\s+(?:many|much)\b|\b(?:number|count|total)\s+of\b/i;
 
 const SOURCE_TYPES: Record<Exclude<QueryIntent, "general">, KnowledgeSourceType[]> = {
   profile: ["profile"],
@@ -35,11 +40,13 @@ function mostRecentPortfolioIntent(history: readonly ConversationMessage[]) {
 
 function classifyPortfolioIntent(query: string): Exclude<QueryIntent, "general"> {
   if (BLOG_TERMS.test(query)) return "blog";
+  if (PROFILE_ROLE.test(query)) return "profile";
   if (PROJECT_TERMS.test(query)) return "project";
-  if (EXPERIENCE_TERMS.test(query)) return "experience";
+  if (EXPERIENCE_ACTION.test(query) || EXPERIENCE_TERMS.test(query)) return "experience";
   if (TECH_STACK_TERMS.test(query)) return "techstack";
   if (NAVIGATION_TERMS.test(query)) return "navigation";
   if (PROFILE_TERMS.test(query)) return "profile";
+
   return "portfolio";
 }
 
@@ -50,8 +57,11 @@ export function classifyQueryIntent(
   const recentPortfolioIntent = mostRecentPortfolioIntent(history.slice(-8));
   const hasPersonalReference = PERSONAL_REFERENCE.test(query);
   const isContextualFollowUp = Boolean(recentPortfolioIntent && FOLLOW_UP.test(query.trim()));
+  const hasImpliedPortfolioOperation =
+    IMPLIED_PORTFOLIO_OPERATION.test(query) &&
+    (BLOG_TERMS.test(query) || EXPERIENCE_TERMS.test(query));
 
-  if (!hasPersonalReference && !isContextualFollowUp) {
+  if (!hasPersonalReference && !isContextualFollowUp && !hasImpliedPortfolioOperation) {
     return { intent: "general", confidence: 0.94, sourceTypes: [] };
   }
 

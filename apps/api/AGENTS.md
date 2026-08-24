@@ -23,8 +23,9 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
   response contract: private repository names, commit messages, filter values, and URLs must remain
   anonymized or omitted as implemented.
 - `src/services/ai/models.ts` is the provider boundary. Blog generation uses `@ai-sdk/google`
-  directly; Ask Zomer chat and embeddings use OpenRouter. Do not replace one provider path as a side
-  effect of work on the other.
+  directly; Ask Zomer chat selects Groq, NVIDIA NIM, or OpenRouter from configuration, while
+  embeddings always use OpenRouter. Do not replace one provider path as a side effect of work on the
+  other.
 - `src/services/blog-generation` owns prompt/output validation, duplicate detection, idempotency,
   immediate Sanity publication, generation audit metadata, and the post-publish index attempt. Indexing
   failure is reported separately and must not roll back a published post.
@@ -35,9 +36,11 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
   removes documents no longer published, refuses stale deletion when Sanity unexpectedly returns zero
   documents, and serializes runs with the ingestion lock. Single-document indexing is used after
   generated publish.
-- Retrieval uses structured recency/experience strategies when applicable, otherwise semantic and
-  PostgreSQL full-text candidates with reciprocal-rank fusion. Keep the stored embedding dimension and
-  model assertion at 2,048.
+- Retrieval uses deterministic structured chronology, aggregate, and named-term list strategies when
+  applicable, otherwise semantic and PostgreSQL full-text candidates with reciprocal-rank fusion. Exact
+  structured lists are document operations and do not use the generative context-token budget. Only
+  retrieve documents matching the active index version and embedding model. Keep the stored embedding
+  dimension and model assertion at 2,048.
 - Conversation persistence is anonymous but not stateless: validate the UUID session key, keep message
   IDs idempotent, preserve the bounded history/token window, and enforce both per-minute and per-day
   limits before generation.
@@ -47,14 +50,14 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
 - Both blog generation methods require the constant-time `CRON_SECRET` bearer check. Manual requests
   may add the validated idempotency header; scheduled keys are date-based.
 - Admin capabilities are separate. `blog-generation` tokens are signed with `CRON_SECRET`;
-  `ai-reindex` tokens are signed with `OPENROUTER_API_KEY`. Never accept one capability token for
+  `ai-reindex` tokens are signed with `AI_INDEX_SECRET_KEY`. Never accept one capability token for
   the other.
 - `/admin/ai/*` accepts only the signed reindex bearer token. Do not expose raw capability secrets in
   API responses or client code.
 - Deployed AI calls run inside the Next.js Node telemetry registration when Langfuse is enabled;
-  standalone CLI and evaluation scripts do not initialize it themselves. Chat and blog generation
-  currently record inputs and outputs; evaluation generation disables both. Make recording an
-  explicit privacy decision for every new AI call.
+  standalone CLI and evaluation scripts do not initialize it themselves. Ask Zomer chat and evaluation
+  disable raw model input and output recording; blog generation records both. Make recording an explicit
+  privacy decision for every new AI call.
 - Read configuration only from the appropriate `@portfolio/env` subpath and shared blog limits only
   from `@portfolio/content/blog`.
 

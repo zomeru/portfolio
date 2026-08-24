@@ -9,12 +9,18 @@ function assertEmbeddingDimensions(embedding: readonly number[]) {
       `The configured embedding model returned ${embedding.length} dimensions; expected ${ASSISTANT_EMBEDDING_DIMENSIONS}. A model dimension change requires a database migration and reindex.`,
     );
   }
+  if (embedding.some((value) => !Number.isFinite(value))) {
+    throw new Error("The configured embedding model returned a non-finite vector value.");
+  }
+  if (!embedding.some((value) => value !== 0)) {
+    throw new Error("The configured embedding model returned an empty vector.");
+  }
 }
 
 export async function embedQuery(value: string): Promise<number[]> {
   const models = getAssistantModels();
   const result = await embed({
-    model: models.embedding,
+    model: models.queryEmbedding,
     value,
     maxRetries: 2,
     abortSignal: AbortSignal.timeout(30_000),
@@ -48,7 +54,7 @@ export async function embedKnowledgeChunks(
       chunksTotal: values.length,
     });
     const result = await embedMany({
-      model: models.embedding,
+      model: models.documentEmbedding,
       values: batch,
       maxRetries: 2,
       maxParallelCalls: 2,

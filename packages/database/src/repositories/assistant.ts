@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { and, count, desc, eq, gte, inArray, lt, notInArray, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, lt, notInArray, sql } from "drizzle-orm";
 import { db } from "../client";
 import {
   type ChatCitation,
@@ -18,15 +18,23 @@ export type KnowledgeSourceTypeValue = (typeof knowledgeDocuments.$inferSelect)[
 export type IngestionTriggerValue = (typeof ingestionRuns.$inferInsert)["trigger"];
 
 const EMBEDDING_DIMENSION = 2048;
+const EMBEDDING_DIMENSION_SQL = sql.raw(String(EMBEDDING_DIMENSION));
 
 export type KnowledgeCandidate = {
   chunkId: string;
   documentId: string;
   content: string;
   metadata: KnowledgeMetadata;
+  semanticSimilarity?: number;
   sourceType: KnowledgeSourceTypeValue;
   title: string;
+  tokenCount: number;
   canonicalUrl: string;
+};
+
+type KnowledgeIndexFilter = {
+  embeddingModel: string;
+  indexVersion: string;
 };
 
 export type KnowledgeDocumentWrite = {
@@ -170,30 +178,50 @@ const candidateSelection = {
   metadata: knowledgeChunks.metadata,
   sourceType: knowledgeDocuments.sourceType,
   title: knowledgeDocuments.title,
+  tokenCount: knowledgeChunks.tokenCount,
   canonicalUrl: knowledgeDocuments.canonicalUrl,
 };
 
-export function findSemanticKnowledgeCandidates(options: {
-  embedding: number[];
-  sourceTypes: KnowledgeSourceTypeValue[];
-  limit: number;
-}) {
+function knowledgeIndexCondition(options: KnowledgeIndexFilter) {
+  return and(
+    sql`${knowledgeDocuments.metadata}->>'embeddingModel' = ${options.embeddingModel}`,
+    sql`${knowledgeDocuments.metadata}->>'indexVersion' = ${options.indexVersion}`,
+  );
+}
+
+export function findSemanticKnowledgeCandidates(
+  options: {
+    embedding: number[];
+    sourceTypes: KnowledgeSourceTypeValue[];
+    limit: number;
+  } & KnowledgeIndexFilter,
+) {
   const vectorValue = JSON.stringify(options.embedding);
-  const distance = sql<number>`(${knowledgeChunks.embedding}::halfvec(${EMBEDDING_DIMENSION}) <=> ${vectorValue}::halfvec(${EMBEDDING_DIMENSION}))`;
+  const distance = sql<number>`(${knowledgeChunks.embedding}::halfvec(${EMBEDDING_DIMENSION_SQL}) <=> ${vectorValue}::halfvec(${EMBEDDING_DIMENSION_SQL}))`;
   return db
-    .select(candidateSelection)
+    .select({
+      ...candidateSelection,
+      semanticSimilarity: sql<number>`1 - ${distance}`,
+    })
     .from(knowledgeChunks)
     .innerJoin(knowledgeDocuments, eq(knowledgeChunks.documentId, knowledgeDocuments.id))
-    .where(inArray(knowledgeDocuments.sourceType, options.sourceTypes))
+    .where(
+      and(
+        inArray(knowledgeDocuments.sourceType, options.sourceTypes),
+        knowledgeIndexCondition(options),
+      ),
+    )
     .orderBy(distance)
     .limit(options.limit);
 }
 
-export function findKeywordKnowledgeCandidates(options: {
-  query: string;
-  sourceTypes: KnowledgeSourceTypeValue[];
-  limit: number;
-}) {
+export function findKeywordKnowledgeCandidates(
+  options: {
+    query: string;
+    sourceTypes: KnowledgeSourceTypeValue[];
+    limit: number;
+  } & KnowledgeIndexFilter,
+) {
   const textQuery = sql`websearch_to_tsquery('english', ${options.query})`;
   const rank = sql<number>`ts_rank_cd(${knowledgeChunks.search}, ${textQuery})`;
   return db
@@ -203,6 +231,7 @@ export function findKeywordKnowledgeCandidates(options: {
     .where(
       and(
         inArray(knowledgeDocuments.sourceType, options.sourceTypes),
+        knowledgeIndexCondition(options),
         sql`${knowledgeChunks.search} @@ ${textQuery}`,
       ),
     )
@@ -211,6 +240,8 @@ export function findKeywordKnowledgeCandidates(options: {
 }
 
 export async function findLatestKnowledgeCandidates(options: {
+  embeddingModel: string;
+  indexVersion: string;
   sourceType: "blog" | "experience";
   limit: number;
 }) {
@@ -221,7 +252,9 @@ export async function findLatestKnowledgeCandidates(options: {
   const [latestDocument] = await db
     .select({ id: knowledgeDocuments.id })
     .from(knowledgeDocuments)
-    .where(eq(knowledgeDocuments.sourceType, options.sourceType))
+    .where(
+      and(eq(knowledgeDocuments.sourceType, options.sourceType), knowledgeIndexCondition(options)),
+    )
     .orderBy(desc(recency), desc(knowledgeDocuments.sanityUpdatedAt))
     .limit(1);
 
@@ -236,15 +269,178 @@ export async function findLatestKnowledgeCandidates(options: {
     .limit(options.limit);
 }
 
-export function findExperienceOverviewCandidates(limit: number) {
+export async function findOldestKnowledgeCandidates(options: {
+  embeddingModel: string;
+  indexVersion: string;
+  sourceType: "blog" | "experience";
+  limit: number;
+}) {
+  const chronology =
+    options.sourceType === "blog"
+      ? sql`coalesce(nullif(${knowledgeDocuments.metadata}->>'publishedAt', '')::timestamptz, ${knowledgeDocuments.sanityUpdatedAt})`
+      : sql`coalesce(nullif(${knowledgeDocuments.metadata}->>'periodStart', '')::date, ${knowledgeDocuments.sanityUpdatedAt}::date)`;
+  const [oldestDocument] = await db
+    .select({ id: knowledgeDocuments.id })
+    .from(knowledgeDocuments)
+    .where(
+      and(eq(knowledgeDocuments.sourceType, options.sourceType), knowledgeIndexCondition(options)),
+    )
+    .orderBy(asc(chronology), asc(knowledgeDocuments.sanityUpdatedAt))
+    .limit(1);
+
+  if (!oldestDocument) return [];
+
+  return db
+    .select(candidateSelection)
+    .from(knowledgeChunks)
+    .innerJoin(knowledgeDocuments, eq(knowledgeChunks.documentId, knowledgeDocuments.id))
+    .where(eq(knowledgeDocuments.id, oldestDocument.id))
+    .orderBy(knowledgeChunks.chunkIndex)
+    .limit(options.limit);
+}
+
+export function findRecentKnowledgeCandidates(options: {
+  embeddingModel: string;
+  indexVersion: string;
+  sourceType: "blog";
+  limit: number;
+}) {
+  const recency = sql`coalesce(nullif(${knowledgeDocuments.metadata}->>'publishedAt', '')::timestamptz, ${knowledgeDocuments.sanityUpdatedAt})`;
+  return db
+    .select(candidateSelection)
+    .from(knowledgeChunks)
+    .innerJoin(knowledgeDocuments, eq(knowledgeChunks.documentId, knowledgeDocuments.id))
+    .where(
+      and(
+        eq(knowledgeDocuments.sourceType, options.sourceType),
+        eq(knowledgeChunks.chunkIndex, 0),
+        knowledgeIndexCondition(options),
+      ),
+    )
+    .orderBy(desc(recency), desc(knowledgeDocuments.sanityUpdatedAt))
+    .limit(options.limit);
+}
+
+export function findOldestBlogCandidates(options: {
+  embeddingModel: string;
+  indexVersion: string;
+  limit: number;
+}) {
+  const chronology = sql`coalesce(nullif(${knowledgeDocuments.metadata}->>'publishedAt', '')::timestamptz, ${knowledgeDocuments.sanityUpdatedAt})`;
+  return db
+    .select(candidateSelection)
+    .from(knowledgeChunks)
+    .innerJoin(knowledgeDocuments, eq(knowledgeChunks.documentId, knowledgeDocuments.id))
+    .where(
+      and(
+        eq(knowledgeDocuments.sourceType, "blog"),
+        eq(knowledgeChunks.chunkIndex, 0),
+        knowledgeIndexCondition(options),
+      ),
+    )
+    .orderBy(asc(chronology), asc(knowledgeDocuments.sanityUpdatedAt))
+    .limit(options.limit);
+}
+
+export async function countKnowledgeDocumentsBySource(
+  options: KnowledgeIndexFilter & { sourceType: KnowledgeSourceTypeValue },
+) {
+  const [result] = await db
+    .select({ value: count() })
+    .from(knowledgeDocuments)
+    .where(
+      and(eq(knowledgeDocuments.sourceType, options.sourceType), knowledgeIndexCondition(options)),
+    );
+  return result?.value ?? 0;
+}
+
+export async function countDistinctExperienceCompanies(options: KnowledgeIndexFilter) {
+  const [result] = await db
+    .select({
+      value: sql<number>`count(distinct nullif(trim(${knowledgeDocuments.metadata}->>'company'), ''))::int`,
+    })
+    .from(knowledgeDocuments)
+    .where(and(eq(knowledgeDocuments.sourceType, "experience"), knowledgeIndexCondition(options)));
+  return result?.value ?? 0;
+}
+
+function knowledgeTextMatchesTerms(terms: readonly string[]) {
+  const conditions = terms.map((term) => {
+    const pattern = `%${term.toLocaleLowerCase()}%`;
+    return sql`(
+      lower(${knowledgeDocuments.title}) like ${pattern}
+      or lower((${knowledgeDocuments.metadata})::text) like ${pattern}
+      or exists (
+        select 1
+        from "knowledge_chunks" as "matching_chunk"
+        where "matching_chunk"."document_id" = ${knowledgeDocuments.id}
+          and lower("matching_chunk"."content") like ${pattern}
+      )
+    )`;
+  });
+  return conditions.length > 0 ? and(...conditions) : sql`false`;
+}
+
+export function findBlogCandidatesMatchingTerms(
+  options: KnowledgeIndexFilter & {
+    terms: readonly string[];
+    limit: number;
+  },
+) {
+  const recency = sql`coalesce(nullif(${knowledgeDocuments.metadata}->>'publishedAt', '')::timestamptz, ${knowledgeDocuments.sanityUpdatedAt})`;
+  return db
+    .select(candidateSelection)
+    .from(knowledgeChunks)
+    .innerJoin(knowledgeDocuments, eq(knowledgeChunks.documentId, knowledgeDocuments.id))
+    .where(
+      and(
+        eq(knowledgeDocuments.sourceType, "blog"),
+        eq(knowledgeChunks.chunkIndex, 0),
+        knowledgeIndexCondition(options),
+        knowledgeTextMatchesTerms(options.terms),
+      ),
+    )
+    .orderBy(desc(recency), desc(knowledgeDocuments.sanityUpdatedAt))
+    .limit(options.limit);
+}
+
+export async function countBlogDocumentsMatchingTerms(
+  options: KnowledgeIndexFilter & {
+    terms: readonly string[];
+  },
+) {
+  const [result] = await db
+    .select({ value: count() })
+    .from(knowledgeDocuments)
+    .where(
+      and(
+        eq(knowledgeDocuments.sourceType, "blog"),
+        knowledgeIndexCondition(options),
+        knowledgeTextMatchesTerms(options.terms),
+      ),
+    );
+  return result?.value ?? 0;
+}
+
+export function findExperienceOverviewCandidates(options: {
+  embeddingModel: string;
+  indexVersion: string;
+  limit: number;
+}) {
   const recency = sql`coalesce(nullif(${knowledgeDocuments.metadata}->>'periodEnd', '')::date, ${knowledgeDocuments.sanityUpdatedAt}::date)`;
   return db
     .select(candidateSelection)
     .from(knowledgeChunks)
     .innerJoin(knowledgeDocuments, eq(knowledgeChunks.documentId, knowledgeDocuments.id))
-    .where(and(eq(knowledgeDocuments.sourceType, "experience"), eq(knowledgeChunks.chunkIndex, 0)))
+    .where(
+      and(
+        eq(knowledgeDocuments.sourceType, "experience"),
+        eq(knowledgeChunks.chunkIndex, 0),
+        knowledgeIndexCondition(options),
+      ),
+    )
     .orderBy(desc(recency), desc(knowledgeDocuments.sanityUpdatedAt))
-    .limit(limit);
+    .limit(options.limit);
 }
 
 export async function createRetrievalEvent(options: {

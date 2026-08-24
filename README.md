@@ -66,7 +66,9 @@ The root scripts load `.env.local`. Configure only the services needed for the p
 | `CRON_SECRET` | Vercel Cron and blog-publishing admin capability; minimum 32 characters |
 | `DATABASE_URL` | Application PostgreSQL connection |
 | `DATABASE_DIRECT_URL` | Optional direct connection for Drizzle CLI operations |
-| `OPENROUTER_API_KEY`, `AI_CHAT_MODEL`, `AI_EMBEDDING_MODEL` | Ask Zomer chat, embeddings, indexing, and AI-admin capability; model IDs have defaults |
+| `AI_CHAT_PROVIDER`, provider API keys, provider chat model IDs | Ask Zomer chat; the provider and model IDs have defaults |
+| `OPENROUTER_API_KEY`, `AI_EMBEDDING_MODEL` | Ask Zomer embeddings and indexing; the model ID has a default |
+| `AI_INDEX_SECRET_KEY` | AI-reindex admin capability; minimum 32 characters |
 | `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, `LANGFUSE_BASE_URL` | Optional tracing; configure both keys or neither |
 
 Do not expose server-only variables to browser code. Confirm the Sanity dataset or database target
@@ -94,8 +96,8 @@ pnpm db:migrate                       # apply migrations; confirm the target fir
 
 pnpm ai:index                         # incremental published-content index
 pnpm ai:index --force                 # rebuild all documents and embeddings
-pnpm ai:eval                          # deterministic intent/strategy evaluation
-pnpm ai:eval --live                   # retrieval Hit@6/MRR and grounded-answer checks
+pnpm ai:eval                          # deterministic intent/query/strategy evaluation
+pnpm ai:eval --live                   # dense/hybrid retrieval and grounded-answer metrics
 pnpm cron:blog                        # invoke the local scheduled-generation path
 ```
 
@@ -112,16 +114,44 @@ generation metadata, and then attempts a best-effort single-document Ask Zomer i
 index update does not roll back the published article.
 
 The private `/admin` page has separate eight-hour, signed, `HttpOnly`, `SameSite=Strict` capability
-sessions: `CRON_SECRET` unlocks blog publishing and `OPENROUTER_API_KEY` unlocks AI reindexing. Every
+sessions: `CRON_SECRET` unlocks blog publishing and `AI_INDEX_SECRET_KEY` unlocks AI reindexing. Every
 mutation re-authorizes server-side. Full indexing is incremental by content hash unless forced, removes
 documents no longer published, refuses an empty-source stale deletion, and uses a database lock to
 prevent concurrent runs. Ordinary Sanity edits are not webhook-indexed; run a reindex after publishing
 them.
 
+Ask Zomer indexes Nemotron 3 documents with OpenRouter's explicit `input_type: passage` mode and
+searches with `input_type: query`; the two model instances are separate so the modes cannot be mixed.
+Profile, experience, project, tech-stack, and heading-aware blog chunks use concise contextual metadata
+for embeddings while retaining citation-friendly source text. Blog chunks target roughly 600 tokens,
+other chunks roughly 700, and code fences, lists, paragraphs, and heading paths are preserved where
+possible.
+
+Non-structured retrieval fetches 16 dense and 16 PostgreSQL full-text candidates in parallel, combines
+them with weighted reciprocal-rank fusion (0.58 dense / 0.42 keyword), promotes requested named terms,
+deduplicates and diversifies results, and sends at most six chunks or about 4,000 tokens to generation.
+There is intentionally no fixed similarity cutoff: the prompt receives structured, corroborated,
+keyword-only, or semantic-only evidence signals, while unsupported named facts deterministically
+abstain. Structured retrieval handles blog totals, distinct company totals, oldest/newest blog and
+experience boundaries, chronological blog lists, and exact named-technology blog filters. Requested
+chronological list sizes default to five and are capped at twenty; exact structured lists bypass the
+generation context-token budget because only their metadata is rendered. These operations are
+rendered deterministically so generation cannot confuse a retrieved chunk slice with the corpus size.
+Follow-ups use a bounded deterministic standalone query instead of adding an LLM call.
+
+The index identity `nemotron3-asymmetric-structural-v2` includes the embedding model in each content
+hash and metadata filter, so old vectors cannot mix with the new format. Deploying these retrieval
+changes requires `pnpm ai:index --force`. An external reranker is not enabled: this corpus already has
+structured retrieval, hybrid fusion, and deterministic ranking, and another network call is not
+justified without live evaluation gains. Embedding fine-tuning is also deferred. It would require
+query-positive-passage pairs, hard negatives, train/validation/test splits, retrieval benchmarks,
+custom model hosting, and a complete vector reindex before it should be considered.
+
 When both Langfuse keys are configured, Node instrumentation exports AI SDK generations plus custom
-chat, retrieval, ingestion, and publishing spans; the base URL has a default. Chat and blog generation
-explicitly record model inputs and outputs; evaluation generations explicitly disable them. Treat
-traced prompts, portfolio context, and responses as data sent to the configured Langfuse project.
+chat, retrieval, ingestion, and publishing spans; the base URL has a default. Ask Zomer chat and
+evaluation disable raw model input/output recording and store only a SHA-256 query fingerprint in
+retrieval events. Blog generation still records model inputs and outputs, so treat that content as data
+sent to the configured Langfuse project.
 
 ## Discovery and deployment
 

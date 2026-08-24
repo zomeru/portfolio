@@ -12,6 +12,7 @@
     "build:all": "turbo run build",
     "ai:eval": "turbo run ai:eval --filter=@portfolio/api --",
     "ai:index": "turbo run ai:index --filter=@portfolio/api --",
+    "ai:index:prod": "turbo run ai:index:prod --filter=@portfolio/api --",
     "cron:blog": "pnpm --filter @portfolio/web run cron:blog",
     "kill:ports": "kill $(lsof -tiTCP:3000-3005 -iTCP:8787 -sTCP:LISTEN 2>/dev/null) 2>/dev/null || true",
     "db:generate": "turbo run db:generate --filter=@portfolio/database",
@@ -42,7 +43,7 @@
     "clean": "rimraf node_modules .pnpm-store .turbo dist apps/*/{node_modules,.turbo,dist,.output} packages/*/{node_modules,.turbo,dist,.output}"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.9",
+    "@biomejs/biome": "2.5.10",
     "@changesets/changelog-github": "^1.0.0",
     "@changesets/cli": "^3.0.1",
     "@commitlint/cli": "^21.2.2",

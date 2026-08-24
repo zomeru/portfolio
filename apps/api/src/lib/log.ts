@@ -1,4 +1,5 @@
-const SENSITIVE_KEY_PATTERN = /authorization|content|key|prompt|secret|token/i;
+const SENSITIVE_KEY_PATTERN =
+  /^(authorization|api[_-]?key|access[_-]?token|refresh[_-]?token|password|prompt|secret|token)$/i;
 
 function sanitize(metadata: Record<string, unknown>) {
   return Object.fromEntries(

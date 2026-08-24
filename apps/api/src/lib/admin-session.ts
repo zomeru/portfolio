@@ -8,7 +8,9 @@ export const ADMIN_SESSION_MAX_AGE_SECONDS = 8 * 60 * 60;
 export type AdminCapability = "ai-reindex" | "blog-generation";
 
 function getCapabilitySecret(capability: AdminCapability) {
-  return capability === "blog-generation" ? getCronEnv().secret : getAssistantServerEnv().apiKey;
+  return capability === "blog-generation"
+    ? getCronEnv().secret
+    : getAssistantServerEnv().aiIndexSecretKey;
 }
 
 function sign(payload: string, capability: AdminCapability) {
