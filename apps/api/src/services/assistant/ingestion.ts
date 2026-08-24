@@ -13,6 +13,7 @@ import {
 } from "@portfolio/database";
 import { getAssistantModels } from "../ai/models";
 import { chunkKnowledgeDocument } from "./chunking";
+import { ASSISTANT_INDEX_VERSION } from "./config";
 import { embedKnowledgeChunks } from "./embeddings";
 import { normalizeSanityKnowledge } from "./normalization";
 import { fetchSanityKnowledgeSource, fetchSanityKnowledgeSources } from "./sanity";
@@ -46,11 +47,13 @@ function databaseErrorCode(error: unknown): string | undefined {
   return undefined;
 }
 
-function contentHash(document: NormalizedKnowledgeDocument) {
+function contentHash(document: NormalizedKnowledgeDocument, embeddingModelId: string) {
   return createHash("sha256")
     .update(
       JSON.stringify({
         canonicalUrl: document.canonicalUrl,
+        embeddingModelId,
+        indexVersion: ASSISTANT_INDEX_VERSION,
         metadata: document.metadata,
         sections: document.sections,
         slug: document.slug,
@@ -80,6 +83,7 @@ async function beginIngestionRun(
 
 async function replaceDocument(options: {
   document: NormalizedKnowledgeDocument;
+  embeddingModelId: string;
   hash: string;
   existingId?: string;
   documentIndex: number;
@@ -89,7 +93,7 @@ async function replaceDocument(options: {
 }) {
   const chunks = chunkKnowledgeDocument(options.document);
   const embeddings = await embedKnowledgeChunks(
-    chunks.map((chunk) => chunk.content),
+    chunks.map((chunk) => chunk.embeddingText),
     {
       onBatchStart: ({ batch, batches, chunksProcessed, chunksTotal }) => {
         options.onProgress?.(
@@ -111,14 +115,22 @@ async function replaceDocument(options: {
       title: options.document.title,
       canonicalUrl: options.document.canonicalUrl,
       contentHash: options.hash,
-      metadata: options.document.metadata,
+      metadata: {
+        ...options.document.metadata,
+        embeddingModel: options.embeddingModelId,
+        indexVersion: ASSISTANT_INDEX_VERSION,
+      },
       sanityUpdatedAt: options.document.sanityUpdatedAt,
     },
     chunks: chunks.map((chunk, index) => ({
       chunkIndex: chunk.chunkIndex,
       content: chunk.content,
       embedding: embeddings[index] as number[],
-      metadata: chunk.metadata,
+      metadata: {
+        ...chunk.metadata,
+        embeddingModel: options.embeddingModelId,
+        indexVersion: ASSISTANT_INDEX_VERSION,
+      },
       tokenCount: chunk.tokenCount,
     })),
   });
@@ -157,13 +169,14 @@ async function indexDocument(options: {
   document: NormalizedKnowledgeDocument;
   documentCount: number;
   documentIndex: number;
+  embeddingModelId: string;
   force: boolean;
   onProgress?: (message: string) => void;
   summary: IngestionSummary;
   existingBySanityId: Map<string, { contentHash: string; id: string }>;
 }) {
   const previous = options.existingBySanityId.get(options.document.sanityDocumentId);
-  const hash = contentHash(options.document);
+  const hash = contentHash(options.document, options.embeddingModelId);
   if (!options.force && previous?.contentHash === hash) {
     options.onProgress?.(
       `Checking ${options.documentIndex}/${options.documentCount}: ${options.document.title} (unchanged)`,
@@ -178,6 +191,7 @@ async function indexDocument(options: {
   );
   options.summary.chunksCreated += await replaceDocument({
     document: options.document,
+    embeddingModelId: options.embeddingModelId,
     hash,
     documentIndex: options.documentIndex,
     documentCount: options.documentCount,
@@ -207,6 +221,7 @@ export async function synchronizePortfolioKnowledge(options: {
         options.onProgress?.("Fetching published portfolio content from Sanity…");
         const sources = await fetchSanityKnowledgeSources();
         const documents = normalizeSanityKnowledge(sources);
+        const embeddingModelId = getAssistantModels().embeddingModelId;
         summary.documentsSeen = documents.length;
 
         options.onProgress?.(`Comparing ${documents.length} documents with the current index…`);
@@ -221,6 +236,7 @@ export async function synchronizePortfolioKnowledge(options: {
             document,
             documentIndex: index + 1,
             documentCount: documents.length,
+            embeddingModelId,
             existingBySanityId,
             force,
             summary,
@@ -271,6 +287,7 @@ export async function synchronizePublishedKnowledgeDocument(options: {
           throw new Error("The published Sanity document is not available for indexing.");
         }
         summary.documentsSeen = 1;
+        const embeddingModelId = getAssistantModels().embeddingModelId;
 
         const existing = await listIndexedKnowledgeDocuments();
         const existingBySanityId = new Map(existing.map((item) => [item.sanityDocumentId, item]));
@@ -278,6 +295,7 @@ export async function synchronizePublishedKnowledgeDocument(options: {
           document,
           documentCount: 1,
           documentIndex: 1,
+          embeddingModelId,
           existingBySanityId,
           force: false,
           summary,
@@ -296,7 +314,12 @@ export async function synchronizePublishedKnowledgeDocument(options: {
 }
 
 export async function getKnowledgeIndexStatus() {
-  return readKnowledgeIndexStatus();
+  const status = await readKnowledgeIndexStatus();
+  return {
+    ...status,
+    embeddingModel: getAssistantModels().embeddingModelId,
+    indexVersion: ASSISTANT_INDEX_VERSION,
+  };
 }
 
 export function listIngestionRuns(limit = 20) {

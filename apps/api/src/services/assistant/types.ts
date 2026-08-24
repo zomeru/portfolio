@@ -16,6 +16,7 @@ export type ConversationMessage = {
 
 export type NormalizedSection = {
   heading: string;
+  headingPath?: string[];
   text: string;
 };
 
@@ -33,8 +34,16 @@ export type NormalizedKnowledgeDocument = {
 export type KnowledgeChunkInput = {
   chunkIndex: number;
   content: string;
+  embeddingText: string;
   metadata: Record<string, unknown>;
   tokenCount: number;
+};
+
+export type RetrievalQuery = {
+  keyword: string;
+  namedTerms: string[];
+  original: string;
+  semantic: string;
 };
 
 export type RetrievedKnowledge = {
@@ -48,5 +57,7 @@ export type RetrievedKnowledge = {
   structuredRank?: number;
   semanticRank?: number;
   keywordRank?: number;
+  semanticSimilarity?: number;
   score: number;
+  tokenCount: number;
 };

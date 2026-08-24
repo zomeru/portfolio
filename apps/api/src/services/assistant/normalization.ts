@@ -66,28 +66,39 @@ function portableTextToText(value: unknown): string {
 
 function markdownSections(markdown: string): NormalizedSection[] {
   const cleaned = markdown
-    .replace(/!\[[^\]]*]\([^)]*\)/g, "")
+    .replace(/!\[([^\]]*)]\([^)]*\)/g, "$1")
     .replace(/\[([^\]]+)]\(([^)]+)\)/g, "$1 ($2)")
-    .replace(/^```[^\n]*$/gm, "")
-    .replace(/<[^>]+>/g, "")
     .trim();
   if (!cleaned) return [];
 
   const sections: NormalizedSection[] = [];
   let heading = "Article overview";
+  let headingPath = [heading];
+  const headingStack: string[] = [];
+  let inCodeFence = false;
   let lines: string[] = [];
 
   const flush = () => {
     const text = lines.join("\n").trim();
-    if (text) sections.push({ heading, text });
+    if (text) sections.push({ heading, headingPath: [...headingPath], text });
     lines = [];
   };
 
   for (const line of cleaned.split("\n")) {
-    const match = /^(#{1,4})\s+(.+)$/.exec(line);
+    if (/^\s*```/.test(line)) {
+      inCodeFence = !inCodeFence;
+      lines.push(line);
+      continue;
+    }
+
+    const match = inCodeFence ? null : /^(#{1,4})\s+(.+)$/.exec(line);
     if (match?.[2]) {
       flush();
+      const level = match[1]?.length ?? 1;
       heading = match[2].replace(/[*_`]/g, "").trim();
+      headingStack.length = level - 1;
+      headingStack[level - 1] = heading;
+      headingPath = headingStack.filter(Boolean);
       continue;
     }
     lines.push(line);

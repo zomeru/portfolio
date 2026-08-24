@@ -176,6 +176,7 @@ export type RetrievalResultMetadata = {
   documentId: string;
   structuredRank?: number;
   semanticRank?: number;
+  semanticSimilarity?: number;
   keywordRank?: number;
   score: number;
 };
