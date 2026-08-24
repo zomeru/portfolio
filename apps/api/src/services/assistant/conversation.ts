@@ -61,7 +61,10 @@ export async function loadConversationMessages(sessionId: string): Promise<Conve
     tokenCount += nextTokenCount;
     selected.push({
       ...row,
-      content: row.role === "assistant" ? normalizeAssistantCitations(row.content) : row.content,
+      content:
+        row.role === "assistant" && row.intent !== "general"
+          ? normalizeAssistantCitations(row.content)
+          : row.content,
     });
   }
 
@@ -97,7 +100,10 @@ export async function saveAssistantMessage(options: {
   citations: ChatCitation[];
   suggestions: string[];
 }) {
-  const content = normalizeAssistantCitations(options.content, options.citations.length);
+  const content =
+    options.intent === "general"
+      ? options.content
+      : normalizeAssistantCitations(options.content, options.citations.length);
   await createAssistantChatMessage({
     ...options,
     content,
@@ -113,13 +119,15 @@ export async function loadChatHistory(sessionKey: string): Promise<AskZomerMessa
 
   return rows.reverse().map((message) => {
     const content =
-      message.role === "assistant"
+      message.role === "assistant" && message.intent !== "general"
         ? normalizeAssistantCitations(message.content, message.citations.length)
         : message.content;
+    const webSearch = message.citations.some((citation) => citation.sourceType === "web");
     const metadata = {
       createdAt: message.createdAt.toISOString(),
       ...(message.intent ? { intent: message.intent } : {}),
       ...(message.model ? { model: message.model } : {}),
+      ...(webSearch ? { webSearch: true } : {}),
       sources: message.citations,
       suggestions: message.suggestions,
     };

@@ -4,15 +4,17 @@ import { getBlogPosts } from "@/lib/sanity/services/blog";
 import { getExperience } from "@/lib/sanity/services/experience";
 import { getProfile } from "@/lib/sanity/services/profile";
 import { getProjects } from "@/lib/sanity/services/projects";
+import { getTechStack } from "@/lib/sanity/services/tech-stack";
 
 export const revalidate = 3600;
 
 export async function GET(): Promise<Response> {
-  const [profile, experience, projects, posts] = await Promise.all([
+  const [profile, experience, projects, posts, techStack] = await Promise.all([
     getProfile(),
     getExperience(),
     getProjects(),
     getBlogPosts(),
+    getTechStack(),
   ]);
   const name = profile?.name || "Portfolio";
   const role = profile?.role || "Software Engineer";
@@ -33,6 +35,13 @@ export async function GET(): Promise<Response> {
       (project) =>
         `- ${project.title}\n  Year: ${project.year}\n  Description: ${project.description}\n  Technologies: ${project.technologies.join(", ") || "Not specified"}${project.demoUrl ? `\n  Demo: ${project.demoUrl}` : ""}${project.repositoryUrl ? `\n  Repository: ${project.repositoryUrl}` : ""}${project.caseStudyUrl ? `\n  Case study: ${project.caseStudyUrl}` : ""}`,
     )
+    .join("\n\n");
+  const techStackLines = techStack
+    .map((group) => {
+      const items = group.items.map((item) => `  - ${item}`).join("\n") || "  - Not specified";
+
+      return `- ${group.name}\n${items}`;
+    })
     .join("\n\n");
   const postLines = posts
     .map(
@@ -59,7 +68,7 @@ export async function GET(): Promise<Response> {
 - Author: ${name}
 - Role: ${role}
 
-## Public Pages
+## Key Sections
 
 - [Home](${siteUrl}): Portfolio overview with professional experience and skills
 - [Projects](${new URL("/projects", siteUrl).href}): Selected work and case studies
@@ -79,6 +88,10 @@ ${experienceLines || "No experience entries published yet."}
 ## Projects (${projects.length} total)
 
 ${projectLines || "No projects published yet."}
+
+## Tech Stack (${techStack.length} groups)
+
+${techStackLines || "No tech stack groups published yet."}
 
 ## Blog Posts (${posts.length} total)
 

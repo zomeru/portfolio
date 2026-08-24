@@ -70,11 +70,13 @@ export type GithubCommitPage = {
 
 export type KnowledgeSourceType = "profile" | "experience" | "project" | "blog" | "techstack";
 
+export type AskZomerSourceType = KnowledgeSourceType | "web";
+
 export type AskZomerSource = {
   id: string;
   title: string;
   url: string;
-  sourceType: KnowledgeSourceType;
+  sourceType: AskZomerSourceType;
 };
 
 export type AskZomerMessageMetadata = {
@@ -83,6 +85,7 @@ export type AskZomerMessageMetadata = {
   model?: string;
   sources?: AskZomerSource[];
   suggestions?: string[];
+  webSearch?: boolean;
 };
 
 export type AskZomerMessage = UIMessage<AskZomerMessageMetadata>;

@@ -3,15 +3,17 @@ import { getBlogPosts } from "@/lib/sanity/services/blog";
 import { getExperience } from "@/lib/sanity/services/experience";
 import { getProfile } from "@/lib/sanity/services/profile";
 import { getProjects } from "@/lib/sanity/services/projects";
+import { getTechStack } from "@/lib/sanity/services/tech-stack";
 
 export const revalidate = 3600;
 
 export async function GET(): Promise<Response> {
-  const [profile, experience, projects, posts] = await Promise.all([
+  const [profile, experience, projects, posts, techStack] = await Promise.all([
     getProfile(),
     getExperience(),
     getProjects(),
     getBlogPosts(),
+    getTechStack(),
   ]);
   const name = profile?.name || "Portfolio";
   const role = profile?.role || "Software Engineer";
@@ -24,6 +26,9 @@ export async function GET(): Promise<Response> {
     .join("\n");
   const projectLines = projects
     .map((project) => `- ${project.title}: ${project.description}`)
+    .join("\n");
+  const techStackLines = techStack
+    .map((group) => `- ${group.name}: ${group.items.join(", ")}`)
     .join("\n");
   const contactLines = [
     `- Website: ${siteUrl}`,
@@ -47,9 +52,9 @@ export async function GET(): Promise<Response> {
 - [GitHub Contributions](${new URL("/github-contributions", siteUrl).href}): GitHub contribution activity and commit history across owned repositories
 - [Contact](${new URL("/contact", siteUrl).href}): Ways to get in touch
 
-## Full Content Index
+## Contact
 
-For a complete list of all blog posts with descriptions, see: ${new URL("/llms-full.txt", siteUrl).href}
+${contactLines}
 
 ## Experience
 
@@ -59,13 +64,18 @@ ${experienceLines || "No experience entries published yet."}
 
 ${projectLines || "No projects published yet."}
 
+## Tech Stack
+
+${techStackLines || "No tech stack groups published yet."}
+
 ## 10 Recent Blog Posts
 
 ${recentPostLines || "No blog posts published yet."}
 
-## Contact
+## Full Content Index
 
-${contactLines}
+For a complete list of all blog posts with descriptions, see: ${new URL("/llms-full.txt", siteUrl).href}
+
 `;
 
   return new Response(content, {

@@ -6,7 +6,7 @@ import { TechStack } from "@/components/portfolio/tech-stack";
 import { getProfileSocials } from "@/lib/sanity/profile";
 import type { Profile, TechStackGroup } from "@/lib/sanity/types";
 
-const AVATAR_SIZE = 96;
+const AVATAR_SIZE = 512;
 
 type SiteHeaderProps = {
   profile: Profile | null;

@@ -62,7 +62,7 @@ export const assistantRoutes = new Hono<ApiEnv>()
           throw new ApiError(error.message, { code: "AI_RATE_LIMITED", status: 429 });
         }
         if (error instanceof ApiError) throw error;
-        throw new ApiError("Ask Zomer AI is temporarily unavailable.", {
+        throw new ApiError("Zomer AI is temporarily unavailable.", {
           code: "AI_PROVIDER_UNAVAILABLE",
           status: 503,
           cause: error,

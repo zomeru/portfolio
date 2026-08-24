@@ -4,7 +4,7 @@ import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { getAiServerEnv } from "@portfolio/env/ai-server";
 import { getAssistantServerEnv } from "@portfolio/env/assistant-server";
-import type { EmbeddingModel, LanguageModel } from "ai";
+import type { EmbeddingModel, LanguageModel, ToolSet } from "ai";
 
 type AssistantProviderOptions = Record<string, Record<string, boolean | number | string>>;
 
@@ -25,6 +25,7 @@ type AssistantModels = {
   embeddingModelId: string;
   provider: "openrouter" | "nvidia" | "groq";
   queryEmbedding: EmbeddingModel;
+  webSearchTools: ToolSet | undefined;
 };
 
 export function getBlogLanguageModel(): BlogLanguageModel {
@@ -47,22 +48,25 @@ function requireProviderKey(value: string | undefined, provider: string) {
 export function getAssistantModels(): AssistantModels {
   const environment = getAssistantServerEnv();
   const openrouter = createOpenRouter({ apiKey: environment.openrouterApiKey });
+  const groq = createGroq({ apiKey: requireProviderKey(environment.groqApiKey, "Groq") });
+
   const chatModels = {
-    groq: () => ({
-      generationOptions: {
-        providerOptions: {
-          groq: {
-            reasoningEffort: "low",
-            reasoningFormat: "hidden",
+    groq: () => {
+      return {
+        generationOptions: {
+          providerOptions: {
+            groq: {
+              reasoningEffort: "low",
+              reasoningFormat: "hidden",
+            },
           },
+          temperature: 0.2,
         },
-        temperature: 0.2,
-      },
-      model: createGroq({ apiKey: requireProviderKey(environment.groqApiKey, "Groq") })(
-        environment.groqChatModel,
-      ),
-      modelId: environment.groqChatModel,
-    }),
+        model: groq(environment.groqChatModel),
+        modelId: environment.groqChatModel,
+        webSearchTools: { browser_search: groq.tools.browserSearch({}) },
+      };
+    },
     nvidia: () => ({
       generationOptions: { temperature: 0.2 },
       model: createOpenAICompatible({
@@ -71,11 +75,15 @@ export function getAssistantModels(): AssistantModels {
         baseURL: "https://integrate.api.nvidia.com/v1",
       }).chatModel(environment.nvidiaChatModel),
       modelId: environment.nvidiaChatModel,
+      webSearchTools: undefined,
     }),
     openrouter: () => ({
       generationOptions: { temperature: 0.2 },
       model: openrouter.chat(environment.openrouterChatModel),
       modelId: environment.openrouterChatModel,
+      webSearchTools: {
+        web_search: openrouter.tools.webSearch({ engine: "auto", maxResults: 5 }),
+      },
     }),
   } satisfies Record<
     typeof environment.chatProvider,
@@ -83,6 +91,7 @@ export function getAssistantModels(): AssistantModels {
       generationOptions: { providerOptions?: AssistantProviderOptions; temperature: number };
       model: LanguageModel;
       modelId: string;
+      webSearchTools: ToolSet | undefined;
     }
   >;
   const chatModel = chatModels[environment.chatProvider]();
@@ -105,5 +114,6 @@ export function getAssistantModels(): AssistantModels {
       environment.embeddingModel,
       embeddingSettings("query"),
     ),
+    webSearchTools: chatModel.webSearchTools,
   };
 }
