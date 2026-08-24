@@ -43,7 +43,7 @@
     "clean": "rimraf node_modules .pnpm-store .turbo dist apps/*/{node_modules,.turbo,dist,.output} packages/*/{node_modules,.turbo,dist,.output}"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.9",
+    "@biomejs/biome": "2.5.10",
     "@changesets/changelog-github": "^1.0.0",
     "@changesets/cli": "^3.0.1",
     "@commitlint/cli": "^21.2.2",
