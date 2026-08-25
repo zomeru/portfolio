@@ -25,7 +25,7 @@
     "db:studio": "turbo run db:studio --filter=@portfolio/database",
     "studio:seed": "turbo run seed --filter=@portfolio/studio",
     "studio:deploy": "turbo run deploy --filter=@portfolio/studio",
-    "check:all": "pnpm run lint && pnpm run deps:check && pnpm run deps:unused && pnpm run check-types",
+    "check:all": "pnpm run lint && pnpm run deps:check && pnpm run deps:unused && pnpm run check-types && pnpm run test",
     "check:all:build": "pnpm run check:all && pnpm run build:all",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
@@ -37,6 +37,7 @@
     "deps:unused": "pnpm run with-env knip",
     "security:audit": "pnpm audit --prod",
     "security:check": "pnpm audit",
+    "test": "turbo run test",
     "version:packages": "changeset version",
     "version:sync": "tsx scripts/sync-version.ts",
     "changeset": "changeset",
@@ -65,7 +66,7 @@
   },
   "packageManager": "pnpm@11.22.0",
   "engines": {
-    "node": ">=24"
+    "node": ">=24.19.0 <25"
   },
   "devEngines": {
     "packageManager": {

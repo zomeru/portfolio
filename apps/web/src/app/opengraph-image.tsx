@@ -1,12 +1,12 @@
+import { getPublicProfile } from "@portfolio/api/public-portfolio";
 import { createPortfolioOgImage, OG_IMAGE_SIZE } from "@/lib/og-image";
-import { getProfile } from "@/lib/sanity/services/profile";
 
 export const alt = "Zomer Gregorio portfolio";
 export const size = OG_IMAGE_SIZE;
 export const contentType = "image/png";
 
 export default async function OpenGraphImage() {
-  const profile = await getProfile();
+  const profile = await getPublicProfile();
   const name = profile?.name || "Zomer Gregorio";
   const role = profile?.role || "Software Engineer";
   const description = `${role} based in the, building modern web experiences with Next.js, TypeScript, and practical AI integrations`;

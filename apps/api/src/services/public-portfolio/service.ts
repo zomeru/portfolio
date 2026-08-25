@@ -1,0 +1,443 @@
+import { getSanityEnv } from "@portfolio/env/sanity";
+import { getSanityServerEnv } from "@portfolio/env/sanity-server";
+import { getSiteEnv } from "@portfolio/env/site";
+import { createClient, type SanityClient } from "@sanity/client";
+import { z } from "zod";
+import { portableTextToParagraphs, portableTextToPlainText } from "./portable-text";
+import { PUBLIC_BLOG_POST_QUERY, PUBLIC_PORTFOLIO_SNAPSHOT_QUERY } from "./queries";
+import {
+  type PublicBlogPost,
+  type PublicBlogPostList,
+  type PublicBlogPostSummary,
+  type PublicExperience,
+  type PublicExperienceList,
+  type PublicPhoto,
+  type PublicProfile,
+  type PublicProject,
+  type PublicProjectList,
+  type PublicResume,
+  type PublicTechStack,
+  type PublicTechStackGroup,
+  publicBlogPostListSchema,
+  publicBlogPostSchema,
+  publicExperienceListSchema,
+  publicProfileSchema,
+  publicProjectListSchema,
+  publicResumeSchema,
+  publicTechStackSchema,
+} from "./schemas";
+
+const SANITY_API_VERSION = "2026-08-20";
+const PUBLIC_REVALIDATE_SECONDS = 300;
+const DEFAULT_RESUME_PATH = "/assets/GREGORIO_ZOMER_RESUME.pdf";
+
+const rawPhotoSchema = z
+  .object({
+    alt: z.string().nullable(),
+    asset: z
+      .object({
+        metadata: z
+          .object({
+            dimensions: z
+              .object({ height: z.number().nullable(), width: z.number().nullable() })
+              .nullable(),
+            lqip: z.string().nullable(),
+          })
+          .nullable(),
+        url: z.string().nullable(),
+      })
+      .nullable(),
+  })
+  .nullable();
+
+const rawProfileSchema = z
+  .object({
+    aboutContent: z.unknown(),
+    biography: z.unknown(),
+    email: z.string().nullable(),
+    githubUrl: z.string().nullable(),
+    linkedinUrl: z.string().nullable(),
+    name: z.string().nullable(),
+    photo: rawPhotoSchema,
+    resumeUrl: z.string().nullable(),
+    role: z.string().nullable(),
+  })
+  .nullable();
+
+const rawExperienceSchema = z.object({
+  company: z.string().nullable(),
+  companyUrl: z.string().nullable(),
+  location: z.string().nullable(),
+  period: z.string().nullable(),
+  responsibilities: z.unknown(),
+  role: z.string().nullable(),
+  summary: z.string().nullable(),
+  technologies: z.array(z.string()).nullable(),
+});
+
+const rawProjectSchema = z.object({
+  caseStudyUrl: z.string().nullable(),
+  demoUrl: z.string().nullable(),
+  description: z.string().nullable(),
+  image: rawPhotoSchema,
+  repositoryUrl: z.string().nullable(),
+  technologies: z.array(z.string()).nullable(),
+  title: z.string().nullable(),
+  year: z.string().nullable(),
+});
+
+const rawBlogSummarySchema = z.object({
+  date: z.string().nullable(),
+  description: z.string().nullable(),
+  slug: z.string().nullable(),
+  tags: z.array(z.string()).nullable(),
+  title: z.string().nullable(),
+});
+
+const rawBlogPostSchema = rawBlogSummarySchema.extend({
+  body: z.string().nullable(),
+  readTime: z.number().nullable(),
+  updatedAt: z.string().nullable(),
+});
+
+const rawTechStackSchema = z.object({
+  items: z.array(z.string()).nullable(),
+  name: z.string().nullable(),
+});
+
+const rawSnapshotSchema = z.object({
+  blogs: z.array(rawBlogSummarySchema),
+  experience: z.array(rawExperienceSchema),
+  profile: rawProfileSchema,
+  projects: z.array(rawProjectSchema),
+  techStack: z.array(rawTechStackSchema),
+});
+
+type RawSnapshot = z.infer<typeof rawSnapshotSchema>;
+type RawBlogPost = z.infer<typeof rawBlogPostSchema>;
+
+export type PublicPortfolioSnapshot = {
+  blogs: PublicBlogPostSummary[];
+  experience: PublicExperience[];
+  profile: PublicProfile | null;
+  projects: PublicProject[];
+  techStack: PublicTechStackGroup[];
+};
+
+export type PublicBlogPostListOptions = {
+  limit?: number;
+  offset?: number;
+  query?: string;
+};
+
+export type PublicPortfolioService = {
+  getBlogPost(slug: string): Promise<PublicBlogPost | null>;
+  getProfile(): Promise<PublicProfile | null>;
+  getResume(): Promise<PublicResume | null>;
+  getSnapshot(): Promise<PublicPortfolioSnapshot>;
+  listBlogPosts(options?: PublicBlogPostListOptions): Promise<PublicBlogPostList>;
+  listExperience(): Promise<PublicExperienceList>;
+  listProjects(): Promise<PublicProjectList>;
+  listTechStack(): Promise<PublicTechStack>;
+};
+
+type ServiceDependencies = {
+  fetchBlogPost(slug: string): Promise<unknown>;
+  fetchSnapshot(): Promise<unknown>;
+  siteUrl: URL;
+};
+
+let sanityClient: SanityClient | undefined;
+
+function getReadClient() {
+  if (sanityClient) return sanityClient;
+
+  const sanity = getSanityEnv();
+  const server = getSanityServerEnv();
+  sanityClient = createClient({
+    apiVersion: SANITY_API_VERSION,
+    dataset: sanity.dataset,
+    perspective: "published",
+    projectId: sanity.projectId,
+    token: server.token,
+    useCdn: process.env.NODE_ENV === "production",
+  });
+
+  return sanityClient;
+}
+
+type NextSanityFetchOptions = {
+  next: {
+    revalidate: number;
+    tags: string[];
+  };
+};
+
+function fetchWithNextCache(query: string, params: Record<string, unknown>, tags: string[]) {
+  // @sanity/client supports Next.js fetch options at runtime. This package deliberately omits DOM
+  // types, so keep the framework-specific RequestInit extension isolated at this boundary.
+  const fetch = getReadClient().fetch.bind(getReadClient()) as (
+    query: string,
+    params: Record<string, unknown>,
+    options: NextSanityFetchOptions,
+  ) => Promise<unknown>;
+
+  return fetch(query, params, {
+    next: {
+      revalidate: PUBLIC_REVALIDATE_SECONDS,
+      tags,
+    },
+  });
+}
+
+function fetchSnapshot() {
+  return fetchWithNextCache(PUBLIC_PORTFOLIO_SNAPSHOT_QUERY, {}, [
+    "profile",
+    "experience",
+    "project",
+    "blogPost",
+    "techStack",
+  ]);
+}
+
+function fetchBlogPost(slug: string) {
+  return fetchWithNextCache(PUBLIC_BLOG_POST_QUERY, { slug }, ["blogPost", `blogPost:${slug}`]);
+}
+
+function cleanString(value: string | null | undefined) {
+  const cleaned = value?.trim();
+  return cleaned || null;
+}
+
+function cleanStringList(value: string[] | null | undefined) {
+  return (value ?? []).map((item) => item.trim()).filter(Boolean);
+}
+
+function toPublicPhoto(photo: z.infer<typeof rawPhotoSchema>): PublicPhoto | null {
+  const url = cleanString(photo?.asset?.url);
+  const alt = cleanString(photo?.alt);
+  if (!url || !alt) return null;
+
+  return {
+    alt,
+    height: photo?.asset?.metadata?.dimensions?.height ?? null,
+    lqip: cleanString(photo?.asset?.metadata?.lqip),
+    url,
+    width: photo?.asset?.metadata?.dimensions?.width ?? null,
+  };
+}
+
+function toPublicProfile(
+  profile: z.infer<typeof rawProfileSchema>,
+  siteUrl: URL,
+): PublicProfile | null {
+  const name = cleanString(profile?.name);
+  const role = cleanString(profile?.role);
+  const email = cleanString(profile?.email);
+  const github = cleanString(profile?.githubUrl);
+  const linkedin = cleanString(profile?.linkedinUrl);
+  if (!name || !role || !email || !github || !linkedin) return null;
+
+  const resumePdfUrl = new URL(cleanString(profile?.resumeUrl) ?? DEFAULT_RESUME_PATH, siteUrl)
+    .href;
+
+  return publicProfileSchema.parse({
+    about: portableTextToPlainText(profile?.aboutContent),
+    biography: portableTextToPlainText(profile?.biography),
+    email,
+    links: {
+      email: `mailto:${email}`,
+      github,
+      linkedin,
+      resume: resumePdfUrl,
+      website: siteUrl.href,
+    },
+    name,
+    photo: toPublicPhoto(profile?.photo ?? null),
+    resumePdfUrl,
+    role,
+    url: siteUrl.href,
+  });
+}
+
+function toPublicExperience(raw: RawSnapshot["experience"][number]) {
+  const company = cleanString(raw.company);
+  const period = cleanString(raw.period);
+  const role = cleanString(raw.role);
+  if (!company || !period || !role) return null;
+
+  return {
+    company,
+    companyUrl: cleanString(raw.companyUrl),
+    location: cleanString(raw.location),
+    period,
+    responsibilities: portableTextToParagraphs(raw.responsibilities),
+    role,
+    summary: cleanString(raw.summary),
+    technologies: cleanStringList(raw.technologies),
+  } satisfies PublicExperience;
+}
+
+function toPublicProject(raw: RawSnapshot["projects"][number], siteUrl: URL) {
+  const description = cleanString(raw.description);
+  const title = cleanString(raw.title);
+  const year = cleanString(raw.year);
+  if (!description || !title || !year) return null;
+
+  return {
+    canonicalUrl: new URL("/projects", siteUrl).href,
+    caseStudyUrl: cleanString(raw.caseStudyUrl),
+    demoUrl: cleanString(raw.demoUrl),
+    description,
+    image: toPublicPhoto(raw.image),
+    repositoryUrl: cleanString(raw.repositoryUrl),
+    technologies: cleanStringList(raw.technologies),
+    title,
+    year,
+  } satisfies PublicProject;
+}
+
+function toPublicBlogSummary(
+  raw: RawSnapshot["blogs"][number],
+  siteUrl: URL,
+): PublicBlogPostSummary | null {
+  const date = cleanString(raw.date);
+  const slug = cleanString(raw.slug);
+  const title = cleanString(raw.title);
+  if (!date || !slug || !title) return null;
+
+  return {
+    canonicalUrl: new URL(`/blogs/${slug}`, siteUrl).href,
+    date,
+    description: cleanString(raw.description) ?? "",
+    slug,
+    tags: cleanStringList(raw.tags),
+    title,
+  };
+}
+
+function toPublicBlogPost(raw: RawBlogPost | null, siteUrl: URL): PublicBlogPost | null {
+  if (!raw) return null;
+  const summary = toPublicBlogSummary(raw, siteUrl);
+  const body = cleanString(raw.body);
+  if (!summary || !body) return null;
+
+  return publicBlogPostSchema.parse({
+    ...summary,
+    body,
+    readTimeMinutes: raw.readTime,
+    updatedAt: cleanString(raw.updatedAt),
+  });
+}
+
+function toPublicTechStack(raw: RawSnapshot["techStack"][number]) {
+  const name = cleanString(raw.name);
+  const items = cleanStringList(raw.items);
+  if (!name || items.length === 0) return null;
+  return { items, name } satisfies PublicTechStackGroup;
+}
+
+export function serializePublicSnapshot(value: unknown, siteUrl: URL): PublicPortfolioSnapshot {
+  const raw = rawSnapshotSchema.parse(value);
+
+  return {
+    blogs: raw.blogs
+      .map((post) => toPublicBlogSummary(post, siteUrl))
+      .filter((post): post is PublicBlogPostSummary => Boolean(post)),
+    experience: raw.experience
+      .map(toPublicExperience)
+      .filter((item): item is PublicExperience => Boolean(item)),
+    profile: toPublicProfile(raw.profile, siteUrl),
+    projects: raw.projects
+      .map((project) => toPublicProject(project, siteUrl))
+      .filter((project): project is PublicProject => Boolean(project)),
+    techStack: raw.techStack
+      .map(toPublicTechStack)
+      .filter((group): group is PublicTechStackGroup => Boolean(group)),
+  };
+}
+
+export function createPublicPortfolioService(
+  dependencies: ServiceDependencies,
+): PublicPortfolioService {
+  async function getSnapshot() {
+    return serializePublicSnapshot(await dependencies.fetchSnapshot(), dependencies.siteUrl);
+  }
+
+  return {
+    async getBlogPost(slug) {
+      const raw = rawBlogPostSchema.nullable().parse(await dependencies.fetchBlogPost(slug));
+      return toPublicBlogPost(raw, dependencies.siteUrl);
+    },
+    async getProfile() {
+      return (await getSnapshot()).profile;
+    },
+    async getResume() {
+      const snapshot = await getSnapshot();
+      if (!snapshot.profile) return null;
+
+      return publicResumeSchema.parse({
+        name: snapshot.profile.name,
+        role: snapshot.profile.role,
+        pdfUrl: snapshot.profile.resumePdfUrl,
+        summary: [snapshot.profile.biography, snapshot.profile.about].filter(Boolean).join("\n\n"),
+        contact: {
+          email: snapshot.profile.email,
+          github: snapshot.profile.links.github,
+          linkedin: snapshot.profile.links.linkedin,
+          website: snapshot.profile.url,
+        },
+        experience: snapshot.experience,
+        techStack: snapshot.techStack,
+      });
+    },
+    getSnapshot,
+    async listBlogPosts({ limit = 10, offset = 0, query = "" } = {}) {
+      const blogs = (await getSnapshot()).blogs;
+      const normalizedQuery = query.trim().toLocaleLowerCase("en-US");
+      const matches = normalizedQuery
+        ? blogs.filter((blog) => blog.title.toLocaleLowerCase("en-US").includes(normalizedQuery))
+        : blogs;
+
+      return publicBlogPostListSchema.parse({
+        items: matches.slice(offset, offset + limit),
+        limit,
+        offset,
+        total: matches.length,
+      });
+    },
+    async listExperience() {
+      const items = (await getSnapshot()).experience;
+      return publicExperienceListSchema.parse({ items, total: items.length });
+    },
+    async listProjects() {
+      const items = (await getSnapshot()).projects;
+      return publicProjectListSchema.parse({ items, total: items.length });
+    },
+    async listTechStack() {
+      const groups = (await getSnapshot()).techStack;
+      return publicTechStackSchema.parse({ groups, total: groups.length });
+    },
+  };
+}
+
+let service: PublicPortfolioService | undefined;
+
+export function getPublicPortfolioService() {
+  service ??= createPublicPortfolioService({
+    fetchBlogPost,
+    fetchSnapshot,
+    siteUrl: new URL(getSiteEnv().siteUrl),
+  });
+  return service;
+}
+
+export const getPublicPortfolioSnapshot = () => getPublicPortfolioService().getSnapshot();
+export const getPublicProfile = () => getPublicPortfolioService().getProfile();
+export const getPublicResume = () => getPublicPortfolioService().getResume();
+export const listPublicExperience = () => getPublicPortfolioService().listExperience();
+export const listPublicProjects = () => getPublicPortfolioService().listProjects();
+export const listPublicBlogPosts = (options?: PublicBlogPostListOptions) =>
+  getPublicPortfolioService().listBlogPosts(options);
+export const getPublicBlogPost = (slug: string) => getPublicPortfolioService().getBlogPost(slug);
+export const getPublicTechStack = () => getPublicPortfolioService().listTechStack();

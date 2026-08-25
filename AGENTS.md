@@ -60,6 +60,7 @@ Choose checks by affected scope:
 - Run the affected workspace's `check-types` after TypeScript changes.
 - Run the affected workspace's build after routing, bundling, runtime, schema, or configuration changes.
 - Run `pnpm lint` after code or configuration changes.
+- Run `pnpm test` after public DTO, REST, OpenAPI, MCP, or discovery contract changes.
 - Run `pnpm run check:all` and `pnpm run build:all` after shared package or dependency changes.
 - Run `pnpm ai:eval` after deterministic assistant intent or retrieval-strategy changes; use
   `--live` only with an authorized, migrated, indexed environment.
@@ -69,8 +70,8 @@ Choose checks by affected scope:
 pnpm run check:all:build && pnpm run security:check && pnpm run security:audit
 ```
 
-There is no general unit-test command. Do not document or invoke one unless a real test workspace is
-added. Keep `.github/workflows/ci.yml` and `README.md` aligned with the production pipeline.
+Keep `.github/workflows/ci.yml`, `README.md`, and the workspace test scripts aligned with the
+production pipeline.
 
 ## Instruction maintenance
 

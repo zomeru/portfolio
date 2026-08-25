@@ -1,10 +1,10 @@
+import { getPublicPortfolioSnapshot } from "@portfolio/api/public-portfolio";
 import type { MetadataRoute } from "next";
 
 import { siteUrl } from "@/lib/metadata";
-import { getBlogPostSlugs } from "@/lib/sanity/services/blog";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const blogPosts = await getBlogPostSlugs();
+  const blogPosts = (await getPublicPortfolioSnapshot()).blogs;
   const paths = new Set([
     "/",
     "/projects",
@@ -12,6 +12,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/github-contributions",
     "/ask",
     "/contact",
+    "/developers",
+    "/developers.md",
+    "/developers/llms.txt",
     "/llms.txt",
     "/llms-full.txt",
   ]);

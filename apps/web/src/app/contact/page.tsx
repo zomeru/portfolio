@@ -1,3 +1,4 @@
+import { getPublicProfile } from "@portfolio/api/public-portfolio";
 import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import { PageTransition } from "@/components/layout/page-transition";
@@ -5,7 +6,6 @@ import { BookACallButton } from "@/components/portfolio/book-a-call-button";
 import { PageHeader } from "@/components/portfolio/page-header";
 import { createPageMetadata } from "@/lib/metadata";
 import { getProfileSocials } from "@/lib/sanity/profile";
-import { getProfile } from "@/lib/sanity/services/profile";
 
 export const metadata: Metadata = createPageMetadata({
   title: "Contact",
@@ -14,7 +14,7 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default async function ContactPage() {
-  const profile = await getProfile();
+  const profile = await getPublicProfile();
   const elsewhere = (profile ? getProfileSocials(profile) : []).filter((p) => p.name !== "GitHub");
 
   return (

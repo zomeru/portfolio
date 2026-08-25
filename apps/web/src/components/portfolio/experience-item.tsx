@@ -1,6 +1,6 @@
-import type { Experience } from "@/lib/sanity/types";
+import type { PublicExperience } from "@portfolio/api/public-portfolio";
 
-export function ExperienceItem({ job }: { job: Experience }) {
+export function ExperienceItem({ job }: { job: PublicExperience }) {
   return (
     <article className="relative pl-7">
       <span aria-hidden className="absolute left-0 top-1.5 size-2.5 rounded-full bg-foreground" />

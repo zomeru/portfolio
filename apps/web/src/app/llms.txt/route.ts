@@ -1,20 +1,16 @@
+import { getPublicPortfolioSnapshot } from "@portfolio/api/public-portfolio";
 import { siteUrl } from "@/lib/metadata";
-import { getBlogPosts } from "@/lib/sanity/services/blog";
-import { getExperience } from "@/lib/sanity/services/experience";
-import { getProfile } from "@/lib/sanity/services/profile";
-import { getProjects } from "@/lib/sanity/services/projects";
-import { getTechStack } from "@/lib/sanity/services/tech-stack";
 
 export const revalidate = 3600;
 
 export async function GET(): Promise<Response> {
-  const [profile, experience, projects, posts, techStack] = await Promise.all([
-    getProfile(),
-    getExperience(),
-    getProjects(),
-    getBlogPosts(),
-    getTechStack(),
-  ]);
+  const {
+    blogs: posts,
+    experience,
+    profile,
+    projects,
+    techStack,
+  } = await getPublicPortfolioSnapshot();
   const name = profile?.name || "Portfolio";
   const role = profile?.role || "Software Engineer";
   const recentPostLines = posts
@@ -33,8 +29,8 @@ export async function GET(): Promise<Response> {
   const contactLines = [
     `- Website: ${siteUrl}`,
     profile?.email ? `- Email: ${profile.email}` : null,
-    profile?.githubUrl ? `- GitHub: ${profile.githubUrl}` : null,
-    profile?.linkedinUrl ? `- LinkedIn: ${profile.linkedinUrl}` : null,
+    profile ? `- GitHub: ${profile.links.github}` : null,
+    profile ? `- LinkedIn: ${profile.links.linkedin}` : null,
   ]
     .filter((line): line is string => Boolean(line))
     .join("\n");
@@ -51,6 +47,18 @@ export async function GET(): Promise<Response> {
 - [Ask Zomer AI](${new URL("/ask", siteUrl).href}): AI assistant for questions about Zomer's work, experience, projects, and writing
 - [GitHub Contributions](${new URL("/github-contributions", siteUrl).href}): GitHub contribution activity and commit history across owned repositories
 - [Contact](${new URL("/contact", siteUrl).href}): Ways to get in touch
+
+## Structured Agent and Developer Access
+
+- [Public REST API](${new URL("/api/v1", siteUrl).href}): Versioned JSON resources for profile, resume, experience, projects, blogs, and tech stack
+- [OpenAPI 3.2](${new URL("/openapi.json", siteUrl).href}): Complete REST contract
+- [Portfolio MCP](${new URL("/api/mcp", siteUrl).href}): Stateless Streamable HTTP MCP server
+- [Documentation MCP](${new URL("/api/mcp/docs", siteUrl).href}): API guide, authentication policy, and OpenAPI tools
+- [API Catalog](${new URL("/.well-known/api-catalog", siteUrl).href}): RFC 9727 Linkset discovery document
+- [MCP Server Card](${new URL("/.well-known/mcp/server-card.json", siteUrl).href}): MCP metadata and tool index
+- [Documentation MCP Server Card](${new URL("/.well-known/mcp/docs-server-card.json", siteUrl).href}): Documentation MCP metadata and tool index
+- [Agent Skills](${new URL("/.well-known/agent-skills/index.json", siteUrl).href}): Machine-readable capabilities
+- [Developer Guide](${new URL("/developers.md", siteUrl).href}): REST and MCP integration instructions
 
 ## Contact
 

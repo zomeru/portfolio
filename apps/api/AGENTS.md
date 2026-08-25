@@ -6,18 +6,24 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
 ## Package and routing invariants
 
 - Compose global middleware and chained feature routers in `src/app.ts`. The app owns the `/api`
-  base path and currently mounts `/ai`, `/admin/ai`, `/blog`, and `/github`.
+  base path and mounts `/ai`, `/admin/ai`, `/blog`, `/github`, and the public `/v1` contract.
 - Keep HTTP parsing, validation, status mapping, and response shaping under `src/routes`. Put
   non-HTTP behavior under `src/services` and shared security/logging helpers under `src/lib`.
 - Preserve route chaining so exported `AppType` retains Hono RPC inference.
-- Export the server implementation only through `src/next.ts` and public client types through
-  `src/types.ts`. Keep the package root guarded by `server-only`.
+- Export the server implementation through `src/next.ts`, public client types through `src/types.ts`,
+  and the canonical published portfolio service through `src/public-portfolio.ts`. Keep server
+  entrypoints guarded by `server-only`.
 - Do not import web components, App Router modules, cookies, or UI state into this workspace.
 - Preserve request IDs, Hono secure headers, structured JSON logs, sanitized error responses, and the
   redaction pattern in `src/lib/log.ts`. Never log authorization values, prompts, content, keys,
   tokens, or secrets.
 
 ## Feature ownership
+
+- `src/services/public-portfolio` owns published-only Sanity queries, explicit public DTO schemas,
+  serialization, OpenAPI generation, and discovery metadata. REST routes and MCP registrations must
+  call this service instead of querying Sanity independently. Keep the five-minute cache tags and
+  explicit public allowlist; never expose drafts, raw Sanity fields, or RAG/indexing state.
 
 - `src/services/github` owns GitHub GraphQL/REST access and in-memory caches. Only return the public
   response contract: private repository names, commit messages, filter values, and URLs must remain
@@ -64,9 +70,10 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
 ## Verification
 
 - Run `pnpm --filter @portfolio/api check-types` after TypeScript changes.
+- Run `pnpm --filter @portfolio/api test` after public DTO, REST, or OpenAPI contract changes.
 - Run `pnpm ai:eval` after intent classification or structured retrieval changes.
 - Use `pnpm ai:eval --live` only against an explicitly authorized migrated/indexed database.
 - After route or middleware changes, exercise the affected path through the Next.js adapter and verify
   request IDs, security headers, status codes, JSON errors, and streaming behavior where applicable.
-- There is no API build script or general API test suite; validate the consuming web build for bundling
-  or runtime-boundary changes.
+- There is no API build script; validate the consuming web build for bundling or runtime-boundary
+  changes.

@@ -11,13 +11,13 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 ## Web guidance
 
 This workspace is the Next.js 16 App Router portfolio and the sole deployed application process.
-Server-rendered pages consume published Sanity content; the Hono backend is mounted inside the same
-deployment.
+Server-rendered pages consume the canonical published portfolio service from `@portfolio/api`; the
+Hono backend and stateless MCP handlers are mounted inside the same deployment.
 
 ## Route and rendering invariants
 
-- Public routes are `/`, `/projects`, `/blogs`, `/blogs/[slug]`,
-  `/github-contributions`, `/ask`, and `/contact`. `/admin` is private and force-dynamic.
+- Public routes are `/`, `/projects`, `/blogs`, `/blogs/[slug]`, `/github-contributions`, `/ask`,
+  `/contact`, and `/developers`. `/admin` is private and force-dynamic.
   Keep pages and layouts as Server Components unless a browser API, interaction state, or effect
   requires a narrow client boundary.
 - `src/app/api/[[...route]]/route.ts` is only the `hono/vercel` adapter for `@portfolio/api`.
@@ -34,20 +34,24 @@ deployment.
 
 ## Sanity, metadata, and discovery
 
-- Put GROQ in `src/lib/sanity/queries.ts`, fetch through `sanityFetch`, and expose domain reads
-  through `src/lib/sanity/services`. Use `defineQuery`, explicit projections, stable ordering,
-  cache tags, and deliberate `revalidate`/`useCdn` choices.
-- Web reads use the published perspective with authenticated server access. The default revalidation
-  is 300 seconds; blog slug discovery uses 3,600 seconds and bypasses the CDN for freshness.
+- Website portfolio reads use `@portfolio/api/public-portfolio`; do not add web-specific Sanity
+  queries for profile, resume, experience, projects, blogs, or tech stack. The API workspace owns
+  their published perspective, projections, DTOs, ordering, and 300-second revalidation.
 - Do not edit `src/lib/sanity/sanity.types.ts`. Run the Studio `typegen` script after any schema
-  or query change and review both generated artifacts.
+  change and review both generated artifacts.
 - Build page metadata with `src/lib/metadata.ts` and `@portfolio/env/site`. Keep canonical, Open
   Graph, Twitter, robots, sitemap, and `NEXT_PUBLIC_SITE_URL` behavior consistent.
 - Route-specific `opengraph-image.tsx` files use `src/lib/og-image.tsx`; matching Twitter files
   re-export them. The sitemap includes public routes plus published blog slugs. Robots must continue to
-  exclude `/admin` and `/api/`.
+  exclude `/admin` and private API families while keeping `/api/v1`, `/api/mcp`, OpenAPI, and
+  well-known discovery resources crawlable.
 - `/llms.txt` and `/llms-full.txt` are generated text Route Handlers backed by published Sanity
-  content and revalidate hourly. Keep their public route lists aligned with the sitemap and navigation.
+  content and revalidate hourly. Keep their API/discovery links aligned with `/developers/llms.txt`.
+- `src/app/api/mcp/**` owns the thin `mcp-handler` adapters. Tool registration uses MCP SDK v2,
+  complete Zod schemas, structured content plus text fallback, and read-only annotations. Do not add
+  legacy SSE routes or session persistence.
+- Generate OpenAPI and all discovery cards/catalogs from `@portfolio/api/public-portfolio`; never
+  check in a second static contract.
 
 ## Admin and telemetry
 
@@ -65,6 +69,7 @@ deployment.
 ## Verification
 
 - Run `pnpm --filter @portfolio/web check-types` after TypeScript or route changes.
+- Run `pnpm --filter @portfolio/web test` after MCP or discovery changes.
 - Run `pnpm --filter @portfolio/web build` after routing, metadata, Sanity query, configuration,
   instrumentation, or dependency changes.
 - Test affected browser interactions in a production build and check changed layouts at mobile and

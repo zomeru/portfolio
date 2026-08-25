@@ -1,10 +1,9 @@
+import type { PublicProject } from "@portfolio/api/public-portfolio";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
-import type { Project } from "@/lib/sanity/types";
-
 type ProjectItemProps = {
-  project: Project;
+  project: PublicProject;
   index: number;
 };
 

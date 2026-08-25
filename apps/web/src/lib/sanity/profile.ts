@@ -1,13 +1,18 @@
-import type { Profile, ProfileSocial } from "./types";
+import type { PublicProfile } from "@portfolio/api/public-portfolio";
+
+export type ProfileSocial = {
+  href: string;
+  name: "Email" | "GitHub" | "LinkedIn";
+};
 
 export function getProfileSocials(
-  profile: Pick<Profile, "email" | "githubUrl" | "linkedinUrl">,
+  profile: Pick<PublicProfile, "email" | "links">,
 ): ProfileSocial[] {
   const socials: ProfileSocial[] = [];
 
-  if (profile.email) socials.push({ name: "Email", href: `mailto:${profile.email}` });
-  if (profile.githubUrl) socials.push({ name: "GitHub", href: profile.githubUrl });
-  if (profile.linkedinUrl) socials.push({ name: "LinkedIn", href: profile.linkedinUrl });
+  socials.push({ name: "Email", href: profile.links.email });
+  socials.push({ name: "GitHub", href: profile.links.github });
+  socials.push({ name: "LinkedIn", href: profile.links.linkedin });
 
   return socials;
 }

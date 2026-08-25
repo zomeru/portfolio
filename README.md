@@ -9,7 +9,8 @@ The project uses:
 - **Runtime and tooling**: Node.js 24+, pnpm 11+, Turborepo 2+, TypeScript 6+, and Biome 2+
 - **Frontend**: Next.js 16+, React 19+, Tailwind CSS 4+, and React Compiler
 - **API**: Hono 4+
-- **Content**: Sanity Studio 6+, `next-sanity` 13+, and GROQ TypeGen
+- **Content**: Sanity Studio 6+, Sanity Client 7+, GROQ, Portable Text, and TypeGen
+- **Agent interfaces**: OpenAPI 3.2, REST `/api/v1`, and stateless Streamable HTTP MCP
 - **Data**: PostgreSQL, Neon, Drizzle ORM, pgvector, full-text search, and HNSW
 - **AI**: AI SDK 7+, Google Gemini, and OpenRouter
 - **Observability**: OpenTelemetry and optional Langfuse tracing
@@ -58,8 +59,9 @@ Use these commands for common development tasks:
 | `pnpm dev:all` | Start all workspace development tasks |
 | `pnpm build` | Build the web app |
 | `pnpm build:all` | Build all workspaces |
-| `pnpm check:all` | Run lint, dependency, unused-code, and type checks |
+| `pnpm check:all` | Run lint, dependency, unused-code, type, and contract checks |
 | `pnpm run check:all:build` | Run all checks and builds |
+| `pnpm test` | Run serializer, REST, OpenAPI, MCP protocol, and discovery tests |
 | `pnpm --filter @portfolio/studio typegen` | Regenerate Sanity types |
 | `pnpm db:generate` | Generate a Drizzle migration |
 | `pnpm db:migrate` | Apply database migrations |
@@ -67,4 +69,27 @@ Use these commands for common development tasks:
 | `pnpm ai:index --force` | Rebuild the full AI index |
 | `pnpm ai:eval` | Run deterministic assistant evaluations |
 
-Run database, seed, publish, and indexing commands only against a confirmed target. This repository has no general unit-test suite.
+Run database, seed, publish, and indexing commands only against a confirmed target.
+
+## Public agent interfaces
+
+Published Sanity content is normalized once in `@portfolio/api/public-portfolio` and shared by the
+website, REST API, and MCP server. The boundary uses explicit public DTOs and never returns drafts,
+Sanity internals, embeddings, admin metadata, or secrets.
+
+| Resource | Purpose |
+| --- | --- |
+| `/api/v1` | Versioned machine-readable API index |
+| `/api/v1/profile`, `/resume`, `/experience`, `/projects`, `/blogs`, `/tech-stack` | Public JSON resources |
+| `/api/v1/blogs/{slug}` | Published blog detail by canonical slug |
+| `/openapi.json` | Generated OpenAPI 3.2 contract |
+| `/api/mcp` | Read-only Streamable HTTP portfolio MCP server |
+| `/api/mcp/docs` | Read-only documentation MCP server |
+| `/.well-known/api-catalog` | RFC 9727 Linkset catalog |
+| `/.well-known/mcp/*.json` | MCP server cards |
+| `/.well-known/agent-skills/index.json` | Machine-readable capability index |
+| `/developers`, `/developers.md`, `/developers/llms.txt` | Human and agent integration guides |
+
+No authentication is required. Clients should not send credentials. Canonical URLs come from
+`NEXT_PUBLIC_SITE_URL`; REST responses use scoped permissive CORS and public caching with a five-minute
+Sanity revalidation window.

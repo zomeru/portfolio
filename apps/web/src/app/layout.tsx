@@ -1,3 +1,4 @@
+import { getPublicProfile, getPublicTechStack } from "@portfolio/api/public-portfolio";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
@@ -6,9 +7,6 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteNav } from "@/components/layout/site-nav";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { siteUrl } from "@/lib/metadata";
-import { portableTextToPlainText } from "@/lib/sanity/portable-text";
-import { getProfile } from "@/lib/sanity/services/profile";
-import { getTechStack } from "@/lib/sanity/services/tech-stack";
 
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -24,10 +22,10 @@ const geistMono = Geist_Mono({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const profile = await getProfile();
+  const profile = await getPublicProfile();
   const name = profile?.name || "Portfolio";
   const role = profile?.role || "Software Engineer";
-  const description = portableTextToPlainText(profile?.biography) || "Personal portfolio.";
+  const description = profile?.biography || "Personal portfolio.";
 
   return {
     metadataBase: siteUrl,
@@ -59,7 +57,7 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const [profile, techStack] = await Promise.all([getProfile(), getTechStack()]);
+  const [profile, techStack] = await Promise.all([getPublicProfile(), getPublicTechStack()]);
 
   return (
     <html
@@ -77,7 +75,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           </a>
           <div className="flex min-h-dvh flex-col">
             <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-5 sm:px-8">
-              <SiteHeader profile={profile} techStack={techStack} />
+              <SiteHeader profile={profile} techStack={techStack.groups} />
               <SiteNav />
               <main id="main-content" tabIndex={-1} className="flex-1 scroll-mt-4 py-12 sm:py-16">
                 {children}

@@ -1,21 +1,21 @@
+import type { PublicProfile, PublicTechStackGroup } from "@portfolio/api/public-portfolio";
 import { ArrowUpRight } from "lucide-react";
 
-import { SanityProfileImage } from "@/components/portfolio/sanity-profile-image";
+import { PublicProfileImage } from "@/components/portfolio/public-profile-image";
 import { SocialLinks } from "@/components/portfolio/social-links";
 import { TechStack } from "@/components/portfolio/tech-stack";
 import { getProfileSocials } from "@/lib/sanity/profile";
-import type { Profile, TechStackGroup } from "@/lib/sanity/types";
 
 const AVATAR_SIZE = 512;
 
 type SiteHeaderProps = {
-  profile: Profile | null;
-  techStack: readonly TechStackGroup[];
+  profile: PublicProfile | null;
+  techStack: readonly PublicTechStackGroup[];
 };
 
 export function SiteHeader({ profile, techStack }: SiteHeaderProps) {
   const socials = profile ? getProfileSocials(profile) : [];
-  const resumeUrl = profile?.resumeUrl ?? "/assets/GREGORIO_ZOMER_RESUME.pdf";
+  const resumeUrl = profile?.resumePdfUrl ?? "/assets/GREGORIO_ZOMER_RESUME.pdf";
 
   return (
     <header className="border-b border-border">
@@ -23,7 +23,7 @@ export function SiteHeader({ profile, techStack }: SiteHeaderProps) {
         <div className="flex flex-col items-start gap-5">
           {profile && (
             <div className="relative size-24 overflow-hidden rounded-full border border-border">
-              <SanityProfileImage
+              <PublicProfileImage
                 value={profile.photo}
                 size={AVATAR_SIZE}
                 priority

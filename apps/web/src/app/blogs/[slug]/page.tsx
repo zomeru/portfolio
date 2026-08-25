@@ -1,3 +1,4 @@
+import { getPublicBlogPost, getPublicPortfolioSnapshot } from "@portfolio/api/public-portfolio";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -5,19 +6,18 @@ import { notFound } from "next/navigation";
 import { PageTransition } from "@/components/layout/page-transition";
 import { MarkdownContent } from "@/components/portfolio/markdown-content";
 import { createPageMetadata } from "@/lib/metadata";
-import { getBlogPostBySlug, getBlogPostSlugs } from "@/lib/sanity/services/blog";
 
 type BlogPostPageProps = {
   params: Promise<{ slug: string }>;
 };
 
 export async function generateStaticParams() {
-  return await getBlogPostSlugs();
+  return (await getPublicPortfolioSnapshot()).blogs.map(({ slug }) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
+  const post = await getPublicBlogPost(slug);
   if (!post) return {};
 
   const metadata = await createPageMetadata({
@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = await getBlogPostBySlug(slug);
+  const post = await getPublicBlogPost(slug);
   if (!post) notFound();
 
   const date = new Intl.DateTimeFormat("en-US", {

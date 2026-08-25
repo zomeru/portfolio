@@ -1,8 +1,8 @@
+import type { PublicProfile } from "@portfolio/api/public-portfolio";
 import { appVersion } from "@/lib/app-version";
 import { getProfileSocials } from "@/lib/sanity/profile";
-import type { Profile } from "@/lib/sanity/types";
 
-export function SiteFooter({ profile }: { profile: Profile | null }) {
+export function SiteFooter({ profile }: { profile: PublicProfile | null }) {
   const footerSocials = profile
     ? getProfileSocials(profile).filter((social) => social.name !== "Email")
     : [];
