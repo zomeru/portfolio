@@ -53,11 +53,8 @@ test("machine-readable discovery routes expose canonical content types and links
   const guide = await developerMarkdown.text();
   assert.match(guide, /get_api_overview/);
   assert.match(guide, /docs-server-card\.json/);
-  assert.match(guide, /### pnpm \(default\)/);
-  assert.match(guide, /pnpm dlx @modelcontextprotocol\/inspector/);
   assert.match(guide, /npx @modelcontextprotocol\/inspector/);
-  assert.match(guide, /bunx @modelcontextprotocol\/inspector/);
-  assert.match(guide, /yarn dlx @modelcontextprotocol\/inspector/);
+  assert.doesNotMatch(guide, /(?:pnpm dlx|bunx|yarn dlx) @modelcontextprotocol\/inspector/);
 
   const authentication = getAuthenticationMarkdown();
   assert.match(authentication.headers.get("cache-control") ?? "", /s-maxage=3600/);

@@ -6,27 +6,6 @@ import {
 
 const absoluteUrl = (path: string, siteUrl: URL) => new URL(path, siteUrl).href;
 
-export type McpInspectorCommandGroup = {
-  commands: string[];
-  id: "pnpm" | "npm" | "bun" | "yarn";
-  label: string;
-};
-
-export function getMcpInspectorCommandGroups(siteUrl: URL): McpInspectorCommandGroup[] {
-  const endpoint = absoluteUrl("/api/mcp", siteUrl);
-  const command = (runner: string) => [
-    `${runner} @modelcontextprotocol/inspector --server-url ${endpoint} --transport http`,
-    `${runner} @modelcontextprotocol/inspector --cli --server-url ${endpoint} --transport http --method tools/list`,
-  ];
-
-  return [
-    { commands: command("pnpm dlx"), id: "pnpm", label: "pnpm" },
-    { commands: command("npx"), id: "npm", label: "npm" },
-    { commands: command("bunx"), id: "bun", label: "Bun" },
-    { commands: command("yarn dlx"), id: "yarn", label: "Yarn" },
-  ];
-}
-
 export function getAuthenticationGuideMarkdown(siteUrl: URL) {
   return `# Authentication policy
 
@@ -41,7 +20,7 @@ Private administration, draft content, AI indexing metadata, embeddings, provide
 `;
 }
 
-export function getDeveloperGuideMarkdownParts(siteUrl: URL) {
+export function getDeveloperGuideMarkdown(siteUrl: URL) {
   const origin = siteUrl.href.replace(/\/$/, "");
   const tools = PORTFOLIO_MCP_TOOLS.map((tool) => `- \`${tool.name}\` — ${tool.description}`).join(
     "\n",
@@ -49,8 +28,12 @@ export function getDeveloperGuideMarkdownParts(siteUrl: URL) {
   const docsTools = DOCS_MCP_TOOLS.map((tool) => `- \`${tool.name}\` — ${tool.description}`).join(
     "\n",
   );
+  const inspectorCommands = [
+    `npx @modelcontextprotocol/inspector --server-url ${origin}/api/mcp --transport http`,
+    `npx @modelcontextprotocol/inspector --cli --server-url ${origin}/api/mcp --transport http --method tools/list`,
+  ].join("\n");
 
-  const beforeInspector = `# Zomer Gregorio Portfolio API
+  return `# Zomer Gregorio Portfolio API
 
 The Portfolio API gives agents and developers deterministic, structured access to Zomer Gregorio's published professional information without scraping HTML.
 
@@ -122,9 +105,13 @@ Example client configuration:
 
 The Inspector commands below target the portfolio MCP. Replace \`${origin}/api/mcp\` with \`${origin}/api/mcp/docs\` to inspect the documentation MCP.
 
-`;
+## Current MCP Inspector commands
 
-  const afterInspector = `## Authentication and safety
+\`\`\`bash
+${inspectorCommands}
+\`\`\`
+
+## Authentication and safety
 
 Authentication is \`none\`. Clients SHOULD NOT send credentials. Every operation is read-only and exposes only explicit public DTOs; draft documents, Sanity internals, embeddings, admin metadata, and secrets are excluded.
 
@@ -132,27 +119,6 @@ Authentication is \`none\`. Clients SHOULD NOT send credentials. Every operation
 
 Responses use public HTTP caching and the existing five-minute Sanity revalidation window. Newly published content should appear reasonably quickly without creating a second cache architecture.
 `;
-
-  return { afterInspector, beforeInspector };
-}
-
-export function getDeveloperGuideMarkdown(siteUrl: URL) {
-  const { afterInspector, beforeInspector } = getDeveloperGuideMarkdownParts(siteUrl);
-  const commands = getMcpInspectorCommandGroups(siteUrl)
-    .map(
-      ({ commands: values, id, label }) => `### ${label}${id === "pnpm" ? " (default)" : ""}
-
-\`\`\`bash
-${values.join("\n")}
-\`\`\``,
-    )
-    .join("\n\n");
-
-  return `${beforeInspector}## Current MCP Inspector commands
-
-${commands}
-
-${afterInspector}`;
 }
 
 export function getDeveloperLlmsText(siteUrl: URL) {
