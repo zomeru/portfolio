@@ -1,5 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
+import { PageTransition } from "@/components/layout/page-transition";
 import { BookACallButton } from "@/components/portfolio/book-a-call-button";
 import { PageHeader } from "@/components/portfolio/page-header";
 import { createPageMetadata } from "@/lib/metadata";
@@ -17,7 +18,7 @@ export default async function ContactPage() {
   const elsewhere = (profile ? getProfileSocials(profile) : []).filter((p) => p.name !== "GitHub");
 
   return (
-    <>
+    <PageTransition>
       <PageHeader
         index="06"
         eyebrow="Let's talk"
@@ -41,6 +42,6 @@ export default async function ContactPage() {
           </li>
         ))}
       </ul>
-    </>
+    </PageTransition>
   );
 }

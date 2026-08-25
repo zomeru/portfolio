@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PageTransition } from "@/components/layout/page-transition";
 import { BlogItem } from "@/components/portfolio/blog-item";
 import { PageHeader } from "@/components/portfolio/page-header";
 import { createPageMetadata } from "@/lib/metadata";
@@ -44,7 +45,7 @@ export default async function BlogsPage({ searchParams }: BlogsPageProps) {
   }
 
   return (
-    <>
+    <PageTransition>
       <PageHeader
         index="03"
         eyebrow="Blog"
@@ -98,6 +99,6 @@ export default async function BlogsPage({ searchParams }: BlogsPageProps) {
           )}
         </nav>
       )}
-    </>
+    </PageTransition>
   );
 }

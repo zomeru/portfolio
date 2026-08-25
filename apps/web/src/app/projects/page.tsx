@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageTransition } from "@/components/layout/page-transition";
 import { PageHeader } from "@/components/portfolio/page-header";
 import { ProjectItem } from "@/components/portfolio/project-item";
 import { createPageMetadata } from "@/lib/metadata";
@@ -14,7 +15,7 @@ export default async function ProjectsPage() {
   const projects = await getProjects();
 
   return (
-    <>
+    <PageTransition>
       <PageHeader index="02" eyebrow="Projects" title="Selected work." />
       <ul className="mt-10 divide-y divide-border border-t border-border">
         {projects.map((project, index) => (
@@ -26,6 +27,6 @@ export default async function ProjectsPage() {
           <li className="py-10 text-sm text-muted">No projects are published yet.</li>
         )}
       </ul>
-    </>
+    </PageTransition>
   );
 }

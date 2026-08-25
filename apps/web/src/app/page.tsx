@@ -1,3 +1,4 @@
+import { PageTransition } from "@/components/layout/page-transition";
 import { ExperienceItem } from "@/components/portfolio/experience-item";
 import { PageHeader } from "@/components/portfolio/page-header";
 import { PortableTextContent } from "@/lib/sanity/portable-text";
@@ -8,7 +9,7 @@ export default async function AboutPage() {
   const [profile, experience] = await Promise.all([getProfile(), getExperience()]);
 
   return (
-    <>
+    <PageTransition>
       <PageHeader
         index="01"
         eyebrow="About"
@@ -48,6 +49,6 @@ export default async function AboutPage() {
           )}
         </ol>
       </section>
-    </>
+    </PageTransition>
   );
 }
