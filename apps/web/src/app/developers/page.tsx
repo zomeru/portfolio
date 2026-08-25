@@ -16,7 +16,7 @@ export default function DevelopersPage() {
   return (
     <PageTransition>
       <article>
-        <MarkdownContent value={getDeveloperGuideMarkdown(canonicalSiteUrl)} />
+        <MarkdownContent openLinksInNewTab value={getDeveloperGuideMarkdown(canonicalSiteUrl)} />
       </article>
     </PageTransition>
   );

@@ -39,27 +39,31 @@ The Portfolio API gives agents and developers deterministic, structured access t
 
 ## Endpoints
 
-- REST API index: ${origin}/api/v1
-- OpenAPI 3.2: ${origin}/openapi.json
-- Portfolio MCP: ${origin}/api/mcp
-- Documentation MCP: ${origin}/api/mcp/docs
-- API catalog: ${origin}/.well-known/api-catalog
-- Portfolio MCP server card: ${origin}/.well-known/mcp/server-card.json
-- Documentation MCP server card: ${origin}/.well-known/mcp/docs-server-card.json
-- Agent capabilities: ${origin}/.well-known/agent-skills/index.json
+| Service | URL |
+| --- | --- |
+| REST API index | [\`${origin}/api/v1\`](${origin}/api/v1) |
+| OpenAPI 3.2 | [\`${origin}/openapi.json\`](${origin}/openapi.json) |
+| Portfolio MCP | [\`${origin}/api/mcp\`](${origin}/api/mcp) |
+| Documentation MCP | [\`${origin}/api/mcp/docs\`](${origin}/api/mcp/docs) |
+| API catalog | [\`${origin}/.well-known/api-catalog\`](${origin}/.well-known/api-catalog) |
+| Portfolio MCP server card | [\`${origin}/.well-known/mcp/server-card.json\`](${origin}/.well-known/mcp/server-card.json) |
+| Documentation MCP server card | [\`${origin}/.well-known/mcp/docs-server-card.json\`](${origin}/.well-known/mcp/docs-server-card.json) |
+| Agent capabilities | [\`${origin}/.well-known/agent-skills/index.json\`](${origin}/.well-known/agent-skills/index.json) |
 
 The REST contract is version ${PUBLIC_API_VERSION}. Breaking REST changes will use a new URL version such as \`/api/v2\`; non-breaking additions may remain in \`/api/v1\`.
 
 ## REST resources
 
-- \`GET /api/v1\`
-- \`GET /api/v1/profile\`
-- \`GET /api/v1/resume\`
-- \`GET /api/v1/experience\`
-- \`GET /api/v1/projects\`
-- \`GET /api/v1/blogs?limit=10&offset=0\`
-- \`GET /api/v1/blogs/{slug}\`
-- \`GET /api/v1/tech-stack\`
+| Resource | Method | Endpoint |
+| --- | --- | --- |
+| API index | GET | \`/api/v1\` |
+| Profile | GET | \`/api/v1/profile\` |
+| Resume | GET | \`/api/v1/resume\` |
+| Experience | GET | \`/api/v1/experience\` |
+| Projects | GET | \`/api/v1/projects\` |
+| Blogs | GET | \`/api/v1/blogs?limit=10&offset=0\` |
+| Blog | GET | \`/api/v1/blogs/{slug}\` |
+| Tech stack | GET | \`/api/v1/tech-stack\` |
 
 All REST resources support anonymous cross-origin reads and return cacheable JSON sourced from published Sanity content.
 
