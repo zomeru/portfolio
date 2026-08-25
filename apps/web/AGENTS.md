@@ -45,6 +45,9 @@ Hono backend and stateless MCP handlers are mounted inside the same deployment.
   re-export them. The sitemap includes public routes plus published blog slugs. Robots must continue to
   exclude `/admin` and private API families while keeping `/api/v1`, `/api/mcp`, OpenAPI, and
   well-known discovery resources crawlable.
+- `/robots.txt` is a custom Route Handler so it can advertise the emerging NLWeb `schemamap`
+  directive alongside the standard sitemap. Keep `/schemamap.xml` aligned with the public
+  schema.org JSON Lines feed at `/structured-data/portfolio.jsonl`.
 - `/llms.txt` and `/llms-full.txt` are generated text Route Handlers backed by published Sanity
   content and revalidate hourly. Keep their API/discovery links aligned with `/developers/llms.txt`.
 - `src/app/api/mcp/**` owns the thin `mcp-handler` adapters. Tool registration uses MCP SDK v2,
@@ -56,7 +59,7 @@ Hono backend and stateless MCP handlers are mounted inside the same deployment.
 ## Admin and telemetry
 
 - Admin access is capability-specific. Blog publishing verifies `CRON_SECRET`; AI reindexing
-  verifies `OPENROUTER_API_KEY`. Store only the signed eight-hour capability token in an `HttpOnly`,
+  verifies `AI_INDEX_SECRET_KEY`. Store only the signed eight-hour capability token in an `HttpOnly`,
   `SameSite=Strict`, `/admin` cookie and re-authorize every mutation.
 - Blog generation goes through the in-process Hono route, then revalidates the blog list and created
   path. Treat publishing and best-effort AI indexing as separate outcomes in the UI.

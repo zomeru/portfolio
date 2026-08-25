@@ -58,6 +58,8 @@ export async function GET(): Promise<Response> {
 - [MCP Server Card](${new URL("/.well-known/mcp/server-card.json", siteUrl).href}): MCP metadata and tool index
 - [Documentation MCP Server Card](${new URL("/.well-known/mcp/docs-server-card.json", siteUrl).href}): Documentation MCP metadata and tool index
 - [Agent Skills](${new URL("/.well-known/agent-skills/index.json", siteUrl).href}): Machine-readable capabilities
+- [Schema Map](${new URL("/schemamap.xml", siteUrl).href}): NLWeb index for structured schema feeds
+- [Schema Feed](${new URL("/structured-data/portfolio.jsonl", siteUrl).href}): Aggregated schema.org records as JSON Lines
 - [Developer Guide](${new URL("/developers.md", siteUrl).href}): REST and MCP integration instructions
 
 ## Contact

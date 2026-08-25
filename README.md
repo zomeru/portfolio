@@ -88,6 +88,7 @@ Sanity internals, embeddings, admin metadata, or secrets.
 | `/.well-known/api-catalog` | RFC 9727 Linkset catalog |
 | `/.well-known/mcp/*.json` | MCP server cards |
 | `/.well-known/agent-skills/index.json` | Machine-readable capability index |
+| `/schemamap.xml`, `/structured-data/portfolio.jsonl` | NLWeb schema map and schema.org JSON Lines feed |
 | `/developers`, `/developers.md`, `/developers/llms.txt` | Human and agent integration guides |
 
 No authentication is required. Clients should not send credentials. Canonical URLs come from

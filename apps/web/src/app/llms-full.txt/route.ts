@@ -80,6 +80,8 @@ export async function GET(): Promise<Response> {
 - Portfolio MCP server card: ${new URL("/.well-known/mcp/server-card.json", siteUrl).href}
 - Documentation MCP server card: ${new URL("/.well-known/mcp/docs-server-card.json", siteUrl).href}
 - Agent skills: ${new URL("/.well-known/agent-skills/index.json", siteUrl).href}
+- NLWeb schema map: ${new URL("/schemamap.xml", siteUrl).href}
+- Schema.org JSON Lines feed: ${new URL("/structured-data/portfolio.jsonl", siteUrl).href}
 - Developer guide: ${new URL("/developers.md", siteUrl).href}
 - Authentication: none; clients SHOULD NOT send credentials
 
