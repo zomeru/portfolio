@@ -145,7 +145,7 @@ export type ChatCitation = {
   id: string;
   title: string;
   url: string;
-  sourceType: (typeof knowledgeSourceType.enumValues)[number];
+  sourceType: (typeof knowledgeSourceType.enumValues)[number] | "web";
 };
 
 export const chatMessages = pgTable(

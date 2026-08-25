@@ -1,6 +1,7 @@
 import type { GithubCommitPage, GithubContributionCalendar } from "@portfolio/api/types";
 import type { Metadata } from "next";
 
+import { PageTransition } from "@/components/layout/page-transition";
 import {
   GithubCommitHistorySection,
   GithubContributionCalendarSection,
@@ -94,7 +95,7 @@ export default async function GithubContributionsPage({
   ]);
 
   return (
-    <>
+    <PageTransition>
       <PageHeader
         index="04"
         eyebrow="GitHub Contributions"
@@ -105,6 +106,6 @@ export default async function GithubContributionsPage({
         initialResult={commitHistory}
         initialFilters={{ page, pageSize, repo }}
       />
-    </>
+    </PageTransition>
   );
 }

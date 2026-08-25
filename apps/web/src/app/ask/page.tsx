@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AskZomerChat } from "@/components/ai/ask-zomer-chat-client";
+import { PageTransition } from "@/components/layout/page-transition";
 import { PageHeader } from "@/components/portfolio/page-header";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -11,7 +12,7 @@ export const metadata: Metadata = createPageMetadata({
 
 export default function AskPage() {
   return (
-    <>
+    <PageTransition>
       <PageHeader
         index="05"
         eyebrow="Ask Zomer AI"
@@ -21,6 +22,6 @@ export default function AskPage() {
         Ask about anything on this portfolio. Answers about me cite the pages they came from.
       </p>
       <AskZomerChat />
-    </>
+    </PageTransition>
   );
 }

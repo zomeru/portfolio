@@ -8,6 +8,7 @@ import { adminAiRoutes } from "./routes/admin-ai";
 import { assistantRoutes } from "./routes/assistant";
 import { blogGenerationRoutes } from "./routes/blog-generation";
 import { githubRoutes } from "./routes/github";
+import { publicApiRoutes } from "./routes/public";
 import type { ApiEnv } from "./types/hono";
 
 const app = new Hono<ApiEnv>().basePath("/api");
@@ -32,7 +33,8 @@ export const apiApp = app
   .route("/ai", assistantRoutes)
   .route("/admin/ai", adminAiRoutes)
   .route("/blog", blogGenerationRoutes)
-  .route("/github", githubRoutes);
+  .route("/github", githubRoutes)
+  .route("/v1", publicApiRoutes);
 
 apiApp.notFound((c) =>
   c.json(

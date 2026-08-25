@@ -1,18 +1,16 @@
+import { getPublicPortfolioSnapshot } from "@portfolio/api/public-portfolio";
 import { siteUrl } from "@/lib/metadata";
-import { getBlogPosts } from "@/lib/sanity/services/blog";
-import { getExperience } from "@/lib/sanity/services/experience";
-import { getProfile } from "@/lib/sanity/services/profile";
-import { getProjects } from "@/lib/sanity/services/projects";
 
 export const revalidate = 3600;
 
 export async function GET(): Promise<Response> {
-  const [profile, experience, projects, posts] = await Promise.all([
-    getProfile(),
-    getExperience(),
-    getProjects(),
-    getBlogPosts(),
-  ]);
+  const {
+    blogs: posts,
+    experience,
+    profile,
+    projects,
+    techStack,
+  } = await getPublicPortfolioSnapshot();
   const name = profile?.name || "Portfolio";
   const role = profile?.role || "Software Engineer";
   const recentPostLines = posts
@@ -25,11 +23,14 @@ export async function GET(): Promise<Response> {
   const projectLines = projects
     .map((project) => `- ${project.title}: ${project.description}`)
     .join("\n");
+  const techStackLines = techStack
+    .map((group) => `- ${group.name}: ${group.items.join(", ")}`)
+    .join("\n");
   const contactLines = [
     `- Website: ${siteUrl}`,
     profile?.email ? `- Email: ${profile.email}` : null,
-    profile?.githubUrl ? `- GitHub: ${profile.githubUrl}` : null,
-    profile?.linkedinUrl ? `- LinkedIn: ${profile.linkedinUrl}` : null,
+    profile ? `- GitHub: ${profile.links.github}` : null,
+    profile ? `- LinkedIn: ${profile.links.linkedin}` : null,
   ]
     .filter((line): line is string => Boolean(line))
     .join("\n");
@@ -47,9 +48,23 @@ export async function GET(): Promise<Response> {
 - [GitHub Contributions](${new URL("/github-contributions", siteUrl).href}): GitHub contribution activity and commit history across owned repositories
 - [Contact](${new URL("/contact", siteUrl).href}): Ways to get in touch
 
-## Full Content Index
+## Structured Agent and Developer Access
 
-For a complete list of all blog posts with descriptions, see: ${new URL("/llms-full.txt", siteUrl).href}
+- [Public REST API](${new URL("/api/v1", siteUrl).href}): Versioned JSON resources for profile, resume, experience, projects, blogs, and tech stack
+- [OpenAPI 3.2](${new URL("/openapi.json", siteUrl).href}): Complete REST contract
+- [Portfolio MCP](${new URL("/api/mcp", siteUrl).href}): Stateless Streamable HTTP MCP server
+- [Documentation MCP](${new URL("/api/mcp/docs", siteUrl).href}): API guide, authentication policy, and OpenAPI tools
+- [API Catalog](${new URL("/.well-known/api-catalog", siteUrl).href}): RFC 9727 Linkset discovery document
+- [MCP Server Card](${new URL("/.well-known/mcp/server-card.json", siteUrl).href}): MCP metadata and tool index
+- [Documentation MCP Server Card](${new URL("/.well-known/mcp/docs-server-card.json", siteUrl).href}): Documentation MCP metadata and tool index
+- [Agent Skills](${new URL("/.well-known/agent-skills/index.json", siteUrl).href}): Machine-readable capabilities
+- [Schema Map](${new URL("/schemamap.xml", siteUrl).href}): NLWeb index for structured schema feeds
+- [Schema Feed](${new URL("/structured-data/portfolio.jsonl", siteUrl).href}): Aggregated schema.org records as JSON Lines
+- [Developer Guide](${new URL("/developers.md", siteUrl).href}): REST and MCP integration instructions
+
+## Contact
+
+${contactLines}
 
 ## Experience
 
@@ -59,13 +74,18 @@ ${experienceLines || "No experience entries published yet."}
 
 ${projectLines || "No projects published yet."}
 
+## Tech Stack
+
+${techStackLines || "No tech stack groups published yet."}
+
 ## 10 Recent Blog Posts
 
 ${recentPostLines || "No blog posts published yet."}
 
-## Contact
+## Full Content Index
 
-${contactLines}
+For a complete list of all blog posts with descriptions, see: ${new URL("/llms-full.txt", siteUrl).href}
+
 `;
 
   return new Response(content, {

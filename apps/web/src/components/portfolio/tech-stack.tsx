@@ -1,10 +1,10 @@
-import type { TechStackGroup } from "@/lib/sanity/types";
+import type { PublicTechStackGroup } from "@portfolio/api/public-portfolio";
 
-export function TechStack({ groups }: { groups: readonly TechStackGroup[] }) {
+export function TechStack({ groups }: { groups: readonly PublicTechStackGroup[] }) {
   return (
     <dl className="grid grid-cols-2 gap-x-6 gap-y-5">
       {groups.map((category) => (
-        <div key={category._id}>
+        <div key={category.name}>
           <dt className="font-mono text-[10px] uppercase tracking-widest text-muted">
             {category.name}
           </dt>

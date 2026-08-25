@@ -2,7 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import { Mail } from "lucide-react";
 
 import { GitHubIcon, LinkedInIcon } from "@/components/icons";
-import type { ProfileSocial } from "@/lib/sanity/types";
+import type { ProfileSocial } from "@/lib/sanity/profile";
 import { cn } from "@/lib/utils";
 
 const socialIcons: Record<ProfileSocial["name"], LucideIcon | typeof GitHubIcon> = {

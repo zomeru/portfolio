@@ -1,7 +1,6 @@
+import type { PublicBlogPostSummary } from "@portfolio/api/public-portfolio";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
-
-import type { BlogPostListItem } from "@/lib/sanity/types";
 
 const dateFormatter = new Intl.DateTimeFormat("en-US", {
   month: "long",
@@ -10,7 +9,7 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
   timeZone: "UTC",
 });
 
-export function BlogItem({ post }: { post: BlogPostListItem }) {
+export function BlogItem({ post }: { post: PublicBlogPostSummary }) {
   const date = dateFormatter.format(new Date(post.date));
 
   return (

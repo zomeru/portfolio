@@ -1,7 +1,12 @@
 import { getSanityEnv } from "@portfolio/env/sanity";
+import { getSiteEnv } from "@portfolio/env/site";
 import type { NextConfig } from "next";
 
 const sanityEnv = getSanityEnv();
+const siteEnv = getSiteEnv(
+  process.env.NEXT_PUBLIC_SITE_URL ? process.env : { ...process.env, NODE_ENV: "development" },
+);
+const canonicalSiteUrl = new URL(siteEnv.siteUrl ?? "http://localhost:3000");
 
 const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(), geolocation=(), microphone=()" },
@@ -10,9 +15,28 @@ const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
 ] as const;
 
+const discoveryLinkHeader = [
+  ["/openapi.json", "service-desc", "application/vnd.oai.openapi+json"],
+  ["/.well-known/api-catalog", "api-catalog", "application/linkset+json"],
+  ["/.well-known/mcp/server-card.json", "service-meta", "application/json"],
+  ["/.well-known/mcp/docs-server-card.json", "service-meta", "application/json"],
+  ["/.well-known/agent-skills/index.json", "service-meta", "application/json"],
+  ["/llms.txt", "alternate", "text/plain"],
+] as const;
+
+const discoveryLinks = discoveryLinkHeader
+  .map(
+    ([path, relation, type]) =>
+      `<${new URL(path, canonicalSiteUrl).href}>; rel="${relation}"; type="${type}"`,
+  )
+  .join(", ");
+
 const nextConfig: NextConfig = {
   async headers() {
-    return [{ source: "/(.*)", headers: [...securityHeaders] }];
+    return [
+      { source: "/(.*)", headers: [...securityHeaders] },
+      { source: "/", headers: [{ key: "Link", value: discoveryLinks }] },
+    ];
   },
   images: {
     remotePatterns: [

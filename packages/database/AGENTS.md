@@ -20,6 +20,9 @@ Drizzle migrations. Consumers must not issue Drizzle queries directly.
   coordinated API constants, schema, migration, index, and forced reindex updates.
 - Preserve foreign-key deletion behavior, message-provider idempotency, the unique ingestion lock, and
   deterministic document/chunk replacement semantics.
+- The knowledge-source enum contains only indexed portfolio sources. Persisted chat citations may also
+  use `web` for validated provider-search URLs; do not add web results to the knowledge-document enum
+  or indexing tables.
 
 ## Migration workflow
 

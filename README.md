@@ -1,18 +1,23 @@
 # Portfolio
 
-A personal portfolio with a technical blog, GitHub activity, and Ask Zomer, a grounded AI assistant. Sanity manages published content, and PostgreSQL supports AI retrieval and chat persistence.
+A personal portfolio with a technical blog, GitHub activity, and Ask Zomer AI. Sanity manages published content, while PostgreSQL supports grounded portfolio retrieval and chat persistence.
 
 ## Tech stack
 
 The project uses:
 
-- **Runtime and tooling**: Node.js 24+, pnpm 11+, Turborepo 2+, TypeScript 6+, and Biome 2+
+- **Runtime and tooling**: Node.js 24.19.x, pnpm 11.22.0, Turborepo 2+, TypeScript 6+, and Biome 2+
 - **Frontend**: Next.js 16+, React 19+, Tailwind CSS 4+, and React Compiler
 - **API**: Hono 4+
-- **Content**: Sanity Studio 6+, `next-sanity` 13+, and GROQ TypeGen
+- **Content**: Sanity Studio 6+, Sanity Client 7+, GROQ, Portable Text, and TypeGen
+- **Agent interfaces**: OpenAPI 3.2, REST `/api/v1`, and stateless Streamable HTTP MCP
 - **Data**: PostgreSQL, Neon, Drizzle ORM, pgvector, full-text search, and HNSW
-- **AI**: AI SDK 7+, Google Gemini, and OpenRouter
+- **AI**: AI SDK 7+, Gemini blog generation, Groq, NVIDIA NIM, or OpenRouter chat, and OpenRouter embeddings
 - **Observability**: OpenTelemetry and optional Langfuse tracing
+
+## Architecture
+
+`apps/web` is the only deployed process. It serves the Next.js UI, mounts the Hono app from `apps/api`, and hosts the MCP transports. `apps/api` owns the canonical published-portfolio service shared by the website, REST API, OpenAPI contract, and MCP tools. Ask Zomer uses the derived portfolio index for portfolio questions and can use provider web search for general questions when Groq or OpenRouter is selected.
 
 ## Local setup
 
@@ -58,8 +63,9 @@ Use these commands for common development tasks:
 | `pnpm dev:all` | Start all workspace development tasks |
 | `pnpm build` | Build the web app |
 | `pnpm build:all` | Build all workspaces |
-| `pnpm check:all` | Run lint, dependency, unused-code, and type checks |
+| `pnpm check:all` | Run lint, dependency, unused-code, type, and test checks |
 | `pnpm run check:all:build` | Run all checks and builds |
+| `pnpm test` | Run public API, MCP, discovery, and SEO contract tests |
 | `pnpm --filter @portfolio/studio typegen` | Regenerate Sanity types |
 | `pnpm db:generate` | Generate a Drizzle migration |
 | `pnpm db:migrate` | Apply database migrations |
@@ -67,4 +73,19 @@ Use these commands for common development tasks:
 | `pnpm ai:index --force` | Rebuild the full AI index |
 | `pnpm ai:eval` | Run deterministic assistant evaluations |
 
-Run database, seed, publish, and indexing commands only against a confirmed target. This repository has no general unit-test suite.
+Run database, seed, publish, and indexing commands only against a confirmed target.
+
+## Public agent interfaces
+
+Published Sanity content is normalized once in `@portfolio/api/public-portfolio` and shared by every public interface. Explicit DTOs exclude drafts, Sanity internals, embeddings, admin metadata, and secrets.
+
+| Resource | Purpose |
+| --- | --- |
+| `/api/v1/*`, `/openapi.json` | Public REST resources and generated OpenAPI 3.2 contract |
+| `/api/mcp`, `/api/mcp/docs` | Read-only Streamable HTTP MCP servers |
+| `/.well-known/*`, `/auth.md`, `/llms.txt`, `/llms-full.txt` | Machine-readable discovery and usage guidance |
+| `/robots.txt`, `/sitemap.xml` | Search and crawler discovery |
+| `/schemamap.xml`, `/structured-data/portfolio.jsonl` | NLWeb schema map and schema.org JSON Lines feed |
+| `/developers`, `/developers.md`, `/developers/llms.txt` | Human and agent integration guides |
+
+No authentication is required. Clients should not send credentials. Canonical URLs come from `NEXT_PUBLIC_SITE_URL`; REST responses use scoped permissive CORS and a five-minute public-content cache.

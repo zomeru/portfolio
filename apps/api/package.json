@@ -5,6 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./src/next.ts",
+    "./public-portfolio": "./src/public-portfolio.ts",
+    "./public-portfolio/testing": "./src/public-portfolio-testing.ts",
     "./types": "./src/types.ts"
   },
   "scripts": {
@@ -12,6 +14,7 @@
     "ai:index": "pnpm run with-env tsx src/cli/index-knowledge.ts",
     "ai:index:prod": "pnpm run with-env:prod tsx src/cli/index-knowledge.ts",
     "check-types": "tsc --noEmit",
+    "test": "node --conditions=react-server --import tsx --test 'src/**/*.test.ts'",
     "with-env": "pnpm exec dotenv -e ../../.env.local --",
     "with-env:prod": "pnpm exec dotenv -e ../../.env.production.local --"
   },
@@ -22,11 +25,13 @@
     "@langfuse/tracing": "^5.10.1",
     "@openrouter/ai-sdk-provider": "^3.0.0",
     "@opentelemetry/api": "^1.9.1",
+    "@portabletext/toolkit": "^6.0.0",
     "@portfolio/content": "workspace:*",
     "@portfolio/database": "workspace:*",
     "@portfolio/env": "workspace:*",
     "@sanity/client": "^7.26.2",
     "ai": "^7.0.77",
+    "groq": "^6.10.1",
     "hono": "^4.13.3",
     "server-only": "^0.0.1",
     "zod": "^4.4.3"
@@ -34,6 +39,7 @@
   "devDependencies": {
     "@portfolio/typescript-config": "workspace:*",
     "@types/node": "^26.2.0",
+    "tsx": "^4.23.12",
     "typescript": "^6.0.3"
   }
 }

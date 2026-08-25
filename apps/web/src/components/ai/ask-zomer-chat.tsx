@@ -2,8 +2,8 @@
 
 import { useChat } from "@ai-sdk/react";
 import type { AskZomerMessage, AskZomerSource } from "@portfolio/api/types";
-import { DefaultChatTransport } from "ai";
-import { ArrowUp, LoaderCircle, RefreshCw, Square } from "lucide-react";
+import { DefaultChatTransport, getToolName, isToolUIPart } from "ai";
+import { ArrowUp, Globe2, LoaderCircle, RefreshCw, Square } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -35,6 +35,83 @@ function messageText(message: AskZomerMessage) {
     .join("");
 }
 
+type WebSearchState = "complete" | "error" | "searching";
+const WEB_SEARCH_TOOL_NAMES = new Set(["browser_search", "web_search"]);
+
+function webSearchState(
+  message: AskZomerMessage,
+  isStreaming: boolean,
+): WebSearchState | undefined {
+  let toolInvoked = false;
+  let completed = false;
+  let failed = false;
+
+  for (const part of message.parts) {
+    if (!isToolUIPart(part) || !WEB_SEARCH_TOOL_NAMES.has(getToolName(part))) continue;
+    toolInvoked = true;
+    if (part.state === "output-error") failed = true;
+    if (part.state === "output-available") completed = true;
+  }
+
+  if (failed) return "error";
+  if (completed) return "complete";
+  if (toolInvoked) return isStreaming ? "searching" : "complete";
+  if (message.metadata?.webSearch) return "complete";
+  return undefined;
+}
+
+function messageSources(message: AskZomerMessage): AskZomerSource[] {
+  const sources = [...(message.metadata?.sources ?? [])];
+  const seenUrls = new Set(sources.map((source) => source.url));
+
+  for (const part of message.parts) {
+    if (part.type !== "source-url") continue;
+
+    try {
+      const url = new URL(part.url);
+      if (url.protocol !== "http:" && url.protocol !== "https:") continue;
+      url.hash = "";
+      const normalizedUrl = url.href;
+      if (seenUrls.has(normalizedUrl)) continue;
+      seenUrls.add(normalizedUrl);
+      sources.push({
+        id: part.sourceId,
+        sourceType: "web",
+        title: part.title?.trim() || url.hostname,
+        url: normalizedUrl,
+      });
+    } catch {
+      // Ignore malformed provider source URLs instead of rendering unsafe links.
+    }
+  }
+
+  return sources;
+}
+
+function WebSearchStatus({ state }: { state: WebSearchState }) {
+  const searching = state === "searching";
+  return (
+    <p
+      className="mb-3 inline-flex items-center gap-2 rounded-full border border-border px-2.5 py-1 text-xs text-muted"
+      aria-busy={searching}
+    >
+      {searching ? (
+        <LoaderCircle
+          aria-hidden="true"
+          className="size-3.5 animate-spin motion-reduce:animate-none"
+        />
+      ) : (
+        <Globe2 aria-hidden="true" className="size-3.5" />
+      )}
+      {searching
+        ? "Searching the web…"
+        : state === "complete"
+          ? "Searched the web"
+          : "Web search unavailable"}
+    </p>
+  );
+}
+
 function SourceList({ sources }: { sources: AskZomerSource[] }) {
   if (sources.length === 0) return null;
 
@@ -45,7 +122,7 @@ function SourceList({ sources }: { sources: AskZomerSource[] }) {
       </summary>
       <ol className="mt-2 space-y-2">
         {sources.map((source, index) => (
-          <li key={source.id} className="flex gap-2">
+          <li key={`${source.sourceType}:${source.id}:${source.url}`} className="flex gap-2">
             <span aria-hidden="true" className="font-mono">
               [{index + 1}]
             </span>
@@ -89,7 +166,15 @@ function SuggestionList({
   );
 }
 
-function ChatMessages({ loading, messages }: { loading: boolean; messages: AskZomerMessage[] }) {
+function ChatMessages({
+  busy,
+  loading,
+  messages,
+}: {
+  busy: boolean;
+  loading: boolean;
+  messages: AskZomerMessage[];
+}) {
   return (
     <div aria-live="polite" aria-relevant="additions text" className="space-y-5 py-6">
       {loading ? (
@@ -115,9 +200,11 @@ function ChatMessages({ loading, messages }: { loading: boolean; messages: AskZo
           </div>
         </div>
       ) : (
-        messages.map((message) => {
+        messages.map((message, index) => {
           const text = messageText(message);
-          const sources = message.metadata?.sources ?? [];
+          const sources = messageSources(message);
+          const isLatestAssistant = message.role === "assistant" && index === messages.length - 1;
+          const searchState = isLatestAssistant ? webSearchState(message, busy) : undefined;
           return (
             <article
               key={message.id}
@@ -127,7 +214,10 @@ function ChatMessages({ loading, messages }: { loading: boolean; messages: AskZo
                   : "chat-message-assistant max-w-2xl"
               }
             >
-              <p className="sr-only">{message.role === "user" ? "You" : "Ask Zomer AI"}</p>
+              <p className="sr-only">{message.role === "user" ? "You" : "Zomer AI"}</p>
+              {message.role === "assistant" && searchState ? (
+                <WebSearchStatus state={searchState} />
+              ) : null}
               {message.role === "assistant" ? (
                 <div className="markdown-content">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
@@ -206,7 +296,7 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
           {historyWarning} You can still start a new conversation.
         </p>
       ) : null}
-      <ChatMessages loading={!historyReady} messages={messages} />
+      <ChatMessages busy={busy} loading={!historyReady} messages={messages} />
 
       {historyReady && suggestions.length > 0 ? (
         <div className="py-4">
@@ -240,7 +330,7 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
       ) : null}
 
       <p aria-live="polite" className={busy ? "py-3 text-xs text-muted" : "sr-only"}>
-        {busy ? (status === "submitted" ? "Searching the portfolio…" : "Writing a response…") : ""}
+        {busy ? (status === "submitted" ? "Preparing a response…" : "Writing a response…") : ""}
       </p>
 
       <form

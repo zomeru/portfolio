@@ -1,29 +1,22 @@
+import { getPublicProfile, listPublicExperience } from "@portfolio/api/public-portfolio";
+import { PageTransition } from "@/components/layout/page-transition";
 import { ExperienceItem } from "@/components/portfolio/experience-item";
 import { PageHeader } from "@/components/portfolio/page-header";
-import { PortableTextContent } from "@/lib/sanity/portable-text";
-import { getExperience } from "@/lib/sanity/services/experience";
-import { getProfile } from "@/lib/sanity/services/profile";
 
 export default async function AboutPage() {
-  const [profile, experience] = await Promise.all([getProfile(), getExperience()]);
+  const [profile, experience] = await Promise.all([getPublicProfile(), listPublicExperience()]);
 
   return (
-    <>
+    <PageTransition>
       <PageHeader
         index="01"
         eyebrow="About"
-        title={
-          profile?.biography ? (
-            <PortableTextContent value={profile.biography} variant="inline" />
-          ) : (
-            "Profile content is unavailable."
-          )
-        }
+        title={profile?.biography || "Profile content is unavailable."}
       />
-      {profile?.aboutContent && (
-        <div className="mt-3 max-w-xl text-sm leading-relaxed text-muted">
-          <PortableTextContent value={profile.aboutContent} />
-        </div>
+      {profile?.about && (
+        <p className="mt-3 max-w-xl whitespace-pre-line text-sm leading-relaxed text-muted">
+          {profile.about}
+        </p>
       )}
 
       <section aria-labelledby="experience-heading" className="mt-16">
@@ -38,16 +31,16 @@ export default async function AboutPage() {
             aria-hidden
             className="absolute bottom-2 left-1 top-2 w-0.5 bg-linear-to-b from-border via-border to-transparent"
           />
-          {experience.map((job) => (
-            <li key={job._id} className="pb-8 last:pb-0">
+          {experience.items.map((job) => (
+            <li key={`${job.company}-${job.role}-${job.period}`} className="pb-8 last:pb-0">
               <ExperienceItem job={job} />
             </li>
           ))}
-          {experience.length === 0 && (
+          {experience.total === 0 && (
             <li className="pl-7 text-sm text-muted">No experience entries are published yet.</li>
           )}
         </ol>
       </section>
-    </>
+    </PageTransition>
   );
 }

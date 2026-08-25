@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { observe, propagateAttributes, updateActiveObservation } from "@langfuse/tracing";
 import { trace } from "@opentelemetry/api";
-import type { ChatCitation } from "@portfolio/database";
 import {
   consumeStream,
   createUIMessageStream,
@@ -45,6 +44,47 @@ function textFromMessage(message: AskZomerMessage) {
     .map((part) => part.text)
     .join("")
     .trim();
+}
+
+function webSourcesFromMessage(message: AskZomerMessage): AskZomerSource[] {
+  const sources: AskZomerSource[] = [];
+  const seenUrls = new Set<string>();
+
+  for (const part of message.parts) {
+    if (part.type !== "source-url") continue;
+
+    try {
+      const url = new URL(part.url);
+      if (url.protocol !== "http:" && url.protocol !== "https:") continue;
+      url.hash = "";
+      const normalizedUrl = url.href;
+      if (seenUrls.has(normalizedUrl)) continue;
+      seenUrls.add(normalizedUrl);
+      sources.push({
+        id: part.sourceId,
+        sourceType: "web",
+        title: part.title?.trim() || url.hostname,
+        url: normalizedUrl,
+      });
+    } catch {
+      // Ignore malformed provider source URLs instead of persisting unsafe links.
+    }
+  }
+
+  return sources;
+}
+
+function mergeSources(...sourceGroups: readonly (readonly AskZomerSource[])[]): AskZomerSource[] {
+  const sources: AskZomerSource[] = [];
+  const seenUrls = new Set<string>();
+
+  for (const source of sourceGroups.flat()) {
+    if (seenUrls.has(source.url)) continue;
+    seenUrls.add(source.url);
+    sources.push(source);
+  }
+
+  return sources;
 }
 
 function noEvidenceMessage(intent: string) {
@@ -113,7 +153,7 @@ function createDeterministicResponse(options: {
         content: options.content,
         intent: options.intent,
         model: options.model,
-        citations: (options.sources ?? []) as ChatCitation[],
+        citations: options.sources ?? [],
         suggestions: options.suggestions,
       });
     },
@@ -338,17 +378,21 @@ async function createAssistantChatResponseImpl(options: {
           ),
           { role: "user", content: options.text },
         ];
+        const webSearchTools =
+          classification.intent === "general" ? models.webSearchTools : undefined;
 
         const result = streamText({
           model: models.chat,
           system: buildAssistantSystemPrompt(classification, retrieval.results, {
             resultLimit: retrieval.resultLimit,
             strategy: retrieval.strategy,
+            webSearchEnabled: Boolean(webSearchTools),
           }),
           messages,
           maxOutputTokens: 900,
           maxRetries: 2,
           ...models.chatGenerationOptions,
+          ...(webSearchTools ? { toolChoice: "auto" as const, tools: webSearchTools } : {}),
           ...(options.abortSignal ? { abortSignal: options.abortSignal } : {}),
           runtimeContext: {
             sessionId: options.sessionKey,
@@ -369,7 +413,9 @@ async function createAssistantChatResponseImpl(options: {
             recordInputs: false,
             recordOutputs: false,
           },
-          experimental_transform: normalizeCitationStream(retrieval.sources.length),
+          ...(classification.intent === "general"
+            ? {}
+            : { experimental_transform: normalizeCitationStream(retrieval.sources.length) }),
           onEnd: ({ text }) => {
             updateActiveObservation({ output: { responseCharacters: text.length } });
             trace.getActiveSpan()?.end();
@@ -378,14 +424,14 @@ async function createAssistantChatResponseImpl(options: {
             updateActiveObservation({
               level: "ERROR",
               output: { errorType: error instanceof Error ? error.name : "UnknownError" },
-              statusMessage: "Ask Zomer AI generation failed.",
+              statusMessage: "Zomer AI generation failed.",
             });
             trace.getActiveSpan()?.end();
           },
           onAbort: () => {
             updateActiveObservation({
               output: { aborted: true },
-              statusMessage: "Ask Zomer AI generation was stopped.",
+              statusMessage: "Zomer AI generation was stopped.",
             });
             trace.getActiveSpan()?.end();
           },
@@ -395,7 +441,7 @@ async function createAssistantChatResponseImpl(options: {
           consumeSseStream: consumeStream,
           generateMessageId: randomUUID,
           sendReasoning: false,
-          sendSources: false,
+          sendSources: true,
           messageMetadata: ({ part }) => {
             if (part.type !== "start") return undefined;
             return {
@@ -406,17 +452,21 @@ async function createAssistantChatResponseImpl(options: {
               suggestions,
             };
           },
-          onError: () => "Ask Zomer AI couldn't finish that response. Please try again.",
+          onError: () => "Zomer AI couldn't finish that response. Please try again.",
           onEnd: async ({ responseMessage, isAborted }) => {
             const content = textFromMessage(responseMessage);
             if (isAborted || !content) return;
+            const citations = mergeSources(
+              retrieval.sources,
+              webSourcesFromMessage(responseMessage),
+            );
             await saveAssistantMessage({
               sessionId: session.id,
               providerMessageId: responseMessage.id,
               content,
               intent: classification.intent,
               model: models.chatModelId,
-              citations: retrieval.sources as ChatCitation[],
+              citations,
               suggestions,
             });
           },
@@ -425,7 +475,7 @@ async function createAssistantChatResponseImpl(options: {
         updateActiveObservation({
           level: "ERROR",
           output: { errorType: error instanceof Error ? error.name : "UnknownError" },
-          statusMessage: "Ask Zomer AI request failed.",
+          statusMessage: "Zomer AI request failed.",
         });
         trace.getActiveSpan()?.end();
         throw error;
