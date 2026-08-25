@@ -37,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
     creator: name,
     publisher: name,
     alternates: { canonical: "/" },
-    verification: { google: "Mny4WtDchE2pSuEz8oyVBVm9uJlNJXF_drStskwc7rg" },
+    verification: { google: "vIm46RcPpRP4YQjS20F6RUACLwKggpLpEwLKn3rMXVw" },
     openGraph: {
       title: `${name} — ${role}`,
       description,
