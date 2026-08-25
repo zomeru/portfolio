@@ -1,3 +1,4 @@
+import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
 import { getPublicProfile, getPublicTechStack } from "@portfolio/api/public-portfolio";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -36,6 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
     creator: name,
     publisher: name,
     alternates: { canonical: "/" },
+    verification: { google: "Mny4WtDchE2pSuEz8oyVBVm9uJlNJXF_drStskwc7rg" },
     openGraph: {
       title: `${name} — ${role}`,
       description,
@@ -65,6 +67,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       suppressHydrationWarning
       className={cn(geistSans.variable, geistMono.variable, "antialiased")}
     >
+      <GoogleTagManager gtmId="GTM-PV9CX97P" />
       <body>
         <ThemeProvider>
           <a
@@ -85,6 +88,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           </div>
         </ThemeProvider>
       </body>
+      <GoogleAnalytics gaId="G-XNJS2S5JPX" />
     </html>
   );
 }

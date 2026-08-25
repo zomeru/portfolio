@@ -5,11 +5,11 @@ file wins when instructions differ.
 
 ## Workspace boundaries
 
-- `apps/web` is the only deployed Next.js process. It owns UI, App Router files, metadata, and the thin
-  Hono adapter.
+- `apps/web` is the only deployed Next.js process. It owns UI, App Router files, metadata, machine
+  discovery routes, MCP transports, and the thin Hono adapter.
 - `apps/api` owns HTTP routes and server-side GitHub, AI, retrieval, indexing, persistence
-  orchestration, and Sanity publishing logic. It is a source-exported just-in-time package, not a
-  separate service.
+  orchestration, Sanity publishing logic, and the canonical public portfolio contract. It is a
+  source-exported just-in-time package, not a separate service.
 - `apps/studio` owns the Sanity schema, Studio workspaces, structure, seed fixtures, and TypeGen
   workflow.
 - `packages/database` owns all Drizzle schema, client, query, repository, and migration code.
@@ -23,7 +23,7 @@ dependencies and public package exports. Browser code may import API types from
 
 ## Repository constraints
 
-- Use Node.js 24+ and pnpm 11.22.0. Do not use npm or Yarn for repository tasks.
+- Use Node.js 24.19.x and pnpm 11.22.0. Do not use npm or Yarn for repository tasks.
 - Run supported scripts through pnpm. Use a filtered workspace script when the root has no alias.
 - Keep changes scoped and preserve unrelated working-tree changes.
 - Preserve strict TypeScript and the repository Biome rules: two spaces, double quotes, semicolons, and
@@ -44,8 +44,12 @@ dependencies and public package exports. Browser code may import API types from
 - Server-side web callers use the in-process Hono client in
   `apps/web/src/lib/api-server.ts`; browser callers use the typed HTTP client in
   `apps/web/src/lib/api.ts`.
-- Sanity schemas and web GROQ queries are coupled through Studio TypeGen. Regenerate both generated
-  artifacts after schema or query changes.
+- `apps/api/src/services/public-portfolio` owns the canonical published GROQ queries and validates
+  their results at runtime. Studio TypeGen scans the web workspace and generates the web Sanity types;
+  it does not validate API queries. Regenerate both Studio artifacts after schema changes.
+- Portfolio intents in Ask Zomer stay grounded in the derived index. General intent may use native web
+  search only when the selected provider supports it; keep web citations distinct from indexed
+  portfolio sources.
 - Ask Zomer embeddings are fixed at 2,048 dimensions. A model dimension change requires a schema
   migration, HNSW review, and forced reindex.
 - Generated blog publication performs a best-effort single-document AI index update. Keep publication
@@ -60,7 +64,7 @@ Choose checks by affected scope:
 - Run the affected workspace's `check-types` after TypeScript changes.
 - Run the affected workspace's build after routing, bundling, runtime, schema, or configuration changes.
 - Run `pnpm lint` after code or configuration changes.
-- Run `pnpm test` after public DTO, REST, OpenAPI, MCP, or discovery contract changes.
+- Run `pnpm test` after public DTO, REST, OpenAPI, MCP, discovery, or SEO contract changes.
 - Run `pnpm run check:all` and `pnpm run build:all` after shared package or dependency changes.
 - Run `pnpm ai:eval` after deterministic assistant intent or retrieval-strategy changes; use
   `--live` only with an authorized, migrated, indexed environment.

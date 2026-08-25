@@ -24,7 +24,9 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
   serialization, OpenAPI generation, and discovery metadata. REST routes and MCP registrations must
   call this service instead of querying Sanity independently. Keep the five-minute cache tags and
   explicit public allowlist; never expose drafts, raw Sanity fields, or RAG/indexing state.
-
+- Keep public GROQ projections explicit and parse their raw results before serialization. Studio
+  TypeGen does not scan this workspace, so protect query changes with API contract tests and type
+  checks.
 - `src/services/github` owns GitHub GraphQL/REST access and in-memory caches. Only return the public
   response contract: private repository names, commit messages, filter values, and URLs must remain
   anonymized or omitted as implemented.
@@ -32,6 +34,9 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
   directly; Ask Zomer chat selects Groq, NVIDIA NIM, or OpenRouter from configuration, while
   embeddings always use OpenRouter. Do not replace one provider path as a side effect of work on the
   other.
+- General Ask Zomer intent may expose native web-search tools for Groq or OpenRouter. NVIDIA NIM has
+  no web-search tool. Portfolio intents must not use those tools and remain grounded in the indexed
+  portfolio.
 - `src/services/blog-generation` owns prompt/output validation, duplicate detection, idempotency,
   immediate Sanity publication, generation audit metadata, and the post-publish index attempt. Indexing
   failure is reported separately and must not roll back a published post.
@@ -50,6 +55,8 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
 - Conversation persistence is anonymous but not stateless: validate the UUID session key, keep message
   IDs idempotent, preserve the bounded history/token window, and enforce both per-minute and per-day
   limits before generation.
+- Persist provider search results as `web` citations only after validating HTTP(S) URLs and removing
+  duplicate URLs. Do not add `web` to the indexed knowledge-source enum.
 
 ## Authentication and telemetry
 

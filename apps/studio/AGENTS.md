@@ -1,7 +1,7 @@
 # Studio guidance
 
 This workspace owns the standalone Sanity Studio, content model, structure, seed fixtures, and the
-schema and query TypeGen pipeline consumed by the web app.
+TypeGen pipeline that generates the web app's Sanity types.
 
 ## Studio and schema invariants
 
@@ -26,13 +26,14 @@ schema and query TypeGen pipeline consumed by the web app.
 ## Content flow and generated files
 
 - The web app and AI index read the published perspective only. Studio drafts are not public or indexed.
-- Add or change web-facing GROQ in `apps/web/src/lib/sanity/queries.ts` with `defineQuery`; project
-  only the fields consumers use and keep deterministic ordering before slicing.
+- Canonical public portfolio GROQ belongs in
+  `apps/api/src/services/public-portfolio/queries.ts`, with explicit projections, published-only
+  filters, deterministic ordering, and runtime result validation.
 - `pnpm --filter @portfolio/studio typegen` extracts the development workspace schema to
-  `schema.json`, scans web TypeScript for queries, and writes
+  `schema.json`, scans web TypeScript for any remaining queries, and writes
   `apps/web/src/lib/sanity/sanity.types.ts`.
-- Never edit `schema.json` or `apps/web/src/lib/sanity/sanity.types.ts` by hand. Review both
-  generated diffs after schema or query changes.
+- Studio TypeGen does not scan `apps/api`. Never edit `schema.json` or
+  `apps/web/src/lib/sanity/sanity.types.ts` by hand. Review both generated diffs after schema changes.
 - `data/*.json` contains seed fixtures. `scripts/seed.ts` creates the singleton if absent, creates
   missing experience/blog/project/tech-stack documents by stable content keys, and synchronizes
   matching blog bodies; it is not a general production migration.
@@ -46,6 +47,7 @@ schema and query TypeGen pipeline consumed by the web app.
   mode without explicit approval.
 - Confirm project, workspace, dataset, and GitHub environment before Studio or GraphQL deployment.
 - Run `pnpm --filter @portfolio/studio check-types` after Studio or schema changes.
-- Run `pnpm --filter @portfolio/studio typegen` after schema or web GROQ changes.
+- Run `pnpm --filter @portfolio/studio typegen` after schema changes or changes to TypeGen-scanned web
+  queries.
 - Run `pnpm --filter @portfolio/studio build` after schema, configuration, structure, or dependency
   changes.

@@ -26,8 +26,12 @@ Hono backend and stateless MCP handlers are mounted inside the same deployment.
   `apiApp.request` and avoids a network hop. Browser callers use `src/lib/api.ts` and import only
   `AppType` from `@portfolio/api/types`.
 - Keep the Ask Zomer client responsible only for the local UUID session key, history restoration,
-  transport, stream presentation, sources, suggestions, stop/retry state, and accessibility. Intent,
-  retrieval, prompts, models, rate limits, and persistence belong in the API.
+  transport, stream presentation, portfolio and web sources, search status, suggestions, stop/retry
+  state, and accessibility. Intent, retrieval, tool selection, prompts, models, rate limits, and
+  persistence belong in the API.
+- `src/components/layout/page-transition.tsx` owns route enter transitions through React View
+  Transitions. Keep the animation CSS in `src/app/globals.css` and preserve the reduced-motion
+  override.
 - Reuse components under `src/components` and tokens in `src/app/globals.css`. Preserve keyboard
   access, visible focus, semantic headings, live-region behavior, touch targets, and reduced-motion
   handling.
@@ -38,18 +42,20 @@ Hono backend and stateless MCP handlers are mounted inside the same deployment.
   queries for profile, resume, experience, projects, blogs, or tech stack. The API workspace owns
   their published perspective, projections, DTOs, ordering, and 300-second revalidation.
 - Do not edit `src/lib/sanity/sanity.types.ts`. Run the Studio `typegen` script after any schema
-  change and review both generated artifacts.
+  change and review `apps/studio/schema.json` plus the generated web types. Studio TypeGen does not
+  validate the canonical API queries.
 - Build page metadata with `src/lib/metadata.ts` and `@portfolio/env/site`. Keep canonical, Open
   Graph, Twitter, robots, sitemap, and `NEXT_PUBLIC_SITE_URL` behavior consistent.
 - Route-specific `opengraph-image.tsx` files use `src/lib/og-image.tsx`; matching Twitter files
-  re-export them. The sitemap includes public routes plus published blog slugs. Robots must continue to
-  exclude `/admin` and private API families while keeping `/api/v1`, `/api/mcp`, OpenAPI, and
-  well-known discovery resources crawlable.
+  re-export them. The sitemap uses `siteUpdatedAt` for monthly static pages and each publication date
+  for yearly blog entries. Update `siteUpdatedAt` for material site releases.
+- Robots must continue to exclude `/admin` and private API families while keeping `/api/v1`,
+  `/api/mcp`, OpenAPI, and well-known discovery resources crawlable.
 - `/robots.txt` is a custom Route Handler so it can advertise the emerging NLWeb `schemamap`
   directive alongside the standard sitemap. Keep `/schemamap.xml` aligned with the public
   schema.org JSON Lines feed at `/structured-data/portfolio.jsonl`.
 - `/llms.txt` and `/llms-full.txt` are generated text Route Handlers backed by published Sanity
-  content and revalidate hourly. Keep their API/discovery links aligned with `/developers/llms.txt`.
+  content. Keep their API/discovery links aligned with `/developers/llms.txt`.
 - `src/app/api/mcp/**` owns the thin `mcp-handler` adapters. Tool registration uses MCP SDK v2,
   complete Zod schemas, structured content plus text fallback, and read-only annotations. Do not add
   legacy SSE routes or session persistence.
@@ -72,8 +78,8 @@ Hono backend and stateless MCP handlers are mounted inside the same deployment.
 ## Verification
 
 - Run `pnpm --filter @portfolio/web check-types` after TypeScript or route changes.
-- Run `pnpm --filter @portfolio/web test` after MCP or discovery changes.
-- Run `pnpm --filter @portfolio/web build` after routing, metadata, Sanity query, configuration,
+- Run `pnpm --filter @portfolio/web test` after MCP, discovery, robots, sitemap, or schema-feed changes.
+- Run `pnpm --filter @portfolio/web build` after routing, metadata, discovery, configuration,
   instrumentation, or dependency changes.
 - Test affected browser interactions in a production build and check changed layouts at mobile and
   desktop widths.
