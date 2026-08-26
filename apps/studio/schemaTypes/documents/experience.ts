@@ -1,7 +1,7 @@
 import { CaseIcon } from "@sanity/icons/Case";
-import { defineArrayMember, defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType, type SchemaTypeDefinition } from "sanity";
 
-export const experience = defineType({
+export const experience: SchemaTypeDefinition = defineType({
   name: "experience",
   title: "Experience",
   type: "document",

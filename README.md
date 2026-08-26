@@ -6,7 +6,7 @@ A personal portfolio with a technical blog, GitHub activity, and Ask Zomer AI. S
 
 The project uses:
 
-- **Runtime and tooling**: Node.js 24.19.x, pnpm 11.22.0, Turborepo 2+, TypeScript 6+, Oxfmt, and Oxlint
+- **Runtime and tooling**: Node.js 24.19.x, pnpm 11.22.0, Turborepo 2+, TypeScript 7 with the TypeScript 6 compatibility API, Oxfmt, and Oxlint
 - **Frontend**: Next.js 16+, React 19+, Tailwind CSS 4+, and React Compiler
 - **API**: Hono 4+
 - **Content**: Sanity Studio 6+, Sanity Client 7+, GROQ, Portable Text, and TypeGen

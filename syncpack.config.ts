@@ -17,9 +17,16 @@ const config: RcFile = {
       pinVersion: "workspace:*",
     },
     {
-      label: "TypeScript (latest 6.x, <7)",
+      label: "TypeScript 6 compatibility API",
       dependencies: ["typescript"],
-      pinVersion: "^6.0.3",
+      packages: ["!@portfolio/web"],
+      pinVersion: "npm:@typescript/typescript6@^6.0.2",
+    },
+    {
+      label: "TypeScript 7 compiler for Next.js",
+      dependencies: ["typescript"],
+      packages: ["@portfolio/web"],
+      pinVersion: "^7.0.2",
     },
   ],
 };

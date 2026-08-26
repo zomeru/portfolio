@@ -30,6 +30,6 @@
   "devDependencies": {
     "@portfolio/typescript-config": "workspace:*",
     "@types/node": "^26.2.0",
-    "typescript": "^6.0.3"
+    "typescript": "npm:@typescript/typescript6@^6.0.2"
   }
 }

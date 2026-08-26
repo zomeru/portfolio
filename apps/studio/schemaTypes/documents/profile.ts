@@ -1,7 +1,7 @@
 import { CogIcon } from "@sanity/icons/Cog";
-import { defineArrayMember, defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType, type SchemaTypeDefinition } from "sanity";
 
-export const profile = defineType({
+export const profile: SchemaTypeDefinition = defineType({
   name: "profile",
   title: "Profile",
   type: "document",
