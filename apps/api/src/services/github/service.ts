@@ -93,6 +93,23 @@ type GraphqlEnvelope<T> = {
 
 const cache = new Map<string, CacheEntry>();
 
+function githubHttpCause(response: Response) {
+  const requestId = response.headers.get("x-github-request-id");
+  const retryAfter = response.headers.get("retry-after");
+  const rateRemaining = response.headers.get("x-ratelimit-remaining");
+  const details = [
+    `GitHub responded with HTTP ${response.status}`,
+    requestId ? `requestId=${requestId}` : null,
+    retryAfter ? `retryAfter=${retryAfter}` : null,
+    rateRemaining ? `rateRemaining=${rateRemaining}` : null,
+  ].filter(Boolean);
+  return Object.assign(new Error(details.join("; ")), {
+    name: "GitHubHttpError",
+    code: `GITHUB_HTTP_${response.status}`,
+    status: response.status,
+  });
+}
+
 async function cached<T>(key: string, ttl: number, load: () => Promise<T>): Promise<T> {
   const current = cache.get(key);
   if (current && current.expiresAt > Date.now()) {
@@ -159,6 +176,7 @@ async function githubFetch(url: string, init?: RequestInit) {
 
   if (isRateLimited) {
     throw new ApiError("GitHub's rate limit was reached. Please try again later.", {
+      cause: githubHttpCause(response),
       code: "GITHUB_RATE_LIMITED",
       status: 429,
     });
@@ -170,6 +188,7 @@ async function githubFetch(url: string, init?: RequestInit) {
       ? "GitHub activity is not configured correctly."
       : "GitHub is temporarily unavailable.",
     {
+      cause: githubHttpCause(response),
       code: isConfigurationError ? "GITHUB_CONFIGURATION_ERROR" : "GITHUB_REQUEST_FAILED",
       status: isConfigurationError ? 503 : 502,
     },
@@ -198,6 +217,15 @@ async function githubGraphql<T>(query: string, variables: Record<string, unknown
         ? "GitHub's rate limit was reached. Please try again later."
         : "GitHub is temporarily unavailable.",
       {
+        cause: Object.assign(
+          new Error(
+            envelope.errors
+              ?.map((error) => error.message)
+              .filter(Boolean)
+              .join("; ") || "GitHub GraphQL response did not contain data.",
+          ),
+          { name: "GitHubGraphqlError" },
+        ),
         code: rateLimited ? "GITHUB_RATE_LIMITED" : "GITHUB_REQUEST_FAILED",
         status: rateLimited ? 429 : 502,
       },

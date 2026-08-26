@@ -17,6 +17,9 @@ is a source-exported internal package; consumers import explicit subpaths.
 - `./database`: required `DATABASE_URL` and optional `DATABASE_DIRECT_URL`.
 - `./langfuse-server`: optional public/secret key pair and defaultable base URL; one key without the
   other is invalid.
+- `./notifications-client`: optional public VAPID key for browser subscription setup.
+- `./notifications-server`: grouped optional Gmail/Resend, Web Push, notification-token, and webhook
+  encryption configuration; incomplete feature groups are invalid.
 
 ## Invariants
 

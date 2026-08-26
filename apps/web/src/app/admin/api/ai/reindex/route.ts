@@ -1,3 +1,4 @@
+import { logError } from "@portfolio/api/logging";
 import { getAdminSessionToken } from "@/lib/admin-session";
 import { serverClient } from "@/lib/api-server";
 
@@ -10,14 +11,24 @@ export async function POST(request: Request) {
     return Response.json({ error: { message: "Unauthorized" } }, { status: 401 });
   }
 
-  return serverClient.api.admin.ai.reindex.stream.$post(
-    {},
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+  try {
+    return await serverClient.api.admin.ai.reindex.stream.$post(
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        init: { body: await request.text() },
       },
-      init: { body: await request.text() },
-    },
-  );
+    );
+  } catch (error) {
+    logError("admin reindex proxy failed", error, {
+      operation: "web.admin.proxyReindex",
+    });
+    return Response.json(
+      { error: { message: "Knowledge indexing could not be started." } },
+      { status: 502 },
+    );
+  }
 }

@@ -1,6 +1,7 @@
 import { listPublicBlogPosts } from "@portfolio/api/public-portfolio";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BlogNotifications } from "@/components/blog/blog-notifications";
 import { PageTransition } from "@/components/layout/page-transition";
 import { BlogItem } from "@/components/portfolio/blog-item";
 import { PageHeader } from "@/components/portfolio/page-header";
@@ -9,7 +10,10 @@ import { createPageMetadata } from "@/lib/metadata";
 const POSTS_PER_PAGE = 10;
 
 type BlogsPageProps = {
-  searchParams: Promise<{ page?: string | string[] }>;
+  searchParams: Promise<{
+    page?: string | string[];
+    subscription?: string | string[];
+  }>;
 };
 
 function getRequestedPage(value: string | string[] | undefined) {
@@ -32,7 +36,8 @@ export const metadata: Metadata = createPageMetadata({
 });
 
 export default async function BlogsPage({ searchParams }: BlogsPageProps) {
-  const { page } = await searchParams;
+  const { page, subscription: subscriptionValue } = await searchParams;
+  const subscription = Array.isArray(subscriptionValue) ? subscriptionValue[0] : subscriptionValue;
   const requestedPage = getRequestedPage(page);
   const requestedStart = (requestedPage - 1) * POSTS_PER_PAGE;
   let pageData = await listPublicBlogPosts({ limit: POSTS_PER_PAGE, offset: requestedStart });
@@ -50,6 +55,11 @@ export default async function BlogsPage({ searchParams }: BlogsPageProps) {
         index="03"
         eyebrow="Blog"
         title="Writing about software engineering, web development, architecture, tooling, and AI."
+      />
+      <BlogNotifications
+        {...(subscription === "confirmed" || subscription === "invalid"
+          ? { initialNotice: subscription }
+          : {})}
       />
       <div className="mt-10 divide-y divide-border border-t border-border">
         {pageData.total === 0 && (

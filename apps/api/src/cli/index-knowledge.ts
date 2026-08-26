@@ -1,3 +1,4 @@
+import { logError } from "../lib/log";
 import {
   IngestionAlreadyRunningError,
   synchronizePortfolioKnowledge,
@@ -78,6 +79,10 @@ if (unsupported) {
     console.log(`Chunks embedded: ${summary.chunksCreated}`);
   } catch (error) {
     progress.stop("Portfolio indexing stopped.", true);
+    logError("portfolio indexing CLI failed", error, {
+      operation: "assistant.indexKnowledgeCli",
+      force: argumentsList.includes("--force"),
+    });
     console.error(
       error instanceof IngestionAlreadyRunningError
         ? error.message

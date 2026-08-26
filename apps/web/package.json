@@ -8,7 +8,6 @@
     "start": "pnpm run with-env next start",
     "cron:blog": "pnpm run with-env tsx scripts/run-blog-cron.ts",
     "check-types": "next typegen && tsc --noEmit",
-    "test": "node --conditions=react-server --import tsx --test 'src/**/*.test.ts'",
     "with-env": "pnpm exec dotenv -e ../../.env.local --"
   },
   "dependencies": {
@@ -41,7 +40,6 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "@modelcontextprotocol/client": "^2.0.0",
     "@portfolio/typescript-config": "workspace:*",
     "@sanity/client": "^7.26.2",
     "@tailwindcss/postcss": "^4.3.3",

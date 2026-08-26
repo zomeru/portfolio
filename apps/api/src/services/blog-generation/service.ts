@@ -1,10 +1,11 @@
 import { propagateAttributes, startActiveObservation } from "@langfuse/tracing";
 import { ApiError } from "../../errors";
-import { log } from "../../lib/log";
+import { errorLogMetadata, log } from "../../lib/log";
 import {
   IngestionAlreadyRunningError,
   synchronizePublishedKnowledgeDocument,
 } from "../assistant/ingestion";
+import { dispatchBlogPublished } from "../notifications/delivery";
 import { generateBlogDraft } from "./draft";
 import {
   type BlogGenerationTrigger,
@@ -15,6 +16,10 @@ import {
 
 type GenerationResult = {
   created: boolean;
+  notifications: {
+    eventId?: string;
+    status: "failed" | "succeeded";
+  };
   indexing: {
     chunksCreated: number;
     status: "failed" | "succeeded" | "unchanged";
@@ -82,6 +87,30 @@ async function generateAndPublish(input: {
             }
           }
 
+          let notifications: GenerationResult["notifications"];
+          try {
+            const dispatched = await dispatchBlogPublished({
+              id: post._id,
+              revision: post._rev,
+              title: post.title,
+              slug: post.slug.current,
+              ...(post.excerpt ? { excerpt: post.excerpt } : {}),
+              publishedAt: post.publishedAt,
+            });
+            notifications = {
+              eventId: dispatched.eventId,
+              status: dispatched.materializationFailures.length > 0 ? "failed" : "succeeded",
+            };
+          } catch (error) {
+            notifications = { status: "failed" };
+            log("error", "published blog post notification dispatch failed", {
+              ...errorLogMetadata(error, "blogGeneration.dispatchNotifications"),
+              postId: post._id,
+              slug: post.slug.current,
+              trigger: input.trigger,
+            });
+          }
+
           let indexing: GenerationResult["indexing"];
           try {
             const summary = await synchronizePublishedKnowledgeDocument({
@@ -95,7 +124,7 @@ async function generateAndPublish(input: {
           } catch (error) {
             indexing = { chunksCreated: 0, status: "failed" };
             log("error", "published blog post indexing failed", {
-              errorType: error instanceof Error ? error.name : "UnknownError",
+              ...errorLogMetadata(error, "blogGeneration.indexPublishedPost"),
               indexingAlreadyRunning: error instanceof IngestionAlreadyRunningError,
               postId: post._id,
               slug: post.slug.current,
@@ -103,11 +132,12 @@ async function generateAndPublish(input: {
             });
           }
 
-          const result = { created, indexing, post };
+          const result = { created, indexing, notifications, post };
           workflow.update({
             output: {
               created,
               indexingStatus: indexing.status,
+              notificationStatus: notifications.status,
               postId: post._id,
               slug: post.slug.current,
               success: true,

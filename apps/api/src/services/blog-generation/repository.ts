@@ -9,6 +9,8 @@ export type BlogGenerationTrigger = "manual" | "scheduled";
 
 export type PublishedBlogPost = {
   _id: string;
+  _rev: string;
+  excerpt?: string;
   publishedAt: string;
   slug: { _type: "slug"; current: string };
   title: string;
@@ -68,9 +70,11 @@ export async function getGenerationContext(generationKey: string): Promise<Gener
     `{
       "existing": *[_type == "blogPost" && generation.key == $generationKey][0] {
         _id,
+        _rev,
         title,
         slug,
-        publishedAt
+        publishedAt,
+        excerpt
       },
       "identifiers": *[_type == "blogPost" && defined(slug.current)] {
         title,
@@ -109,6 +113,8 @@ export async function createGeneratedBlogPost(input: {
 
   return {
     _id: post._id,
+    _rev: post._rev,
+    excerpt: post.excerpt,
     publishedAt: post.publishedAt,
     slug: post.slug,
     title: post.title,

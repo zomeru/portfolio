@@ -340,6 +340,6 @@ async function main() {
 }
 
 void main().catch((error: unknown) => {
-  console.error(error instanceof Error ? error.message : error);
+  console.error("Studio seed failed.", error);
   process.exitCode = 1;
 });

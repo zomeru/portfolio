@@ -2,11 +2,13 @@ import { BLOG_CONTENT_LIMITS } from "@portfolio/content/blog";
 import { generateText, NoObjectGeneratedError, NoOutputGeneratedError, Output } from "ai";
 import { z } from "zod";
 import { ApiError } from "../../errors";
-import { log } from "../../lib/log";
+import { errorLogMetadata, log } from "../../lib/log";
 import { getBlogLanguageModel } from "../ai/models";
 import type { BlogGenerationTrigger } from "./repository";
 
 const SYSTEM_INSTRUCTION = `You are a principal full-stack software engineer and expert technical writer. Write for experienced software engineers. Be practical, concise, technically credible, and specific. Avoid hype, filler, generic advice, and obvious AI-generated phrasing. Focus on real-world engineering problems, tradeoffs, architecture, and implementation details. Use code only when it materially improves understanding. Prefer TypeScript when code is useful. Return strict JSON only with no extra commentary or Markdown fences.`;
+const BLOG_GENERATION_TIMEOUT_MS = 60_000;
+const BLOG_GENERATION_MAX_RETRIES = 2;
 
 const generatedBlogSchema = z.object({
   title: z
@@ -242,6 +244,7 @@ export async function generateBlogDraft(
   trigger: BlogGenerationTrigger,
 ): Promise<GeneratedBlogDraft> {
   const { model, modelId, provider } = getBlogLanguageModel();
+  const startedAt = performance.now();
 
   try {
     const result = await generateText({
@@ -255,8 +258,8 @@ export async function generateBlogDraft(
       prompt: generatePrompt(),
       temperature: 0.35,
       maxOutputTokens: 8192,
-      maxRetries: 2,
-      abortSignal: AbortSignal.timeout(60_000),
+      maxRetries: BLOG_GENERATION_MAX_RETRIES,
+      abortSignal: AbortSignal.timeout(BLOG_GENERATION_TIMEOUT_MS),
       runtimeContext: {
         model: modelId,
         provider,
@@ -283,6 +286,7 @@ export async function generateBlogDraft(
       model: modelId,
       provider,
       finishReason: result.finishReason,
+      durationMs: Math.round(performance.now() - startedAt),
       wordCount: countWords(validation.body),
     });
 
@@ -302,7 +306,11 @@ export async function generateBlogDraft(
     log("error", "blog draft generation failed", {
       model: modelId,
       provider,
-      errorType: error instanceof Error ? error.name : "UnknownError",
+      durationMs: Math.round(performance.now() - startedAt),
+      timeoutMs: BLOG_GENERATION_TIMEOUT_MS,
+      maxRetries: BLOG_GENERATION_MAX_RETRIES,
+      timedOut: error instanceof Error && error.name === "TimeoutError",
+      ...errorLogMetadata(error, "blogGeneration.generateDraft"),
       structuredOutputFailure:
         NoObjectGeneratedError.isInstance(error) || NoOutputGeneratedError.isInstance(error),
     });

@@ -3,11 +3,12 @@ import { requestId } from "hono/request-id";
 import { secureHeaders } from "hono/secure-headers";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import { ApiError } from "./errors";
-import { log } from "./lib/log";
+import { errorLogMetadata, log, withLogContext } from "./lib/log";
 import { adminAiRoutes } from "./routes/admin-ai";
 import { assistantRoutes } from "./routes/assistant";
 import { blogGenerationRoutes } from "./routes/blog-generation";
 import { githubRoutes } from "./routes/github";
+import { notificationRoutes } from "./routes/notifications";
 import { publicApiRoutes } from "./routes/public";
 import type { ApiEnv } from "./types/hono";
 
@@ -17,7 +18,14 @@ app.use("*", requestId());
 app.use("*", secureHeaders());
 app.use("*", async (c, next) => {
   const startedAt = performance.now();
-  await next();
+  await withLogContext(
+    {
+      requestId: c.get("requestId"),
+      method: c.req.method,
+      path: c.req.path,
+    },
+    next,
+  );
 
   log("info", "request completed", {
     requestId: c.get("requestId"),
@@ -34,6 +42,7 @@ export const apiApp = app
   .route("/admin/ai", adminAiRoutes)
   .route("/blog", blogGenerationRoutes)
   .route("/github", githubRoutes)
+  .route("/notifications", notificationRoutes)
   .route("/v1", publicApiRoutes);
 
 apiApp.notFound((c) =>
@@ -49,9 +58,9 @@ apiApp.onError((error, c) => {
 
   log(status >= 500 ? "error" : "warn", "request failed", {
     requestId: c.get("requestId"),
-    errorType: error.name,
     errorCode: apiError?.code ?? "INTERNAL_ERROR",
     status,
+    ...errorLogMetadata(error, "api.request"),
   });
 
   return c.json(

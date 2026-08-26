@@ -10,6 +10,9 @@ Drizzle migrations. Consumers must not issue Drizzle queries directly.
 - `src/db/schema/ai.ts` owns knowledge documents/chunks, ingestion runs, anonymous chat
   sessions/messages, and retrieval events. `src/db/schema/user.ts` is an existing user-table
   scaffold with no application repository or current consumer; do not imply it backs authentication.
+- `src/db/schema/notifications.ts` owns anonymous email/push/webhook subscriptions, durable publication
+  events, idempotent deliveries, and subscription rate limits. Never expose destination data outside
+  purpose-built repository results.
 - Keep Drizzle operators, SQL fragments, batches, and transactions inside this package. Apps consume
   repository functions exported from `src/index.ts`, not `db`, schema tables, or `drizzle-orm`.
 - Preserve lazy database initialization so imports and builds do not connect eagerly.

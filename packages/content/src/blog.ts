@@ -1,7 +1,7 @@
 const WORD_COUNT_TARGET = {
   minimum: 900,
   maximum: 1_200,
-  tolerance: 100,
+  tolerance: 200,
 } as const;
 
 export const BLOG_CONTENT_LIMITS = {

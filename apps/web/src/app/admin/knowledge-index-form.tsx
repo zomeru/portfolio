@@ -3,6 +3,7 @@
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useRef, useState } from "react";
+import { reportClientError } from "@/lib/client-log";
 
 type ReindexSummary = {
   chunksCreated: number;
@@ -85,6 +86,7 @@ export function KnowledgeIndexForm() {
       if (!completed) throw new Error("Knowledge indexing ended without a completion summary.");
       router.refresh();
     } catch (error) {
+      reportClientError("admin.reindexKnowledge", error, { force });
       setState({
         status: "error",
         message:

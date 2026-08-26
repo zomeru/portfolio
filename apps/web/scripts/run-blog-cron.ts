@@ -64,7 +64,6 @@ async function run() {
 }
 
 run().catch((error: unknown) => {
-  const message = error instanceof Error ? error.message : "Unknown error";
-  console.error(`Local blog cron failed: ${message}`);
+  console.error("Local blog cron failed.", error);
   process.exitCode = 1;
 });

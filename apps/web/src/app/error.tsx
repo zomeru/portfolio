@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { reportClientError } from "@/lib/client-log";
 
 export default function ErrorPage({
   error,
@@ -10,7 +11,7 @@ export default function ErrorPage({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error);
+    reportClientError("next.routeErrorBoundary", error, { digest: error.digest });
   }, [error]);
 
   return (

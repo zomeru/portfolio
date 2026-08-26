@@ -8,6 +8,7 @@ import {
   type ModelMessage,
   streamText,
 } from "ai";
+import { logError } from "../../lib/log";
 import type { AskZomerMessage, AskZomerSource, QueryIntent } from "../../types";
 import { getAssistantModels } from "../ai/models";
 import { normalizeCitationStream } from "./citations";
@@ -421,6 +422,13 @@ async function createAssistantChatResponseImpl(options: {
             trace.getActiveSpan()?.end();
           },
           onError: ({ error }) => {
+            logError("assistant model stream failed", error, {
+              operation: "assistant.streamModelResponse",
+              sessionId: session.id,
+              messageId: options.messageId,
+              model: models.chatModelId,
+              intent: classification.intent,
+            });
             updateActiveObservation({
               level: "ERROR",
               output: { errorType: error instanceof Error ? error.name : "UnknownError" },
@@ -452,7 +460,16 @@ async function createAssistantChatResponseImpl(options: {
               suggestions,
             };
           },
-          onError: () => "Zomer AI couldn't finish that response. Please try again.",
+          onError: (error) => {
+            logError("assistant UI message stream failed", error, {
+              operation: "assistant.streamUiMessage",
+              sessionId: session.id,
+              messageId: options.messageId,
+              model: models.chatModelId,
+              intent: classification.intent,
+            });
+            return "Zomer AI couldn't finish that response. Please try again.";
+          },
           onEnd: async ({ responseMessage, isAborted }) => {
             const content = textFromMessage(responseMessage);
             if (isAborted || !content) return;
@@ -472,6 +489,11 @@ async function createAssistantChatResponseImpl(options: {
           },
         });
       } catch (error) {
+        logError("assistant request setup failed", error, {
+          operation: "assistant.createChatResponse",
+          sessionKey: options.sessionKey,
+          messageId: options.messageId,
+        });
         updateActiveObservation({
           level: "ERROR",
           output: { errorType: error instanceof Error ? error.name : "UnknownError" },

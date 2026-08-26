@@ -1,3 +1,4 @@
+import { logError } from "@portfolio/api/logging";
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/portfolio/page-header";
 import { getAdminSessionToken } from "@/lib/admin-session";
@@ -6,6 +7,8 @@ import { logoutAdmin } from "./actions";
 import { GenerationForm } from "./generation-form";
 import { KnowledgeIndexForm } from "./knowledge-index-form";
 import { LoginForm } from "./login-form";
+import { NotificationRetryForm } from "./notification-retry-form";
+import { WebhookManager, type WebhookSummary } from "./webhook-manager";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -26,6 +29,18 @@ type KnowledgeIndexStatus = {
   };
 };
 
+type NotificationSummary = {
+  counts: { email: number; push: number; webhook: number };
+  latestEvent: null | {
+    occurredAt: string;
+    payload: { data: { blog: { title: string } } };
+  };
+  deliveries: Array<{
+    channel: "email" | "push" | "webhook";
+    status: "pending" | "processing" | "delivered" | "failed";
+  }>;
+};
+
 async function loadKnowledgeStatus(token: string) {
   try {
     const response = await serverClient.api.admin.ai.status.$get(
@@ -34,9 +49,56 @@ async function loadKnowledgeStatus(token: string) {
     );
     if (!response.ok) return null;
     return (await response.json()) as KnowledgeIndexStatus;
-  } catch {
+  } catch (error) {
+    logError("admin knowledge status could not be loaded", error, {
+      operation: "web.admin.loadKnowledgeStatus",
+    });
     return null;
   }
+}
+
+async function loadNotificationSummary(token: string) {
+  try {
+    const response = await serverClient.api.notifications.admin.summary.$get(
+      {},
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+    if (!response.ok) return null;
+    return (await response.json()) as NotificationSummary;
+  } catch (error) {
+    logError("admin notification summary could not be loaded", error, {
+      operation: "web.admin.loadNotificationSummary",
+    });
+    return null;
+  }
+}
+
+async function loadWebhookSummaries(token: string) {
+  try {
+    const response = await serverClient.api.notifications.webhooks.$get(
+      {},
+      { headers: { Authorization: `Bearer ${token}` } },
+    );
+    if (!response.ok) return null;
+    const payload = (await response.json()) as { webhooks: WebhookSummary[] };
+    return payload.webhooks;
+  } catch (error) {
+    logError("admin webhook destinations could not be loaded", error, {
+      operation: "web.admin.loadWebhookSummaries",
+    });
+    return null;
+  }
+}
+
+function deliveryCounts(summary: NotificationSummary, channel: "email" | "push" | "webhook") {
+  const rows = summary.deliveries.filter((delivery) => delivery.channel === channel);
+  return {
+    delivered: rows.filter((delivery) => delivery.status === "delivered").length,
+    failed: rows.filter((delivery) => delivery.status === "failed").length,
+    pending: rows.filter(
+      (delivery) => delivery.status === "pending" || delivery.status === "processing",
+    ).length,
+  };
 }
 
 function formatIndexDate(value: string | null | undefined) {
@@ -53,7 +115,11 @@ export default async function AdminPage() {
     getAdminSessionToken("blog-generation"),
     getAdminSessionToken("ai-reindex"),
   ]);
-  const status = reindexToken ? await loadKnowledgeStatus(reindexToken) : null;
+  const [status, notificationSummary, webhookSummaries] = await Promise.all([
+    reindexToken ? loadKnowledgeStatus(reindexToken) : null,
+    publishingToken ? loadNotificationSummary(publishingToken) : null,
+    publishingToken ? loadWebhookSummaries(publishingToken) : null,
+  ]);
 
   return (
     <>
@@ -102,6 +168,57 @@ export default async function AdminPage() {
           <LoginForm capability="blog-generation" />
         )}
       </section>
+
+      {publishingToken ? (
+        <section aria-labelledby="notifications-heading" className="mt-16">
+          <h2
+            id="notifications-heading"
+            className="font-mono text-xs uppercase tracking-widest text-muted"
+          >
+            Notifications
+          </h2>
+          <div className="mt-3 divide-y divide-border border-y border-border">
+            <div className="grid grid-cols-3 gap-4 py-4 text-sm">
+              <div>
+                <p className="text-xs text-muted">Email</p>
+                <p className="mt-1 font-mono">{notificationSummary?.counts.email ?? "—"}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted">Push</p>
+                <p className="mt-1 font-mono">{notificationSummary?.counts.push ?? "—"}</p>
+              </div>
+              <div>
+                <p className="text-xs text-muted">Webhooks</p>
+                <p className="mt-1 font-mono">{notificationSummary?.counts.webhook ?? "—"}</p>
+              </div>
+            </div>
+            <div className="py-4 text-sm">
+              <p className="text-xs text-muted">Last publication</p>
+              <p className="mt-1 font-medium">
+                {notificationSummary?.latestEvent?.payload.data.blog.title ?? "No events recorded"}
+              </p>
+              {notificationSummary?.latestEvent ? (
+                <div className="mt-3 grid gap-2 font-mono text-xs text-muted sm:grid-cols-3">
+                  {(["email", "push", "webhook"] as const).map((channel) => {
+                    const counts = deliveryCounts(notificationSummary, channel);
+                    return (
+                      <p key={channel} className="capitalize">
+                        {channel}: {counts.delivered} delivered · {counts.failed} failed ·{" "}
+                        {counts.pending} pending
+                      </p>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
+            <NotificationRetryForm />
+          </div>
+          <WebhookManager
+            webhooks={webhookSummaries ?? []}
+            loadFailed={webhookSummaries === null}
+          />
+        </section>
+      ) : null}
 
       <section aria-labelledby="knowledge-heading" className="mt-16">
         <h2

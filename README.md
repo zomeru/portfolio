@@ -15,9 +15,21 @@ The project uses:
 - **AI**: AI SDK 7+, Gemini blog generation, Groq, NVIDIA NIM, or OpenRouter chat, and OpenRouter embeddings
 - **Observability**: OpenTelemetry and optional Langfuse tracing
 
+Development logs color warnings and errors. Production emits structured, redacted JSON with request context, error details, and the originating application frame.
+
 ## Architecture
 
 `apps/web` is the only deployed process. It serves the Next.js UI, mounts the Hono app from `apps/api`, and hosts the MCP transports. `apps/api` owns the canonical published-portfolio service shared by the website, REST API, OpenAPI contract, and MCP tools. Ask Zomer uses the derived portfolio index for portfolio questions and can use provider web search for general questions when Groq or OpenRouter is selected.
+
+Blog publication creates an idempotent PostgreSQL event after Sanity succeeds. Email, Web Push, and webhook deliveries run independently, so provider failures never roll back a published post. The protected admin page retries incomplete or transient deliveries.
+
+## Notifications
+
+- **Email**: Gmail SMTP by default or Resend, with confirmation and signed unsubscribe links
+- **Web Push**: explicit browser opt-in through a small Progressive Web App (PWA) service worker
+- **Webhooks**: admin-approved Discord, Slack, or signed generic HTTPS destinations with server-side request forgery (SSRF) protection
+
+Notification schemas and migrations live in `packages/database`. See `/developers` for webhook payloads, signature verification, retries, and local testing.
 
 ## Local setup
 
@@ -49,9 +61,29 @@ pnpm --filter @portfolio/studio dev
 | Ask Zomer providers | `AI_CHAT_PROVIDER`, `GROQ_API_KEY`, `NVIDIA_NIM_API_KEY`, `OPENROUTER_API_KEY` |
 | Ask Zomer models | `AI_GROQ_CHAT_MODEL`, `AI_NVIDIA_NIM_CHAT_MODEL`, `AI_OPENROUTER_CHAT_MODEL`, `AI_EMBEDDING_MODEL` |
 | Admin | `CRON_SECRET`, `AI_INDEX_SECRET_KEY` |
+| Email notifications | `EMAIL_PROVIDER`, `EMAIL_FROM`, `EMAIL_FROM_NAME`, optional `EMAIL_REPLY_TO`; Gmail: `GOOGLE_APP_PASSWORD`; Resend: `RESEND_API_KEY` |
+| Web Push | `NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY`, `WEB_PUSH_VAPID_PRIVATE_KEY`, `WEB_PUSH_SUBJECT` |
+| Notification security | `NOTIFICATION_TOKEN_SECRET`, `WEBHOOK_ENCRYPTION_KEY` |
 | Tracing | `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, optional `LANGFUSE_BASE_URL` |
 
 Never expose server-only variables to browser code. Confirm the target before seeding content, publishing, migrating, indexing, or deploying.
+
+Notification features are optional, but each enabled feature needs its complete variable group. Generate setup values without committing production secrets:
+
+```sh
+pnpm --filter @portfolio/api exec web-push generate-vapid-keys
+openssl rand -base64 48
+openssl rand -base64 32 | tr '+/' '-_' | tr -d '='
+```
+
+Use the first random value for `NOTIFICATION_TOKEN_SECRET` and the base64url value for `WEBHOOK_ENCRYPTION_KEY`. Keep the VAPID key pair unchanged across deployments.
+
+### Notification setup
+
+1. For Gmail, enable two-step verification and set `EMAIL_FROM` plus `GOOGLE_APP_PASSWORD`. For Resend, set `EMAIL_PROVIDER=resend`, `EMAIL_FROM`, and `RESEND_API_KEY`.
+2. Configure the three Web Push variables with one VAPID key pair.
+3. Generate the notification and webhook secrets shown above.
+4. Confirm the database target, run `pnpm db:migrate`, and deploy. Use **Retry notifications** on `/admin` for eligible failures.
 
 ## Development commands
 
@@ -65,7 +97,7 @@ Use these commands for common development tasks:
 | `pnpm build:all` | Build all workspaces |
 | `pnpm check:all` | Run lint, dependency, unused-code, type, and test checks |
 | `pnpm run check:all:build` | Run all checks and builds |
-| `pnpm test` | Run public API, MCP, discovery, and SEO contract tests |
+| `pnpm test` | Run the minimal API contract, security, and complex-logic tests |
 | `pnpm --filter @portfolio/studio typegen` | Regenerate Sanity types |
 | `pnpm db:generate` | Generate a Drizzle migration |
 | `pnpm db:migrate` | Apply database migrations |
