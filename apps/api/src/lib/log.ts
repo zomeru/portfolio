@@ -20,6 +20,7 @@ const logContext = new AsyncLocalStorage<LogMetadata>();
 const MAX_ERROR_MESSAGE_LENGTH = 1_000;
 const MAX_PROVIDER_MESSAGE_LENGTH = 1_000;
 const MAX_ERROR_CAUSE_DEPTH = 3;
+const MAX_STACK_FRAME_LENGTH = 4_096;
 const ANSI_RESET = "\u001b[0m";
 const ANSI_RED = "\u001b[31m";
 const ANSI_ORANGE = "\u001b[38;5;208m";
@@ -42,19 +43,65 @@ function truncate(value: string, maximumLength: number) {
     : `${redacted.slice(0, maximumLength)}…[truncated ${redacted.length - maximumLength} characters]`;
 }
 
+function containsOnlyAsciiDigits(value: string) {
+  if (value.length === 0) return false;
+  for (const character of value) {
+    if (character < "0" || character > "9") return false;
+  }
+  return true;
+}
+
 function applicationFrame(line: string) {
-  let decoded = line.trim();
+  let decoded = line.trim().slice(0, MAX_STACK_FRAME_LENGTH);
   try {
     decoded = decodeURIComponent(decoded);
   } catch {
     // Keep the original frame when a runtime emitted malformed URI escapes.
   }
-  const source = decoded.match(
-    /(?:\[project\]\/|\/)((?:apps|packages)\/[^+?)]+?\.[cm]?[jt]sx?)[^:\n]*:(\d+):(\d+)/,
-  );
-  if (!source) return null;
-  const functionName = decoded.match(/^at\s+(?:async\s+)?([^(]+?)(?:\s+\(|$)/)?.[1]?.trim();
-  return `at ${functionName || "anonymous"} (${source[1]}:${source[2]}:${source[3]})`;
+
+  const sourceStart = ["/apps/", "/packages/"]
+    .map((marker) => decoded.indexOf(marker))
+    .filter((index) => index >= 0)
+    .sort((left, right) => left - right)[0];
+  if (sourceStart === undefined) return null;
+  const sourcePathStart = sourceStart + 1;
+
+  const sourceExtensions = [".tsx", ".jsx", ".mts", ".cts", ".mjs", ".cjs", ".ts", ".js"];
+  for (let separator = decoded.indexOf(":", sourcePathStart); separator >= 0; ) {
+    const lineEnd = decoded.indexOf(":", separator + 1);
+    if (lineEnd < 0) return null;
+
+    const lineNumber = decoded.slice(separator + 1, lineEnd);
+    let columnEnd = lineEnd + 1;
+    while (columnEnd < decoded.length) {
+      const character = decoded.charCodeAt(columnEnd);
+      if (character < 48 || character > 57) break;
+      columnEnd += 1;
+    }
+    const columnNumber = decoded.slice(lineEnd + 1, columnEnd);
+    const source = decoded.slice(sourcePathStart, separator);
+    const suffixStart = source.search(/[+?)]/);
+    const sourcePath = suffixStart >= 0 ? source.slice(0, suffixStart) : source;
+
+    if (
+      containsOnlyAsciiDigits(lineNumber) &&
+      containsOnlyAsciiDigits(columnNumber) &&
+      sourceExtensions.some((extension) => sourcePath.endsWith(extension))
+    ) {
+      let functionName = "anonymous";
+      if (decoded.startsWith("at ")) {
+        const nameStart = decoded.startsWith("at async ") ? 9 : 3;
+        const nameEnd = decoded.indexOf(" (", nameStart);
+        if (nameEnd >= 0 && nameEnd <= sourcePathStart) {
+          functionName = decoded.slice(nameStart, nameEnd).trim() || functionName;
+        }
+      }
+      return `at ${functionName} (${sourcePath}:${lineNumber}:${columnNumber})`;
+    }
+
+    separator = decoded.indexOf(":", lineEnd + 1);
+  }
+  return null;
 }
 
 function errorOrigin(stack: string | undefined) {

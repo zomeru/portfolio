@@ -37,6 +37,7 @@
     "deps:unused": "pnpm run with-env knip",
     "security:audit": "pnpm audit --prod",
     "security:check": "pnpm audit",
+    "security:secrets": "tsx scripts/run-ggshield.ts",
     "test": "turbo run test",
     "version:packages": "changeset version",
     "version:sync": "tsx scripts/sync-version.ts",

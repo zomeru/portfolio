@@ -104,8 +104,26 @@ Use these commands for common development tasks:
 | `pnpm ai:index` | Update the published-content index |
 | `pnpm ai:index --force` | Rebuild the full AI index |
 | `pnpm ai:eval` | Run deterministic assistant evaluations |
+| `pnpm security:secrets` | Scan the Git repository for new secrets with GitGuardian ggshield |
 
 Run database, seed, publish, and indexing commands only against a confirmed target.
+
+### Local security scanning
+
+The secrets scan requires the standalone GitGuardian CLI; it is not a pnpm dependency. On macOS,
+install and authenticate ggshield with:
+
+```sh
+brew install ggshield
+ggshield auth login
+```
+
+Run `pnpm security:secrets` to scan the repository and its commit history. The command ignores
+secrets already known to the authenticated GitGuardian dashboard, such as remediated historical
+incidents, but still fails when it detects a new secret. GitGuardian uses its API and requires
+authentication. Files larger than GitGuardian's one-megabyte document limit are reported as skipped.
+See the official [ggshield setup guide](https://docs.gitguardian.com/ggshield-docs/getting-started)
+for other operating systems and installation options.
 
 ## Public agent interfaces
 

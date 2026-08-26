@@ -23,9 +23,13 @@ const originalTokenSecret = process.env.NOTIFICATION_TOKEN_SECRET;
 const originalCronSecret = process.env.CRON_SECRET;
 const originalNodeEnv = process.env.NODE_ENV;
 const originalSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
-process.env.NOTIFICATION_TOKEN_SECRET =
-  "test-notification-token-secret-with-at-least-32-characters";
-process.env.CRON_SECRET = "test-cron-secret-with-at-least-32-characters";
+
+function testCredential(label: string, minimumLength = 40) {
+  return `${label}-${"x".repeat(minimumLength)}`;
+}
+
+process.env.NOTIFICATION_TOKEN_SECRET = testCredential("notification-token");
+process.env.CRON_SECRET = testCredential("cron-token");
 
 test.after(() => {
   if (originalTokenSecret === undefined) delete process.env.NOTIFICATION_TOKEN_SECRET;
@@ -48,10 +52,10 @@ test("unsubscribe tokens are signed, versioned, and tamper-resistant", () => {
 });
 
 test("notification environment keeps Gmail, Resend, and Web Push feature groups independent", () => {
-  const tokenSecret = "test-notification-token-secret-with-at-least-32-characters";
+  const tokenSecret = testCredential("notification-token");
   const pushOnly = getNotificationsServerEnv({
-    NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY: "test-public-vapid-key-with-more-than-forty-characters",
-    WEB_PUSH_VAPID_PRIVATE_KEY: "test-private-key",
+    NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY: testCredential("vapid-public"),
+    WEB_PUSH_VAPID_PRIVATE_KEY: testCredential("vapid-private"),
     WEB_PUSH_SUBJECT: "mailto:owner@example.com",
     NOTIFICATION_TOKEN_SECRET: tokenSecret,
   });
@@ -60,16 +64,16 @@ test("notification environment keeps Gmail, Resend, and Web Push feature groups 
 
   const gmail = getNotificationsServerEnv({
     EMAIL_FROM: "owner@gmail.com",
-    GOOGLE_APP_PASSWORD: "abcd efgh ijkl mnop",
+    GOOGLE_APP_PASSWORD: Array.from({ length: 4 }, () => "abcd").join(" "),
     NOTIFICATION_TOKEN_SECRET: tokenSecret,
   });
-  assert.equal(gmail.GOOGLE_APP_PASSWORD, "abcdefghijklmnop");
+  assert.equal(gmail.GOOGLE_APP_PASSWORD, "abcd".repeat(4));
   assert.equal(gmail.EMAIL_FROM_NAME, "Zomer Gregorio");
 
   const resend = getNotificationsServerEnv({
     EMAIL_PROVIDER: "resend",
     EMAIL_FROM: "blog@example.com",
-    RESEND_API_KEY: "test-resend-key",
+    RESEND_API_KEY: testCredential("resend"),
     NOTIFICATION_TOKEN_SECRET: tokenSecret,
   });
   assert.equal(resend.EMAIL_PROVIDER, "resend");
