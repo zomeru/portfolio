@@ -138,7 +138,7 @@ async function deliverClaimedNotification(
   }
   if (delivery.channel === "email") {
     const subscription = await findEmailSubscriptionById(delivery.destinationId);
-    if (subscription?.status !== "active") return { skipped: true } as const;
+    if (subscription?.status !== "confirmed") return { skipped: true } as const;
     const token = createUnsubscribeToken(subscription.id, subscription.unsubscribeTokenVersion);
     const unsubscribeUrl = new URL("/blogs/unsubscribe", getSiteEnv().siteUrl);
     unsubscribeUrl.searchParams.set("token", token);

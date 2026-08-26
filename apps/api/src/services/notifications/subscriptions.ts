@@ -12,7 +12,7 @@ import { getNotificationsServerEnv } from "@portfolio/env/notifications-server";
 import { getSiteEnv } from "@portfolio/env/site";
 import { z } from "zod";
 
-import { logError } from "../../lib/log";
+import { log, logError } from "../../lib/log";
 import { createSecretToken, hashToken, keyedHash, parseUnsubscribeToken } from "./crypto";
 import { isEmailConfigured, sendSubscriptionConfirmationEmail } from "./email";
 import { NotificationDeliveryError } from "./errors";
@@ -23,7 +23,35 @@ import {
   validatePushServiceEndpoint,
 } from "./push";
 
-const CONFIRMATION_TTL_MS = 24 * 60 * 60 * 1_000;
+type EmailSubscriptionResult = {
+  subscription: { id: string };
+  outcome: "confirmation_required" | "confirmation_pending" | "already_subscribed" | "suppressed";
+};
+
+type EmailSubscriptionDependencies = {
+  getConfiguration: () => {
+    confirmationTtlHours: number;
+    emailConfigured: boolean;
+    siteUrl: string;
+  };
+  createToken: () => string;
+  hashToken: (token: string) => string;
+  createOrReuse: (options: {
+    email: string;
+    verificationTokenHash: string;
+    verificationExpiresAt: Date;
+  }) => Promise<EmailSubscriptionResult>;
+  confirm: (tokenHash: string, now: Date) => Promise<{ id: string } | null>;
+  expireToken: (subscriptionId: string, tokenHash: string) => Promise<void>;
+  sendConfirmation: (options: {
+    email: string;
+    confirmationUrl: string;
+    expiresInHours: number;
+    subscriptionId: string;
+    tokenHash: string;
+  }) => Promise<unknown>;
+  now: () => Date;
+};
 
 export class NotificationRateLimitError extends Error {
   constructor() {
@@ -53,47 +81,84 @@ export async function enforceNotificationRateLimit(options: {
   if (!result.allowed) throw new NotificationRateLimitError();
 }
 
-export async function subscribeEmailAddress(email: string) {
-  if (!isEmailConfigured()) {
-    throw new NotificationDeliveryError("Email subscriptions are not configured.", {
-      code: "EMAIL_NOT_CONFIGURED",
-      retryable: false,
-    });
-  }
-  const token = createSecretToken(32);
-  const tokenHash = hashToken(token);
-  const result = await createOrReuseEmailSubscription({
-    email,
-    verificationTokenHash: tokenHash,
-    verificationExpiresAt: new Date(Date.now() + CONFIRMATION_TTL_MS),
-  });
-  if (result.outcome !== "confirmation_required") return { outcome: result.outcome };
+export function createEmailSubscriptionService(dependencies: EmailSubscriptionDependencies) {
+  return {
+    async subscribe(email: string) {
+      const configuration = dependencies.getConfiguration();
+      if (!configuration.emailConfigured) {
+        throw new NotificationDeliveryError("Email subscriptions are not configured.", {
+          code: "EMAIL_NOT_CONFIGURED",
+          retryable: false,
+        });
+      }
 
-  const confirmationUrl = new URL("/api/notifications/email/confirm", getSiteEnv().siteUrl);
-  confirmationUrl.searchParams.set("token", token);
-  try {
-    await sendSubscriptionConfirmationEmail({
-      email,
-      confirmationUrl: confirmationUrl.href,
-      subscriptionId: result.subscription.id,
-      tokenHash,
-    });
-  } catch (error) {
-    try {
-      await expireEmailVerificationToken(result.subscription.id, tokenHash);
-    } catch (cleanupError) {
-      logError("failed email confirmation token could not be expired", cleanupError, {
-        operation: "notifications.expireFailedEmailConfirmation",
-        subscriptionId: result.subscription.id,
+      const now = dependencies.now();
+      const token = dependencies.createToken();
+      const tokenHash = dependencies.hashToken(token);
+      const result = await dependencies.createOrReuse({
+        email,
+        verificationTokenHash: tokenHash,
+        verificationExpiresAt: new Date(
+          now.getTime() + configuration.confirmationTtlHours * 60 * 60 * 1_000,
+        ),
       });
-    }
-    throw error;
-  }
-  return { outcome: result.outcome };
+      if (result.outcome !== "confirmation_required") return { outcome: result.outcome };
+
+      const confirmationUrl = new URL("/api/notifications/email/confirm", configuration.siteUrl);
+      confirmationUrl.searchParams.set("token", token);
+      try {
+        await dependencies.sendConfirmation({
+          email,
+          confirmationUrl: confirmationUrl.href,
+          expiresInHours: configuration.confirmationTtlHours,
+          subscriptionId: result.subscription.id,
+          tokenHash,
+        });
+      } catch (error) {
+        try {
+          await dependencies.expireToken(result.subscription.id, tokenHash);
+        } catch (cleanupError) {
+          log("error", "failed email confirmation token could not be expired", {
+            operation: "notifications.expireFailedEmailConfirmation",
+            subscriptionId: result.subscription.id,
+            errorType: cleanupError instanceof Error ? cleanupError.name : "NonErrorThrown",
+          });
+        }
+        throw error;
+      }
+      return { outcome: result.outcome };
+    },
+
+    confirm(token: string) {
+      return dependencies.confirm(dependencies.hashToken(token), dependencies.now());
+    },
+  };
+}
+
+const emailSubscriptionService = createEmailSubscriptionService({
+  getConfiguration: () => {
+    const environment = getNotificationsServerEnv();
+    return {
+      confirmationTtlHours: environment.EMAIL_CONFIRMATION_TTL_HOURS,
+      emailConfigured: isEmailConfigured(),
+      siteUrl: getSiteEnv().siteUrl,
+    };
+  },
+  createToken: () => createSecretToken(32),
+  hashToken,
+  createOrReuse: createOrReuseEmailSubscription,
+  confirm: confirmEmailSubscription,
+  expireToken: expireEmailVerificationToken,
+  sendConfirmation: sendSubscriptionConfirmationEmail,
+  now: () => new Date(),
+});
+
+export function subscribeEmailAddress(email: string) {
+  return emailSubscriptionService.subscribe(email);
 }
 
 export function confirmEmailAddress(token: string) {
-  return confirmEmailSubscription(hashToken(token));
+  return emailSubscriptionService.confirm(token);
 }
 
 export async function unsubscribeEmailAddress(token: string) {

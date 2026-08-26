@@ -43,27 +43,13 @@ export async function createOrReuseEmailSubscription(options: {
     .limit(1);
 
   if (!existing) throw new Error("Email subscription conflict could not be resolved.");
-  if (existing.status === "active") {
+  if (existing.status === "confirmed") {
     return { subscription: existing, outcome: "already_subscribed" as const };
   }
   if (existing.status === "suppressed") {
     return { subscription: existing, outcome: "suppressed" as const };
   }
-  if (
-    existing.status === "pending" &&
-    existing.verificationExpiresAt &&
-    existing.verificationExpiresAt > now
-  ) {
-    return { subscription: existing, outcome: "confirmation_pending" as const };
-  }
-
-  const reusableStatus = or(
-    eq(blogEmailSubscriptions.status, "unsubscribed"),
-    and(
-      eq(blogEmailSubscriptions.status, "pending"),
-      lte(blogEmailSubscriptions.verificationExpiresAt, now),
-    ),
-  );
+  const reusableStatus = inArray(blogEmailSubscriptions.status, ["pending", "unsubscribed"]);
   const [updated] = await db
     .update(blogEmailSubscriptions)
     .set({
@@ -94,9 +80,11 @@ export async function createOrReuseEmailSubscription(options: {
   return {
     subscription: current,
     outcome:
-      current.status === "active"
+      current.status === "confirmed"
         ? ("already_subscribed" as const)
-        : ("confirmation_pending" as const),
+        : current.status === "suppressed"
+          ? ("suppressed" as const)
+          : ("confirmation_pending" as const),
   };
 }
 
@@ -104,7 +92,7 @@ export async function confirmEmailSubscription(tokenHash: string, now = new Date
   const [subscription] = await db
     .update(blogEmailSubscriptions)
     .set({
-      status: "active",
+      status: "confirmed",
       verificationTokenHash: null,
       verificationExpiresAt: null,
       verifiedAt: now,
@@ -158,7 +146,7 @@ export async function unsubscribeEmailSubscription(id: string, tokenVersion: num
       and(
         eq(blogEmailSubscriptions.id, id),
         eq(blogEmailSubscriptions.unsubscribeTokenVersion, tokenVersion),
-        inArray(blogEmailSubscriptions.status, ["pending", "active", "unsubscribed"]),
+        inArray(blogEmailSubscriptions.status, ["pending", "confirmed", "unsubscribed"]),
       ),
     )
     .returning();
@@ -336,7 +324,7 @@ export async function listActiveNotificationDestinationIds(
       .from(blogEmailSubscriptions)
       .where(
         and(
-          eq(blogEmailSubscriptions.status, "active"),
+          eq(blogEmailSubscriptions.status, "confirmed"),
           lte(blogEmailSubscriptions.verifiedAt, options.createdBefore),
           options.afterId ? gt(blogEmailSubscriptions.id, options.afterId) : undefined,
         ),
@@ -590,7 +578,7 @@ export async function getNotificationAdminSummary() {
     db
       .select({ count: count() })
       .from(blogEmailSubscriptions)
-      .where(eq(blogEmailSubscriptions.status, "active")),
+      .where(eq(blogEmailSubscriptions.status, "confirmed")),
     db
       .select({ count: count() })
       .from(blogPushSubscriptions)

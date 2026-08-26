@@ -171,15 +171,14 @@ export function getOpenApiDocument(siteUrl: URL) {
           operationId: "subscribeToBlogEmail",
           requestBody: { required: true, content: jsonContent("EmailSubscriptionRequest") },
           responses: {
-            "200": success(
-              "Confirmation requested or subscription already exists.",
+            "202": success(
+              "The privacy-preserving subscription request was accepted.",
               "EmailSubscriptionResult",
             ),
             "400": error("The email address is invalid."),
             "413": error("The request body is too large."),
             "429": error("The subscription rate limit was exceeded."),
-            "502": error("The email provider could not complete the request."),
-            "503": error("Email notifications are not configured."),
+            "503": error("Email validation is temporarily unavailable."),
           },
           security: [],
           summary: "Request a double-opt-in email subscription",
@@ -285,15 +284,7 @@ export function getOpenApiDocument(siteUrl: URL) {
           additionalProperties: false,
           properties: {
             success: { const: true, type: "boolean" },
-            status: {
-              enum: [
-                "confirmation_required",
-                "confirmation_pending",
-                "already_subscribed",
-                "suppressed",
-              ],
-              type: "string",
-            },
+            status: { const: "confirmation_sent", type: "string" },
           },
           required: ["success", "status"],
           type: "object",

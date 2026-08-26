@@ -248,13 +248,10 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
         if (code === "INVALID_EMAIL") input.focus();
         return;
       }
-      const messages = {
-        confirmation_required: "Check your inbox to confirm the subscription.",
-        confirmation_pending: "A confirmation email was already sent. Check your inbox.",
-        already_subscribed: "This email address is already subscribed.",
-        suppressed: "This address cannot receive blog email right now.",
-      } satisfies Record<typeof payload.status, string>;
-      setEmailState({ kind: "success", message: messages[payload.status] });
+      setEmailState({
+        kind: "success",
+        message: "If confirmation is needed, check your inbox for a confirmation link.",
+      });
       input.value = "";
     } catch (error) {
       reportClientError("notifications.subscribeEmail", error);

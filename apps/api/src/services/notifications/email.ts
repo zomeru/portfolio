@@ -208,18 +208,20 @@ async function sendEmail(options: {
 export async function sendSubscriptionConfirmationEmail(options: {
   email: string;
   confirmationUrl: string;
+  expiresInHours: number;
   subscriptionId: string;
   tokenHash: string;
 }) {
   const heading = "Confirm your blog subscription";
+  const expiration = `${options.expiresInHours} hour${options.expiresInHours === 1 ? "" : "s"}`;
   const html = emailFrame(
     `<h1 style="margin:0;font-size:24px;line-height:1.3;font-weight:600;">${heading}</h1>
 <p style="margin:16px 0 0;font-size:15px;line-height:1.7;color:#52525b;">Confirm this address to receive a short email whenever I publish a new post.</p>
 ${button("Confirm subscription", options.confirmationUrl)}
-<p style="margin:0;font-size:12px;line-height:1.6;color:#71717a;">This link expires in 24 hours. If you did not request it, you can ignore this email.</p>`,
+<p style="margin:0;font-size:12px;line-height:1.6;color:#71717a;">This link expires in ${expiration}. If you did not request it, you can ignore this email.</p>`,
     heading,
   );
-  const text = `${heading}\n\nConfirm this address to receive a short email whenever I publish a new post.\n\n${options.confirmationUrl}\n\nThis link expires in 24 hours. If you did not request it, ignore this email.`;
+  const text = `${heading}\n\nConfirm this address to receive a short email whenever I publish a new post.\n\n${options.confirmationUrl}\n\nThis link expires in ${expiration}. If you did not request it, ignore this email.`;
   return sendEmail({
     to: options.email,
     subject: heading,

@@ -51,20 +51,20 @@ pnpm --filter @portfolio/studio dev
 
 `.env.example` is the source of truth. Add only the services needed for your development path:
 
-| Service               | Variables                                                                                                                            |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Site                  | `NEXT_PUBLIC_SITE_URL`                                                                                                               |
-| Sanity                | `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `NEXT_PUBLIC_SANITY_APP_ID`, `SANITY_API_TOKEN`                       |
-| GitHub                | `GH_PAT_TOKEN`                                                                                                                       |
-| Database              | `DATABASE_URL`, optional `DATABASE_DIRECT_URL`                                                                                       |
-| Blog AI               | `GOOGLE_GENERATIVE_AI_API_KEY`, `GOOGLE_GENERATIVE_AI_MODEL`                                                                         |
-| Ask Zomer providers   | `AI_CHAT_PROVIDER`, `GROQ_API_KEY`, `NVIDIA_NIM_API_KEY`, `OPENROUTER_API_KEY`                                                       |
-| Ask Zomer models      | `AI_GROQ_CHAT_MODEL`, `AI_NVIDIA_NIM_CHAT_MODEL`, `AI_OPENROUTER_CHAT_MODEL`, `AI_EMBEDDING_MODEL`                                   |
-| Admin                 | `ADMIN_ACCESS_KEY`, `CRON_SECRET`, `AI_INDEX_SECRET_KEY`                                                                             |
-| Email notifications   | `EMAIL_PROVIDER`, `EMAIL_FROM`, `EMAIL_FROM_NAME`, optional `EMAIL_REPLY_TO`; Gmail: `GOOGLE_APP_PASSWORD`; Resend: `RESEND_API_KEY` |
-| Web Push              | `NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY`, `WEB_PUSH_VAPID_PRIVATE_KEY`, `WEB_PUSH_SUBJECT`                                            |
-| Notification security | `NOTIFICATION_TOKEN_SECRET`, `WEBHOOK_ENCRYPTION_KEY`                                                                                |
-| Tracing               | `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, optional `LANGFUSE_BASE_URL`                                                           |
+| Service               | Variables                                                                                                                                                               |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Site                  | `NEXT_PUBLIC_SITE_URL`                                                                                                                                                  |
+| Sanity                | `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `NEXT_PUBLIC_SANITY_APP_ID`, `SANITY_API_TOKEN`                                                          |
+| GitHub                | `GH_PAT_TOKEN`                                                                                                                                                          |
+| Database              | `DATABASE_URL`, optional `DATABASE_DIRECT_URL`                                                                                                                          |
+| Blog AI               | `GOOGLE_GENERATIVE_AI_API_KEY`, `GOOGLE_GENERATIVE_AI_MODEL`                                                                                                            |
+| Ask Zomer providers   | `AI_CHAT_PROVIDER`, `GROQ_API_KEY`, `NVIDIA_NIM_API_KEY`, `OPENROUTER_API_KEY`                                                                                          |
+| Ask Zomer models      | `AI_GROQ_CHAT_MODEL`, `AI_NVIDIA_NIM_CHAT_MODEL`, `AI_OPENROUTER_CHAT_MODEL`, `AI_EMBEDDING_MODEL`                                                                      |
+| Admin                 | `ADMIN_ACCESS_KEY`, `CRON_SECRET`, `AI_INDEX_SECRET_KEY`                                                                                                                |
+| Email notifications   | `EMAIL_PROVIDER`, `EMAIL_FROM`, `EMAIL_FROM_NAME`, optional `EMAIL_REPLY_TO` and `EMAIL_CONFIRMATION_TTL_HOURS`; Gmail: `GOOGLE_APP_PASSWORD`; Resend: `RESEND_API_KEY` |
+| Web Push              | `NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY`, `WEB_PUSH_VAPID_PRIVATE_KEY`, `WEB_PUSH_SUBJECT`                                                                               |
+| Notification security | `NOTIFICATION_TOKEN_SECRET`, `WEBHOOK_ENCRYPTION_KEY`                                                                                                                   |
+| Tracing               | `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, optional `LANGFUSE_BASE_URL`                                                                                              |
 
 Never expose server-only variables to browser code. Confirm the target before seeding content, publishing, migrating, indexing, or deploying.
 

@@ -32,6 +32,7 @@
     "@portfolio/env": "workspace:*",
     "@sanity/client": "^7.26.2",
     "ai": "^7.0.77",
+    "disposable-email-domains-js": "^1.25.0",
     "groq": "^6.10.1",
     "hono": "^4.13.3",
     "nodemailer": "^9.0.5",

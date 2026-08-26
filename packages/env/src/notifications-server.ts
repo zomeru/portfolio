@@ -32,6 +32,7 @@ const notificationsServerSchema = z
       (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
       z.email().optional(),
     ),
+    EMAIL_CONFIRMATION_TTL_HOURS: z.coerce.number().int().min(1).max(168).default(24),
     NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY: optionalSecret,
     WEB_PUSH_VAPID_PRIVATE_KEY: optionalSecret,
     WEB_PUSH_SUBJECT: z.preprocess(
