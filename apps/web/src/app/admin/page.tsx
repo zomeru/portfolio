@@ -1,9 +1,11 @@
 import { logError } from "@portfolio/api/logging";
 import type { Metadata } from "next";
 import { PageHeader } from "@/components/portfolio/page-header";
+import { isAdminAccessAuthenticated } from "@/lib/admin-access";
 import { getAdminSessionToken } from "@/lib/admin-session";
 import { serverClient } from "@/lib/api-server";
-import { logoutAdmin } from "./actions";
+import { AdminAccessGate } from "./access-gate";
+import { logoutAdmin, logoutAdminAccess } from "./actions";
 import { GenerationForm } from "./generation-form";
 import { KnowledgeIndexForm } from "./knowledge-index-form";
 import { LoginForm } from "./login-form";
@@ -111,6 +113,20 @@ function formatIndexDate(value: string | null | undefined) {
 }
 
 export default async function AdminPage() {
+  const hasPageAccess = await isAdminAccessAuthenticated();
+  if (!hasPageAccess) {
+    return (
+      <>
+        <div aria-hidden="true" className="pointer-events-none select-none blur-sm">
+          <PageHeader index="06" eyebrow="Admin" title="Manage portfolio automation." />
+          <div className="mt-10 h-40 rounded-lg border border-border/70 bg-foreground/2.5" />
+          <div className="mt-4 h-40 rounded-lg border border-border/70 bg-foreground/2.5" />
+        </div>
+        <AdminAccessGate />
+      </>
+    );
+  }
+
   const [publishingToken, reindexToken] = await Promise.all([
     getAdminSessionToken("blog-generation"),
     getAdminSessionToken("ai-reindex"),
@@ -124,6 +140,21 @@ export default async function AdminPage() {
   return (
     <>
       <PageHeader index="06" eyebrow="Admin" title="Manage portfolio automation." />
+
+      <div className="mt-6 flex items-center justify-between gap-4 rounded-lg border border-border/70 bg-foreground/2.5 px-4 py-3">
+        <div>
+          <p className="text-sm font-medium">Page access</p>
+          <p className="mt-1 text-xs text-muted">Admin page unlocked on this browser</p>
+        </div>
+        <form action={logoutAdminAccess}>
+          <button
+            type="submit"
+            className="min-h-10 rounded-md border border-border px-3 text-xs text-muted transition-colors duration-150 hover:text-foreground motion-reduce:transition-none"
+          >
+            Lock page
+          </button>
+        </form>
+      </div>
 
       <section
         aria-labelledby="publishing-heading"

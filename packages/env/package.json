@@ -4,6 +4,7 @@
   "description": "Centralized environment variable validation",
   "private": true,
   "exports": {
+    "./admin": "./src/admin.ts",
     "./ai-server": "./src/ai-server.ts",
     "./assistant-server": "./src/assistant-server.ts",
     "./cron": "./src/cron.ts",

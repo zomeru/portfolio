@@ -8,6 +8,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import {
+  createAdminAccessSession,
+  deleteAdminAccessSession,
+  isAdminAccessAuthenticated,
+  verifyAdminAccessKey,
+} from "@/lib/admin-access";
+import {
   createAdminSession,
   deleteAdminSession,
   getAdminSessionToken,
@@ -73,10 +79,27 @@ function parseAdminCapability(value: FormDataEntryValue | null): AdminCapability
   return value === "blog-generation" || value === "ai-reindex" ? value : null;
 }
 
+export async function authenticateAdminAccess(
+  _previousState: LoginActionState,
+  formData: FormData,
+): Promise<LoginActionState> {
+  const accessKey = formData.get("accessKey");
+  if (typeof accessKey !== "string" || !verifyAdminAccessKey(accessKey)) {
+    return { error: "The admin access key is incorrect." };
+  }
+
+  await createAdminAccessSession();
+  redirect("/admin");
+}
+
 export async function authenticateAdmin(
   _previousState: LoginActionState,
   formData: FormData,
 ): Promise<LoginActionState> {
+  if (!(await isAdminAccessAuthenticated())) {
+    return { error: "Page access expired. Refresh and unlock the admin page again." };
+  }
+
   const secret = formData.get("secret");
   const capability = parseAdminCapability(formData.get("capability"));
 
@@ -92,6 +115,10 @@ export async function triggerBlogGeneration(
   _previousState: GenerationActionState,
   _formData: FormData,
 ): Promise<GenerationActionState> {
+  if (!(await isAdminAccessAuthenticated())) {
+    return { status: "error", message: "Page access expired. Unlock the admin page again." };
+  }
+
   if (!(await isAdminAuthenticated("blog-generation"))) {
     return {
       status: "error",
@@ -151,7 +178,13 @@ export async function registerWebhook(
   _previousState: WebhookRegistrationActionState,
   formData: FormData,
 ): Promise<WebhookRegistrationActionState> {
-  const token = await getAdminSessionToken("blog-generation");
+  const [hasPageAccess, token] = await Promise.all([
+    isAdminAccessAuthenticated(),
+    getAdminSessionToken("blog-generation"),
+  ]);
+  if (!hasPageAccess) {
+    return { status: "error", message: "Page access expired. Unlock the admin page again." };
+  }
   if (!token) {
     return {
       status: "error",
@@ -217,8 +250,14 @@ export async function testWebhook(
   _previousState: WebhookMutationActionState,
   formData: FormData,
 ): Promise<WebhookMutationActionState> {
-  const token = await getAdminSessionToken("blog-generation");
+  const [hasPageAccess, token] = await Promise.all([
+    isAdminAccessAuthenticated(),
+    getAdminSessionToken("blog-generation"),
+  ]);
   const id = webhookIdSchema.safeParse(formData.get("id"));
+  if (!hasPageAccess) {
+    return { status: "error", message: "Page access expired. Unlock the admin page again." };
+  }
   if (!token) {
     return {
       status: "error",
@@ -252,8 +291,14 @@ export async function disableWebhook(
   _previousState: WebhookMutationActionState,
   formData: FormData,
 ): Promise<WebhookMutationActionState> {
-  const token = await getAdminSessionToken("blog-generation");
+  const [hasPageAccess, token] = await Promise.all([
+    isAdminAccessAuthenticated(),
+    getAdminSessionToken("blog-generation"),
+  ]);
   const id = webhookIdSchema.safeParse(formData.get("id"));
+  if (!hasPageAccess) {
+    return { status: "error", message: "Page access expired. Unlock the admin page again." };
+  }
   if (!token) {
     return {
       status: "error",
@@ -289,7 +334,13 @@ export async function retryNotifications(
   _previousState: NotificationRetryActionState,
   _formData: FormData,
 ): Promise<NotificationRetryActionState> {
-  const token = await getAdminSessionToken("blog-generation");
+  const [hasPageAccess, token] = await Promise.all([
+    isAdminAccessAuthenticated(),
+    getAdminSessionToken("blog-generation"),
+  ]);
+  if (!hasPageAccess) {
+    return { status: "error", message: "Page access expired. Unlock the admin page again." };
+  }
   if (!token) {
     return {
       status: "error",
@@ -341,5 +392,10 @@ export async function retryNotifications(
 export async function logoutAdmin(formData: FormData) {
   const capability = parseAdminCapability(formData.get("capability"));
   if (capability) await deleteAdminSession(capability);
+  redirect("/admin");
+}
+
+export async function logoutAdminAccess() {
+  await deleteAdminAccessSession();
   redirect("/admin");
 }

@@ -67,6 +67,9 @@ Hono backend and stateless MCP handlers are mounted inside the same deployment.
 
 ## Admin and telemetry
 
+- The entire admin page first verifies `ADMIN_ACCESS_KEY` and stores only its signed eight-hour
+  session in an `HttpOnly`, `SameSite=Strict`, `/admin` cookie. Do not load or render privileged admin
+  data until this outer gate is valid, and re-authorize admin mutations against it.
 - Admin access is capability-specific. Blog publishing verifies `CRON_SECRET`; AI reindexing
   verifies `AI_INDEX_SECRET_KEY`. Store only the signed eight-hour capability token in an `HttpOnly`,
   `SameSite=Strict`, `/admin` cookie and re-authorize every mutation.
