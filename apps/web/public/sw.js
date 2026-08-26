@@ -1,4 +1,4 @@
-const CACHE_VERSION = "zomer-pwa-v1";
+const CACHE_VERSION = "zomer-pwa-v2";
 const OFFLINE_URL = "/offline.html";
 const CORE_ASSETS = [
   OFFLINE_URL,
@@ -28,7 +28,12 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
   if (request.method !== "GET") return;
   const url = new URL(request.url);
-  if (url.origin !== self.location.origin || url.pathname.startsWith("/api/") || url.pathname.startsWith("/admin")) {
+  if (
+    url.origin !== self.location.origin ||
+    url.pathname.startsWith("/_next/") ||
+    url.pathname.startsWith("/api/") ||
+    url.pathname.startsWith("/admin")
+  ) {
     return;
   }
 
@@ -38,7 +43,6 @@ self.addEventListener("fetch", (event) => {
   }
 
   const cacheableStaticAsset =
-    url.pathname.startsWith("/_next/static/") ||
     /\.(?:css|js|woff2?|png|jpg|jpeg|webp|avif|svg|ico)$/i.test(url.pathname);
   if (!cacheableStaticAsset) return;
   event.respondWith(

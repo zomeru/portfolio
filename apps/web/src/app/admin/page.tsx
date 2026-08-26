@@ -125,16 +125,19 @@ export default async function AdminPage() {
     <>
       <PageHeader index="06" eyebrow="Admin" title="Manage portfolio automation." />
 
-      <section aria-labelledby="publishing-heading" className="mt-10">
-        <h2
-          id="publishing-heading"
-          className="font-mono text-xs uppercase tracking-widest text-muted"
-        >
+      <section
+        aria-labelledby="publishing-heading"
+        className="mt-10 rounded-lg border border-border/70 bg-foreground/2.5 p-4 sm:p-5"
+      >
+        <h2 id="publishing-heading" className="text-sm font-medium">
           Blog publishing
         </h2>
+        <p className="mt-1 text-xs leading-relaxed text-muted">
+          Generate and publish portfolio articles with the configured provider.
+        </p>
 
         {publishingToken ? (
-          <div className="mt-3 divide-y divide-border border-y border-border">
+          <div className="mt-4 divide-y divide-border/70">
             <div className="flex min-h-16 items-center justify-between gap-4 py-3">
               <div>
                 <p className="text-sm font-medium">Access</p>
@@ -170,14 +173,17 @@ export default async function AdminPage() {
       </section>
 
       {publishingToken ? (
-        <section aria-labelledby="notifications-heading" className="mt-16">
-          <h2
-            id="notifications-heading"
-            className="font-mono text-xs uppercase tracking-widest text-muted"
-          >
-            Notifications
+        <section
+          aria-labelledby="notifications-heading"
+          className="mt-4 rounded-lg border border-border/70 bg-foreground/2.5 p-4 sm:p-5"
+        >
+          <h2 id="notifications-heading" className="text-sm font-medium">
+            Delivery operations
           </h2>
-          <div className="mt-3 divide-y divide-border border-y border-border">
+          <p className="mt-1 text-xs leading-relaxed text-muted">
+            Monitor publication notifications, retry deliveries, and manage webhooks.
+          </p>
+          <div className="mt-4 divide-y divide-border/70">
             <div className="grid grid-cols-3 gap-4 py-4 text-sm">
               <div>
                 <p className="text-xs text-muted">Email</p>
@@ -198,17 +204,42 @@ export default async function AdminPage() {
                 {notificationSummary?.latestEvent?.payload.data.blog.title ?? "No events recorded"}
               </p>
               {notificationSummary?.latestEvent ? (
-                <div className="mt-3 grid gap-2 font-mono text-xs text-muted sm:grid-cols-3">
+                <dl className="mt-4 grid gap-4 sm:grid-cols-3">
                   {(["email", "push", "webhook"] as const).map((channel) => {
                     const counts = deliveryCounts(notificationSummary, channel);
                     return (
-                      <p key={channel} className="capitalize">
-                        {channel}: {counts.delivered} delivered · {counts.failed} failed ·{" "}
-                        {counts.pending} pending
-                      </p>
+                      <div key={channel} className="border-l-2 border-border pl-3">
+                        <dt className="font-mono text-[0.6875rem] uppercase tracking-widest text-muted">
+                          {channel}
+                        </dt>
+                        <dd className="mt-2 grid grid-cols-3 gap-3">
+                          <span>
+                            <span className="block font-mono text-sm tabular-nums text-foreground">
+                              {counts.delivered}
+                            </span>
+                            <span className="mt-0.5 block text-[0.6875rem] text-muted">
+                              Delivered
+                            </span>
+                          </span>
+                          <span>
+                            <span className="block font-mono text-sm tabular-nums text-foreground">
+                              {counts.failed}
+                            </span>
+                            <span className="mt-0.5 block text-[0.6875rem] text-muted">Failed</span>
+                          </span>
+                          <span>
+                            <span className="block font-mono text-sm tabular-nums text-foreground">
+                              {counts.pending}
+                            </span>
+                            <span className="mt-0.5 block text-[0.6875rem] text-muted">
+                              Pending
+                            </span>
+                          </span>
+                        </dd>
+                      </div>
                     );
                   })}
-                </div>
+                </dl>
               ) : null}
             </div>
             <NotificationRetryForm />
@@ -220,15 +251,18 @@ export default async function AdminPage() {
         </section>
       ) : null}
 
-      <section aria-labelledby="knowledge-heading" className="mt-16">
-        <h2
-          id="knowledge-heading"
-          className="font-mono text-xs uppercase tracking-widest text-muted"
-        >
+      <section
+        aria-labelledby="knowledge-heading"
+        className="mt-4 rounded-lg border border-border/70 bg-foreground/2.5 p-4 sm:p-5"
+      >
+        <h2 id="knowledge-heading" className="text-sm font-medium">
           AI knowledge index
         </h2>
+        <p className="mt-1 text-xs leading-relaxed text-muted">
+          Inspect and refresh the published portfolio data available to Ask Zomer.
+        </p>
         {reindexToken ? (
-          <div className="mt-3 divide-y divide-border border-y border-border">
+          <div className="mt-4 divide-y divide-border/70">
             <div className="flex min-h-16 items-center justify-between gap-4 py-3">
               <div>
                 <p className="text-sm font-medium">Access</p>

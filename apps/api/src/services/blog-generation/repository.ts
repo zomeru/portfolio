@@ -35,16 +35,6 @@ type GeneratedBlogPostFields = {
   title: string;
 };
 
-type BlogPostIdentifier = {
-  slug: string;
-  title: string;
-};
-
-type GenerationContext = {
-  existing: PublishedBlogPost | null;
-  identifiers: BlogPostIdentifier[];
-};
-
 let writeClient: SanityClient | undefined;
 
 function getWriteClient(): SanityClient {
@@ -65,21 +55,17 @@ function getWriteClient(): SanityClient {
   return writeClient;
 }
 
-export async function getGenerationContext(generationKey: string): Promise<GenerationContext> {
-  return getWriteClient().fetch<GenerationContext>(
-    `{
-      "existing": *[_type == "blogPost" && generation.key == $generationKey][0] {
-        _id,
-        _rev,
-        title,
-        slug,
-        publishedAt,
-        excerpt
-      },
-      "identifiers": *[_type == "blogPost" && defined(slug.current)] {
-        title,
-        "slug": slug.current
-      }
+export async function findGeneratedBlogPost(
+  generationKey: string,
+): Promise<PublishedBlogPost | null> {
+  return getWriteClient().fetch<PublishedBlogPost | null>(
+    `*[_type == "blogPost" && generation.key == $generationKey][0] {
+      _id,
+      _rev,
+      title,
+      slug,
+      publishedAt,
+      excerpt
     }`,
     { generationKey },
   );

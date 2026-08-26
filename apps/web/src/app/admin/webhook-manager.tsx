@@ -41,7 +41,7 @@ function WebhookRow({ webhook }: { webhook: WebhookSummary }) {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="break-words text-sm font-medium">{webhook.name}</p>
+            <p className="wrap-break-word text-sm font-medium">{webhook.name}</p>
             <span className="rounded-full border border-border px-2 py-0.5 font-mono text-[0.6875rem] uppercase text-muted">
               {webhook.destinationType}
             </span>
@@ -137,7 +137,7 @@ export function WebhookManager({
   }
 
   return (
-    <div className="mt-8">
+    <div className="mt-6 border-t border-border/70 pt-5">
       <div>
         <h3 className="text-sm font-medium">Webhook destinations</h3>
         <p className="mt-1 max-w-2xl text-xs leading-relaxed text-muted">
@@ -146,7 +146,7 @@ export function WebhookManager({
         </p>
       </div>
 
-      <form ref={formRef} action={formAction} className="mt-4 border-y border-border py-4">
+      <form ref={formRef} action={formAction} className="mt-4">
         <div className="grid gap-4 md:grid-cols-2">
           <div>
             <label htmlFor={nameId} className="block text-xs font-medium">

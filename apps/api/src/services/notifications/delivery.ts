@@ -327,23 +327,25 @@ export async function dispatchBlogPublished(blog: BlogPublishedInput) {
   });
   const materialized: Partial<Record<NotificationDeliveryChannelValue, number>> = {};
   const materializationFailures: NotificationDeliveryChannelValue[] = [];
-  for (const channel of ["email", "push", "webhook"] as const) {
-    try {
-      materialized[channel] = await materializeDeliveries(
-        persisted.event.id,
-        channel,
-        persisted.event.createdAt,
-      );
-    } catch (error) {
-      materializationFailures.push(channel);
-      log("error", "notification delivery materialization failed", {
-        eventId,
-        blogId: blog.id,
-        channel,
-        ...errorLogMetadata(error, "notifications.materializeDeliveries"),
-      });
-    }
-  }
+  await Promise.all(
+    (["email", "push", "webhook"] as const).map(async (channel) => {
+      try {
+        materialized[channel] = await materializeDeliveries(
+          persisted.event.id,
+          channel,
+          persisted.event.createdAt,
+        );
+      } catch (error) {
+        materializationFailures.push(channel);
+        log("error", "notification delivery materialization failed", {
+          eventId,
+          blogId: blog.id,
+          channel,
+          ...errorLogMetadata(error, "notifications.materializeDeliveries"),
+        });
+      }
+    }),
+  );
   const deliveries = await processNotificationDeliveries({ eventId: persisted.event.id });
   log("info", "blog.published dispatched", {
     eventId,

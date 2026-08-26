@@ -38,9 +38,9 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
 - General Ask Zomer intent may expose native web-search tools for Groq or OpenRouter. NVIDIA NIM has
   no web-search tool. Portfolio intents must not use those tools and remain grounded in the indexed
   portfolio.
-- `src/services/blog-generation` owns prompt/output validation, duplicate detection, idempotency,
-  immediate Sanity publication, generation audit metadata, and the post-publish index attempt. Indexing
-  failure is reported separately and must not roll back a published post.
+- `src/services/blog-generation` owns prompt/output validation, generation-key idempotency, immediate
+  Sanity publication, generation audit metadata, and the post-publish index attempt. Indexing failure
+  is reported separately and must not roll back a published post.
 - `src/services/notifications` owns double opt-in email, anonymous Web Push, approved outgoing
   webhooks, durable `blog.published` delivery, and retries. Call its shared dispatcher only after
   Sanity succeeds; provider failures must not roll back publication.

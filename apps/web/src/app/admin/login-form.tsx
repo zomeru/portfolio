@@ -13,7 +13,7 @@ export function LoginForm({ capability }: { capability: AdminCapability }) {
   const errorId = `admin-login-error-${capability}`;
 
   return (
-    <form action={formAction} className="mt-3 border-y border-border py-4">
+    <form action={formAction} className="mt-4 border-t border-border/70 pt-4">
       <input type="hidden" name="capability" value={capability} />
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0 flex-1">
