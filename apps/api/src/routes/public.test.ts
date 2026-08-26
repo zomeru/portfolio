@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
 import {
   publicApiIndexSchema,
   publicBlogPostListSchema,
@@ -22,7 +23,7 @@ const routes = createPublicApiRoutes({
   siteUrl: testSiteUrl,
 });
 
-test("public REST routes return JSON, CORS, caching, and expected resources", async () => {
+void test("public REST routes return JSON, CORS, caching, and expected resources", async () => {
   const resources = [
     ["/", publicApiIndexSchema],
     ["/profile", publicProfileSchema],
@@ -52,7 +53,7 @@ test("public REST routes return JSON, CORS, caching, and expected resources", as
   );
 });
 
-test("public REST routes validate pagination and return actionable JSON 404s", async () => {
+void test("public REST routes validate pagination and return actionable JSON 404s", async () => {
   const invalid = await routes.request("/blogs?limit=51");
   assert.equal(invalid.status, 400);
   assert.equal(publicErrorSchema.parse(await invalid.json()).error.code, "INVALID_QUERY");
@@ -73,7 +74,7 @@ test("public REST routes validate pagination and return actionable JSON 404s", a
   );
 });
 
-test("public REST routes answer scoped CORS preflight requests", async () => {
+void test("public REST routes answer scoped CORS preflight requests", async () => {
   const response = await routes.request("/blogs", {
     headers: {
       "Access-Control-Request-Method": "GET",

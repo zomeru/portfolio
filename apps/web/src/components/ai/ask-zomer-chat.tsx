@@ -7,6 +7,7 @@ import { ArrowUp, Globe2, LoaderCircle, RefreshCw, Square } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+
 import { client } from "@/lib/api";
 import { reportClientWarning } from "@/lib/client-log";
 

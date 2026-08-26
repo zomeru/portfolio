@@ -1,6 +1,7 @@
 import { visionTool } from "@sanity/vision";
 import { defineConfig, type WorkspaceOptions } from "sanity";
 import { structureTool } from "sanity/structure";
+
 import { studioConfig } from "./config";
 import { schemaTypes } from "./schemaTypes";
 import { structure } from "./structure";

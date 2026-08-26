@@ -67,7 +67,7 @@ function applicationFrame(line: string) {
   const sourcePathStart = sourceStart + 1;
 
   const sourceExtensions = [".tsx", ".jsx", ".mts", ".cts", ".mjs", ".cjs", ".ts", ".js"];
-  for (let separator = decoded.indexOf(":", sourcePathStart); separator >= 0; ) {
+  for (let separator = decoded.indexOf(":", sourcePathStart); separator >= 0;) {
     const lineEnd = decoded.indexOf(":", separator + 1);
     if (lineEnd < 0) return null;
 

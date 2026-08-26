@@ -1,4 +1,5 @@
 import { defineCliConfig } from "sanity/cli";
+
 import { studioConfig } from "./config";
 
 export default defineCliConfig({

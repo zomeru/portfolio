@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+
 import {
   countBlogDocumentsMatchingTerms,
   countDistinctExperienceCompanies,
@@ -15,6 +16,7 @@ import {
   type KnowledgeCandidate,
   type RetrievalResultMetadata,
 } from "@portfolio/database";
+
 import { errorLogMetadata, log } from "../../lib/log";
 import type { AskZomerSource, KnowledgeSourceType } from "../../types";
 import { getAssistantModels } from "../ai/models";

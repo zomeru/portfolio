@@ -3,6 +3,7 @@
 import { LoaderCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useRef, useState } from "react";
+
 import { reportClientError } from "@/lib/client-log";
 
 type ReindexSummary = {
@@ -98,7 +99,11 @@ export function KnowledgeIndexForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form
+      onSubmit={(event) => {
+        void handleSubmit(event);
+      }}
+    >
       <div className="flex min-h-16 flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm font-medium">Portfolio knowledge</p>

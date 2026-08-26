@@ -1,14 +1,15 @@
 import type { StoredBlogPublishedEvent } from "@portfolio/database";
 import { getNotificationsServerEnv } from "@portfolio/env/notifications-server";
 import webPush, { WebPushError } from "web-push";
+
 import { NotificationDeliveryError } from "./errors";
 
 export function isWebPushConfigured() {
   const environment = getNotificationsServerEnv();
   return Boolean(
     environment.NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY &&
-      environment.WEB_PUSH_VAPID_PRIVATE_KEY &&
-      environment.WEB_PUSH_SUBJECT,
+    environment.WEB_PUSH_VAPID_PRIVATE_KEY &&
+    environment.WEB_PUSH_SUBJECT,
   );
 }
 

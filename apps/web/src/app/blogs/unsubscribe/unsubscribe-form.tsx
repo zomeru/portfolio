@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+
 import { client } from "@/lib/api";
 import { reportClientError } from "@/lib/client-log";
 
@@ -40,7 +41,9 @@ export function UnsubscribeForm({ token }: { token?: string }) {
         {state !== "success" ? (
           <button
             type="button"
-            onClick={unsubscribe}
+            onClick={() => {
+              void unsubscribe();
+            }}
             disabled={!token || state === "submitting"}
             className="min-h-10 rounded-md bg-foreground px-4 text-sm font-medium text-background disabled:opacity-50"
           >

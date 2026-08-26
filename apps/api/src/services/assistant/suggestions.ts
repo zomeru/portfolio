@@ -20,7 +20,7 @@ export function createFollowUpSuggestions(
   const technologies = technologiesFromResults(results);
 
   if (classification.intent === "general") {
-    return [...INITIAL_ASK_ZOMER_SUGGESTIONS.slice(0, 3)];
+    return INITIAL_ASK_ZOMER_SUGGESTIONS.slice(0, 3);
   }
   if (classification.intent === "blog") {
     return [

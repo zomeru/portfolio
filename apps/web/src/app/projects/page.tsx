@@ -1,5 +1,6 @@
 import { listPublicProjects } from "@portfolio/api/public-portfolio";
 import type { Metadata } from "next";
+
 import { PageTransition } from "@/components/layout/page-transition";
 import { PageHeader } from "@/components/portfolio/page-header";
 import { ProjectItem } from "@/components/portfolio/project-item";

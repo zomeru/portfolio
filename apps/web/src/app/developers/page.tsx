@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+
 import { PageTransition } from "@/components/layout/page-transition";
 import { MarkdownContent } from "@/components/portfolio/markdown-content";
 import { getDeveloperGuideMarkdown } from "@/lib/developer-docs";

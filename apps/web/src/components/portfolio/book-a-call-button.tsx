@@ -3,6 +3,7 @@
 import { getCalApi } from "@calcom/embed-react";
 import { CalendarDays } from "lucide-react";
 import { useEffect } from "react";
+
 import { reportClientError } from "@/lib/client-log";
 
 const CAL_LINK = "zomer/30min";

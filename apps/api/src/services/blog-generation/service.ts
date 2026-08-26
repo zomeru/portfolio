@@ -1,4 +1,5 @@
 import { propagateAttributes, startActiveObservation } from "@langfuse/tracing";
+
 import { errorLogMetadata, log } from "../../lib/log";
 import {
   IngestionAlreadyRunningError,

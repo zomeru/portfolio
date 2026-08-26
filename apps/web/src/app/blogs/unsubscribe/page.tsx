@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+
 import { PageTransition } from "@/components/layout/page-transition";
 import { PageHeader } from "@/components/portfolio/page-header";
+
 import { UnsubscribeForm } from "./unsubscribe-form";
 
 export const metadata: Metadata = {

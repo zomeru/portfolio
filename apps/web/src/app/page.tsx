@@ -1,4 +1,5 @@
 import { getPublicProfile, listPublicExperience } from "@portfolio/api/public-portfolio";
+
 import { PageTransition } from "@/components/layout/page-transition";
 import { ExperienceItem } from "@/components/portfolio/experience-item";
 import { PageHeader } from "@/components/portfolio/page-header";

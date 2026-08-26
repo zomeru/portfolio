@@ -1,6 +1,7 @@
 import { listPublicBlogPosts } from "@portfolio/api/public-portfolio";
 import type { Metadata } from "next";
 import Link from "next/link";
+
 import { BlogNotifications } from "@/components/blog/blog-notifications";
 import { PageTransition } from "@/components/layout/page-transition";
 import { BlogItem } from "@/components/portfolio/blog-item";

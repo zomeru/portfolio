@@ -91,7 +91,7 @@ function detectLanguage(code: string) {
 
   if (isJson(value)) return "json";
   if (hasFileExtension(value, ["json", "jsonc"])) return "jsonc";
-  if (/^\{/.test(uncommented) && /(?:\\"|")[\w$-]+(?:\\"|")\s*:/.test(uncommented)) {
+  if (uncommented.startsWith("{") && /(?:\\"|")[\w$-]+(?:\\"|")\s*:/.test(uncommented)) {
     return "jsonc";
   }
 

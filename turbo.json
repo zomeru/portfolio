@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/turbo/schema.json",
   "ui": "tui",
-  "globalDependencies": ["pnpm-workspace.yaml"],
+  "globalDependencies": ["pnpm-workspace.yaml", ".oxfmtrc.json", ".oxlintrc.json"],
   "tasks": {
     "ai:eval": {
       "cache": false,

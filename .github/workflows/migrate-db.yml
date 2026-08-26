@@ -4,9 +4,9 @@ on:
   push:
     branches: [dev, main]
     paths:
-      - 'packages/database/**'
-      - 'pnpm-lock.yaml'
-      - '.github/workflows/migrate-db.yml'
+      - "packages/database/**"
+      - "pnpm-lock.yaml"
+      - ".github/workflows/migrate-db.yml"
   workflow_dispatch: # allows manual re-runs without needing a new commit
 
 concurrency:
@@ -19,7 +19,7 @@ permissions:
 jobs:
   deploy:
     name: Migrate Database (${{ github.ref_name == 'main' && 'Production' || 'Preview' }})
-    
+
     runs-on: ubuntu-latest
     timeout-minutes: 10
 

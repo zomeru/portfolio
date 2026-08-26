@@ -2,6 +2,7 @@ import type { StoredBlogPublishedEvent } from "@portfolio/database";
 import { getNotificationsServerEnv } from "@portfolio/env/notifications-server";
 import nodemailer from "nodemailer";
 import { Resend } from "resend";
+
 import { NotificationDeliveryError } from "./errors";
 
 const SITE_NAME = "Zomer Gregorio";

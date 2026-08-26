@@ -1,7 +1,9 @@
 "use client";
 
 import { useActionState, useEffect, useId, useRef, useState } from "react";
+
 import { reportClientError } from "@/lib/client-log";
+
 import { initialWebhookMutationState, initialWebhookRegistrationState } from "./action-state";
 import { disableWebhook, registerWebhook, testWebhook } from "./actions";
 
@@ -301,7 +303,9 @@ export function WebhookManager({
             </button>
             <button
               type="button"
-              onClick={copySecret}
+              onClick={() => {
+                void copySecret();
+              }}
               className="min-h-10 rounded-md border border-border px-3 text-xs"
             >
               Copy secret

@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const post = await getPublicBlogPost(slug);
   if (!post) return {};
 
-  const metadata = await createPageMetadata({
+  const metadata = createPageMetadata({
     title: post.title,
     description: post.description,
     path: `/blogs/${post.slug}`,

@@ -26,7 +26,7 @@ dependencies and public package exports. Browser code may import API types from
 - Use Node.js 24.19.x and pnpm 11.22.0. Do not use npm or Yarn for repository tasks.
 - Run supported scripts through pnpm. Use a filtered workspace script when the root has no alias.
 - Keep changes scoped and preserve unrelated working-tree changes.
-- Preserve strict TypeScript and the repository Biome rules: two spaces, double quotes, semicolons, and
+- Preserve strict TypeScript and the repository Oxfmt rules: two spaces, double quotes, semicolons, and
   a 100-column width.
 - Keep package task logic in its owning workspace and let root scripts delegate through `turbo run`.
 - Treat `apps/studio/schema.json`, `apps/web/src/lib/sanity/sanity.types.ts`, Drizzle snapshots,

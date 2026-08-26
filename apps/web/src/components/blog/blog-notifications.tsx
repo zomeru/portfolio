@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+
 import { client } from "@/lib/api";
 import { reportClientError } from "@/lib/client-log";
 
@@ -389,7 +390,13 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
         only to deliver these updates; unsubscribe anytime. No account or tracking profile required.
       </p>
 
-      <form noValidate onSubmit={handleEmailSubmit} className="mt-4">
+      <form
+        noValidate
+        onSubmit={(event) => {
+          void handleEmailSubmit(event);
+        }}
+        className="mt-4"
+      >
         <label htmlFor={emailId} className="block text-xs font-medium">
           Get new posts by email
         </label>
@@ -453,7 +460,9 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
             <div className="flex shrink-0 flex-wrap gap-2">
               <button
                 type="button"
-                onClick={handleEnablePush}
+                onClick={() => {
+                  void handleEnablePush();
+                }}
                 className="min-h-10 rounded-md border border-border px-3 text-xs font-medium transition-colors duration-150 hover:bg-foreground/5 motion-safe:active:scale-[0.96] motion-reduce:transition-none"
               >
                 Enable notifications
@@ -475,7 +484,9 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
               {SHOW_PUSH_TEST ? (
                 <button
                   type="button"
-                  onClick={() => handleTestPush(pushState.subscription)}
+                  onClick={() => {
+                    void handleTestPush(pushState.subscription);
+                  }}
                   disabled={pushTesting}
                   className="min-h-10 rounded-md border border-border px-3 text-xs font-medium transition-colors duration-150 hover:bg-foreground/5 motion-safe:active:scale-[0.96] disabled:cursor-wait disabled:opacity-50 motion-reduce:transition-none"
                 >
@@ -484,7 +495,9 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
               ) : null}
               <button
                 type="button"
-                onClick={() => handleDisablePush(pushState.subscription)}
+                onClick={() => {
+                  void handleDisablePush(pushState.subscription);
+                }}
                 disabled={pushTesting}
                 className="min-h-10 rounded-md border border-border px-3 text-xs text-muted transition-colors duration-150 hover:text-foreground motion-safe:active:scale-[0.96] disabled:opacity-50 motion-reduce:transition-none"
               >

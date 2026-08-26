@@ -1,4 +1,5 @@
 import { getPublicProfile } from "@portfolio/api/public-portfolio";
+
 import { createPortfolioOgImage, OG_IMAGE_SIZE } from "@/lib/og-image";
 
 export const alt = "Zomer Gregorio portfolio";

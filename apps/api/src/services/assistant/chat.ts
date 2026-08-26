@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+
 import { observe, propagateAttributes, updateActiveObservation } from "@langfuse/tracing";
 import { trace } from "@opentelemetry/api";
 import {
@@ -8,6 +9,7 @@ import {
   type ModelMessage,
   streamText,
 } from "ai";
+
 import { logError } from "../../lib/log";
 import type { AskZomerMessage, AskZomerSource, QueryIntent } from "../../types";
 import { getAssistantModels } from "../ai/models";

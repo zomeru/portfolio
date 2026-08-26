@@ -1,5 +1,7 @@
 import { createCipheriv, createDecipheriv, createHash, createHmac, randomBytes } from "node:crypto";
+
 import { getNotificationsServerEnv } from "@portfolio/env/notifications-server";
+
 import { constantTimeEqual } from "../../lib/secure-compare";
 
 export function createSecretToken(bytes = 32) {

@@ -1,5 +1,4 @@
 import "server-only";
-
 import {
   ADMIN_SESSION_MAX_AGE_SECONDS,
   type AdminCapability,

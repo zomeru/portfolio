@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+
 import { reportClientWarning } from "@/lib/client-log";
 
 export function ServiceWorkerRegistration() {

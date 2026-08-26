@@ -1,4 +1,5 @@
 import { embed, embedMany } from "ai";
+
 import { ASSISTANT_EMBEDDING_DIMENSIONS, getAssistantModels } from "../ai/models";
 
 const EMBEDDING_BATCH_SIZE = 16;

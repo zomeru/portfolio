@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+
 import { reportClientError } from "@/lib/client-log";
+
 import "./globals.css";
 
 export default function GlobalError({

@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
 import { getNotificationsServerEnv } from "@portfolio/env/notifications-server";
+
 import { apiApp } from "../../app";
 import { notificationRoutes } from "../../routes/notifications";
 import {
@@ -42,7 +44,7 @@ test.after(() => {
   else process.env.NEXT_PUBLIC_SITE_URL = originalSiteUrl;
 });
 
-test("unsubscribe tokens are signed, versioned, and tamper-resistant", () => {
+void test("unsubscribe tokens are signed, versioned, and tamper-resistant", () => {
   const token = createUnsubscribeToken("356c4ffc-05e3-4818-bc40-cabf4b7e6b85", 3);
   assert.deepEqual(parseUnsubscribeToken(token), {
     subscriptionId: "356c4ffc-05e3-4818-bc40-cabf4b7e6b85",
@@ -51,7 +53,7 @@ test("unsubscribe tokens are signed, versioned, and tamper-resistant", () => {
   assert.equal(parseUnsubscribeToken(`${token}x`), null);
 });
 
-test("notification environment keeps Gmail, Resend, and Web Push feature groups independent", () => {
+void test("notification environment keeps Gmail, Resend, and Web Push feature groups independent", () => {
   const tokenSecret = testCredential("notification-token");
   const pushOnly = getNotificationsServerEnv({
     NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY: testCredential("vapid-public"),
@@ -87,7 +89,7 @@ test("notification environment keeps Gmail, Resend, and Web Push feature groups 
   );
 });
 
-test("webhook signatures include the timestamp and enforce replay tolerance", () => {
+void test("webhook signatures include the timestamp and enforce replay tolerance", () => {
   const now = new Date("2026-08-25T08:00:00.000Z");
   const timestamp = Math.floor(now.getTime() / 1_000).toString();
   const rawBody = JSON.stringify({ type: "blog.published" });
@@ -110,7 +112,7 @@ test("webhook signatures include the timestamp and enforce replay tolerance", ()
   );
 });
 
-test("blog publication event identifiers are stable for one Sanity revision", () => {
+void test("blog publication event identifiers are stable for one Sanity revision", () => {
   const blog = {
     id: "blog-1",
     revision: "revision-1",
@@ -148,7 +150,7 @@ test("blog publication event identifiers are stable for one Sanity revision", ()
   assert.deepEqual(JSON.parse(createWebhookBody("generic", first.payload)), first.payload);
 });
 
-test("webhook tests are clearly separated from publication events", () => {
+void test("webhook tests are clearly separated from publication events", () => {
   const options = {
     id: "test_123",
     createdAt: "2026-08-25T08:00:00.000Z",
@@ -179,7 +181,7 @@ test("webhook tests are clearly separated from publication events", () => {
   assert.equal(slack.text, "Blog notifications connected");
 });
 
-test("SSRF validation blocks local, private, link-local, and metadata destinations", async () => {
+void test("SSRF validation blocks local, private, link-local, and metadata destinations", async () => {
   for (const address of ["127.0.0.1", "10.0.0.1", "169.254.169.254", "::1", "fc00::1"]) {
     assert.equal(isBlockedWebhookAddress(address), true, address);
   }
@@ -201,7 +203,7 @@ test("SSRF validation blocks local, private, link-local, and metadata destinatio
   assert.equal(isRetryableWebhookStatus(400), false);
 });
 
-test("Web Push accepts recognized services and rejects arbitrary HTTPS endpoints", () => {
+void test("Web Push accepts recognized services and rejects arbitrary HTTPS endpoints", () => {
   for (const endpoint of [
     "https://fcm.googleapis.com/fcm/send/example",
     "https://updates.push.services.mozilla.com/wpush/v2/example",
@@ -221,7 +223,7 @@ test("Web Push accepts recognized services and rejects arbitrary HTTPS endpoints
   }
 });
 
-test("public subscription routes reject malformed payloads without provider calls", async () => {
+void test("public subscription routes reject malformed payloads without provider calls", async () => {
   const emailResponse = await notificationRoutes.request("http://localhost/email/subscribe", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -244,7 +246,7 @@ test("public subscription routes reject malformed payloads without provider call
   assert.equal(testResponse.status, 400);
 });
 
-test("notification administration and test delivery require authorization", async () => {
+void test("notification administration and test delivery require authorization", async () => {
   const webhookId = "356c4ffc-05e3-4818-bc40-cabf4b7e6b85";
   for (const request of [
     new Request("http://localhost/api/notifications/webhooks", { method: "GET" }),
@@ -261,7 +263,7 @@ test("notification administration and test delivery require authorization", asyn
   }
 });
 
-test("browser push testing requires authorization outside development", async () => {
+void test("browser push testing requires authorization outside development", async () => {
   process.env.NODE_ENV = "production";
   process.env.NEXT_PUBLIC_SITE_URL = "https://example.com";
   try {

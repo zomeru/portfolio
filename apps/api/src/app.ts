@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { requestId } from "hono/request-id";
 import { secureHeaders } from "hono/secure-headers";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
+
 import { ApiError } from "./errors";
 import { errorLogMetadata, log, withLogContext } from "./lib/log";
 import { adminAiRoutes } from "./routes/admin-ai";

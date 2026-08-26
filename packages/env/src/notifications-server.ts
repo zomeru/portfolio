@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { parseEnv } from "#utils";
 
 const optionalSecret = z.preprocess(
@@ -63,9 +64,9 @@ const notificationsServerSchema = z
         : [environment.EMAIL_FROM, environment.GOOGLE_APP_PASSWORD];
     const emailRequested = Boolean(
       environment.EMAIL_FROM ||
-        environment.EMAIL_REPLY_TO ||
-        environment.RESEND_API_KEY ||
-        environment.GOOGLE_APP_PASSWORD,
+      environment.EMAIL_REPLY_TO ||
+      environment.RESEND_API_KEY ||
+      environment.GOOGLE_APP_PASSWORD,
     );
     if (emailRequested && !providerValues.every(Boolean)) {
       const missing =

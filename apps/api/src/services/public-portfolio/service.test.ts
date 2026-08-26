@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+
 import { createPublicPortfolioService, serializePublicSnapshot } from "./service";
 import { rawPublicBlogPostFixture, rawPublicSnapshotFixture, testSiteUrl } from "./test-fixtures";
 
-test("public serializers allowlist fields and produce canonical URLs", async () => {
+void test("public serializers allowlist fields and produce canonical URLs", async () => {
   const serialized = serializePublicSnapshot(rawPublicSnapshotFixture, testSiteUrl);
   const json = JSON.stringify(serialized);
 
@@ -32,7 +33,7 @@ test("public serializers allowlist fields and produce canonical URLs", async () 
   assert.doesNotMatch(JSON.stringify(post), /internalId/);
 });
 
-test("blog listing searches titles case-insensitively before pagination", async () => {
+void test("blog listing searches titles case-insensitively before pagination", async () => {
   const service = createPublicPortfolioService({
     async fetchBlogPost() {
       return rawPublicBlogPostFixture;

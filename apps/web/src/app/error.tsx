@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+
 import { reportClientError } from "@/lib/client-log";
 
 export default function ErrorPage({

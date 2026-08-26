@@ -68,7 +68,7 @@ if (unsupported) {
     const summary = await synchronizePortfolioKnowledge({
       trigger: "cli",
       force: argumentsList.includes("--force"),
-      onProgress: progress.update,
+      onProgress: (message) => progress.update(message),
     });
     progress.stop("Portfolio indexing complete.");
     console.log(`Documents scanned: ${summary.documentsSeen}`);

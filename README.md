@@ -6,7 +6,7 @@ A personal portfolio with a technical blog, GitHub activity, and Ask Zomer AI. S
 
 The project uses:
 
-- **Runtime and tooling**: Node.js 24.19.x, pnpm 11.22.0, Turborepo 2+, TypeScript 6+, and Biome 2+
+- **Runtime and tooling**: Node.js 24.19.x, pnpm 11.22.0, Turborepo 2+, TypeScript 6+, Oxfmt, and Oxlint
 - **Frontend**: Next.js 16+, React 19+, Tailwind CSS 4+, and React Compiler
 - **API**: Hono 4+
 - **Content**: Sanity Studio 6+, Sanity Client 7+, GROQ, Portable Text, and TypeGen
@@ -51,20 +51,20 @@ pnpm --filter @portfolio/studio dev
 
 `.env.example` is the source of truth. Add only the services needed for your development path:
 
-| Service | Variables |
-| --- | --- |
-| Site | `NEXT_PUBLIC_SITE_URL` |
-| Sanity | `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `NEXT_PUBLIC_SANITY_APP_ID`, `SANITY_API_TOKEN` |
-| GitHub | `GH_PAT_TOKEN` |
-| Database | `DATABASE_URL`, optional `DATABASE_DIRECT_URL` |
-| Blog AI | `GOOGLE_GENERATIVE_AI_API_KEY`, `GOOGLE_GENERATIVE_AI_MODEL` |
-| Ask Zomer providers | `AI_CHAT_PROVIDER`, `GROQ_API_KEY`, `NVIDIA_NIM_API_KEY`, `OPENROUTER_API_KEY` |
-| Ask Zomer models | `AI_GROQ_CHAT_MODEL`, `AI_NVIDIA_NIM_CHAT_MODEL`, `AI_OPENROUTER_CHAT_MODEL`, `AI_EMBEDDING_MODEL` |
-| Admin | `ADMIN_ACCESS_KEY`, `CRON_SECRET`, `AI_INDEX_SECRET_KEY` |
-| Email notifications | `EMAIL_PROVIDER`, `EMAIL_FROM`, `EMAIL_FROM_NAME`, optional `EMAIL_REPLY_TO`; Gmail: `GOOGLE_APP_PASSWORD`; Resend: `RESEND_API_KEY` |
-| Web Push | `NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY`, `WEB_PUSH_VAPID_PRIVATE_KEY`, `WEB_PUSH_SUBJECT` |
-| Notification security | `NOTIFICATION_TOKEN_SECRET`, `WEBHOOK_ENCRYPTION_KEY` |
-| Tracing | `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, optional `LANGFUSE_BASE_URL` |
+| Service               | Variables                                                                                                                            |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Site                  | `NEXT_PUBLIC_SITE_URL`                                                                                                               |
+| Sanity                | `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `NEXT_PUBLIC_SANITY_APP_ID`, `SANITY_API_TOKEN`                       |
+| GitHub                | `GH_PAT_TOKEN`                                                                                                                       |
+| Database              | `DATABASE_URL`, optional `DATABASE_DIRECT_URL`                                                                                       |
+| Blog AI               | `GOOGLE_GENERATIVE_AI_API_KEY`, `GOOGLE_GENERATIVE_AI_MODEL`                                                                         |
+| Ask Zomer providers   | `AI_CHAT_PROVIDER`, `GROQ_API_KEY`, `NVIDIA_NIM_API_KEY`, `OPENROUTER_API_KEY`                                                       |
+| Ask Zomer models      | `AI_GROQ_CHAT_MODEL`, `AI_NVIDIA_NIM_CHAT_MODEL`, `AI_OPENROUTER_CHAT_MODEL`, `AI_EMBEDDING_MODEL`                                   |
+| Admin                 | `ADMIN_ACCESS_KEY`, `CRON_SECRET`, `AI_INDEX_SECRET_KEY`                                                                             |
+| Email notifications   | `EMAIL_PROVIDER`, `EMAIL_FROM`, `EMAIL_FROM_NAME`, optional `EMAIL_REPLY_TO`; Gmail: `GOOGLE_APP_PASSWORD`; Resend: `RESEND_API_KEY` |
+| Web Push              | `NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY`, `WEB_PUSH_VAPID_PRIVATE_KEY`, `WEB_PUSH_SUBJECT`                                            |
+| Notification security | `NOTIFICATION_TOKEN_SECRET`, `WEBHOOK_ENCRYPTION_KEY`                                                                                |
+| Tracing               | `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, optional `LANGFUSE_BASE_URL`                                                           |
 
 Never expose server-only variables to browser code. Confirm the target before seeding content, publishing, migrating, indexing, or deploying.
 
@@ -89,22 +89,25 @@ Use the first random value for `NOTIFICATION_TOKEN_SECRET` and the base64url val
 
 Use these commands for common development tasks:
 
-| Command | Purpose |
-| --- | --- |
-| `pnpm dev` | Start the web app |
-| `pnpm dev:all` | Start all workspace development tasks |
-| `pnpm build` | Build the web app |
-| `pnpm build:all` | Build all workspaces |
-| `pnpm check:all` | Run lint, dependency, unused-code, type, and test checks |
-| `pnpm run check:all:build` | Run all checks and builds |
-| `pnpm test` | Run the minimal API contract, security, and complex-logic tests |
-| `pnpm --filter @portfolio/studio typegen` | Regenerate Sanity types |
-| `pnpm db:generate` | Generate a Drizzle migration |
-| `pnpm db:migrate` | Apply database migrations |
-| `pnpm ai:index` | Update the published-content index |
-| `pnpm ai:index --force` | Rebuild the full AI index |
-| `pnpm ai:eval` | Run deterministic assistant evaluations |
-| `pnpm security:secrets` | Scan the Git repository for new secrets with GitGuardian ggshield |
+| Command                                   | Purpose                                                           |
+| ----------------------------------------- | ----------------------------------------------------------------- |
+| `pnpm dev`                                | Start the web app                                                 |
+| `pnpm dev:all`                            | Start all workspace development tasks                             |
+| `pnpm build`                              | Build the web app                                                 |
+| `pnpm build:all`                          | Build all workspaces                                              |
+| `pnpm check:all`                          | Run lint, dependency, unused-code, type, and test checks          |
+| `pnpm run check:all:build`                | Run all checks and builds                                         |
+| `pnpm lint`                               | Check formatting with Oxfmt and lint with type-aware Oxlint       |
+| `pnpm lint:fix`                           | Format with Oxfmt and apply safe Oxlint fixes                     |
+| `pnpm format`                             | Format supported files with Oxfmt                                 |
+| `pnpm test`                               | Run the minimal API contract, security, and complex-logic tests   |
+| `pnpm --filter @portfolio/studio typegen` | Regenerate Sanity types                                           |
+| `pnpm db:generate`                        | Generate a Drizzle migration                                      |
+| `pnpm db:migrate`                         | Apply database migrations                                         |
+| `pnpm ai:index`                           | Update the published-content index                                |
+| `pnpm ai:index --force`                   | Rebuild the full AI index                                         |
+| `pnpm ai:eval`                            | Run deterministic assistant evaluations                           |
+| `pnpm security:secrets`                   | Scan the Git repository for new secrets with GitGuardian ggshield |
 
 Run database, seed, publish, and indexing commands only against a confirmed target.
 
@@ -129,13 +132,13 @@ for other operating systems and installation options.
 
 Published Sanity content is normalized once in `@portfolio/api/public-portfolio` and shared by every public interface. Explicit DTOs exclude drafts, Sanity internals, embeddings, admin metadata, and secrets.
 
-| Resource | Purpose |
-| --- | --- |
-| `/api/v1/*`, `/openapi.json` | Public REST resources and generated OpenAPI 3.2 contract |
-| `/api/mcp`, `/api/mcp/docs` | Read-only Streamable HTTP MCP servers |
-| `/.well-known/*`, `/auth.md`, `/llms.txt`, `/llms-full.txt` | Machine-readable discovery and usage guidance |
-| `/robots.txt`, `/sitemap.xml` | Search and crawler discovery |
-| `/schemamap.xml`, `/structured-data/portfolio.jsonl` | NLWeb schema map and schema.org JSON Lines feed |
-| `/developers`, `/developers.md`, `/developers/llms.txt` | Human and agent integration guides |
+| Resource                                                    | Purpose                                                  |
+| ----------------------------------------------------------- | -------------------------------------------------------- |
+| `/api/v1/*`, `/openapi.json`                                | Public REST resources and generated OpenAPI 3.2 contract |
+| `/api/mcp`, `/api/mcp/docs`                                 | Read-only Streamable HTTP MCP servers                    |
+| `/.well-known/*`, `/auth.md`, `/llms.txt`, `/llms-full.txt` | Machine-readable discovery and usage guidance            |
+| `/robots.txt`, `/sitemap.xml`                               | Search and crawler discovery                             |
+| `/schemamap.xml`, `/structured-data/portfolio.jsonl`        | NLWeb schema map and schema.org JSON Lines feed          |
+| `/developers`, `/developers.md`, `/developers/llms.txt`     | Human and agent integration guides                       |
 
 No authentication is required. Clients should not send credentials. Canonical URLs come from `NEXT_PUBLIC_SITE_URL`; REST responses use scoped permissive CORS and a five-minute public-content cache.

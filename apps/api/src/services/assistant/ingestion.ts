@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+
 import {
   completeIngestionRun,
   createIngestionRun,
@@ -11,6 +12,7 @@ import {
   replaceIndexedKnowledgeDocument,
   touchIndexedKnowledgeDocument,
 } from "@portfolio/database";
+
 import { logError } from "../../lib/log";
 import { getAssistantModels } from "../ai/models";
 import { chunkKnowledgeDocument } from "./chunking";
