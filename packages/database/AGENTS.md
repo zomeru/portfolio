@@ -5,8 +5,8 @@ Drizzle migrations. Consumers must not issue Drizzle queries directly.
 
 ## Schema and repository invariants
 
-- Define tables under `src/db/schema` and re-export them through `src/db/schema.ts` and
-  `src/index.ts`.
+- Define tables under `src/db/schema` and re-export them through `src/db/schema.ts` for Drizzle's
+  schema discovery. Do not export table objects from the package root.
 - `src/db/schema/ai.ts` owns knowledge documents/chunks, ingestion runs, anonymous chat
   sessions/messages, and retrieval events. `src/db/schema/user.ts` is an existing user-table
   scaffold with no application repository or current consumer; do not imply it backs authentication.
@@ -48,3 +48,6 @@ Drizzle migrations. Consumers must not issue Drizzle queries directly.
 - Run `pnpm db:check` after migration changes.
 - Run the root type check after changing exported schema or repository contracts.
 - Database scripts load the repository-root `.env.local`; never print either connection URL.
+- Knip disables its Drizzle config evaluator because the CLI config validates database credentials.
+  It ignores only that config file and schema-export reports: Drizzle discovers those exports at
+  runtime. Keep this exemption scoped to `packages/database`.

@@ -10,7 +10,12 @@
       "ignore": ["public/sw.js", "src/lib/sanity/sanity.types.ts"]
     },
     "packages/database": {
-      "ignoreDependencies": ["tsx"]
+      "ignoreDependencies": ["tsx"],
+      "drizzle": false,
+      "ignoreFiles": ["drizzle.config.ts"],
+      "ignoreIssues": {
+        "src/db/schema/**": ["exports"]
+      }
     }
   }
 }
