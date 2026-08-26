@@ -428,8 +428,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
         </p>
         <p
           id={emailStatusId}
-          role="status"
-          aria-live="polite"
+          role={emailError ? "alert" : "status"}
           aria-atomic="true"
           className={
             emailState.message

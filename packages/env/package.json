@@ -11,7 +11,6 @@
     "./database": "./src/database.ts",
     "./github-server": "./src/github-server.ts",
     "./langfuse-server": "./src/langfuse-server.ts",
-    "./notifications-client": "./src/notifications-client.ts",
     "./notifications-server": "./src/notifications-server.ts",
     "./sanity": "./src/sanity.ts",
     "./sanity-server": "./src/sanity-server.ts",

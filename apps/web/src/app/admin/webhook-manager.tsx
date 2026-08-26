@@ -77,8 +77,7 @@ function WebhookRow({ webhook }: { webhook: WebhookSummary }) {
         </div>
       </div>
       <div
-        role="status"
-        aria-live="polite"
+        role={error ? "alert" : "status"}
         aria-atomic="true"
         className={message ? "mt-2 text-xs" : "sr-only"}
       >

@@ -15,6 +15,8 @@ Drizzle migrations. Consumers must not issue Drizzle queries directly.
   purpose-built repository results.
 - Keep Drizzle operators, SQL fragments, batches, and transactions inside this package. Apps consume
   repository functions exported from `src/index.ts`, not `db`, schema tables, or `drizzle-orm`.
+  The package root exports repositories and explicit public data types only; do not re-export the
+  client or table objects.
 - Preserve lazy database initialization so imports and builds do not connect eagerly.
 - Read `DATABASE_URL` and optional `DATABASE_DIRECT_URL` from `@portfolio/env/database`.
   Application queries use the pooled/application URL; Drizzle CLI prefers the direct URL when supplied.

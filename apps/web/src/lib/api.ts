@@ -1,5 +1,5 @@
+import "client-only";
 import type { AppType } from "@portfolio/api/types";
-import { getSiteEnv } from "@portfolio/env/site";
 import { type ClientRequestOptions, hc } from "hono/client";
 
 type Client = ReturnType<typeof hc<AppType>>;
@@ -11,10 +11,8 @@ export function createApiClient(baseUrl: string, options?: ClientRequestOptions)
 }
 
 function getClient(): Client {
-  const siteUrl = typeof window === "undefined" ? getSiteEnv().siteUrl : window.location.origin;
-
   if (!_client) {
-    _client = createApiClient(siteUrl, {
+    _client = createApiClient(window.location.origin, {
       init: {
         credentials: "include",
       },

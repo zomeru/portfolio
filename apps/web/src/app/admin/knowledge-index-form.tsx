@@ -132,7 +132,7 @@ export function KnowledgeIndexForm() {
         </button>
       </div>
 
-      <div role="status" aria-live="polite" aria-atomic="true">
+      <div role={state.status === "error" ? "alert" : "status"} aria-atomic="true">
         {state.status === "running" ? (
           <div className="mb-4 rounded-md border border-border p-3">
             <div className="flex items-center gap-2 text-xs font-medium">

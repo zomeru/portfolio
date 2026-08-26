@@ -13,7 +13,7 @@ export function hashToken(value: string) {
 }
 
 function getTokenSecret() {
-  const secret = getNotificationsServerEnv().NOTIFICATION_TOKEN_SECRET;
+  const secret = getNotificationsServerEnv().notificationTokenSecret;
   if (!secret) throw new Error("Notification token signing is not configured.");
   return secret;
 }
@@ -64,7 +64,7 @@ export function verifyWebhookSignature(options: {
 }
 
 function getEncryptionKey() {
-  const encoded = getNotificationsServerEnv().WEBHOOK_ENCRYPTION_KEY;
+  const encoded = getNotificationsServerEnv().webhookEncryptionKey;
   if (!encoded) throw new Error("Webhook encryption is not configured.");
   return Buffer.from(encoded, "base64url");
 }

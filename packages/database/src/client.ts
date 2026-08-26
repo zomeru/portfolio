@@ -2,12 +2,12 @@ import { neon } from "@neondatabase/serverless";
 import { getDatabaseEnv } from "@portfolio/env/database";
 import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
 
-export function createDatabase(): NeonHttpDatabase {
+function createDatabase(): NeonHttpDatabase {
   const sql = neon(getDatabaseEnv().url);
   return drizzle({ client: sql });
 }
 
-export type Database = NeonHttpDatabase;
+type Database = NeonHttpDatabase;
 
 let database: Database | undefined;
 

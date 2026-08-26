@@ -24,7 +24,8 @@ Hono backend and stateless MCP handlers are mounted inside the same deployment.
   Backend routes, validation, auth, provider calls, and persistence belong in `apps/api`.
 - Use `src/lib/api-server.ts` for server-to-API calls; it binds the Hono client to
   `apiApp.request` and avoids a network hop. Browser callers use `src/lib/api.ts` and import only
-  `AppType` from `@portfolio/api/types`.
+  `AppType` from `@portfolio/api/types`. Keep the browser client marked `client-only` and derive its
+  origin from `window`; do not import environment parsers into the client graph.
 - Keep the Ask Zomer client responsible only for the local UUID session key, history restoration,
   transport, stream presentation, portfolio and web sources, search status, suggestions, stop/retry
   state, and accessibility. Intent, retrieval, tool selection, prompts, models, rate limits, and
@@ -92,6 +93,8 @@ Hono backend and stateless MCP handlers are mounted inside the same deployment.
   non-web boundary can cover the risk.
 - Run `pnpm --filter @portfolio/web build` after routing, metadata, discovery, configuration,
   instrumentation, or dependency changes.
+- Run `pnpm analyze` for an on-disk Next.js bundle report when evaluating dependency or client-boundary
+  changes. It is a diagnostic command, not a thresholded CI gate.
 - Test affected browser interactions in a production build and check changed layouts at mobile and
   desktop widths.
 - After API adapter, admin, or streaming changes, verify the in-process server client and browser HTTP

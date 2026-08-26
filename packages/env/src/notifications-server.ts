@@ -113,8 +113,22 @@ const notificationsServerSchema = z
     }
   });
 
-export type NotificationsServerEnv = z.infer<typeof notificationsServerSchema>;
-
 export function getNotificationsServerEnv(source: NodeJS.ProcessEnv = process.env) {
-  return parseEnv(notificationsServerSchema, source);
+  const environment = parseEnv(notificationsServerSchema, source);
+  return {
+    emailProvider: environment.EMAIL_PROVIDER,
+    resendApiKey: environment.RESEND_API_KEY,
+    emailFrom: environment.EMAIL_FROM,
+    emailFromName: environment.EMAIL_FROM_NAME,
+    emailReplyTo: environment.EMAIL_REPLY_TO,
+    emailConfirmationTtlHours: environment.EMAIL_CONFIRMATION_TTL_HOURS,
+    webPushVapidPublicKey: environment.NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY,
+    webPushVapidPrivateKey: environment.WEB_PUSH_VAPID_PRIVATE_KEY,
+    webPushSubject: environment.WEB_PUSH_SUBJECT,
+    notificationTokenSecret: environment.NOTIFICATION_TOKEN_SECRET,
+    webhookEncryptionKey: environment.WEBHOOK_ENCRYPTION_KEY,
+    googleAppPassword: environment.GOOGLE_APP_PASSWORD,
+  } as const;
 }
+
+export type NotificationsServerEnv = ReturnType<typeof getNotificationsServerEnv>;

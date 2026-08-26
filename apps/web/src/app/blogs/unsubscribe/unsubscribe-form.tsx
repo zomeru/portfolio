@@ -34,7 +34,7 @@ export function UnsubscribeForm({ token }: { token?: string }) {
 
   return (
     <div className="mt-8 border-y border-border py-5">
-      <p role="status" aria-live="polite" className="text-sm text-muted">
+      <p role={state === "error" ? "alert" : "status"} className="text-sm text-muted">
         {message}
       </p>
       <div className="mt-4 flex flex-wrap gap-3">

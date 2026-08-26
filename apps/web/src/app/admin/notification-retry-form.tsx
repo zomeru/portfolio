@@ -30,7 +30,7 @@ export function NotificationRetryForm() {
         </button>
       </div>
       <p
-        aria-live="polite"
+        role={state.status === "error" ? "alert" : "status"}
         className={`min-h-5 pt-2 text-xs ${state.status === "error" ? "text-error" : "text-muted"}`}
       >
         {state.message}

@@ -72,15 +72,15 @@ function getGmailTransporter(environment: ReturnType<typeof getNotificationsServ
     return gmailTransporter;
   }
 
-  if (!environment.EMAIL_FROM || !environment.GOOGLE_APP_PASSWORD) {
+  if (!environment.emailFrom || !environment.googleAppPassword) {
     return null;
   }
 
   gmailTransporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: environment.EMAIL_FROM,
-      pass: environment.GOOGLE_APP_PASSWORD,
+      user: environment.emailFrom,
+      pass: environment.googleAppPassword,
     },
   });
 
@@ -89,10 +89,10 @@ function getGmailTransporter(environment: ReturnType<typeof getNotificationsServ
 
 function getEmailClient(): EmailClient | null {
   const environment = getNotificationsServerEnv();
-  if (!environment.EMAIL_FROM) return null;
-  const emailFrom = `${environment.EMAIL_FROM_NAME} <${environment.EMAIL_FROM}>`;
+  if (!environment.emailFrom) return null;
+  const emailFrom = `${environment.emailFromName} <${environment.emailFrom}>`;
 
-  switch (environment.EMAIL_PROVIDER) {
+  switch (environment.emailProvider) {
     case "gmail": {
       const transporter = getGmailTransporter(environment);
 
@@ -104,20 +104,20 @@ function getEmailClient(): EmailClient | null {
         provider: "gmail",
         client: transporter,
         from: emailFrom,
-        replyTo: environment.EMAIL_REPLY_TO,
+        replyTo: environment.emailReplyTo,
       } as GmailClient;
     }
 
     case "resend": {
-      if (!environment.RESEND_API_KEY) {
+      if (!environment.resendApiKey) {
         return null;
       }
 
       return {
         provider: "resend",
-        client: new Resend(environment.RESEND_API_KEY),
+        client: new Resend(environment.resendApiKey),
         from: emailFrom,
-        replyTo: environment.EMAIL_REPLY_TO,
+        replyTo: environment.emailReplyTo,
       } as ResendClient;
     }
 

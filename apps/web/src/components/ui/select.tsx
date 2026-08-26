@@ -195,6 +195,7 @@ export function Select({
           {selectedOption?.label}
         </span>
         <MorphIcon
+          aria-hidden="true"
           icon={open ? ChevronUp : ChevronDown}
           reducedMotion="user"
           spring="snappy"
@@ -235,7 +236,8 @@ export function Select({
                 onPointerMove={(event) => handleOptionPointerMove(event, index)}
                 className={cn(
                   "flex min-h-10 cursor-default items-center justify-between gap-3 rounded-sm px-2.5",
-                  "text-sm outline-none data-[active=true]:bg-border/60",
+                  "text-sm outline-none data-[active=true]:bg-border/60 focus-visible:outline-2",
+                  "focus-visible:-outline-offset-2 focus-visible:outline-foreground",
                 )}
               >
                 <span className="min-w-0 truncate">{option.label}</span>

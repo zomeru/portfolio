@@ -68,7 +68,7 @@ export async function enforceNotificationRateLimit(options: {
 }) {
   if (process.env.NODE_ENV === "development") return;
 
-  if (!getNotificationsServerEnv().NOTIFICATION_TOKEN_SECRET) {
+  if (!getNotificationsServerEnv().notificationTokenSecret) {
     throw new NotificationDeliveryError("Notifications are not configured.", {
       code: "NOTIFICATIONS_NOT_CONFIGURED",
       retryable: false,
@@ -139,7 +139,7 @@ const emailSubscriptionService = createEmailSubscriptionService({
   getConfiguration: () => {
     const environment = getNotificationsServerEnv();
     return {
-      confirmationTtlHours: environment.EMAIL_CONFIRMATION_TTL_HOURS,
+      confirmationTtlHours: environment.emailConfirmationTtlHours,
       emailConfigured: isEmailConfigured(),
       siteUrl: getSiteEnv().siteUrl,
     };

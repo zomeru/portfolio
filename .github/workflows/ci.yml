@@ -90,6 +90,9 @@ jobs:
       - name: Check formatting and linting with Oxc
         run: pnpm run lint
 
+      - name: Check workspace boundaries
+        run: pnpm run boundaries
+
       - name: Check dependency consistency
         run: pnpm run deps:check
 
