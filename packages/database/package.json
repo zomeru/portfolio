@@ -29,7 +29,7 @@
   },
   "devDependencies": {
     "@portfolio/typescript-config": "workspace:*",
-    "@types/node": "^26.2.0",
+    "@types/node": "^26.3.0",
     "drizzle-kit": "1.0.0-rc.4",
     "tsx": "^4.23.12",
     "typescript": "npm:@typescript/typescript6@^6.0.2"

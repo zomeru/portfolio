@@ -32,7 +32,7 @@
   "devDependencies": {
     "@portfolio/typescript-config": "workspace:*",
     "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
+    "@types/react-dom": "^19.2.5",
     "typescript": "npm:@typescript/typescript6@^6.0.2"
   }
 }
