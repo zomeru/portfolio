@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+
 import { PageTransition } from "@/components/layout/page-transition";
 
 export const metadata: Metadata = {

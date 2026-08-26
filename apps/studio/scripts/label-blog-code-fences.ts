@@ -10,6 +10,21 @@ type BlogPost = {
 const CHECK_ONLY = process.argv.includes("--check");
 const dataFile = resolve(dirname(fileURLToPath(import.meta.url)), "../data/blog.json");
 const fencePattern = /```[^\n]*\n([\s\S]*?)```/g;
+const SQL_STATEMENT_KEYWORDS = new Set([
+  "SELECT",
+  "INSERT",
+  "UPDATE",
+  "DELETE",
+  "CREATE",
+  "ALTER",
+  "DROP",
+  "WITH",
+  "EXPLAIN",
+  "GRANT",
+  "REVOKE",
+  "BEGIN",
+  "DO",
+]);
 
 function hasFileExtension(code: string, extensions: string[]) {
   const pattern = new RegExp(`\\.(${extensions.join("|")})(?:\\b|$)`, "i");
@@ -31,6 +46,22 @@ function isJson(code: string) {
   } catch {
     return false;
   }
+}
+
+function startsWithSqlStatement(code: string) {
+  const firstStatementLine = code
+    .split("\n")
+    .map((line) => line.trim())
+    .find((line) => line.length > 0 && !line.startsWith("--"));
+  if (!firstStatementLine) return false;
+
+  let keywordEnd = 0;
+  while (keywordEnd < firstStatementLine.length) {
+    const character = firstStatementLine[keywordEnd];
+    if (!character || character.toLowerCase() === character.toUpperCase()) break;
+    keywordEnd += 1;
+  }
+  return SQL_STATEMENT_KEYWORDS.has(firstStatementLine.slice(0, keywordEnd).toUpperCase());
 }
 
 function detectLanguage(code: string) {
@@ -60,7 +91,7 @@ function detectLanguage(code: string) {
 
   if (isJson(value)) return "json";
   if (hasFileExtension(value, ["json", "jsonc"])) return "jsonc";
-  if (/^\{/.test(uncommented) && /(?:\\"|")[\w$-]+(?:\\"|")\s*:/.test(uncommented)) {
+  if (uncommented.startsWith("{") && /(?:\\"|")[\w$-]+(?:\\"|")\s*:/.test(uncommented)) {
     return "jsonc";
   }
 
@@ -88,11 +119,7 @@ function detectLanguage(code: string) {
     return "prisma";
   }
 
-  if (
-    /^(?:\s*--.*\n\s*)*(?:SELECT|INSERT|UPDATE|DELETE|CREATE|ALTER|DROP|WITH|EXPLAIN|GRANT|REVOKE|BEGIN|DO)\b/i.test(
-      value,
-    )
-  ) {
+  if (startsWithSqlStatement(value)) {
     return "sql";
   }
 

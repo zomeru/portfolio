@@ -6,6 +6,7 @@ import remarkGfm from "remark-gfm";
 import type { RichText } from "@/lib/sanity/sanity.types";
 
 type MarkdownContentProps = {
+  openLinksInNewTab?: boolean;
   value: RichText | string | null | undefined;
 };
 
@@ -83,13 +84,25 @@ function portableTextToMarkdown(value: RichText | string | null | undefined) {
   }, "");
 }
 
-export async function MarkdownContent({ value }: MarkdownContentProps) {
+export async function MarkdownContent({ openLinksInNewTab = false, value }: MarkdownContentProps) {
   const markdown = portableTextToMarkdown(value);
   if (!markdown) return null;
 
   return (
     <div className="markdown-content">
       <MarkdownAsync
+        components={
+          openLinksInNewTab
+            ? {
+                a: ({ children, ...props }) => (
+                  <a {...props} target="_blank" rel="noopener noreferrer">
+                    {children}
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                ),
+              }
+            : undefined
+        }
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[[rehypePrettyCode, prettyCodeOptions]]}
       >

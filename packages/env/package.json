@@ -4,12 +4,15 @@
   "description": "Centralized environment variable validation",
   "private": true,
   "exports": {
+    "./admin": "./src/admin.ts",
     "./ai-server": "./src/ai-server.ts",
     "./assistant-server": "./src/assistant-server.ts",
     "./cron": "./src/cron.ts",
     "./database": "./src/database.ts",
     "./github-server": "./src/github-server.ts",
     "./langfuse-server": "./src/langfuse-server.ts",
+    "./notifications-client": "./src/notifications-client.ts",
+    "./notifications-server": "./src/notifications-server.ts",
     "./sanity": "./src/sanity.ts",
     "./sanity-server": "./src/sanity-server.ts",
     "./site": "./src/site.ts"
@@ -27,6 +30,6 @@
   "devDependencies": {
     "@portfolio/typescript-config": "workspace:*",
     "@types/node": "^26.2.0",
-    "typescript": "^6.0.3"
+    "typescript": "npm:@typescript/typescript6@^6.0.2"
   }
 }

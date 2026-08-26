@@ -1,6 +1,7 @@
 import { getSanityEnv } from "@portfolio/env/sanity";
 import { getSanityServerEnv } from "@portfolio/env/sanity-server";
 import { createClient, type SanityClient } from "@sanity/client";
+
 import type { GeneratedBlogDraft } from "./draft";
 
 const SANITY_API_VERSION = "2026-08-01";
@@ -9,6 +10,8 @@ export type BlogGenerationTrigger = "manual" | "scheduled";
 
 export type PublishedBlogPost = {
   _id: string;
+  _rev: string;
+  excerpt?: string;
   publishedAt: string;
   slug: { _type: "slug"; current: string };
   title: string;
@@ -33,16 +36,6 @@ type GeneratedBlogPostFields = {
   title: string;
 };
 
-type BlogPostIdentifier = {
-  slug: string;
-  title: string;
-};
-
-type GenerationContext = {
-  existing: PublishedBlogPost | null;
-  identifiers: BlogPostIdentifier[];
-};
-
 let writeClient: SanityClient | undefined;
 
 function getWriteClient(): SanityClient {
@@ -63,19 +56,17 @@ function getWriteClient(): SanityClient {
   return writeClient;
 }
 
-export async function getGenerationContext(generationKey: string): Promise<GenerationContext> {
-  return getWriteClient().fetch<GenerationContext>(
-    `{
-      "existing": *[_type == "blogPost" && generation.key == $generationKey][0] {
-        _id,
-        title,
-        slug,
-        publishedAt
-      },
-      "identifiers": *[_type == "blogPost" && defined(slug.current)] {
-        title,
-        "slug": slug.current
-      }
+export async function findGeneratedBlogPost(
+  generationKey: string,
+): Promise<PublishedBlogPost | null> {
+  return getWriteClient().fetch<PublishedBlogPost | null>(
+    `*[_type == "blogPost" && generation.key == $generationKey][0] {
+      _id,
+      _rev,
+      title,
+      slug,
+      publishedAt,
+      excerpt
     }`,
     { generationKey },
   );
@@ -109,6 +100,8 @@ export async function createGeneratedBlogPost(input: {
 
   return {
     _id: post._id,
+    _rev: post._rev,
+    excerpt: post.excerpt,
     publishedAt: post.publishedAt,
     slug: post.slug,
     title: post.title,

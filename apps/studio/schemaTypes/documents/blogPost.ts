@@ -1,8 +1,8 @@
 import { BLOG_CONTENT_LIMITS } from "@portfolio/content/blog";
 import { DocumentTextIcon } from "@sanity/icons/DocumentText";
-import { defineArrayMember, defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType, type SchemaTypeDefinition } from "sanity";
 
-export const blogPost = defineType({
+export const blogPost: SchemaTypeDefinition = defineType({
   name: "blogPost",
   title: "Blog post",
   type: "document",

@@ -1,8 +1,10 @@
 import { Hono } from "hono";
 import { streamText } from "hono/streaming";
 import { z } from "zod";
+
 import { ApiError } from "../errors";
 import { verifyAdminSessionToken } from "../lib/admin-session";
+import { logError } from "../lib/log";
 import {
   getKnowledgeIndexStatus,
   IngestionAlreadyRunningError,
@@ -47,6 +49,7 @@ async function runReindex(force: boolean, onProgress?: (message: string) => void
   } catch (error) {
     if (error instanceof IngestionAlreadyRunningError) {
       throw new ApiError(error.message, {
+        cause: error,
         code: "INGESTION_ALREADY_RUNNING",
         status: 409,
       });
@@ -100,6 +103,10 @@ export const adminAiRoutes = new Hono<ApiEnv>()
         });
         send({ type: "complete", summary });
       } catch (error) {
+        logError("streamed portfolio reindex failed", error, {
+          operation: "assistant.streamReindex",
+          force: request.force,
+        });
         send({
           type: "error",
           message: error instanceof ApiError ? error.message : "Portfolio indexing failed.",

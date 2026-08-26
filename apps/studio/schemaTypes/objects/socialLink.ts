@@ -1,7 +1,7 @@
 import { LinkIcon } from "@sanity/icons/Link";
-import { defineField, defineType } from "sanity";
+import { defineField, defineType, type SchemaTypeDefinition } from "sanity";
 
-export const socialLink = defineType({
+export const socialLink: SchemaTypeDefinition = defineType({
   name: "socialLink",
   title: "Social link",
   type: "object",

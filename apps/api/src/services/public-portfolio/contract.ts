@@ -67,7 +67,7 @@ export const DOCS_MCP_TOOLS = [
   },
 ] as const;
 
-export const PUBLIC_REST_PATHS = [
+export const PUBLIC_PORTFOLIO_REST_PATHS = [
   "/api/v1",
   "/api/v1/profile",
   "/api/v1/resume",
@@ -76,4 +76,18 @@ export const PUBLIC_REST_PATHS = [
   "/api/v1/blogs",
   "/api/v1/blogs/{slug}",
   "/api/v1/tech-stack",
+] as const;
+
+export const PUBLIC_NOTIFICATION_REST_PATHS = [
+  "/api/notifications/email/subscribe",
+  "/api/notifications/email/confirm",
+  "/api/notifications/email/unsubscribe",
+  "/api/notifications/push/config",
+  "/api/notifications/push/subscribe",
+  "/api/notifications/push/unsubscribe",
+] as const;
+
+export const PUBLIC_OPENAPI_PATHS = [
+  ...PUBLIC_PORTFOLIO_REST_PATHS,
+  ...PUBLIC_NOTIFICATION_REST_PATHS,
 ] as const;

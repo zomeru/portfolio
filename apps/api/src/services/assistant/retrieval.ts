@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+
 import {
   countBlogDocumentsMatchingTerms,
   countDistinctExperienceCompanies,
@@ -15,7 +16,8 @@ import {
   type KnowledgeCandidate,
   type RetrievalResultMetadata,
 } from "@portfolio/database";
-import { log } from "../../lib/log";
+
+import { errorLogMetadata, log } from "../../lib/log";
 import type { AskZomerSource, KnowledgeSourceType } from "../../types";
 import { getAssistantModels } from "../ai/models";
 import {
@@ -567,16 +569,14 @@ export async function searchPortfolioKnowledge(options: {
     } else {
       embeddingFailed = true;
       log("warn", "portfolio semantic retrieval failed; using keyword retrieval", {
-        errorType:
-          semanticResult.reason instanceof Error ? semanticResult.reason.name : "UnknownError",
+        ...errorLogMetadata(semanticResult.reason, "assistant.semanticRetrieval"),
       });
     }
     if (keywordResult.status === "fulfilled") {
       keyword = keywordResult.value;
     } else {
       log("warn", "portfolio keyword retrieval failed; using semantic retrieval", {
-        errorType:
-          keywordResult.reason instanceof Error ? keywordResult.reason.name : "UnknownError",
+        ...errorLogMetadata(keywordResult.reason, "assistant.keywordRetrieval"),
       });
     }
   }

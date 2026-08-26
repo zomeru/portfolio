@@ -5,6 +5,7 @@ is a source-exported internal package; consumers import explicit subpaths.
 
 ## Export contracts
 
+- `./admin`: `ADMIN_ACCESS_KEY` with a minimum length of 32 for the page-wide admin gate.
 - `./site`: `NODE_ENV` and `NEXT_PUBLIC_SITE_URL`; localhost fallback is development-only
   and the URL is required in production.
 - `./sanity`: public project, selected development/production dataset, app ID, and dataset map.
@@ -17,6 +18,9 @@ is a source-exported internal package; consumers import explicit subpaths.
 - `./database`: required `DATABASE_URL` and optional `DATABASE_DIRECT_URL`.
 - `./langfuse-server`: optional public/secret key pair and defaultable base URL; one key without the
   other is invalid.
+- `./notifications-client`: optional public VAPID key for browser subscription setup.
+- `./notifications-server`: grouped optional Gmail/Resend, Web Push, notification-token, and webhook
+  encryption configuration; incomplete feature groups are invalid.
 
 ## Invariants
 

@@ -1,9 +1,3 @@
-const WORD_COUNT_TARGET = {
-  minimum: 900,
-  maximum: 1_200,
-  tolerance: 100,
-} as const;
-
 export const BLOG_CONTENT_LIMITS = {
   body: {
     minimumCharacters: 3_000,
@@ -31,10 +25,5 @@ export const BLOG_CONTENT_LIMITS = {
   title: {
     minimumCharacters: 12,
     maximumCharacters: 100,
-  },
-  wordCount: {
-    ...WORD_COUNT_TARGET,
-    acceptedMinimum: WORD_COUNT_TARGET.minimum - WORD_COUNT_TARGET.tolerance,
-    acceptedMaximum: WORD_COUNT_TARGET.maximum + WORD_COUNT_TARGET.tolerance,
   },
 } as const;

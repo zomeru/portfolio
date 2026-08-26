@@ -1,5 +1,4 @@
 import "server-only";
-
 import { apiApp } from "@portfolio/api";
 import type { AppType } from "@portfolio/api/types";
 import { hc } from "hono/client";

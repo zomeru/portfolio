@@ -7,7 +7,9 @@ import { ArrowUp, Globe2, LoaderCircle, RefreshCw, Square } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+
 import { client } from "@/lib/api";
+import { reportClientWarning } from "@/lib/client-log";
 
 const SESSION_STORAGE_KEY = "ask-zomer-session";
 const INITIAL_SUGGESTIONS = [
@@ -268,6 +270,7 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
         setMessages(payload.messages ?? []);
       } catch (restoreError) {
         if (!(restoreError instanceof DOMException && restoreError.name === "AbortError")) {
+          reportClientWarning("assistant.restoreHistory", restoreError, { sessionKey });
           setHistoryWarning("Saved conversation history is unavailable right now.");
         }
       } finally {

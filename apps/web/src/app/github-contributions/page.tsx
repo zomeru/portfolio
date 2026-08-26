@@ -1,3 +1,4 @@
+import { logError } from "@portfolio/api/logging";
 import type { GithubCommitPage, GithubContributionCalendar } from "@portfolio/api/types";
 import type { Metadata } from "next";
 
@@ -53,7 +54,11 @@ async function loadContributions(
       };
     }
     return { data: await response.json(), error: null };
-  } catch {
+  } catch (error) {
+    logError("GitHub contributions could not be loaded for server rendering", error, {
+      operation: "web.github.loadContributions",
+      ...(year ? { year } : {}),
+    });
     return { data: null, error: "GitHub activity could not be loaded." };
   }
 }
@@ -72,7 +77,11 @@ async function loadCommits(filters: {
       };
     }
     return { data: await response.json(), error: null };
-  } catch {
+  } catch (error) {
+    logError("GitHub commits could not be loaded for server rendering", error, {
+      operation: "web.github.loadCommits",
+      filters,
+    });
     return { data: null, error: "GitHub commit history could not be loaded." };
   }
 }

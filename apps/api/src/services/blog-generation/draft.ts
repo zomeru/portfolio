@@ -1,12 +1,90 @@
 import { BLOG_CONTENT_LIMITS } from "@portfolio/content/blog";
 import { generateText, NoObjectGeneratedError, NoOutputGeneratedError, Output } from "ai";
 import { z } from "zod";
+
 import { ApiError } from "../../errors";
-import { log } from "../../lib/log";
+import { errorLogMetadata, log } from "../../lib/log";
 import { getBlogLanguageModel } from "../ai/models";
 import type { BlogGenerationTrigger } from "./repository";
 
 const SYSTEM_INSTRUCTION = `You are a principal full-stack software engineer and expert technical writer. Write for experienced software engineers. Be practical, concise, technically credible, and specific. Avoid hype, filler, generic advice, and obvious AI-generated phrasing. Focus on real-world engineering problems, tradeoffs, architecture, and implementation details. Use code only when it materially improves understanding. Prefer TypeScript when code is useful. Return strict JSON only with no extra commentary or Markdown fences.`;
+const BLOG_GENERATION_TIMEOUT_MS = 45_000;
+const BLOG_GENERATION_MAX_RETRIES = 0;
+
+const BLOG_DOMAINS = [
+  // Full-stack web development
+  "Modern full-stack web architecture with React, Next.js, TypeScript, and Node.js",
+  "Server and client boundaries, React Server Components, rendering, streaming, and caching",
+  "Backend API design with Node.js, Hono, Express, REST, OpenAPI, and type-safe contracts",
+  "Authentication, authorization, sessions, API security, rate limiting, and application security",
+  "PostgreSQL data modeling, query optimization, transactions, indexing, and database migrations",
+  "Caching, queues, background jobs, webhooks, event-driven architecture, and asynchronous workflows",
+  "Real-time applications with WebSockets, Server-Sent Events, synchronization, and optimistic updates",
+  "Frontend state management, server state, forms, validation, and complex application data flows",
+  "Web performance, Core Web Vitals, rendering performance, bundle optimization, and perceived speed",
+  "Web accessibility, responsive UI, design systems, interaction patterns, and progressive enhancement",
+
+  // Mobile and cross-platform development
+  "Cross-platform mobile development with React Native, Expo, and shared TypeScript architecture",
+  "Mobile application architecture, navigation, state management, persistence, and offline-first design",
+  "Mobile-to-backend integration, authentication, push notifications, deep links, and real-time features",
+  "Offline synchronization, local-first applications, conflict resolution, and resilient mobile data flows",
+  "Mobile performance, platform-specific behavior, native integrations, and cross-platform tradeoffs",
+
+  // Architecture, infrastructure, and production
+  "Full-stack application architecture, modular monoliths, service boundaries, and distributed system tradeoffs",
+  "Docker, containers, serverless, edge runtimes, deployment architecture, and cloud portability",
+  "CI/CD, infrastructure as code, automated deployments, environment management, and release engineering",
+  "Testing full-stack applications with unit, integration, end-to-end, contract, and production verification",
+  "Observability, structured logging, tracing, metrics, debugging, incident response, and production reliability",
+  "Scalability, resilience, concurrency, performance engineering, and infrastructure cost optimization",
+
+  // AI application engineering
+  "Building production AI features with LLM APIs, structured outputs, streaming, and model abstraction",
+  "AI agents, tool calling, multi-step workflows, agent orchestration, and autonomous task execution",
+  "AI coding agents, coding harnesses, repository context, agent workflows, and human review",
+  "RAG systems, embeddings, hybrid search, reranking, chunking, retrieval quality, and grounded generation",
+  "AI evaluation, benchmarks, regression testing, observability, tracing, and production quality measurement",
+  "Model routing, fallback strategies, latency, token usage, caching, and AI inference cost optimization",
+  "MCP, agent tools, API discovery, structured tool interfaces, and agent-accessible applications",
+  "AI security, prompt injection, tool permissions, data privacy, guardrails, and untrusted model output",
+  "AI-assisted software development, agent-ready repositories, documentation, context engineering, and workflows",
+  "Human-in-the-loop AI systems, approval workflows, confidence thresholds, and safe automation",
+] as const;
+
+function shuffle<T>(items: readonly T[]): T[] {
+  const result = [...items];
+
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const current = result[i];
+    const random = result[j];
+
+    if (current === undefined || random === undefined) continue;
+
+    result[i] = random;
+    result[j] = current;
+  }
+
+  return result;
+}
+
+function createRandomPicker<T>(items: readonly T[]) {
+  if (items.length === 0) throw new Error("Cannot create a picker from an empty list.");
+
+  let queue = shuffle(items);
+
+  return (): T => {
+    if (queue.length === 0) queue = shuffle(items);
+
+    const item = queue.pop();
+    if (item === undefined) throw new Error("Failed to select an item.");
+
+    return item;
+  };
+}
+
+const pickBlogDomain = createRandomPicker(BLOG_DOMAINS);
 
 const generatedBlogSchema = z.object({
   title: z
@@ -48,77 +126,54 @@ export type GeneratedBlogDraft = Omit<z.infer<typeof generatedBlogSchema>, "cont
   slug: string;
 };
 
-const BLOG_DOMAINS = [
-  "Application development (web, mobile, desktop, cross-platform, frontend, backend, and fullstack)",
-  "Software architecture and systems design (modularity, distributed systems, APIs, messaging, and integration patterns)",
-  "AI, machine learning, and data engineering (models, agents, evaluation, retrieval, pipelines, and analytics)",
-  "Programming languages and runtimes (language features, compilers, type systems, concurrency, and runtime behavior)",
-  "Cloud, platform, and infrastructure engineering (deployment, containers, serverless, edge, networking, and operations)",
-  "Developer tooling and engineering productivity (build systems, testing, CI/CD, observability, and local development)",
-  "Security, privacy, and identity (application security, authentication, authorization, data protection, and supply chains)",
-  "Databases, storage, search, caching, streaming, and data modeling",
-  "Performance, scalability, reliability, resilience, and cost efficiency",
-  "User experience, accessibility, design systems, rendering, and interaction patterns",
-  "Testing, debugging, code quality, maintainability, migrations, and technical debt",
-  "Observability, incident response, production operations, and site reliability",
-  "Networking, protocols, real-time systems, synchronization, and offline-first design",
-  "Open source, developer ecosystems, standards, interoperability, and emerging engineering practices",
-] as const;
-
-function pickRandomItem<T>(items: readonly T[]): T {
-  const item = items[Math.floor(Math.random() * items.length)];
-  if (item === undefined) throw new Error("Cannot select a blog domain from an empty list.");
-  return item;
-}
-
-function pickBlogDomain(): (typeof BLOG_DOMAINS)[number] {
-  return pickRandomItem(BLOG_DOMAINS);
-}
-
 const generatePrompt = (): string => {
-  const currentDate = new Date().toISOString().slice(0, 10);
   const domain = pickBlogDomain();
-  const prompt = `Generate ONE production-ready technical blog post for software engineers.
 
+  return `
 Context:
-- Current date: ${currentDate}
-- Optional domain inspiration: ${domain}
-- Use your existing technical knowledge only. Do not assume live internet access or invent recent developments, APIs, benchmarks, or releases.
+* Current date: ${new Date().toISOString().slice(0, 10)}
+* Optional domain inspiration: ${domain}
+* Use existing technical knowledge only. Do not assume live internet access or invent current releases, APIs, benchmarks, statistics, documentation, or URLs.
 
-Requirements:
-- Choose one specific, practical engineering topic worth writing about.
-- Treat the domain as optional inspiration, not a required scope. Choose a better topic or domain if appropriate.
-- Focus on one real problem, implementation pattern, migration, tradeoff, debugging scenario, or architectural decision.
-- Prefer topics that teach reusable engineering knowledge.
-- Avoid broad overviews, generic tutorials, listicles, vague trends, and stale topics.
-- Keep tools/frameworks secondary unless one is central to the problem.
-- Target ${BLOG_CONTENT_LIMITS.wordCount.minimum}–${BLOG_CONTENT_LIMITS.wordCount.maximum} words.
-- Write for working software engineers: practical, technically precise, and concise.
-- Explain relevant tradeoffs, constraints, and failure modes.
-- Include code only when it materially improves understanding.
-- Optimize naturally for SEO without clickbait or keyword stuffing.
+Goal:
+Create a technically strong, publication-ready article that answers one clear engineering search intent and is genuinely useful to working software engineers.
 
-Title:
-- Maximum ${BLOG_CONTENT_LIMITS.title.maximumCharacters} characters.
-- Make it specific, concrete, and search-friendly.
-- Start with a clear subject or technology.
-- Avoid generic gerund openings such as "Building", "Optimizing", "Architecting" and etc...
+Topic & Search Intent:
+* Choose one specific problem, implementation pattern, migration, debugging scenario, tradeoff, architectural decision, or technical question.
+* Treat the provided domain as optional inspiration, not a required scope. Choose a better topic when it produces a stronger article.
+* Prefer focused, reusable engineering knowledge over broad overviews, generic tutorials, listicles, trends, or news.
+* Internally identify the primary search query, reader intent, core subject, and relevant supporting concepts.
+* Build the title, opening, headings, and body around that intent without keyword stuffing or artificial repetition.
 
-Excerpt:
-- Write one or two SEO-friendly sentences between ${BLOG_CONTENT_LIMITS.excerpt.minimumCharacters} and ${BLOG_CONTENT_LIMITS.excerpt.maximumCharacters} characters.
+Title & Excerpt:
+* Write a concrete, descriptive, search-friendly title no longer than ${BLOG_CONTENT_LIMITS.title.maximumCharacters} characters.
+* Put the primary subject near the beginning. Avoid clickbait, vague promises, unnecessary superlatives, and generic gerund openings.
+* Favor natural title patterns such as:
+  * "How to ..."
+  * "[Technology]: How to ..."
+  * "[Technology]: [Specific Problem or Solution]"
+  * "[Technology A] vs. [Technology B] for [Specific Use Case]"
+  * "Why [Technical Problem] Happens and How to Fix It"
+* Use these patterns only when they accurately match the article.
+* Write a distinct one- or two-sentence excerpt between ${BLOG_CONTENT_LIMITS.excerpt.minimumCharacters} and ${BLOG_CONTENT_LIMITS.excerpt.maximumCharacters} characters that states the problem and practical value.
 
-Content:
-- Markdown body only; do not repeat the title or use an H1.
-- Use H2–H3 headings for structure.
-- Link the meaningful mention of relevant tools, libraries, or frameworks to official documentation.
-- Never invent URLs; omit the link if unsure.
+Content & Technical Depth:
+* Return a Markdown body without repeating the title or using an H1. Use descriptive H2 and H3 headings with a logical reading order.
+* Establish the problem quickly, answer the main question directly, then explain implementation, tradeoffs, constraints, assumptions, failure modes, edge cases, security, performance, operations, verification, and alternatives where relevant.
+* Keep paragraphs focused. Prefer precise technical language over marketing language.
+* Include minimal, realistic, internally consistent code only when it materially improves understanding. Prefer TypeScript when appropriate and explain important details.
+* Avoid filler, topic drift, unnecessary abstractions, forced FAQs, and repetitive conclusions.
+
+Links & Quality:
+* Link meaningful first mentions to official documentation only when confident the URL is correct. Never invent or guess a URL.
+* Keep the title, excerpt, headings, examples, and recommendations consistent with the same primary intent.
+* Before returning, silently check structure, technical credibility, useful depth, natural SEO language, unsupported claims, and schema compliance. Revise internally when needed.
 
 Output:
-- Return only the fields defined by the response schema, with no commentary or Markdown fences.
-`;
+* Return only the fields defined by the response schema, with concise relevant tags.
+* Do not add commentary or Markdown fences around the response.
 
-  log("info", "Generating blog content with dynamic topic prompt", { currentDate, domain });
-  return prompt;
+`;
 };
 
 function countWords(value: string) {
@@ -196,16 +251,6 @@ function assertValidDraft(draft: z.infer<typeof generatedBlogSchema>) {
   const uniqueTags = new Set(normalizedTags.map((tag) => tag.toLowerCase()));
   const prose = withoutFencedCodeBlocks(normalizedBody);
 
-  if (
-    wordCount < BLOG_CONTENT_LIMITS.wordCount.acceptedMinimum ||
-    wordCount > BLOG_CONTENT_LIMITS.wordCount.acceptedMaximum
-  ) {
-    throw new ApiError(
-      `Generated article contains ${wordCount} words; accepted range is ${BLOG_CONTENT_LIMITS.wordCount.acceptedMinimum}-${BLOG_CONTENT_LIMITS.wordCount.acceptedMaximum} words (target ${BLOG_CONTENT_LIMITS.wordCount.minimum}-${BLOG_CONTENT_LIMITS.wordCount.maximum}).`,
-      { code: "BLOG_GENERATION_INVALID", status: 422 },
-    );
-  }
-
   if (/^#\s+/m.test(prose) || /^---\s*$/m.test(prose)) {
     throw new ApiError("Generated article contains unsupported Markdown structure.", {
       code: "BLOG_GENERATION_INVALID",
@@ -242,6 +287,7 @@ export async function generateBlogDraft(
   trigger: BlogGenerationTrigger,
 ): Promise<GeneratedBlogDraft> {
   const { model, modelId, provider } = getBlogLanguageModel();
+  const startedAt = performance.now();
 
   try {
     const result = await generateText({
@@ -253,10 +299,11 @@ export async function generateBlogDraft(
       }),
       system: SYSTEM_INSTRUCTION,
       prompt: generatePrompt(),
-      temperature: 0.35,
+      temperature: 0.7,
+      reasoning: "none",
       maxOutputTokens: 8192,
-      maxRetries: 2,
-      abortSignal: AbortSignal.timeout(60_000),
+      maxRetries: BLOG_GENERATION_MAX_RETRIES,
+      timeout: BLOG_GENERATION_TIMEOUT_MS,
       runtimeContext: {
         model: modelId,
         provider,
@@ -283,6 +330,7 @@ export async function generateBlogDraft(
       model: modelId,
       provider,
       finishReason: result.finishReason,
+      durationMs: Math.round(performance.now() - startedAt),
       wordCount: countWords(validation.body),
     });
 
@@ -302,7 +350,11 @@ export async function generateBlogDraft(
     log("error", "blog draft generation failed", {
       model: modelId,
       provider,
-      errorType: error instanceof Error ? error.name : "UnknownError",
+      durationMs: Math.round(performance.now() - startedAt),
+      timeoutMs: BLOG_GENERATION_TIMEOUT_MS,
+      maxRetries: BLOG_GENERATION_MAX_RETRIES,
+      timedOut: error instanceof Error && error.name === "TimeoutError",
+      ...errorLogMetadata(error, "blogGeneration.generateDraft"),
       structuredOutputFailure:
         NoObjectGeneratedError.isInstance(error) || NoOutputGeneratedError.isInstance(error),
     });

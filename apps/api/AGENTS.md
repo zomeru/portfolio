@@ -6,7 +6,8 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
 ## Package and routing invariants
 
 - Compose global middleware and chained feature routers in `src/app.ts`. The app owns the `/api`
-  base path and mounts `/ai`, `/admin/ai`, `/blog`, `/github`, and the public `/v1` contract.
+  base path and mounts `/ai`, `/admin/ai`, `/blog`, `/github`, `/notifications`, and the public
+  `/v1` contract.
 - Keep HTTP parsing, validation, status mapping, and response shaping under `src/routes`. Put
   non-HTTP behavior under `src/services` and shared security/logging helpers under `src/lib`.
 - Preserve route chaining so exported `AppType` retains Hono RPC inference.
@@ -37,9 +38,12 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
 - General Ask Zomer intent may expose native web-search tools for Groq or OpenRouter. NVIDIA NIM has
   no web-search tool. Portfolio intents must not use those tools and remain grounded in the indexed
   portfolio.
-- `src/services/blog-generation` owns prompt/output validation, duplicate detection, idempotency,
-  immediate Sanity publication, generation audit metadata, and the post-publish index attempt. Indexing
-  failure is reported separately and must not roll back a published post.
+- `src/services/blog-generation` owns prompt/output validation, generation-key idempotency, immediate
+  Sanity publication, generation audit metadata, and the post-publish index attempt. Indexing failure
+  is reported separately and must not roll back a published post.
+- `src/services/notifications` owns double opt-in email, anonymous Web Push, approved outgoing
+  webhooks, durable `blog.published` delivery, and retries. Call its shared dispatcher only after
+  Sanity succeeds; provider failures must not roll back publication.
 - `src/services/assistant` owns intent classification, Sanity normalization, section-aware chunking,
   embeddings, hybrid/structured retrieval, prompts, chat persistence, rate limiting, indexing, and
   evaluation support. Keep PostgreSQL calls behind `@portfolio/database` repository exports.
@@ -62,6 +66,9 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
 
 - Both blog generation methods require the constant-time `CRON_SECRET` bearer check. Manual requests
   may add the validated idempotency header; scheduled keys are date-based.
+- Public email and push subscription routes are bounded, validated, rate-limited, and never list
+  destinations. Webhook management is admin-approved, accepts only the blog-generation capability or
+  `CRON_SECRET`, and must preserve SSRF validation and encrypted destination credentials.
 - Admin capabilities are separate. `blog-generation` tokens are signed with `CRON_SECRET`;
   `ai-reindex` tokens are signed with `AI_INDEX_SECRET_KEY`. Never accept one capability token for
   the other.
@@ -77,7 +84,10 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
 ## Verification
 
 - Run `pnpm --filter @portfolio/api check-types` after TypeScript changes.
-- Run `pnpm --filter @portfolio/api test` after public DTO, REST, or OpenAPI contract changes.
+- Keep API tests limited to complex logic, security boundaries, and stable public contracts. Do not
+  add tests for logging wrappers, trivial pass-through functions, or implementation-shape assertions.
+- Run `pnpm --filter @portfolio/api test` after changing an existing tested public DTO, REST/OpenAPI
+  contract, cryptographic operation, SSRF rule, authentication boundary, or durable delivery flow.
 - Run `pnpm ai:eval` after intent classification or structured retrieval changes.
 - Use `pnpm ai:eval --live` only against an explicitly authorized migrated/indexed database.
 - After route or middleware changes, exercise the affected path through the Next.js adapter and verify

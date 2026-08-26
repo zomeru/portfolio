@@ -7,6 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ContributionCalendar } from "@/components/portfolio/contribution-calendar";
 import { Select, type SelectOption } from "@/components/ui/select";
 import { client } from "@/lib/api";
+import { reportClientError } from "@/lib/client-log";
 
 const PAGE_SIZES = [10, 20, 50, 100] as const;
 
@@ -131,6 +132,7 @@ export function GithubContributionCalendarSection({
       setResult({ data: await response.json(), error: null });
     } catch (error) {
       if (!isAbortError(error)) {
+        reportClientError("github.loadContributions", error, { year });
         setResult({ data: null, error: "GitHub activity could not be loaded." });
       }
     } finally {
@@ -251,6 +253,7 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
       });
     } catch (error) {
       if (!isAbortError(error)) {
+        reportClientError("github.loadCommits", error, { filters: nextFilters });
         setResult({ data: null, error: "GitHub commit history could not be loaded." });
       }
     } finally {

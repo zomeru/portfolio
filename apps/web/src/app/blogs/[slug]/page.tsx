@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { BlogNotifications } from "@/components/blog/blog-notifications";
 import { PageTransition } from "@/components/layout/page-transition";
 import { MarkdownContent } from "@/components/portfolio/markdown-content";
 import { createPageMetadata } from "@/lib/metadata";
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const post = await getPublicBlogPost(slug);
   if (!post) return {};
 
-  const metadata = await createPageMetadata({
+  const metadata = createPageMetadata({
     title: post.title,
     description: post.description,
     path: `/blogs/${post.slug}`,
@@ -64,6 +65,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           {post.tags && post.tags.length > 0 ? ` · ${post.tags.join(" · ")}` : ""}
         </p>
         <p className="mt-8 text-sm leading-relaxed text-muted">{post.description}</p>
+        <BlogNotifications />
         <div className="mt-8">
           <MarkdownContent value={post.body} />
         </div>

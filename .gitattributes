@@ -3,3 +3,4 @@
 .codex/** linguist-documentation
 .opencode/** linguist-documentation
 graphify-out/** linguist-documentation
+apps/web/public/** linguist-documentation

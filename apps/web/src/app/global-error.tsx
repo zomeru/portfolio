@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
+
+import { reportClientError } from "@/lib/client-log";
+
 import "./globals.css";
 
 export default function GlobalError({
@@ -11,7 +14,7 @@ export default function GlobalError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error);
+    reportClientError("next.globalErrorBoundary", error, { digest: error.digest });
   }, [error]);
 
   return (

@@ -6,6 +6,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteNav } from "@/components/layout/site-nav";
+import { ServiceWorkerRegistration } from "@/components/pwa/service-worker-registration";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { siteUrl } from "@/lib/metadata";
 
@@ -36,6 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
     authors: [{ name, url: siteUrl }],
     creator: name,
     publisher: name,
+    appleWebApp: { capable: true, statusBarStyle: "default", title: name },
     alternates: { canonical: "/" },
     verification: { google: "vIm46RcPpRP4YQjS20F6RUACLwKggpLpEwLKn3rMXVw" },
     openGraph: {
@@ -70,6 +72,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <GoogleTagManager gtmId="GTM-PV9CX97P" />
       <body>
         <ThemeProvider>
+          <ServiceWorkerRegistration />
           <a
             href="#main-content"
             className="sr-only fixed left-4 top-4 z-50 rounded-sm bg-foreground px-4 py-2 text-sm font-medium text-background focus:not-sr-only"

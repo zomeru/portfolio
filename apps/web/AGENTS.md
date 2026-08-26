@@ -32,6 +32,9 @@ Hono backend and stateless MCP handlers are mounted inside the same deployment.
 - `src/components/layout/page-transition.tsx` owns route enter transitions through React View
   Transitions. Keep the animation CSS in `src/app/globals.css` and preserve the reduced-motion
   override.
+- `public/sw.js` is a deliberately small standards-based worker: cache only same-origin static assets,
+  keep pages and APIs network-owned, preserve the offline fallback, and validate notification-click
+  URLs against the site origin. Blog subscription UI stays in a narrow client component.
 - Reuse components under `src/components` and tokens in `src/app/globals.css`. Preserve keyboard
   access, visible focus, semantic headings, live-region behavior, touch targets, and reduced-motion
   handling.
@@ -64,6 +67,9 @@ Hono backend and stateless MCP handlers are mounted inside the same deployment.
 
 ## Admin and telemetry
 
+- The entire admin page first verifies `ADMIN_ACCESS_KEY` and stores only its signed eight-hour
+  session in an `HttpOnly`, `SameSite=Strict`, `/admin` cookie. Do not load or render privileged admin
+  data until this outer gate is valid, and re-authorize admin mutations against it.
 - Admin access is capability-specific. Blog publishing verifies `CRON_SECRET`; AI reindexing
   verifies `AI_INDEX_SECRET_KEY`. Store only the signed eight-hour capability token in an `HttpOnly`,
   `SameSite=Strict`, `/admin` cookie and re-authorize every mutation.
@@ -78,7 +84,12 @@ Hono backend and stateless MCP handlers are mounted inside the same deployment.
 ## Verification
 
 - Run `pnpm --filter @portfolio/web check-types` after TypeScript or route changes.
-- Run `pnpm --filter @portfolio/web test` after MCP, discovery, robots, sitemap, or schema-feed changes.
+- Do not add automated tests in `apps/web` for pages, components, styling, metadata, discovery routes,
+  admin controls, or source-code patterns. This is a portfolio frontend; use type checking, builds,
+  and focused browser verification instead.
+- If web behavior contains genuinely complex logic, first move that logic to its owning API or shared
+  module and test it there. Add a web test only when the user explicitly requests one and no smaller
+  non-web boundary can cover the risk.
 - Run `pnpm --filter @portfolio/web build` after routing, metadata, discovery, configuration,
   instrumentation, or dependency changes.
 - Test affected browser interactions in a production build and check changed layouts at mobile and

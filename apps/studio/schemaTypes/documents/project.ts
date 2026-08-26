@@ -1,7 +1,7 @@
 import { FolderIcon } from "@sanity/icons/Folder";
-import { defineArrayMember, defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType, type SchemaTypeDefinition } from "sanity";
 
-export const project = defineType({
+export const project: SchemaTypeDefinition = defineType({
   name: "project",
   title: "Project",
   type: "document",

@@ -1,20 +1,25 @@
 import { propagateAttributes, startActiveObservation } from "@langfuse/tracing";
-import { ApiError } from "../../errors";
-import { log } from "../../lib/log";
+
+import { errorLogMetadata, log } from "../../lib/log";
 import {
   IngestionAlreadyRunningError,
   synchronizePublishedKnowledgeDocument,
 } from "../assistant/ingestion";
+import { dispatchBlogPublished } from "../notifications/delivery";
 import { generateBlogDraft } from "./draft";
 import {
   type BlogGenerationTrigger,
   createGeneratedBlogPost,
-  getGenerationContext,
+  findGeneratedBlogPost,
   type PublishedBlogPost,
 } from "./repository";
 
 type GenerationResult = {
   created: boolean;
+  notifications: {
+    eventId?: string;
+    status: "failed" | "succeeded";
+  };
   indexing: {
     chunksCreated: number;
     status: "failed" | "succeeded" | "unchanged";
@@ -24,14 +29,57 @@ type GenerationResult = {
 
 const inFlightGenerations = new Map<string, Promise<GenerationResult>>();
 
-function normalizeTitle(value: string) {
-  return (
-    value
-      .normalize("NFKD")
-      .toLowerCase()
-      .match(/[\p{L}\p{N}]+/gu)
-      ?.join(" ") ?? ""
-  );
+async function dispatchNotifications(
+  post: PublishedBlogPost,
+  trigger: BlogGenerationTrigger,
+): Promise<GenerationResult["notifications"]> {
+  try {
+    const dispatched = await dispatchBlogPublished({
+      id: post._id,
+      revision: post._rev,
+      title: post.title,
+      slug: post.slug.current,
+      ...(post.excerpt ? { excerpt: post.excerpt } : {}),
+      publishedAt: post.publishedAt,
+    });
+    return {
+      eventId: dispatched.eventId,
+      status: dispatched.materializationFailures.length > 0 ? "failed" : "succeeded",
+    };
+  } catch (error) {
+    log("error", "published blog post notification dispatch failed", {
+      ...errorLogMetadata(error, "blogGeneration.dispatchNotifications"),
+      postId: post._id,
+      slug: post.slug.current,
+      trigger,
+    });
+    return { status: "failed" };
+  }
+}
+
+async function indexPublishedPost(
+  post: PublishedBlogPost,
+  trigger: BlogGenerationTrigger,
+): Promise<GenerationResult["indexing"]> {
+  try {
+    const summary = await synchronizePublishedKnowledgeDocument({
+      documentId: post._id,
+      trigger: trigger === "scheduled" ? "scheduled" : "admin",
+    });
+    return {
+      chunksCreated: summary.chunksCreated,
+      status: summary.documentsUnchanged > 0 ? "unchanged" : "succeeded",
+    };
+  } catch (error) {
+    log("error", "published blog post indexing failed", {
+      ...errorLogMetadata(error, "blogGeneration.indexPublishedPost"),
+      indexingAlreadyRunning: error instanceof IngestionAlreadyRunningError,
+      postId: post._id,
+      slug: post.slug.current,
+      trigger,
+    });
+    return { chunksCreated: 0, status: "failed" };
+  }
 }
 
 async function generateAndPublish(input: {
@@ -49,65 +97,31 @@ async function generateAndPublish(input: {
         workflow.update({ input: { trigger: input.trigger } });
 
         try {
-          const initialContext = await getGenerationContext(input.generationKey);
           let created = false;
-          let post = initialContext.existing;
+          let post = await findGeneratedBlogPost(input.generationKey);
 
           if (!post) {
             const draft = await generateBlogDraft(input.trigger);
-            const refreshedContext = await getGenerationContext(input.generationKey);
-            post = refreshedContext.existing;
-
-            if (!post) {
-              const duplicate = refreshedContext.identifiers.find(
-                (identifier) =>
-                  identifier.slug === draft.slug ||
-                  normalizeTitle(identifier.title) === normalizeTitle(draft.title),
-              );
-
-              if (duplicate) {
-                throw new ApiError("The generated article duplicates an existing post.", {
-                  code: "BLOG_DUPLICATE",
-                  status: 409,
-                });
-              }
-
-              post = await createGeneratedBlogPost({ ...input, draft });
-              created = true;
-              log("info", "generated blog post published", {
-                postId: post._id,
-                slug: post.slug.current,
-                trigger: input.trigger,
-              });
-            }
-          }
-
-          let indexing: GenerationResult["indexing"];
-          try {
-            const summary = await synchronizePublishedKnowledgeDocument({
-              documentId: post._id,
-              trigger: input.trigger === "scheduled" ? "scheduled" : "admin",
-            });
-            indexing = {
-              chunksCreated: summary.chunksCreated,
-              status: summary.documentsUnchanged > 0 ? "unchanged" : "succeeded",
-            };
-          } catch (error) {
-            indexing = { chunksCreated: 0, status: "failed" };
-            log("error", "published blog post indexing failed", {
-              errorType: error instanceof Error ? error.name : "UnknownError",
-              indexingAlreadyRunning: error instanceof IngestionAlreadyRunningError,
+            post = await createGeneratedBlogPost({ ...input, draft });
+            created = true;
+            log("info", "generated blog post published", {
               postId: post._id,
               slug: post.slug.current,
               trigger: input.trigger,
             });
           }
 
-          const result = { created, indexing, post };
+          const [notifications, indexing] = await Promise.all([
+            dispatchNotifications(post, input.trigger),
+            indexPublishedPost(post, input.trigger),
+          ]);
+
+          const result = { created, indexing, notifications, post };
           workflow.update({
             output: {
               created,
               indexingStatus: indexing.status,
+              notificationStatus: notifications.status,
               postId: post._id,
               slug: post.slug.current,
               success: true,

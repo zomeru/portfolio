@@ -1,4 +1,5 @@
 import { z } from "zod";
+
 import { parseEnv } from "#utils";
 
 const DEFAULT_PROJECT_ID = "fvmu1iv8";

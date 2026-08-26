@@ -1,6 +1,6 @@
 import "server-only";
-
 import { ImageResponse } from "next/og";
+
 import { domain } from "./metadata";
 
 type PortfolioOgImageOptions = {

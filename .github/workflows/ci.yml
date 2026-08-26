@@ -87,13 +87,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Setup Biome
-        uses: biomejs/setup-biome@v2
-        with:
-          version: latest
-
-      - name: Run Biome
-        run: pnpm exec biome ci .
+      - name: Check formatting and linting with Oxc
+        run: pnpm run lint
 
       - name: Check dependency consistency
         run: pnpm run deps:check

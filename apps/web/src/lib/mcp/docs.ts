@@ -8,6 +8,7 @@ import {
 import { getSiteEnv } from "@portfolio/env/site";
 import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
+
 import { getAuthenticationGuideMarkdown, getDeveloperGuideMarkdown } from "@/lib/developer-docs";
 
 const emptyInputSchema = z.object({}).strict();

@@ -15,9 +15,32 @@ allowBuilds:
 
 minimumReleaseAgeExclude:
   - get-it@9.5.0
-  - '@ai-sdk/gateway@4.0.60 || 4.0.62'
+  - "@ai-sdk/gateway@4.0.60 || 4.0.62"
   - ai@7.0.74 || 7.0.77
-  - '@ai-sdk/google@4.0.50'
-  - '@ai-sdk/provider-utils@5.0.29'
-  - '@ai-sdk/mcp@2.0.36'
-  - '@ai-sdk/react@4.0.80'
+  - "@ai-sdk/google@4.0.50"
+  - "@ai-sdk/provider-utils@5.0.29"
+  - "@ai-sdk/mcp@2.0.36"
+  - "@ai-sdk/react@4.0.80"
+  - "@portabletext/editor@8.0.2"
+  - "@portabletext/html@2.0.0"
+  - "@portabletext/keyboard-shortcuts@3.0.0"
+  - "@portabletext/patches@3.0.0"
+  - "@portabletext/plugin-character-pair-decorator@9.0.2"
+  - "@portabletext/plugin-dnd@2.0.2"
+  - "@portabletext/plugin-input-rule@7.0.2"
+  - "@portabletext/plugin-list-index@2.0.2"
+  - "@portabletext/plugin-markdown-shortcuts@9.0.2"
+  - "@portabletext/plugin-one-line@8.0.2"
+  - "@portabletext/plugin-paste-link@5.0.2"
+  - "@portabletext/plugin-table@2.0.2"
+  - "@portabletext/plugin-typography@9.0.2"
+  - "@portabletext/sanity-bridge@4.0.0"
+  - "@portabletext/schema@3.0.0"
+  - "@sanity/access-ui@6.11.0"
+  - "@sanity/diff@6.11.0"
+  - "@sanity/mutator@6.11.0"
+  - "@sanity/schema@6.11.0"
+  - "@sanity/types@6.11.0"
+  - "@sanity/util@6.11.0"
+  - "@sanity/vision@6.11.0"
+  - sanity@6.11.0

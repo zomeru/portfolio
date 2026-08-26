@@ -1,4 +1,5 @@
 import { createHash } from "node:crypto";
+
 import {
   completeIngestionRun,
   createIngestionRun,
@@ -11,6 +12,8 @@ import {
   replaceIndexedKnowledgeDocument,
   touchIndexedKnowledgeDocument,
 } from "@portfolio/database";
+
+import { logError } from "../../lib/log";
 import { getAssistantModels } from "../ai/models";
 import { chunkKnowledgeDocument } from "./chunking";
 import { ASSISTANT_INDEX_VERSION } from "./config";
@@ -34,8 +37,11 @@ export type IngestionSummary = {
 };
 
 export class IngestionAlreadyRunningError extends Error {
-  constructor() {
-    super("A portfolio indexing run is already in progress.");
+  constructor(cause?: unknown) {
+    super(
+      "A portfolio indexing run is already in progress.",
+      cause === undefined ? undefined : { cause },
+    );
     this.name = "IngestionAlreadyRunningError";
   }
 }
@@ -76,7 +82,7 @@ async function beginIngestionRun(
     if (!run) throw new Error("The ingestion run could not be created.");
     return run;
   } catch (error) {
-    if (databaseErrorCode(error) === "23505") throw new IngestionAlreadyRunningError();
+    if (databaseErrorCode(error) === "23505") throw new IngestionAlreadyRunningError(error);
     throw error;
   }
 }
@@ -142,6 +148,22 @@ async function markRunFailed(runId: string, error: unknown) {
   const message =
     error instanceof Error ? error.message.slice(0, 1_000) : "Unknown indexing failure.";
   await failIngestionRun(runId, message);
+}
+
+async function safelyMarkRunFailed(runId: string, originalError: unknown, operation: string) {
+  try {
+    await markRunFailed(runId, originalError);
+  } catch (persistenceError) {
+    logError("ingestion failure status could not be persisted", persistenceError, {
+      operation: `${operation}.recordFailure`,
+      runId,
+      originalError: errorLogSummary(originalError),
+    });
+  }
+}
+
+function errorLogSummary(error: unknown) {
+  return error instanceof Error ? { type: error.name, message: error.message } : String(error);
 }
 
 function createIngestionSummary(runId: string): IngestionSummary {
@@ -257,7 +279,13 @@ export async function synchronizePortfolioKnowledge(options: {
       },
     );
   } catch (error) {
-    await markRunFailed(run.id, error);
+    logError("portfolio knowledge ingestion failed", error, {
+      operation: "assistant.ingestPortfolioKnowledge",
+      runId: run.id,
+      trigger: options.trigger,
+      force,
+    });
+    await safelyMarkRunFailed(run.id, error, "assistant.ingestPortfolioKnowledge");
     throw error;
   }
 }
@@ -308,7 +336,13 @@ export async function synchronizePublishedKnowledgeDocument(options: {
       },
     );
   } catch (error) {
-    await markRunFailed(run.id, error);
+    logError("published document ingestion failed", error, {
+      operation: "assistant.ingestPublishedDocument",
+      runId: run.id,
+      trigger: options.trigger,
+      documentId: options.documentId,
+    });
+    await safelyMarkRunFailed(run.id, error, "assistant.ingestPublishedDocument");
     throw error;
   }
 }

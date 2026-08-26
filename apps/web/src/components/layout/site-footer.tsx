@@ -1,4 +1,5 @@
 import type { PublicProfile } from "@portfolio/api/public-portfolio";
+
 import { appVersion } from "@/lib/app-version";
 import { getProfileSocials } from "@/lib/sanity/profile";
 

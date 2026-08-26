@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+
 import { initialGenerationState } from "./action-state";
 import { triggerBlogGeneration } from "./actions";
 

@@ -1,9 +1,9 @@
 import { CodeIcon } from "@sanity/icons/Code";
-import { defineArrayMember, defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType, type SchemaTypeDefinition } from "sanity";
 
 const API_VERSION = "2026-08-20";
 
-export const techStack = defineType({
+export const techStack: SchemaTypeDefinition = defineType({
   name: "techStack",
   title: "Tech stack group",
   type: "document",

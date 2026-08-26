@@ -1,6 +1,7 @@
 import { getPublicProfile } from "@portfolio/api/public-portfolio";
 import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
+
 import { PageTransition } from "@/components/layout/page-transition";
 import { BookACallButton } from "@/components/portfolio/book-a-call-button";
 import { PageHeader } from "@/components/portfolio/page-header";
