@@ -1,13 +1,16 @@
 import type { PublicProject } from "@portfolio/api/public-portfolio";
 import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+
+import { Link } from "@/i18n/navigation";
 
 type ProjectItemProps = {
   project: PublicProject;
   index: number;
 };
 
-export function ProjectItem({ project, index }: ProjectItemProps) {
+export async function ProjectItem({ project, index }: ProjectItemProps) {
+  const t = await getTranslations("Projects");
   const number = String(index).padStart(2, "0");
 
   return (
@@ -27,13 +30,13 @@ export function ProjectItem({ project, index }: ProjectItemProps) {
             {project.repositoryUrl && (
               <ExternalLink href={project.repositoryUrl}>GitHub</ExternalLink>
             )}
-            {project.demoUrl && <ExternalLink href={project.demoUrl}>Live</ExternalLink>}
+            {project.demoUrl && <ExternalLink href={project.demoUrl}>{t("live")}</ExternalLink>}
             {project.caseStudyUrl && (
               <Link
                 href={project.caseStudyUrl}
                 className="inline-flex items-center gap-1 text-foreground underline-offset-4 transition-colors duration-200 hover:text-muted motion-reduce:transition-none"
               >
-                Case study <ArrowUpRight aria-hidden="true" size={14} strokeWidth={1.5} />
+                {t("caseStudy")} <ArrowUpRight aria-hidden="true" size={14} strokeWidth={1.5} />
               </Link>
             )}
           </div>

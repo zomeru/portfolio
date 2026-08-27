@@ -14,9 +14,10 @@ const socialIcons: Record<ProfileSocial["name"], LucideIcon | typeof GitHubIcon>
 type SocialLinksProps = {
   items: readonly ProfileSocial[];
   className?: string;
+  emailLabel?: string;
 };
 
-export function SocialLinks({ items, className }: SocialLinksProps) {
+export function SocialLinks({ items, className, emailLabel = "Email" }: SocialLinksProps) {
   return (
     <ul className={cn(className, "gap-4")}>
       {items.map((social) => {
@@ -26,7 +27,7 @@ export function SocialLinks({ items, className }: SocialLinksProps) {
           <li key={social.name}>
             <a
               href={social.href}
-              aria-label={social.name}
+              aria-label={social.name === "Email" ? emailLabel : social.name}
               className="inline-flex items-center justify-center text-muted transition-colors duration-200 hover:text-foreground motion-reduce:transition-none"
               {...(isMailto ? {} : { target: "_blank", rel: "noopener noreferrer" })}
             >

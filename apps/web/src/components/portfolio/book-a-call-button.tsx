@@ -2,6 +2,7 @@
 
 import { getCalApi } from "@calcom/embed-react";
 import { CalendarDays } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 
 import { reportClientError } from "@/lib/client-log";
@@ -34,6 +35,7 @@ function manageBookingDialogFocus(trigger: HTMLButtonElement) {
 }
 
 export function BookACallButton() {
+  const t = useTranslations("Contact");
   useEffect(() => {
     async function configureCalEmbed() {
       const cal = await getCalApi({ namespace: CAL_NAMESPACE });
@@ -60,7 +62,7 @@ export function BookACallButton() {
       data-cal-config='{"layout":"month_view"}'
       className="mt-8 inline-flex min-h-11 items-center gap-2 rounded-sm bg-foreground px-5 py-2 text-sm font-medium text-background transition-opacity duration-200 hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground motion-reduce:transition-none"
     >
-      Book a call <CalendarDays aria-hidden="true" size={16} />
+      {t("book")} <CalendarDays aria-hidden="true" size={16} />
     </button>
   );
 }

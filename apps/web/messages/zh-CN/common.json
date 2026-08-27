@@ -1,0 +1,34 @@
+{
+  "skipToContent": "跳到主要内容",
+  "nav": {
+    "label": "主导航",
+    "about": "关于",
+    "projects": "项目",
+    "blogs": "博客",
+    "github": "GitHub",
+    "assistant": "询问 Zomer AI",
+    "contact": "联系我"
+  },
+  "theme": {
+    "legend": "颜色主题",
+    "system": "跟随系统",
+    "light": "浅色主题",
+    "dark": "深色主题"
+  },
+  "language": {
+    "label": "语言",
+    "switching": "正在切换语言"
+  },
+  "resume": "简历",
+  "profileRole": "软件工程师",
+  "techGroups": {
+    "frontend": "前端",
+    "backend": "后端",
+    "data": "数据",
+    "infrastructure": "基础设施／工具"
+  },
+  "social": {
+    "email": "电子邮件"
+  },
+  "opensNewTab": "（在新标签页中打开）"
+}

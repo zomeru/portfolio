@@ -8,6 +8,8 @@ overrides:
   "uuid@<11.1.1": "11.1.1"
 
 allowBuilds:
+  "@parcel/watcher": false
+  "@swc/core": false
   esbuild: true
   protobufjs: false
   sharp: true

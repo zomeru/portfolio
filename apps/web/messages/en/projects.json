@@ -1,0 +1,18 @@
+{
+  "eyebrow": "Projects",
+  "title": "Selected work.",
+  "empty": "No projects are published yet.",
+  "live": "Live",
+  "caseStudy": "Case study",
+  "descriptions": {
+    "rezumerAi": "Rezumer AI is an AI-assisted resume builder for job seekers who want one workspace to draft, refine, tailor, and export resumes. It combines structured resume editing with AI-powered section optimization, job-description matching, and a scope-aware assistant that can answer public, account, or admin questions based on the current user's access.",
+    "batibot": "Batibot is an AI-powered messaging companion that helps you find the right information and services for your needs.",
+    "zomink": "Zomink is an open-source link management platform with all the features you need in one place. Manage, track, and shorten your URLs with your custom alias.",
+    "sticaLms": "STICA LMS is my college capstone project. It is an online library management system for STI College Alabang.",
+    "kokuban": "Kokuban helps teachers in Japan create online educational materials that their students can access and use in a browser.",
+    "zomify": "Zomify is a Spotify clone built with SvelteKit, TypeScript, and Tailwind CSS.",
+    "paymongo": "A lightweight, full-featured, modular, TypeScript-compatible JavaScript library for PayMongo.",
+    "groundwork": "An online B2B platform designed to create and grow networks for businesses in the Philippines.",
+    "zomifyColors": "A color palette app inspired by Flat UI Colors."
+  }
+}

@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { MarkdownAsync } from "react-markdown";
 import type { Options as PrettyCodeOptions } from "rehype-pretty-code";
 import rehypePrettyCode from "rehype-pretty-code";
@@ -87,6 +88,7 @@ function portableTextToMarkdown(value: RichText | string | null | undefined) {
 export async function MarkdownContent({ openLinksInNewTab = false, value }: MarkdownContentProps) {
   const markdown = portableTextToMarkdown(value);
   if (!markdown) return null;
+  const t = openLinksInNewTab ? await getTranslations("Common") : null;
 
   return (
     <div className="markdown-content">
@@ -97,7 +99,7 @@ export async function MarkdownContent({ openLinksInNewTab = false, value }: Mark
                 a: ({ children, ...props }) => (
                   <a {...props} target="_blank" rel="noopener noreferrer">
                     {children}
-                    <span className="sr-only"> (opens in a new tab)</span>
+                    <span className="sr-only"> {t?.("opensNewTab")}</span>
                   </a>
                 ),
               }

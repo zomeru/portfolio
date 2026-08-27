@@ -1,0 +1,11 @@
+{
+  "heading": "職歴",
+  "empty": "公開中の職歴はまだありません。",
+  "entries": {
+    "seansoft": { "role": "ソフトウェア開発者", "period": "2024年1月 — 2026年4月" },
+    "binbooker": { "role": "React開発者", "period": "2025年3月 — 2025年7月" },
+    "evelan": { "role": "フルスタック開発者", "period": "2023年8月 — 2023年12月" },
+    "beyonder": { "role": "ソフトウェアエンジニア", "period": "2022年2月 — 2023年8月" },
+    "freelance": { "role": "フルスタック開発者", "period": "2021年9月 — 2022年2月" }
+  }
+}

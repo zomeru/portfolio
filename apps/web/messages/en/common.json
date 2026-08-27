@@ -1,0 +1,34 @@
+{
+  "skipToContent": "Skip to content",
+  "nav": {
+    "label": "Primary navigation",
+    "about": "About",
+    "projects": "Projects",
+    "blogs": "Blogs",
+    "github": "GitHub",
+    "assistant": "Ask Zomer AI",
+    "contact": "Let's talk"
+  },
+  "theme": {
+    "legend": "Color theme",
+    "system": "System theme",
+    "light": "Light theme",
+    "dark": "Dark theme"
+  },
+  "language": {
+    "label": "Language",
+    "switching": "Switching language"
+  },
+  "resume": "Resume",
+  "profileRole": "Software Engineer",
+  "techGroups": {
+    "frontend": "Frontend",
+    "backend": "Backend",
+    "data": "Data",
+    "infrastructure": "Infrastructure / Tools"
+  },
+  "social": {
+    "email": "Email"
+  },
+  "opensNewTab": "(opens in a new tab)"
+}

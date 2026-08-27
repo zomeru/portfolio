@@ -1,0 +1,34 @@
+{
+  "skipToContent": "Zum Inhalt springen",
+  "nav": {
+    "label": "Hauptnavigation",
+    "about": "Über mich",
+    "projects": "Projekte",
+    "blogs": "Blog",
+    "github": "GitHub",
+    "assistant": "Zomer AI fragen",
+    "contact": "Kontakt"
+  },
+  "theme": {
+    "legend": "Farbschema",
+    "system": "Systemeinstellung",
+    "light": "Helles Farbschema",
+    "dark": "Dunkles Farbschema"
+  },
+  "language": {
+    "label": "Sprache",
+    "switching": "Sprache wird gewechselt"
+  },
+  "resume": "Lebenslauf",
+  "profileRole": "Softwareentwickler",
+  "techGroups": {
+    "frontend": "Frontend",
+    "backend": "Backend",
+    "data": "Daten",
+    "infrastructure": "Infrastruktur / Tools"
+  },
+  "social": {
+    "email": "E-Mail"
+  },
+  "opensNewTab": "(wird in einem neuen Tab geöffnet)"
+}

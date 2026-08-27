@@ -1,0 +1,48 @@
+{
+  "root": {
+    "role": "软件工程师",
+    "description": "构建现代 Web 应用和可扩展系统的全栈软件工程师。"
+  },
+  "projects": { "title": "项目", "description": "精选作品。" },
+  "blogs": {
+    "title": "博客",
+    "description": "软件工程、Web 开发、架构、工具和 AI 相关文章。"
+  },
+  "contact": {
+    "title": "联系方式",
+    "description": "有项目、机会或有趣的想法想聊聊吗？"
+  },
+  "assistant": {
+    "title": "询问 Zomer AI",
+    "description": "向 AI 助手询问 Zomer 的工作、经历、项目和文章。"
+  },
+  "github": {
+    "title": "GitHub 贡献",
+    "description": "我所拥有仓库中的 GitHub 贡献活动和提交记录。"
+  },
+  "developers": {
+    "title": "开发者",
+    "description": "公共作品集 API 的 REST、OpenAPI 和 MCP 集成指南。"
+  },
+  "unsubscribe": {
+    "title": "取消订阅博客邮件",
+    "description": "管理 Zomer Gregorio 博客邮件订阅。"
+  },
+  "og": {
+    "portfolioEyebrow": "作品集",
+    "portfolioDescription": "使用 Next.js、TypeScript 和实用 AI 集成构建现代 Web 体验。",
+    "projectsTitle": "精选作品。",
+    "projectsDescription": "涵盖产品工程、系统和全栈软件开发。",
+    "blogsTitle": "软件开发笔记。",
+    "blogsDescription": "关于架构、工具、AI 和 Web 工程的实践文章。",
+    "contactTitle": "有项目或有趣的想法吗？",
+    "contactDescription": "欢迎交流软件工程、产品开发或合作机会。",
+    "assistantTitle": "基于可靠资料了解我的工作。",
+    "assistantDescription": "询问工作经历、项目、技术优势和已发布的文章。",
+    "githubTitle": "贡献活动和提交记录。",
+    "githubDescription": "我所拥有仓库中的 GitHub 贡献和提交记录。",
+    "blogArticle": "博客文章",
+    "blogFallbackTitle": "软件工程笔记。",
+    "blogFallbackDescription": "构建可靠软件的实践笔记。"
+  }
+}

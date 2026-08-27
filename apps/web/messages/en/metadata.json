@@ -1,0 +1,48 @@
+{
+  "root": {
+    "role": "Software Engineer",
+    "description": "Full-stack software engineer building modern web applications and scalable systems."
+  },
+  "projects": { "title": "Projects", "description": "Selected work." },
+  "blogs": {
+    "title": "Blog",
+    "description": "Writing about software engineering, web development, architecture, tooling, and AI."
+  },
+  "contact": {
+    "title": "Contact",
+    "description": "Have a project, opportunity, or interesting idea? Let's talk."
+  },
+  "assistant": {
+    "title": "Ask Zomer AI",
+    "description": "Ask an AI assistant about Zomer's work, experience, projects, and writing."
+  },
+  "github": {
+    "title": "GitHub Contributions",
+    "description": "GitHub contribution activity and commit history across owned repositories."
+  },
+  "developers": {
+    "title": "Developers",
+    "description": "REST, OpenAPI, and MCP integration guide for the public portfolio API."
+  },
+  "unsubscribe": {
+    "title": "Unsubscribe from blog emails",
+    "description": "Manage your Zomer Gregorio blog email subscription."
+  },
+  "og": {
+    "portfolioEyebrow": "Portfolio",
+    "portfolioDescription": "Building modern web experiences with Next.js, TypeScript, and practical AI integrations.",
+    "projectsTitle": "Selected work.",
+    "projectsDescription": "Product engineering, systems, and software built across the stack.",
+    "blogsTitle": "Notes on building software.",
+    "blogsDescription": "Practical writing on architecture, tooling, AI, and web engineering.",
+    "contactTitle": "Have a project or interesting idea?",
+    "contactDescription": "Get in touch about software engineering, product work, or collaboration.",
+    "assistantTitle": "A grounded guide to my work.",
+    "assistantDescription": "Ask about experience, projects, technical strengths, and published writing.",
+    "githubTitle": "Contribution activity and commits.",
+    "githubDescription": "GitHub contributions and authored commit history across repositories I own.",
+    "blogArticle": "Blog article",
+    "blogFallbackTitle": "Software engineering notes.",
+    "blogFallbackDescription": "Practical notes on building reliable software."
+  }
+}

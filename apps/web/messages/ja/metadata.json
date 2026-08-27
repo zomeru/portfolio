@@ -1,0 +1,48 @@
+{
+  "root": {
+    "role": "ソフトウェアエンジニア",
+    "description": "モダンなWebアプリケーションとスケーラブルなシステムを開発するフルスタックソフトウェアエンジニア。"
+  },
+  "projects": { "title": "プロジェクト", "description": "主な制作実績。" },
+  "blogs": {
+    "title": "ブログ",
+    "description": "ソフトウェアエンジニアリング、Web開発、アーキテクチャ、ツール、AIについての記事。"
+  },
+  "contact": {
+    "title": "お問い合わせ",
+    "description": "プロジェクト、機会、面白いアイデアについてお話ししませんか？"
+  },
+  "assistant": {
+    "title": "Zomer AIに質問",
+    "description": "Zomerの仕事、職歴、プロジェクト、執筆内容についてAIアシスタントに質問できます。"
+  },
+  "github": {
+    "title": "GitHubコントリビューション",
+    "description": "所有リポジトリでのGitHubコントリビューションとコミット履歴。"
+  },
+  "developers": {
+    "title": "開発者向け",
+    "description": "公開ポートフォリオAPIのREST、OpenAPI、MCP連携ガイド。"
+  },
+  "unsubscribe": {
+    "title": "ブログメールの購読解除",
+    "description": "Zomer Gregorioのブログメール購読を管理します。"
+  },
+  "og": {
+    "portfolioEyebrow": "ポートフォリオ",
+    "portfolioDescription": "Next.js、TypeScript、実用的なAI連携でモダンなWeb体験を構築しています。",
+    "projectsTitle": "主な制作実績。",
+    "projectsDescription": "プロダクト開発、システム設計、フルスタックのソフトウェア開発。",
+    "blogsTitle": "ソフトウェア開発の記録。",
+    "blogsDescription": "アーキテクチャ、ツール、AI、Webエンジニアリングに関する実践的な記事。",
+    "contactTitle": "プロジェクトや面白いアイデアはありますか？",
+    "contactDescription": "ソフトウェア開発、プロダクト、コラボレーションについてご相談ください。",
+    "assistantTitle": "仕事を根拠付きで案内します。",
+    "assistantDescription": "職歴、プロジェクト、技術的な強み、公開記事について質問できます。",
+    "githubTitle": "コントリビューションとコミット。",
+    "githubDescription": "所有リポジトリでのGitHubコントリビューションとコミット履歴。",
+    "blogArticle": "ブログ記事",
+    "blogFallbackTitle": "ソフトウェアエンジニアリングの記録。",
+    "blogFallbackDescription": "信頼できるソフトウェアを構築するための実践的な記録。"
+  }
+}

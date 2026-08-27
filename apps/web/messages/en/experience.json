@@ -1,0 +1,11 @@
+{
+  "heading": "Experience",
+  "empty": "No experience entries are published yet.",
+  "entries": {
+    "seansoft": { "role": "Software Developer", "period": "Jan. 2024 — Apr. 2026" },
+    "binbooker": { "role": "React Developer", "period": "Mar. 2025 — Jul. 2025" },
+    "evelan": { "role": "Full Stack Developer", "period": "Aug. 2023 — Dec. 2023" },
+    "beyonder": { "role": "Software Engineer", "period": "Feb. 2022 — Aug. 2023" },
+    "freelance": { "role": "Full Stack Developer", "period": "Sep. 2021 — Feb. 2022" }
+  }
+}

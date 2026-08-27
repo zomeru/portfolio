@@ -1,0 +1,11 @@
+{
+  "heading": "工作经历",
+  "empty": "尚未发布工作经历。",
+  "entries": {
+    "seansoft": { "role": "软件开发工程师", "period": "2024年1月 — 2026年4月" },
+    "binbooker": { "role": "React 开发工程师", "period": "2025年3月 — 2025年7月" },
+    "evelan": { "role": "全栈开发工程师", "period": "2023年8月 — 2023年12月" },
+    "beyonder": { "role": "软件工程师", "period": "2022年2月 — 2023年8月" },
+    "freelance": { "role": "全栈开发工程师", "period": "2021年9月 — 2022年2月" }
+  }
+}

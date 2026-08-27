@@ -1,0 +1,20 @@
+{
+  "notFound": {
+    "eyebrow": "404 / Not found",
+    "title": "This page does not exist.",
+    "description": "The address may be outdated, or the page may have moved.",
+    "action": "Back to portfolio"
+  },
+  "route": {
+    "eyebrow": "Something went wrong",
+    "title": "This page could not be loaded.",
+    "description": "The issue may be temporary. Try loading the page again.",
+    "action": "Try again"
+  },
+  "global": {
+    "eyebrow": "Something went wrong",
+    "title": "The portfolio could not be loaded.",
+    "description": "The issue may be temporary. Try loading the site again.",
+    "action": "Try again"
+  }
+}

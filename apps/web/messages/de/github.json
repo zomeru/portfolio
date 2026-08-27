@@ -1,0 +1,39 @@
+{
+  "eyebrow": "GitHub-Beiträge",
+  "title": "Beiträge und Commits in meinen eigenen Repositorys.",
+  "loading": "GitHub-Aktivität wird geladen…",
+  "activityError": "Die GitHub-Aktivität konnte nicht geladen werden.",
+  "commitsError": "Der GitHub-Commitverlauf konnte nicht geladen werden.",
+  "calendar": {
+    "heading": "Beitragskalender",
+    "description": "Beiträge im GitHub-Profil, einschließlich Aktivitäten über Git-Commits hinaus.",
+    "period": "Zeitraum",
+    "lastTwelveMonths": "Letzte 12 Monate",
+    "updating": "Beitragskalender wird aktualisiert.",
+    "updated": "Beitragskalender wurde aktualisiert.",
+    "total": "{count, plural, one {# Beitrag} other {# Beiträge}} in {range}",
+    "range": "den letzten 12 Monaten",
+    "empty": "Für diesen Zeitraum wurden keine Beiträge erfasst.",
+    "imageLabel": "{count, plural, one {# GitHub-Beitrag} other {# GitHub-Beiträge}} pro Tag in {range}",
+    "dayLabel": "{count, plural, one {# Beitrag} other {# Beiträge}} am {date}",
+    "less": "Weniger",
+    "more": "Mehr",
+    "weekdays": { "monday": "Mo", "wednesday": "Mi", "friday": "Fr" }
+  },
+  "commits": {
+    "heading": "Commitverlauf",
+    "description": "Eigene Commits auf den Standard-Branches meiner Repositorys, neueste zuerst.",
+    "repository": "Repository",
+    "allRepositories": "Alle Repositorys",
+    "perPage": "Pro Seite",
+    "updating": "Commitverlauf wird aktualisiert.",
+    "updated": "Commitverlauf wurde aktualisiert.",
+    "view": "Commit ansehen",
+    "empty": "Es wurden keine passenden Commits gefunden.",
+    "limited": "GitHub begrenzt die Commit-Suche auf die ersten 1.000 Treffer und kann unvollständige Ergebnisse melden.",
+    "paginationLabel": "Seitennavigation des Commitverlaufs",
+    "newer": "Neuere",
+    "older": "Ältere",
+    "page": "Seite {page} von {total}"
+  }
+}

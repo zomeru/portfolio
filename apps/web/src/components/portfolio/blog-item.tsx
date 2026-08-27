@@ -1,16 +1,15 @@
 import type { PublicBlogPostSummary } from "@portfolio/api/public-portfolio";
 import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
+import { getLocale } from "next-intl/server";
 
-const dateFormatter = new Intl.DateTimeFormat("en-US", {
-  month: "long",
-  day: "numeric",
-  year: "numeric",
-  timeZone: "UTC",
-});
+import { Link } from "@/i18n/navigation";
 
-export function BlogItem({ post }: { post: PublicBlogPostSummary }) {
-  const date = dateFormatter.format(new Date(post.date));
+export async function BlogItem({ post }: { post: PublicBlogPostSummary }) {
+  const locale = await getLocale();
+  const date = new Intl.DateTimeFormat(locale, {
+    dateStyle: "long",
+    timeZone: "UTC",
+  }).format(new Date(post.date));
 
   return (
     <Link

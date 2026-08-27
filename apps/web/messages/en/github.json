@@ -1,0 +1,39 @@
+{
+  "eyebrow": "GitHub Contributions",
+  "title": "Contribution activity and commits across repositories I own.",
+  "loading": "Loading GitHub activity…",
+  "activityError": "GitHub activity could not be loaded.",
+  "commitsError": "GitHub commit history could not be loaded.",
+  "calendar": {
+    "heading": "Contribution calendar",
+    "description": "GitHub profile contributions, including more than just Git commits.",
+    "period": "Period",
+    "lastTwelveMonths": "Last 12 months",
+    "updating": "Updating contribution calendar.",
+    "updated": "Contribution calendar updated.",
+    "total": "{count, plural, one {# contribution} other {# contributions}} in {range}",
+    "range": "the last 12 months",
+    "empty": "No contributions were recorded for this period.",
+    "imageLabel": "{count, plural, one {# GitHub contribution} other {# GitHub contributions}} by day in {range}",
+    "dayLabel": "{count, plural, one {# contribution} other {# contributions}} on {date}",
+    "less": "Less",
+    "more": "More",
+    "weekdays": { "monday": "Mon", "wednesday": "Wed", "friday": "Fri" }
+  },
+  "commits": {
+    "heading": "Commit history",
+    "description": "Authored commits on the default branches of owned repositories, newest first.",
+    "repository": "Repository",
+    "allRepositories": "All repositories",
+    "perPage": "Per page",
+    "updating": "Updating commit history.",
+    "updated": "Commit history updated.",
+    "view": "View commit",
+    "empty": "No matching commits were found.",
+    "limited": "GitHub limits commit-search results to the first 1,000 matches and may report an incomplete result set.",
+    "paginationLabel": "Commit history pagination",
+    "newer": "Newer",
+    "older": "Older",
+    "page": "Page {page} of {total}"
+  }
+}

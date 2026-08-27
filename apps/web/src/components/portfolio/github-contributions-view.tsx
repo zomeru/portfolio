@@ -2,6 +2,7 @@
 
 import type { GithubCommitPage, GithubContributionCalendar } from "@portfolio/api/types";
 import { ArrowUpRight } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ContributionCalendar } from "@/components/portfolio/contribution-calendar";
@@ -34,12 +35,8 @@ type CommitFilters = {
 };
 
 async function getErrorMessage(response: Response, fallback: string) {
-  try {
-    const body = (await response.json()) as { error?: { message?: string } };
-    return body.error?.message ?? fallback;
-  } catch {
-    return fallback;
-  }
+  await response.body?.cancel();
+  return fallback;
 }
 
 function isAbortError(error: unknown) {
@@ -75,8 +72,8 @@ function parsePageSize(value: string) {
   return PAGE_SIZES.includes(parsed as (typeof PAGE_SIZES)[number]) ? parsed : 10;
 }
 
-function formatPhtDateTime(value: string) {
-  const formatted = new Intl.DateTimeFormat("en-US", {
+function formatPhtDateTime(value: string, locale: string) {
+  const formatted = new Intl.DateTimeFormat(locale, {
     day: "numeric",
     hour: "numeric",
     hour12: true,
@@ -100,6 +97,7 @@ export function GithubContributionCalendarSection({
   initialResult,
   initialYear,
 }: CalendarSectionProps) {
+  const t = useTranslations("Github");
   const normalizedInitialYear = initialResult.data?.year
     ? String(initialResult.data.year)
     : initialYear;
@@ -110,35 +108,35 @@ export function GithubContributionCalendarSection({
   const yearRef = useRef(normalizedInitialYear);
   yearRef.current = selectedYear;
 
-  const loadCalendar = useCallback(async (year: string) => {
-    requestRef.current?.abort();
-    const controller = new AbortController();
-    requestRef.current = controller;
-    setPending(true);
+  const loadCalendar = useCallback(
+    async (year: string) => {
+      requestRef.current?.abort();
+      const controller = new AbortController();
+      requestRef.current = controller;
+      setPending(true);
 
-    try {
-      const response = await client.api.github.contributions.$get(
-        { query: year ? { year } : {} },
-        { init: { signal: controller.signal } },
-      );
-      if (!response.ok) {
-        const error = await getErrorMessage(
-          response as Response,
-          "GitHub activity could not be loaded.",
+      try {
+        const response = await client.api.github.contributions.$get(
+          { query: year ? { year } : {} },
+          { init: { signal: controller.signal } },
         );
-        setResult({ data: null, error });
-        return;
+        if (!response.ok) {
+          const error = await getErrorMessage(response as Response, t("activityError"));
+          setResult({ data: null, error });
+          return;
+        }
+        setResult({ data: await response.json(), error: null });
+      } catch (error) {
+        if (!isAbortError(error)) {
+          reportClientError("github.loadContributions", error, { year });
+          setResult({ data: null, error: t("activityError") });
+        }
+      } finally {
+        if (requestRef.current === controller) setPending(false);
       }
-      setResult({ data: await response.json(), error: null });
-    } catch (error) {
-      if (!isAbortError(error)) {
-        reportClientError("github.loadContributions", error, { year });
-        setResult({ data: null, error: "GitHub activity could not be loaded." });
-      }
-    } finally {
-      if (requestRef.current === controller) setPending(false);
-    }
-  }, []);
+    },
+    [t],
+  );
 
   useEffect(() => {
     function handlePopState() {
@@ -165,7 +163,7 @@ export function GithubContributionCalendarSection({
   const years = new Set(result.data?.availableYears ?? []);
   if (selectedYear) years.add(Number.parseInt(selectedYear, 10));
   const options: SelectOption[] = [
-    { label: "Last 12 months", value: "" },
+    { label: t("calendar.lastTwelveMonths"), value: "" },
     ...Array.from(years)
       .filter(Number.isSafeInteger)
       .sort((a, b) => b - a)
@@ -177,15 +175,13 @@ export function GithubContributionCalendarSection({
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 id="contribution-calendar-heading" className="text-base font-medium tracking-tight">
-            Contribution calendar
+            {t("calendar.heading")}
           </h2>
-          <p className="mt-1 text-sm leading-relaxed text-muted">
-            GitHub profile contributions, including more than just Git commits.
-          </p>
+          <p className="mt-1 text-sm leading-relaxed text-muted">{t("calendar.description")}</p>
         </div>
         <Select
           id="contribution-year"
-          label="Period"
+          label={t("calendar.period")}
           value={selectedYear}
           options={options}
           onValueChangeAction={changeYear}
@@ -194,7 +190,7 @@ export function GithubContributionCalendarSection({
       </div>
       <div aria-busy={pending} className="mt-6 border-t border-border pt-6">
         <p role="status" className="sr-only">
-          {pending ? "Updating contribution calendar." : "Contribution calendar updated."}
+          {pending ? t("calendar.updating") : t("calendar.updated")}
         </p>
         {result.data ? (
           <ContributionCalendar calendar={result.data} />
@@ -207,6 +203,9 @@ export function GithubContributionCalendarSection({
 }
 
 export function GithubCommitHistorySection({ initialFilters, initialResult }: CommitSectionProps) {
+  const locale = useLocale();
+  const t = useTranslations("Github");
+  const tCommon = useTranslations("Common");
   const initialData = initialResult.data;
   const [result, setResult] = useState(initialResult);
   const [filters, setFilters] = useState<CommitFilters>({
@@ -219,47 +218,47 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
   const filtersRef = useRef(filters);
   filtersRef.current = filters;
 
-  const loadCommits = useCallback(async (nextFilters: CommitFilters) => {
-    requestRef.current?.abort();
-    const controller = new AbortController();
-    requestRef.current = controller;
-    setPending(true);
+  const loadCommits = useCallback(
+    async (nextFilters: CommitFilters) => {
+      requestRef.current?.abort();
+      const controller = new AbortController();
+      requestRef.current = controller;
+      setPending(true);
 
-    try {
-      const response = await client.api.github.commits.$get(
-        {
-          query: {
-            ...(nextFilters.page > 1 ? { page: String(nextFilters.page) } : {}),
-            ...(nextFilters.pageSize !== 10 ? { pageSize: String(nextFilters.pageSize) } : {}),
-            ...(nextFilters.repo ? { repo: nextFilters.repo } : {}),
+      try {
+        const response = await client.api.github.commits.$get(
+          {
+            query: {
+              ...(nextFilters.page > 1 ? { page: String(nextFilters.page) } : {}),
+              ...(nextFilters.pageSize !== 10 ? { pageSize: String(nextFilters.pageSize) } : {}),
+              ...(nextFilters.repo ? { repo: nextFilters.repo } : {}),
+            },
           },
-        },
-        { init: { signal: controller.signal } },
-      );
-      if (!response.ok) {
-        const error = await getErrorMessage(
-          response as Response,
-          "GitHub commit history could not be loaded.",
+          { init: { signal: controller.signal } },
         );
-        setResult({ data: null, error });
-        return;
+        if (!response.ok) {
+          const error = await getErrorMessage(response as Response, t("commitsError"));
+          setResult({ data: null, error });
+          return;
+        }
+        const data = await response.json();
+        setResult({ data, error: null });
+        setFilters({
+          page: data.page,
+          pageSize: data.pageSize,
+          repo: data.selectedRepository ?? "",
+        });
+      } catch (error) {
+        if (!isAbortError(error)) {
+          reportClientError("github.loadCommits", error, { filters: nextFilters });
+          setResult({ data: null, error: t("commitsError") });
+        }
+      } finally {
+        if (requestRef.current === controller) setPending(false);
       }
-      const data = await response.json();
-      setResult({ data, error: null });
-      setFilters({
-        page: data.page,
-        pageSize: data.pageSize,
-        repo: data.selectedRepository ?? "",
-      });
-    } catch (error) {
-      if (!isAbortError(error)) {
-        reportClientError("github.loadCommits", error, { filters: nextFilters });
-        setResult({ data: null, error: "GitHub commit history could not be loaded." });
-      }
-    } finally {
-      if (requestRef.current === controller) setPending(false);
-    }
-  }, []);
+    },
+    [t],
+  );
 
   useEffect(() => {
     function handlePopState() {
@@ -294,7 +293,7 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
   }
 
   const repositoryOptions: SelectOption[] = [
-    { label: "All repositories", value: "" },
+    { label: t("commits.allRepositories"), value: "" },
     ...(result.data?.repositories.map((repository) => ({
       label: repository.label,
       value: repository.value,
@@ -309,24 +308,22 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
     <section aria-labelledby="commit-history-heading" className="mt-16">
       <div>
         <h2 id="commit-history-heading" className="text-base font-medium tracking-tight">
-          Commit history
+          {t("commits.heading")}
         </h2>
-        <p className="mt-1 text-sm leading-relaxed text-muted">
-          Authored commits on the default branches of owned repositories, newest first.
-        </p>
+        <p className="mt-1 text-sm leading-relaxed text-muted">{t("commits.description")}</p>
       </div>
 
       <div className="mt-6 grid gap-3 border-t border-border pt-6 sm:grid-cols-[minmax(0,1fr)_8rem] sm:items-end">
         <Select
           id="commit-repository"
-          label="Repository"
+          label={t("commits.repository")}
           value={filters.repo}
           options={repositoryOptions}
           onValueChangeAction={(repo) => changeFilters({ ...filters, page: 1, repo })}
         />
         <Select
           id="commit-page-size"
-          label="Per page"
+          label={t("commits.perPage")}
           value={String(filters.pageSize)}
           options={pageSizeOptions}
           onValueChangeAction={(pageSize) =>
@@ -337,7 +334,7 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
 
       <div aria-busy={pending}>
         <p role="status" className="sr-only">
-          {pending ? "Updating commit history." : "Commit history updated."}
+          {pending ? t("commits.updating") : t("commits.updated")}
         </p>
         {result.data ? (
           <>
@@ -354,7 +351,7 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
                           dateTime={commit.committedAt}
                           className="font-mono text-xs text-muted"
                         >
-                          {formatPhtDateTime(commit.committedAt)}
+                          {formatPhtDateTime(commit.committedAt, locale)}
                         </time>
                       </div>
                       <p className="mt-2 break-words text-sm leading-relaxed">{commit.message}</p>
@@ -365,9 +362,9 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
                           rel="noopener noreferrer"
                           className="mt-3 inline-flex items-center gap-1 text-sm underline-offset-4 transition-colors duration-200 hover:text-muted motion-reduce:transition-none"
                         >
-                          View commit
+                          {t("commits.view")}
                           <ArrowUpRight aria-hidden="true" size={14} strokeWidth={1.5} />
-                          <span className="sr-only"> (opens in a new tab)</span>
+                          <span className="sr-only"> {tCommon("opensNewTab")}</span>
                         </a>
                       )}
                     </article>
@@ -375,21 +372,16 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
                 ))}
               </ul>
             ) : (
-              <p className="border-t border-border py-8 text-sm text-muted">
-                No matching commits were found.
-              </p>
+              <p className="border-t border-border py-8 text-sm text-muted">{t("commits.empty")}</p>
             )}
 
             {(result.data.truncated || result.data.incompleteResults) && (
-              <p className="mt-5 text-xs leading-relaxed text-muted">
-                GitHub limits commit-search results to the first 1,000 matches and may report an
-                incomplete result set.
-              </p>
+              <p className="mt-5 text-xs leading-relaxed text-muted">{t("commits.limited")}</p>
             )}
 
             {result.data.totalPages > 1 && (
               <nav
-                aria-label="Commit history pagination"
+                aria-label={t("commits.paginationLabel")}
                 className="mt-8 flex items-center justify-between gap-4 text-sm"
               >
                 <button
@@ -398,10 +390,13 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
                   onClick={() => changeFilters({ ...filters, page: result.data.page - 1 })}
                   className="inline-flex min-h-6 items-center underline-offset-4 transition-colors duration-200 enabled:hover:text-muted disabled:text-muted motion-reduce:transition-none"
                 >
-                  ← Newer
+                  ← {t("commits.newer")}
                 </button>
                 <p className="font-mono text-xs text-muted">
-                  Page {result.data.page} of {result.data.totalPages}
+                  {t("commits.page", {
+                    page: result.data.page,
+                    total: result.data.totalPages,
+                  })}
                 </p>
                 <button
                   type="button"
@@ -409,7 +404,7 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
                   onClick={() => changeFilters({ ...filters, page: result.data.page + 1 })}
                   className="inline-flex min-h-6 items-center underline-offset-4 transition-colors duration-200 enabled:hover:text-muted disabled:text-muted motion-reduce:transition-none"
                 >
-                  Older →
+                  {t("commits.older")} →
                 </button>
               </nav>
             )}

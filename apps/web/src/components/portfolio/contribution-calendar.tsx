@@ -1,24 +1,11 @@
+"use client";
+
 import type {
   GithubContributionCalendar as ContributionCalendarData,
-  GithubContributionDay,
   GithubContributionLevel,
 } from "@portfolio/api/types";
+import { useLocale, useTranslations } from "next-intl";
 
-const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  day: "numeric",
-  month: "long",
-  timeZone: "UTC",
-  year: "numeric",
-});
-const MONTH_FORMATTER = new Intl.DateTimeFormat("en-US", {
-  month: "short",
-  timeZone: "UTC",
-});
-const DAY_LABELS = [
-  { label: "Mon", row: 3 },
-  { label: "Wed", row: 5 },
-  { label: "Fri", row: 7 },
-] as const;
 const LEVEL_CLASSES: Record<GithubContributionLevel, string> = {
   NONE: "bg-border/60",
   FIRST_QUARTILE: "bg-foreground/20",
@@ -27,12 +14,6 @@ const LEVEL_CLASSES: Record<GithubContributionLevel, string> = {
   FOURTH_QUARTILE: "bg-foreground/90",
 };
 
-function dayLabel(day: GithubContributionDay) {
-  const date = DATE_FORMATTER.format(new Date(`${day.date}T00:00:00Z`));
-  const contribution = day.contributionCount === 1 ? "contribution" : "contributions";
-  return `${day.contributionCount} ${contribution} on ${date}`;
-}
-
 type MonthLabel = {
   column: number;
   columnEnd?: number;
@@ -40,7 +21,10 @@ type MonthLabel = {
   label: string;
 };
 
-function buildMonthLabels(weeks: ContributionCalendarData["weeks"]): MonthLabel[] {
+function buildMonthLabels(
+  weeks: ContributionCalendarData["weeks"],
+  monthFormatter: Intl.DateTimeFormat,
+): MonthLabel[] {
   const candidates: MonthLabel[] = [];
   const firstDay = weeks[0]?.contributionDays[0];
   let previousMonthKey = firstDay?.date.slice(0, 7) ?? null;
@@ -49,7 +33,7 @@ function buildMonthLabels(weeks: ContributionCalendarData["weeks"]): MonthLabel[
     candidates.push({
       column: 2,
       key: previousMonthKey,
-      label: MONTH_FORMATTER.format(new Date(`${firstDay.date}T00:00:00Z`)),
+      label: monthFormatter.format(new Date(`${firstDay.date}T00:00:00Z`)),
     });
   }
 
@@ -65,7 +49,7 @@ function buildMonthLabels(weeks: ContributionCalendarData["weeks"]): MonthLabel[
     candidates.push({
       column: weekIndex + 2,
       key: monthKey,
-      label: MONTH_FORMATTER.format(new Date(`${monthStart.date}T00:00:00Z`)),
+      label: monthFormatter.format(new Date(`${monthStart.date}T00:00:00Z`)),
     });
     previousMonthKey = monthKey;
   }
@@ -82,22 +66,39 @@ type ContributionCalendarProps = {
 };
 
 export function ContributionCalendar({ calendar }: ContributionCalendarProps) {
-  const rangeLabel = calendar.year ? String(calendar.year) : "the last 12 months";
-  const monthLabels = buildMonthLabels(calendar.weeks);
-  const total = calendar.totalContributions.toLocaleString("en-US");
+  const locale = useLocale();
+  const t = useTranslations("Github.calendar");
+  const dateFormatter = new Intl.DateTimeFormat(locale, {
+    dateStyle: "long",
+    timeZone: "UTC",
+  });
+  const monthFormatter = new Intl.DateTimeFormat(locale, {
+    month: "short",
+    timeZone: "UTC",
+  });
+  const rangeLabel = calendar.year
+    ? new Intl.NumberFormat(locale, { useGrouping: false }).format(calendar.year)
+    : t("range");
+  const monthLabels = buildMonthLabels(calendar.weeks, monthFormatter);
+  const dayLabels = [
+    { label: t("weekdays.monday"), row: 3 },
+    { label: t("weekdays.wednesday"), row: 5 },
+    { label: t("weekdays.friday"), row: 7 },
+  ] as const;
 
   return (
     <div>
       <p className="text-sm text-muted">
-        {total} contributions in {rangeLabel}
+        {t("total", { count: calendar.totalContributions, range: rangeLabel })}
       </p>
-      {calendar.totalContributions === 0 && (
-        <p className="mt-3 text-sm text-muted">No contributions were recorded for this period.</p>
-      )}
+      {calendar.totalContributions === 0 && <p className="mt-3 text-sm text-muted">{t("empty")}</p>}
       <div className="-mx-1 mt-5 overflow-x-auto px-1 pb-2">
         <div
           role="img"
-          aria-label={`${total} GitHub contributions by day in ${rangeLabel}`}
+          aria-label={t("imageLabel", {
+            count: calendar.totalContributions,
+            range: rangeLabel,
+          })}
           className="grid w-max gap-[3px]"
           style={{
             gridTemplateColumns: `2rem repeat(${calendar.weeks.length}, 0.75rem)`,
@@ -117,7 +118,7 @@ export function ContributionCalendar({ calendar }: ContributionCalendarProps) {
               {month.label}
             </span>
           ))}
-          {DAY_LABELS.map((day) => (
+          {dayLabels.map((day) => (
             <span
               key={day.label}
               aria-hidden="true"
@@ -132,7 +133,10 @@ export function ContributionCalendar({ calendar }: ContributionCalendarProps) {
               <span
                 key={day.date}
                 aria-hidden="true"
-                title={dayLabel(day)}
+                title={t("dayLabel", {
+                  count: day.contributionCount,
+                  date: dateFormatter.format(new Date(`${day.date}T00:00:00Z`)),
+                })}
                 className={`size-3 rounded-[2px] ${LEVEL_CLASSES[day.contributionLevel]}`}
                 style={{ gridColumn: weekIndex + 2, gridRow: day.weekday + 2 }}
               />
@@ -144,11 +148,11 @@ export function ContributionCalendar({ calendar }: ContributionCalendarProps) {
         aria-hidden="true"
         className="mt-2 flex items-center justify-end gap-1.5 text-xs text-muted"
       >
-        <span>Less</span>
+        <span>{t("less")}</span>
         {Object.values(LEVEL_CLASSES).map((className) => (
           <span key={className} className={`size-3 rounded-[2px] ${className}`} />
         ))}
-        <span>More</span>
+        <span>{t("more")}</span>
       </div>
     </div>
   );
