@@ -153,6 +153,8 @@ function normalizeExperience(source: SanityKnowledgeSource): NormalizedKnowledge
   const technologies = stringList(source.technologies);
   const summary = stringValue(source.summary);
   const responsibilities = portableTextToText(source.responsibilities);
+  const details = portableTextToText(source.details);
+  const slug = stringValue(source.slug);
   const period = stringValue(source.period);
   const location = stringValue(source.location);
   const companyUrl = stringValue(source.companyUrl);
@@ -161,9 +163,9 @@ function normalizeExperience(source: SanityKnowledgeSource): NormalizedKnowledge
   return {
     ...baseDocument(source),
     sourceType: "experience",
-    slug: null,
+    slug: slug || null,
     title: `${role} at ${company}`,
-    canonicalUrl: "/",
+    canonicalUrl: slug ? `/work/${slug}` : "/",
     metadata: {
       company,
       role,
@@ -189,6 +191,7 @@ function normalizeExperience(source: SanityKnowledgeSource): NormalizedKnowledge
       },
       summary && { heading: "Summary", text: summary },
       responsibilities && { heading: "Responsibilities and achievements", text: responsibilities },
+      details && { heading: "Detailed work", text: details },
     ].filter((section): section is NormalizedSection => Boolean(section)),
   };
 }
@@ -198,6 +201,8 @@ function normalizeProject(source: SanityKnowledgeSource): NormalizedKnowledgeDoc
   const description = stringValue(source.description);
   if (!title || !description) return null;
   const technologies = stringList(source.technologies);
+  const details = portableTextToText(source.details);
+  const slug = stringValue(source.slug);
   const image = source.image && typeof source.image === "object" ? source.image : null;
   const imageAlt = image && "alt" in image ? stringValue(image.alt) : "";
   const links = [
@@ -209,9 +214,9 @@ function normalizeProject(source: SanityKnowledgeSource): NormalizedKnowledgeDoc
   return {
     ...baseDocument(source),
     sourceType: "project",
-    slug: null,
+    slug: slug || null,
     title,
-    canonicalUrl: "/projects",
+    canonicalUrl: slug ? `/projects/${slug}` : "/projects",
     metadata: {
       title,
       year: stringValue(source.year),
@@ -230,6 +235,7 @@ function normalizeProject(source: SanityKnowledgeSource): NormalizedKnowledgeDoc
           .filter(Boolean)
           .join("\n"),
       },
+      details && { heading: "Project details", text: details },
       imageAlt && { heading: "Project image description", text: imageAlt },
       links.length > 0 && { heading: "Project links", text: links.join("\n") },
     ].filter((section): section is NormalizedSection => Boolean(section)),

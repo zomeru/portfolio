@@ -7,14 +7,14 @@ import { NotificationDeliveryError } from "./errors";
 export function isWebPushConfigured() {
   const environment = getNotificationsServerEnv();
   return Boolean(
-    environment.NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY &&
-    environment.WEB_PUSH_VAPID_PRIVATE_KEY &&
-    environment.WEB_PUSH_SUBJECT,
+    environment.webPushVapidPublicKey &&
+    environment.webPushVapidPrivateKey &&
+    environment.webPushSubject,
   );
 }
 
 export function getWebPushPublicKey() {
-  return getNotificationsServerEnv().NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY ?? null;
+  return getNotificationsServerEnv().webPushVapidPublicKey ?? null;
 }
 
 type PushDestination = { endpoint: string; p256dh: string; auth: string };
@@ -65,9 +65,9 @@ async function sendPushNotification(options: {
 }) {
   validatePushServiceEndpoint(options.subscription.endpoint);
   const environment = getNotificationsServerEnv();
-  const publicKey = environment.NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY;
-  const privateKey = environment.WEB_PUSH_VAPID_PRIVATE_KEY;
-  const subject = environment.WEB_PUSH_SUBJECT;
+  const publicKey = environment.webPushVapidPublicKey;
+  const privateKey = environment.webPushVapidPrivateKey;
+  const subject = environment.webPushSubject;
   if (!publicKey || !privateKey || !subject) {
     throw new NotificationDeliveryError("Web Push delivery is not configured.", {
       code: "PUSH_NOT_CONFIGURED",

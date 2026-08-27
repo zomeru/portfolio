@@ -6,6 +6,7 @@ import { MorphIcon } from "morphicons/react";
 import {
   type KeyboardEvent,
   type PointerEvent as ReactPointerEvent,
+  type Ref,
   useEffect,
   useId,
   useRef,
@@ -20,22 +21,41 @@ export type SelectOption = {
 };
 
 export type SelectProps = {
+  ariaDescribedBy?: string;
   className?: string;
+  contentClassName?: string;
   disabled?: boolean;
   id?: string;
+  iconSize?: number;
   label: string;
+  labelClassName?: string;
+  name?: string;
   onValueChangeAction: (value: string) => void;
   options: SelectOption[];
+  triggerClassName?: string;
+  triggerRef?: Ref<HTMLButtonElement>;
   value: string;
 };
 
+function assignRef<T>(ref: Ref<T> | undefined, value: T | null) {
+  if (typeof ref === "function") ref(value);
+  else if (ref) ref.current = value;
+}
+
 export function Select({
+  ariaDescribedBy,
   className,
+  contentClassName,
   disabled = false,
   id,
+  iconSize = 16,
   label,
+  labelClassName,
+  name,
   onValueChangeAction,
   options,
+  triggerClassName,
+  triggerRef: forwardedTriggerRef,
   value,
 }: SelectProps) {
   const generatedId = useId();
@@ -168,14 +188,18 @@ export function Select({
 
   return (
     <div ref={rootRef} data-slot="select" className={cn("relative grid gap-1", className)}>
-      <span id={labelId} className="text-xs text-muted">
+      {name ? <input type="hidden" name={name} value={value} /> : null}
+      <span id={labelId} className={cn("text-xs text-muted", labelClassName)}>
         {label}
       </span>
       <button
-        ref={triggerRef}
+        ref={(node) => {
+          triggerRef.current = node;
+          assignRef(forwardedTriggerRef, node);
+        }}
         id={triggerId}
         type="button"
-        aria-controls={listboxId}
+        aria-describedby={ariaDescribedBy}
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-labelledby={`${labelId} ${valueId}`}
@@ -187,18 +211,20 @@ export function Select({
         className={cn(
           "flex min-h-10 w-full items-center justify-between gap-3 rounded-md border border-border",
           "bg-background px-3 text-left text-sm text-foreground transition-colors duration-150",
-          "hover:border-foreground disabled:cursor-not-allowed disabled:opacity-60",
-          "focus-visible:outline-2 focus-visible:outline-offset-2 motion-reduce:transition-none",
+          "outline-none focus-visible:bg-border/40 disabled:cursor-not-allowed disabled:opacity-60",
+          "motion-reduce:transition-none",
+          triggerClassName,
         )}
       >
         <span id={valueId} className="min-w-0 truncate">
           {selectedOption?.label}
         </span>
         <MorphIcon
+          aria-hidden="true"
           icon={open ? ChevronUp : ChevronDown}
           reducedMotion="user"
           spring="snappy"
-          size={16}
+          size={iconSize}
           strokeWidth={1.5}
           className="shrink-0"
         />
@@ -213,6 +239,7 @@ export function Select({
           className={cn(
             "absolute top-full right-0 left-0 z-30 mt-1 max-h-72 overflow-y-auto rounded-md",
             "border border-border bg-background p-1 shadow-lg",
+            contentClassName,
           )}
         >
           {options.map((option, index) => {

@@ -1,8 +1,11 @@
 {
   "$schema": "node_modules/turbo/schema.json",
   "ui": "tui",
-  "globalDependencies": ["pnpm-workspace.yaml", ".oxfmtrc.json", ".oxlintrc.json"],
+  "globalDependencies": ["pnpm-workspace.yaml"],
   "tasks": {
+    "analyze": {
+      "cache": false
+    },
     "ai:eval": {
       "cache": false,
       "env": [
@@ -54,49 +57,17 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env*"],
-      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**", "dist/**"],
-      "env": [
-        "ADMIN_ACCESS_KEY",
-        "DATABASE_URL",
-        "AI_INDEX_SECRET_KEY",
-        "AI_CHAT_PROVIDER",
-        "OPENROUTER_API_KEY",
-        "NVIDIA_NIM_API_KEY",
-        "GROQ_API_KEY",
-        "AI_OPENROUTER_CHAT_MODEL",
-        "AI_NVIDIA_NIM_CHAT_MODEL",
-        "AI_GROQ_CHAT_MODEL",
-        "AI_EMBEDDING_MODEL",
-        "LANGFUSE_PUBLIC_KEY",
-        "LANGFUSE_SECRET_KEY",
-        "LANGFUSE_BASE_URL",
-        "GOOGLE_GENERATIVE_AI_API_KEY",
-        "GOOGLE_GENERATIVE_AI_MODEL",
-        "CRON_SECRET",
-        "EMAIL_PROVIDER",
-        "RESEND_API_KEY",
-        "EMAIL_FROM",
-        "EMAIL_FROM_NAME",
-        "EMAIL_REPLY_TO",
-        "GOOGLE_APP_PASSWORD",
-        "NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY",
-        "WEB_PUSH_VAPID_PRIVATE_KEY",
-        "WEB_PUSH_SUBJECT",
-        "NOTIFICATION_TOKEN_SECRET",
-        "WEBHOOK_ENCRYPTION_KEY",
-        "SANITY_API_TOKEN",
-        "NEXT_PUBLIC_SANITY_DATASET",
-        "NEXT_PUBLIC_SITE_URL",
-        "GH_PAT_TOKEN",
-        "ENABLE_EXPERIMENTAL_COREPACK"
-      ]
+      "outputs": ["dist/**"]
+    },
+    "transit": {
+      "dependsOn": ["^transit"]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": ["transit"],
+      "outputs": []
     },
     "test": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": ["check-types"]
     },
     "dev": {
       "cache": false,

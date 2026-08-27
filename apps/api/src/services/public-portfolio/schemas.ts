@@ -1,6 +1,17 @@
 import { z } from "zod";
 
 const nullableUrl = z.url().nullable();
+const publicSlugSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+
+export const publicDetailContentSchema = z.object({
+  style: z.enum(["bullet", "number", "paragraph"]),
+  text: z.string().min(1),
+});
+
+export const publicDetailSectionSchema = z.object({
+  content: z.array(publicDetailContentSchema).min(1),
+  title: z.string().min(1),
+});
 
 export const publicPhotoSchema = z.object({
   alt: z.string(),
@@ -29,14 +40,18 @@ export const publicProfileSchema = z.object({
 });
 
 export const publicExperienceSchema = z.object({
+  canonicalUrl: z.url(),
   company: z.string().min(1),
   companyUrl: nullableUrl,
+  details: z.array(publicDetailSectionSchema),
   location: z.string().nullable(),
   period: z.string().min(1),
   responsibilities: z.array(z.string().min(1)),
   role: z.string().min(1),
+  slug: publicSlugSchema,
   summary: z.string().nullable(),
   technologies: z.array(z.string().min(1)),
+  updatedAt: z.iso.datetime(),
 });
 
 export const publicProjectSchema = z.object({
@@ -44,10 +59,13 @@ export const publicProjectSchema = z.object({
   caseStudyUrl: nullableUrl,
   demoUrl: nullableUrl,
   description: z.string().min(1),
+  details: z.array(publicDetailSectionSchema),
   image: publicPhotoSchema.nullable(),
   repositoryUrl: nullableUrl,
+  slug: publicSlugSchema,
   technologies: z.array(z.string().min(1)),
   title: z.string().min(1),
+  updatedAt: z.iso.datetime(),
   year: z.string().regex(/^\d{4}$/),
 });
 
@@ -146,6 +164,8 @@ export const publicApiIndexSchema = z.object({
 });
 
 export type PublicPhoto = z.infer<typeof publicPhotoSchema>;
+export type PublicDetailContent = z.infer<typeof publicDetailContentSchema>;
+export type PublicDetailSection = z.infer<typeof publicDetailSectionSchema>;
 export type PublicProfile = z.infer<typeof publicProfileSchema>;
 export type PublicExperience = z.infer<typeof publicExperienceSchema>;
 export type PublicProject = z.infer<typeof publicProjectSchema>;

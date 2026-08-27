@@ -4,7 +4,8 @@ import { useChat } from "@ai-sdk/react";
 import type { AskZomerMessage, AskZomerSource } from "@portfolio/api/types";
 import { DefaultChatTransport, getToolName, isToolUIPart } from "ai";
 import { ArrowUp, Globe2, LoaderCircle, RefreshCw, Square } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -12,13 +13,6 @@ import { client } from "@/lib/api";
 import { reportClientWarning } from "@/lib/client-log";
 
 const SESSION_STORAGE_KEY = "ask-zomer-session";
-const INITIAL_SUGGESTIONS = [
-  "What's Zomer's experience?",
-  "What projects has he built?",
-  "What's his backend experience?",
-  "What technologies does he use?",
-] as const;
-
 function getOrCreateSessionKey() {
   const stored = window.localStorage.getItem(SESSION_STORAGE_KEY);
   if (stored) return stored;
@@ -91,6 +85,7 @@ function messageSources(message: AskZomerMessage): AskZomerSource[] {
 }
 
 function WebSearchStatus({ state }: { state: WebSearchState }) {
+  const t = useTranslations("Assistant");
   const searching = state === "searching";
   return (
     <p
@@ -106,21 +101,22 @@ function WebSearchStatus({ state }: { state: WebSearchState }) {
         <Globe2 aria-hidden="true" className="size-3.5" />
       )}
       {searching
-        ? "Searching the web…"
+        ? t("searchingWeb")
         : state === "complete"
-          ? "Searched the web"
-          : "Web search unavailable"}
+          ? t("searchedWeb")
+          : t("webUnavailable")}
     </p>
   );
 }
 
 function SourceList({ sources }: { sources: AskZomerSource[] }) {
+  const t = useTranslations("Assistant");
   if (sources.length === 0) return null;
 
   return (
     <details className="mt-3 pt-3 text-xs text-muted">
       <summary className="w-fit cursor-pointer rounded-sm py-1 font-mono uppercase tracking-widest hover:text-foreground">
-        {sources.length} {sources.length === 1 ? "source" : "sources"}
+        {t("sourceCount", { count: sources.length })}
       </summary>
       <ol className="mt-2 space-y-2">
         {sources.map((source, index) => (
@@ -150,9 +146,10 @@ function SuggestionList({
   onSelect: (suggestion: string) => void;
   suggestions: readonly string[];
 }) {
+  const t = useTranslations("Assistant");
   return (
     <fieldset className="flex flex-wrap gap-2">
-      <legend className="sr-only">Suggested questions</legend>
+      <legend className="sr-only">{t("suggestedQuestions")}</legend>
       {suggestions.map((suggestion) => (
         <button
           key={suggestion}
@@ -177,6 +174,7 @@ function ChatMessages({
   loading: boolean;
   messages: AskZomerMessage[];
 }) {
+  const t = useTranslations("Assistant");
   return (
     <div aria-live="polite" aria-relevant="additions text" className="space-y-5 py-6">
       {loading ? (
@@ -189,16 +187,13 @@ function ChatMessages({
             aria-hidden="true"
             className="size-4 animate-spin motion-reduce:animate-none"
           />
-          Loading messages…
+          {t("loadingMessages")}
         </div>
       ) : messages.length === 0 ? (
         <div className="flex items-center justify-center py-10 text-center sm:py-14">
           <div className="max-w-md">
-            <p className="text-sm font-medium">What would you like to know?</p>
-            <p className="mt-2 text-sm leading-relaxed text-muted">
-              Try a question about work history, technical strengths, selected projects, or recent
-              articles.
-            </p>
+            <p className="text-sm font-medium">{t("emptyTitle")}</p>
+            <p className="mt-2 text-sm leading-relaxed text-muted">{t("emptyDescription")}</p>
           </div>
         </div>
       ) : (
@@ -216,7 +211,7 @@ function ChatMessages({
                   : "chat-message-assistant max-w-2xl"
               }
             >
-              <p className="sr-only">{message.role === "user" ? "You" : "Zomer AI"}</p>
+              <p className="sr-only">{message.role === "user" ? t("you") : t("assistant")}</p>
               {message.role === "assistant" && searchState ? (
                 <WebSearchStatus state={searchState} />
               ) : null}
@@ -236,10 +231,19 @@ function ChatMessages({
   );
 }
 
-function ChatSession({ sessionKey }: { sessionKey: string }) {
+function ChatSession({
+  initialQuestion,
+  sessionKey,
+}: {
+  initialQuestion: string | undefined;
+  sessionKey: string;
+}) {
+  const locale = useLocale();
+  const t = useTranslations("Assistant");
   const [input, setInput] = useState("");
   const [historyReady, setHistoryReady] = useState(false);
-  const [historyWarning, setHistoryWarning] = useState<string>();
+  const [historyWarning, setHistoryWarning] = useState(false);
+  const initialQuestionHandled = useRef(false);
   const transport = useMemo(
     () =>
       new DefaultChatTransport<AskZomerMessage>({
@@ -271,7 +275,7 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
       } catch (restoreError) {
         if (!(restoreError instanceof DOMException && restoreError.name === "AbortError")) {
           reportClientWarning("assistant.restoreHistory", restoreError, { sessionKey });
-          setHistoryWarning("Saved conversation history is unavailable right now.");
+          setHistoryWarning(true);
         }
       } finally {
         if (!controller.signal.aborted) setHistoryReady(true);
@@ -281,6 +285,18 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
     return () => controller.abort();
   }, [sessionKey, setMessages]);
 
+  useEffect(() => {
+    const trimmed = initialQuestion?.trim();
+    if (!trimmed || !historyReady || busy || initialQuestionHandled.current) return;
+    initialQuestionHandled.current = true;
+    const alreadySent = messages.some(
+      (message) => message.role === "user" && messageText(message).trim() === trimmed,
+    );
+    if (alreadySent) return;
+    clearError();
+    void sendMessage({ text: trimmed, metadata: { createdAt: new Date().toISOString() } });
+  }, [busy, clearError, historyReady, initialQuestion, messages, sendMessage]);
+
   const submit = (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || busy || !historyReady) return;
@@ -289,14 +305,22 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
     void sendMessage({ text: trimmed, metadata: { createdAt: new Date().toISOString() } });
   };
   const lastAssistant = [...messages].reverse().find((message) => message.role === "assistant");
+  const initialSuggestions = [
+    t("initialSuggestions.experience"),
+    t("initialSuggestions.projects"),
+    t("initialSuggestions.backend"),
+    t("initialSuggestions.technologies"),
+  ];
   const suggestions =
-    lastAssistant?.metadata?.suggestions ?? (messages.length === 0 ? INITIAL_SUGGESTIONS : []);
+    locale === "en"
+      ? (lastAssistant?.metadata?.suggestions ?? (messages.length === 0 ? initialSuggestions : []))
+      : initialSuggestions;
 
   return (
-    <section aria-label="Ask Zomer AI conversation" className="mt-10 border-y border-border">
+    <section aria-label={t("conversationLabel")} className="mt-10 border-y border-border">
       {historyWarning ? (
         <p role="status" className="border-b border-border py-3 text-xs text-muted">
-          {historyWarning} You can still start a new conversation.
+          {t("historyUnavailable")}
         </p>
       ) : null}
       <ChatMessages busy={busy} loading={!historyReady} messages={messages} />
@@ -316,9 +340,7 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
           role="alert"
           className="flex items-center justify-between gap-4 border-t border-border py-3"
         >
-          <p className="text-sm text-red-600 dark:text-red-400">
-            {error.message || "The response could not be completed."}
-          </p>
+          <p className="text-sm text-red-600 dark:text-red-400">{t("responseError")}</p>
           <button
             type="button"
             onClick={() => {
@@ -327,13 +349,13 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
             }}
             className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-md border border-border px-3 text-xs hover:border-foreground"
           >
-            <RefreshCw aria-hidden="true" size={14} /> Retry
+            <RefreshCw aria-hidden="true" size={14} /> {t("retry")}
           </button>
         </div>
       ) : null}
 
       <p aria-live="polite" className={busy ? "py-3 text-xs text-muted" : "sr-only"}>
-        {busy ? (status === "submitted" ? "Preparing a response…" : "Writing a response…") : ""}
+        {busy ? (status === "submitted" ? t("preparingResponse") : t("writingResponse")) : ""}
       </p>
 
       <form
@@ -344,7 +366,7 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
         }}
       >
         <label htmlFor="ask-zomer-input" className="sr-only">
-          Ask Zomer AI a question
+          {t("inputLabel")}
         </label>
         <div className="chat-composer flex items-end gap-2 rounded-xl border border-border bg-background p-2">
           <textarea
@@ -353,7 +375,7 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
             disabled={!historyReady}
             maxLength={4_000}
             rows={2}
-            placeholder={historyReady ? "Ask about Zomer's work…" : "Restoring conversation…"}
+            placeholder={historyReady ? t("inputPlaceholder") : t("restoring")}
             onChange={(event) => setInput(event.currentTarget.value)}
             onKeyDown={(event) => {
               if (event.key === "Enter" && !event.shiftKey) {
@@ -361,13 +383,13 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
                 submit(input);
               }
             }}
-            className="max-h-40 min-h-12 flex-1 resize-y bg-transparent px-2 py-2 text-base leading-relaxed outline-none placeholder:text-muted disabled:cursor-wait sm:text-sm"
+            className="max-h-40 min-h-12 flex-1 resize-y bg-transparent px-2 py-2 text-base leading-relaxed outline-none placeholder:text-muted focus-visible:bg-border/20 disabled:cursor-wait sm:text-sm"
           />
           {busy ? (
             <button
               type="button"
               onClick={() => void stop()}
-              aria-label="Stop generating"
+              aria-label={t("stop")}
               className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg bg-foreground text-background hover:opacity-80"
             >
               <Square aria-hidden="true" size={15} fill="currentColor" />
@@ -376,20 +398,21 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
             <button
               type="submit"
               disabled={!historyReady || !input.trim()}
-              aria-label="Send message"
+              aria-label={t("send")}
               className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg bg-foreground text-background transition-opacity duration-150 hover:opacity-80 disabled:cursor-not-allowed disabled:opacity-40 motion-reduce:transition-none"
             >
               <ArrowUp aria-hidden="true" size={18} />
             </button>
           )}
         </div>
-        <p className="mt-2 text-xs text-muted">Enter to send · Shift+Enter for a new line</p>
+        <p className="mt-2 text-xs text-muted">{t("keyboardHint")}</p>
       </form>
     </section>
   );
 }
 
-export function AskZomerChatContent() {
+export function AskZomerChatContent({ initialQuestion }: { initialQuestion: string | undefined }) {
+  const t = useTranslations("Assistant");
   const [sessionKey, setSessionKey] = useState<string>();
 
   useEffect(() => setSessionKey(getOrCreateSessionKey()), []);
@@ -397,10 +420,10 @@ export function AskZomerChatContent() {
   if (!sessionKey) {
     return (
       <div className="mt-10 border-y border-border py-12" aria-busy="true">
-        <p className="text-sm text-muted">Preparing your conversation…</p>
+        <p className="text-sm text-muted">{t("preparingConversation")}</p>
       </div>
     );
   }
 
-  return <ChatSession sessionKey={sessionKey} />;
+  return <ChatSession initialQuestion={initialQuestion} sessionKey={sessionKey} />;
 }

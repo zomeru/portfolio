@@ -1,0 +1,26 @@
+{
+  "eyebrow": "プロジェクト",
+  "title": "主な制作実績。",
+  "empty": "公開中のプロジェクトはまだありません。",
+  "live": "デモ",
+  "caseStudy": "事例を見る",
+  "detail": {
+    "back": "プロジェクト",
+    "eyebrow": "プロジェクト",
+    "technologies": "使用技術",
+    "links": "リンク",
+    "repository": "リポジトリ",
+    "opensNewTab": "（新しいタブで開きます）"
+  },
+  "descriptions": {
+    "rezumerAi": "Rezumer AIは、履歴書の作成、改善、応募先に合わせた調整、書き出しを一つのワークスペースで行えるAI支援型の履歴書作成ツールです。構造化された編集機能に、AIによるセクション最適化、求人票とのマッチング、利用者の権限に応じて公開・アカウント・管理者向けの質問に回答できるアシスタントを組み合わせています。",
+    "batibot": "Batibotは、必要な情報やサービスを見つける手助けをするAI搭載のメッセージングアシスタントです。",
+    "zomink": "Zominkは、リンク管理に必要な機能を一か所にまとめたオープンソースのプラットフォームです。独自エイリアスでURLを管理、追跡、短縮できます。",
+    "sticaLms": "STICA LMSは大学の卒業制作として開発した、STI College Alabang向けのオンライン図書館管理システムです。",
+    "kokuban": "Kokubanは、日本の教師がブラウザから生徒に提供できるオンライン教材を作成するための支援ツールです。",
+    "zomify": "ZomifyはSvelteKit、TypeScript、Tailwind CSSで構築したSpotifyクローンです。",
+    "paymongo": "軽量で高機能、モジュール式かつTypeScript対応のPayMongo向けJavaScriptライブラリです。",
+    "groundwork": "フィリピンの事業者同士がネットワークを構築し、広げるためのオンラインB2Bプラットフォームです。",
+    "zomifyColors": "Flat UI Colorsから着想を得たカラーパレットアプリです。"
+  }
+}

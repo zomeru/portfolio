@@ -61,16 +61,16 @@ void test("notification environment keeps Gmail, Resend, and Web Push feature gr
     WEB_PUSH_SUBJECT: "mailto:owner@example.com",
     NOTIFICATION_TOKEN_SECRET: tokenSecret,
   });
-  assert.equal(pushOnly.EMAIL_PROVIDER, "gmail");
-  assert.equal(pushOnly.EMAIL_FROM, undefined);
+  assert.equal(pushOnly.emailProvider, "gmail");
+  assert.equal(pushOnly.emailFrom, undefined);
 
   const gmail = getNotificationsServerEnv({
     EMAIL_FROM: "owner@gmail.com",
     GOOGLE_APP_PASSWORD: Array.from({ length: 4 }, () => "abcd").join(" "),
     NOTIFICATION_TOKEN_SECRET: tokenSecret,
   });
-  assert.equal(gmail.GOOGLE_APP_PASSWORD, "abcd".repeat(4));
-  assert.equal(gmail.EMAIL_FROM_NAME, "Zomer Gregorio");
+  assert.equal(gmail.googleAppPassword, "abcd".repeat(4));
+  assert.equal(gmail.emailFromName, "Zomer Gregorio");
 
   const resend = getNotificationsServerEnv({
     EMAIL_PROVIDER: "resend",
@@ -78,7 +78,7 @@ void test("notification environment keeps Gmail, Resend, and Web Push feature gr
     RESEND_API_KEY: testCredential("resend"),
     NOTIFICATION_TOKEN_SECRET: tokenSecret,
   });
-  assert.equal(resend.EMAIL_PROVIDER, "resend");
+  assert.equal(resend.emailProvider, "resend");
   assert.throws(
     () =>
       getNotificationsServerEnv({

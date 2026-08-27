@@ -1,0 +1,21 @@
+{
+  "heading": "Berufserfahrung",
+  "empty": "Es wurden noch keine Berufserfahrungen veröffentlicht.",
+  "entries": {
+    "seansoft": { "role": "Softwareentwickler", "period": "Jan. 2024 — Apr. 2026" },
+    "binbooker": { "role": "React-Entwickler", "period": "März 2025 — Juli 2025" },
+    "evelan": { "role": "Full-Stack-Entwickler", "period": "Aug. 2023 — Dez. 2023" },
+    "beyonder": { "role": "Softwareentwickler", "period": "Feb. 2022 — Aug. 2023" },
+    "freelance": { "role": "Full-Stack-Entwickler", "period": "Sept. 2021 — Feb. 2022" }
+  },
+  "detail": {
+    "back": "Berufserfahrung",
+    "eyebrow": "Berufliche Station",
+    "period": "Zeitraum",
+    "location": "Ort",
+    "technologies": "Technologien",
+    "responsibilities": "Aufgaben",
+    "opensNewTab": "(öffnet in einem neuen Tab)",
+    "metadataDescription": "{role} bei {company}. {summary}"
+  }
+}

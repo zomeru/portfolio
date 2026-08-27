@@ -1,6 +1,7 @@
 import { getSanityEnv } from "@portfolio/env/sanity";
 import { getSiteEnv } from "@portfolio/env/site";
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
 const sanityEnv = getSanityEnv();
 const siteEnv = getSiteEnv(
@@ -59,4 +60,6 @@ const nextConfig: NextConfig = {
   reactCompiler: true,
 };
 
-export default nextConfig;
+const withNextIntl = createNextIntlPlugin({ requestConfig: "./src/i18n/request.ts" });
+
+export default withNextIntl(nextConfig);

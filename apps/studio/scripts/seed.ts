@@ -1,16 +1,30 @@
 import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { isDeepStrictEqual } from "node:util";
 
 import { getSanityServerEnv } from "@portfolio/env/sanity-server";
 import { getCliClient } from "sanity/cli";
 
 type SeedDocument = Record<string, unknown> & { _type: string };
 
-type ExistingExperience = { company: string | null; period: string | null; role: string | null };
+type ExistingExperience = {
+  _id: string;
+  company: string | null;
+  details: unknown;
+  period: string | null;
+  role: string | null;
+  slug: unknown;
+};
 type ExistingBlogPost = { _id: string; body: unknown; slug: string | null };
-type ExistingProject = { title: string | null };
+type ExistingProject = { _id: string; details: unknown; slug: unknown; title: string | null };
 type ExistingTechStack = { name: string | null };
+
+type PortfolioDetailUpdate = {
+  _id: string;
+  details: unknown;
+  slug: unknown;
+};
 
 const API_VERSION = "2026-08-20";
 const BATCH_SIZE = 25;
@@ -138,12 +152,43 @@ async function synchronizeBlogBodies(
   log("Blog post body synchronization: complete.");
 }
 
+async function synchronizePortfolioDetails(
+  client: ReturnType<typeof getCliClient>,
+  label: string,
+  documents: PortfolioDetailUpdate[],
+) {
+  if (documents.length === 0) {
+    log(`${label}: all matching documents are current; skipped.`);
+    return;
+  }
+
+  const batchCount = Math.ceil(documents.length / BATCH_SIZE);
+  log(`${label}: updating ${documents.length} document(s) in ${batchCount} batch(es).`);
+
+  for (let index = 0; index < documents.length; index += BATCH_SIZE) {
+    const batch = documents.slice(index, index + BATCH_SIZE);
+    const batchNumber = index / BATCH_SIZE + 1;
+    log(`${label}: committing batch ${batchNumber}/${batchCount} (${batch.length} document(s)).`);
+
+    let transaction = client.transaction();
+    for (const document of batch) {
+      transaction = transaction.patch(document._id, {
+        set: { details: document.details, slug: document.slug },
+      });
+    }
+    await transaction.commit();
+  }
+
+  log(`${label}: complete.`);
+}
+
 async function validateWriteAccess(
   client: ReturnType<typeof getCliClient>,
   profileDocument: SeedDocument,
   profileExists: boolean,
   missingDocuments: SeedDocument[],
   blogBodyUpdates: Array<{ _id: string; body: string }>,
+  portfolioDetailUpdates: PortfolioDetailUpdate[],
 ) {
   log("Dry run: validating write permission without changing the dataset.");
 
@@ -155,6 +200,14 @@ async function validateWriteAccess(
     await client
       .patch(blogBodyUpdates[0]._id)
       .set({ body: blogBodyUpdates[0].body })
+      .commit({ dryRun: true });
+  } else if (portfolioDetailUpdates[0]) {
+    await client
+      .patch(portfolioDetailUpdates[0]._id)
+      .set({
+        details: portfolioDetailUpdates[0].details,
+        slug: portfolioDetailUpdates[0].slug,
+      })
       .commit({ dryRun: true });
   } else {
     log("Dry run: no writes are planned, so no write-permission probe is needed.");
@@ -236,9 +289,11 @@ async function main() {
     existingTechStacks,
   ] = await Promise.all([
     client.fetch<boolean>(`count(*[_id in ["profile", "drafts.profile"]]) > 0`),
-    client.fetch<ExistingExperience[]>(`*[_type == "experience"]{company, role, period}`),
+    client.fetch<ExistingExperience[]>(
+      `*[_type == "experience"]{_id, company, role, period, slug, details}`,
+    ),
     client.fetch<ExistingBlogPost[]>(`*[_type == "blogPost"]{_id, body, "slug": slug.current}`),
-    client.fetch<ExistingProject[]>(`*[_type == "project"]{title}`),
+    client.fetch<ExistingProject[]>(`*[_type == "project"]{_id, title, slug, details}`),
     client.fetch<ExistingTechStack[]>(`*[_type == "techStack"]{name}`),
   ]);
 
@@ -269,9 +324,39 @@ async function main() {
 
     return [{ _id: document._id, body }];
   });
+  const experiencesByKey = new Map(
+    experiences.map((document) => [experienceKey(document), withoutSystemFields(document)]),
+  );
+  const experienceDetailUpdates = existingExperiences.flatMap((document) => {
+    const seedDocument = experiencesByKey.get(
+      [document.company, document.role, document.period].map(normalize).join("\u0000"),
+    );
+    if (!seedDocument) return [];
+
+    const { details, slug } = seedDocument;
+    if (isDeepStrictEqual(document.details, details) && isDeepStrictEqual(document.slug, slug)) {
+      return [];
+    }
+
+    return [{ _id: document._id, details, slug }];
+  });
   const missingProjects = projects
     .map(withoutSystemFields)
     .filter((document) => !existingProjectKeys.has(projectKey(document)));
+  const projectsByKey = new Map(
+    projects.map((document) => [projectKey(document), withoutSystemFields(document)]),
+  );
+  const projectDetailUpdates = existingProjects.flatMap((document) => {
+    const seedDocument = projectsByKey.get(normalize(document.title));
+    if (!seedDocument) return [];
+
+    const { details, slug } = seedDocument;
+    if (isDeepStrictEqual(document.details, details) && isDeepStrictEqual(document.slug, slug)) {
+      return [];
+    }
+
+    return [{ _id: document._id, details, slug }];
+  });
   const missingTechStacks = techStacks
     .map(withoutSystemFields)
     .filter((document) => !existingTechStackKeys.has(techStackKey(document)));
@@ -284,12 +369,14 @@ async function main() {
     ...missingProjects,
     ...missingTechStacks,
   ];
+  const portfolioDetailUpdates = [...experienceDetailUpdates, ...projectDetailUpdates];
   const summary = {
     mode: DRY_RUN ? "dry-run" : "seeded",
     profile: profileExists ? "skipped" : "created",
     experiences: {
       created: missingExperiences.length,
       skipped: experiences.length - missingExperiences.length,
+      synchronized: experienceDetailUpdates.length,
     },
     blogPosts: {
       created: missingBlogPosts.length,
@@ -299,6 +386,7 @@ async function main() {
     projects: {
       created: missingProjects.length,
       skipped: projects.length - missingProjects.length,
+      synchronized: projectDetailUpdates.length,
     },
     techStacks: {
       created: missingTechStacks.length,
@@ -307,7 +395,7 @@ async function main() {
   };
 
   log(
-    `Plan: profile ${summary.profile}; ${missingExperiences.length}/${experiences.length} experiences, ${missingBlogPosts.length}/${blogPosts.length} blog posts, ${missingProjects.length}/${projects.length} projects, and ${missingTechStacks.length}/${techStacks.length} tech stack groups will be created. ${blogBodyUpdates.length} existing blog body document(s) will be synchronized from blog.json.`,
+    `Plan: profile ${summary.profile}; ${missingExperiences.length}/${experiences.length} experiences, ${missingBlogPosts.length}/${blogPosts.length} blog posts, ${missingProjects.length}/${projects.length} projects, and ${missingTechStacks.length}/${techStacks.length} tech stack groups will be created. ${blogBodyUpdates.length} blog body, ${experienceDetailUpdates.length} experience detail, and ${projectDetailUpdates.length} project detail document(s) will be synchronized from seed data.`,
   );
 
   if (DRY_RUN) {
@@ -317,6 +405,7 @@ async function main() {
       profileExists,
       missingDocuments,
       blogBodyUpdates,
+      portfolioDetailUpdates,
     );
     log("Dry run complete. No documents were written.");
     console.log(JSON.stringify(summary, null, 2));
@@ -330,9 +419,15 @@ async function main() {
     log("Profile: complete.");
   }
   await createInBatches(client, "Experiences", missingExperiences);
+  await synchronizePortfolioDetails(
+    client,
+    "Experience detail synchronization",
+    experienceDetailUpdates,
+  );
   await createInBatches(client, "Blog posts", missingBlogPosts);
   await synchronizeBlogBodies(client, blogBodyUpdates);
   await createInBatches(client, "Projects", missingProjects);
+  await synchronizePortfolioDetails(client, "Project detail synchronization", projectDetailUpdates);
   await createInBatches(client, "Tech stack groups", missingTechStacks);
 
   log(`Seed complete. ${missingDocuments.length} document(s) created.`);

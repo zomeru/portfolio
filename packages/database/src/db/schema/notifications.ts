@@ -13,7 +13,7 @@ import {
 
 export const emailSubscriptionStatus = pgEnum("email_subscription_status", [
   "pending",
-  "active",
+  "confirmed",
   "unsubscribed",
   "suppressed",
 ]);

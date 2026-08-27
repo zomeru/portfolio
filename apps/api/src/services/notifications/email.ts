@@ -72,15 +72,15 @@ function getGmailTransporter(environment: ReturnType<typeof getNotificationsServ
     return gmailTransporter;
   }
 
-  if (!environment.EMAIL_FROM || !environment.GOOGLE_APP_PASSWORD) {
+  if (!environment.emailFrom || !environment.googleAppPassword) {
     return null;
   }
 
   gmailTransporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: environment.EMAIL_FROM,
-      pass: environment.GOOGLE_APP_PASSWORD,
+      user: environment.emailFrom,
+      pass: environment.googleAppPassword,
     },
   });
 
@@ -89,10 +89,10 @@ function getGmailTransporter(environment: ReturnType<typeof getNotificationsServ
 
 function getEmailClient(): EmailClient | null {
   const environment = getNotificationsServerEnv();
-  if (!environment.EMAIL_FROM) return null;
-  const emailFrom = `${environment.EMAIL_FROM_NAME} <${environment.EMAIL_FROM}>`;
+  if (!environment.emailFrom) return null;
+  const emailFrom = `${environment.emailFromName} <${environment.emailFrom}>`;
 
-  switch (environment.EMAIL_PROVIDER) {
+  switch (environment.emailProvider) {
     case "gmail": {
       const transporter = getGmailTransporter(environment);
 
@@ -104,20 +104,20 @@ function getEmailClient(): EmailClient | null {
         provider: "gmail",
         client: transporter,
         from: emailFrom,
-        replyTo: environment.EMAIL_REPLY_TO,
+        replyTo: environment.emailReplyTo,
       } as GmailClient;
     }
 
     case "resend": {
-      if (!environment.RESEND_API_KEY) {
+      if (!environment.resendApiKey) {
         return null;
       }
 
       return {
         provider: "resend",
-        client: new Resend(environment.RESEND_API_KEY),
+        client: new Resend(environment.resendApiKey),
         from: emailFrom,
-        replyTo: environment.EMAIL_REPLY_TO,
+        replyTo: environment.emailReplyTo,
       } as ResendClient;
     }
 
@@ -208,18 +208,20 @@ async function sendEmail(options: {
 export async function sendSubscriptionConfirmationEmail(options: {
   email: string;
   confirmationUrl: string;
+  expiresInHours: number;
   subscriptionId: string;
   tokenHash: string;
 }) {
   const heading = "Confirm your blog subscription";
+  const expiration = `${options.expiresInHours} hour${options.expiresInHours === 1 ? "" : "s"}`;
   const html = emailFrame(
     `<h1 style="margin:0;font-size:24px;line-height:1.3;font-weight:600;">${heading}</h1>
 <p style="margin:16px 0 0;font-size:15px;line-height:1.7;color:#52525b;">Confirm this address to receive a short email whenever I publish a new post.</p>
 ${button("Confirm subscription", options.confirmationUrl)}
-<p style="margin:0;font-size:12px;line-height:1.6;color:#71717a;">This link expires in 24 hours. If you did not request it, you can ignore this email.</p>`,
+<p style="margin:0;font-size:12px;line-height:1.6;color:#71717a;">This link expires in ${expiration}. If you did not request it, you can ignore this email.</p>`,
     heading,
   );
-  const text = `${heading}\n\nConfirm this address to receive a short email whenever I publish a new post.\n\n${options.confirmationUrl}\n\nThis link expires in 24 hours. If you did not request it, ignore this email.`;
+  const text = `${heading}\n\nConfirm this address to receive a short email whenever I publish a new post.\n\n${options.confirmationUrl}\n\nThis link expires in ${expiration}. If you did not request it, ignore this email.`;
   return sendEmail({
     to: options.email,
     subject: heading,

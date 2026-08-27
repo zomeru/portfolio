@@ -1,0 +1,39 @@
+{
+  "eyebrow": "GitHub 贡献",
+  "title": "我所拥有仓库中的贡献活动和提交记录。",
+  "loading": "正在加载 GitHub 活动…",
+  "activityError": "无法加载 GitHub 活动。",
+  "commitsError": "无法加载 GitHub 提交记录。",
+  "calendar": {
+    "heading": "贡献日历",
+    "description": "GitHub 个人资料贡献，其中不仅包括 Git 提交。",
+    "period": "时间范围",
+    "lastTwelveMonths": "过去 12 个月",
+    "updating": "正在更新贡献日历。",
+    "updated": "贡献日历已更新。",
+    "total": "{range}共有 {count} 次贡献",
+    "range": "过去 12 个月",
+    "empty": "此时间范围内没有贡献记录。",
+    "imageLabel": "{range}按日统计的 {count} 次 GitHub 贡献",
+    "dayLabel": "{date}有 {count} 次贡献",
+    "less": "少",
+    "more": "多",
+    "weekdays": { "monday": "周一", "wednesday": "周三", "friday": "周五" }
+  },
+  "commits": {
+    "heading": "提交记录",
+    "description": "我在所拥有仓库默认分支上提交的记录，按时间倒序排列。",
+    "repository": "仓库",
+    "allRepositories": "所有仓库",
+    "perPage": "每页数量",
+    "updating": "正在更新提交记录。",
+    "updated": "提交记录已更新。",
+    "view": "查看提交",
+    "empty": "没有找到符合条件的提交。",
+    "limited": "GitHub 将提交搜索结果限制为前 1,000 条，并可能返回不完整的结果集。",
+    "paginationLabel": "提交记录分页",
+    "newer": "较新",
+    "older": "较早",
+    "page": "第 {page} 页，共 {total} 页"
+  }
+}

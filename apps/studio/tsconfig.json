@@ -4,8 +4,7 @@
     "forceConsistentCasingInFileNames": true,
     "module": "preserve",
     "moduleResolution": "bundler",
-    "jsx": "preserve",
-    "incremental": true
+    "jsx": "preserve"
   },
   "include": ["**/*.ts", "sanity.cli.ts", "sanity.config.ts"],
   "exclude": ["node_modules"]

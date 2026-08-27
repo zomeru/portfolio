@@ -22,6 +22,7 @@ const KNOWLEDGE_PROJECTION = /* groq */ `{
     period,
     summary,
     responsibilities,
+    details,
     technologies,
     companyUrl,
     title,

@@ -1,0 +1,20 @@
+{
+  "notFound": {
+    "eyebrow": "404 / Nicht gefunden",
+    "title": "Diese Seite existiert nicht.",
+    "description": "Die Adresse ist möglicherweise veraltet oder die Seite wurde verschoben.",
+    "action": "Zurück zum Portfolio"
+  },
+  "route": {
+    "eyebrow": "Ein Fehler ist aufgetreten",
+    "title": "Diese Seite konnte nicht geladen werden.",
+    "description": "Das Problem ist möglicherweise vorübergehend. Lade die Seite erneut.",
+    "action": "Erneut versuchen"
+  },
+  "global": {
+    "eyebrow": "Ein Fehler ist aufgetreten",
+    "title": "Das Portfolio konnte nicht geladen werden.",
+    "description": "Das Problem ist möglicherweise vorübergehend. Lade die Website erneut.",
+    "action": "Erneut versuchen"
+  }
+}

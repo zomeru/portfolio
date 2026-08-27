@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useId, useRef, useState } from "react";
 
+import { Select, type SelectOption } from "@/components/ui/select";
 import { reportClientError } from "@/lib/client-log";
 
 import { initialWebhookMutationState, initialWebhookRegistrationState } from "./action-state";
@@ -15,6 +16,12 @@ export type WebhookSummary = {
   createdAt: string;
   disabledAt: string | null;
 };
+
+const destinationTypeOptions: SelectOption[] = [
+  { label: "Discord", value: "discord" },
+  { label: "Slack", value: "slack" },
+  { label: "Generic HTTPS", value: "generic" },
+];
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en", {
@@ -77,8 +84,7 @@ function WebhookRow({ webhook }: { webhook: WebhookSummary }) {
         </div>
       </div>
       <div
-        role="status"
-        aria-live="polite"
+        role={error ? "alert" : "status"}
         aria-atomic="true"
         className={message ? "mt-2 text-xs" : "sr-only"}
       >
@@ -103,7 +109,7 @@ export function WebhookManager({
   );
   const formRef = useRef<HTMLFormElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
-  const typeRef = useRef<HTMLSelectElement>(null);
+  const typeRef = useRef<HTMLButtonElement>(null);
   const urlRef = useRef<HTMLInputElement>(null);
   const [destinationType, setDestinationType] =
     useState<WebhookSummary["destinationType"]>("discord");
@@ -177,28 +183,23 @@ export function WebhookManager({
           </div>
 
           <div>
-            <label htmlFor={typeId} className="block text-xs font-medium">
-              Destination type
-            </label>
-            <select
-              ref={typeRef}
+            <Select
               id={typeId}
               name="destinationType"
-              defaultValue="discord"
+              label="Destination type"
+              labelClassName="font-medium text-foreground"
+              value={destinationType}
+              options={destinationTypeOptions}
               disabled={isPending}
-              aria-invalid={state.fieldErrors?.destinationType ? true : undefined}
-              aria-describedby={
+              ariaDescribedBy={
                 state.fieldErrors?.destinationType ? `${typeId}-error` : `${typeId}-help`
               }
-              onChange={(event) =>
-                setDestinationType(event.currentTarget.value as WebhookSummary["destinationType"])
+              triggerRef={typeRef}
+              onValueChangeAction={(value) =>
+                setDestinationType(value as WebhookSummary["destinationType"])
               }
-              className="mt-2 min-h-10 w-full rounded-md border border-border bg-background px-3 text-sm"
-            >
-              <option value="discord">Discord</option>
-              <option value="slack">Slack</option>
-              <option value="generic">Generic HTTPS</option>
-            </select>
+              className="gap-2"
+            />
             <p id={`${typeId}-help`} className="mt-1 text-xs text-muted">
               {destinationType === "generic"
                 ? "Generic endpoints receive signed JSON."

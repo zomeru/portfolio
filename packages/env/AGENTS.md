@@ -18,15 +18,17 @@ is a source-exported internal package; consumers import explicit subpaths.
 - `./database`: required `DATABASE_URL` and optional `DATABASE_DIRECT_URL`.
 - `./langfuse-server`: optional public/secret key pair and defaultable base URL; one key without the
   other is invalid.
-- `./notifications-client`: optional public VAPID key for browser subscription setup.
 - `./notifications-server`: grouped optional Gmail/Resend, Web Push, notification-token, and webhook
-  encryption configuration; incomplete feature groups are invalid.
+  encryption configuration; incomplete feature groups are invalid and the accessor returns normalized
+  camel-case properties.
 
 ## Invariants
 
 - Group validation by consumer and runtime boundary. Importing one subpath must not validate unrelated
   feature variables.
 - Parse every schema through `parseEnv` so errors keep the shared field-oriented format.
+- Return small normalized consumer contracts from accessors instead of leaking raw environment names;
+  schema validation errors should still use the original variable names.
 - Never expose server-only values through `NEXT_PUBLIC_*`, browser modules, logs, errors, or
   generated client code.
 - Keep `package.json` exports synchronized with `src` modules and preserve the package-private

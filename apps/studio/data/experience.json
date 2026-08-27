@@ -12,7 +12,76 @@
     "_type": "experience",
     "_updatedAt": "2026-08-20T14:52:27Z",
     "company": "Seansoft Corporation",
+    "slug": { "_type": "slug", "current": "seansoft-corporation" },
     "companyUrl": "https://www.seansoftinc.com/",
+    "details": [
+      {
+        "_key": "seansoft-problems-heading",
+        "_type": "block",
+        "children": [{ "_key": "seansoft-problems-heading-text", "_type": "span", "marks": [], "text": "Problems I solved" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "seansoft-problems-maps",
+        "_type": "block",
+        "children": [{ "_key": "seansoft-problems-maps-text", "_type": "span", "marks": [], "text": "Improved Leaflet map responsiveness by removing unnecessary markers, layers, and rendering work." }],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "seansoft-problems-reports",
+        "_type": "block",
+        "children": [{ "_key": "seansoft-problems-reports-text", "_type": "span", "marks": [], "text": "Improved slow reports and database queries by identifying bottlenecks and adding targeted PostgreSQL indexes." }],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "seansoft-decisions-heading",
+        "_type": "block",
+        "children": [{ "_key": "seansoft-decisions-heading-text", "_type": "span", "marks": [], "text": "Technical decisions" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "seansoft-decisions-react",
+        "_type": "block",
+        "children": [{ "_key": "seansoft-decisions-react-text", "_type": "span", "marks": [], "text": "Migrated legacy AngularJS features to React to reduce frontend complexity and make the application easier to maintain." }],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "seansoft-decisions-audit",
+        "_type": "block",
+        "children": [{ "_key": "seansoft-decisions-audit-text", "_type": "span", "marks": [], "text": "Moved custom audit logging toward database-level auditing for more consistent change tracking." }],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "seansoft-quality-heading",
+        "_type": "block",
+        "children": [{ "_key": "seansoft-quality-heading-text", "_type": "span", "marks": [], "text": "Quality and reliability" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "seansoft-quality-tests",
+        "_type": "block",
+        "children": [{ "_key": "seansoft-quality-tests-text", "_type": "span", "marks": [], "text": "Added and stabilized Cypress end-to-end tests around critical workflows and React migrations." }],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
     "location": "Makati City, Philippines ",
     "order": 4,
     "period": "Jan. 2024 — Apr. 2026",
@@ -173,7 +242,51 @@
     "_type": "experience",
     "_updatedAt": "2026-08-20T14:54:12Z",
     "company": "Binbooker",
+    "slug": { "_type": "slug", "current": "binbooker" },
     "companyUrl": "https://binbooker.com/",
+    "details": [
+      {
+        "_key": "binbooker-work-heading",
+        "_type": "block",
+        "children": [{ "_key": "binbooker-work-heading-text", "_type": "span", "marks": [], "text": "What I worked on" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "binbooker-work-ui",
+        "_type": "block",
+        "children": [{ "_key": "binbooker-work-ui-text", "_type": "span", "marks": [], "text": "Improved existing React and SCSS workflows and built advanced filtering and reporting features for operational data." }],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "binbooker-performance-heading",
+        "_type": "block",
+        "children": [{ "_key": "binbooker-performance-heading-text", "_type": "span", "marks": [], "text": "Performance and reliability" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "binbooker-performance-bins",
+        "_type": "block",
+        "children": [{ "_key": "binbooker-performance-bins-text", "_type": "span", "marks": [], "text": "Reduced unnecessary rendering and costly frontend work in Bins Management for large datasets." }],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "binbooker-performance-maintenance",
+        "_type": "block",
+        "children": [{ "_key": "binbooker-performance-maintenance-text", "_type": "span", "marks": [], "text": "Improved the Stripe integration and added a system-wide maintenance mode for deployments and maintenance work." }],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
     "location": "Vancouver, Canada (Remote)",
     "order": 3,
     "period": "Mar. 2025 — July. 2025",
@@ -260,7 +373,58 @@
     "_type": "experience",
     "_updatedAt": "2026-08-20T15:01:06Z",
     "company": "Evelan GmbH",
+    "slug": { "_type": "slug", "current": "evelan-gmbh" },
     "companyUrl": "https://evelan.de/en",
+    "details": [
+      {
+        "_key": "evelan-context-heading",
+        "_type": "block",
+        "children": [{ "_key": "evelan-context-heading-text", "_type": "span", "marks": [], "text": "Project context" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "evelan-context-paul",
+        "_type": "block",
+        "children": [{ "_key": "evelan-context-paul-text", "_type": "span", "marks": [], "text": "Worked on PAUL 360, a secure document collaboration platform." }],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "evelan-implementation-heading",
+        "_type": "block",
+        "children": [{ "_key": "evelan-implementation-heading-text", "_type": "span", "marks": [], "text": "Implementation" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "evelan-implementation-ui",
+        "_type": "block",
+        "children": [{ "_key": "evelan-implementation-ui-text", "_type": "span", "marks": [], "text": "Built responsive, reusable, strictly typed interfaces with React and Chakra UI." }],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "evelan-implementation-contracts",
+        "_type": "block",
+        "children": [{ "_key": "evelan-implementation-contracts-text", "_type": "span", "marks": [], "text": "Used tRPC and shared Zod schemas to keep client, server, and validation contracts aligned." }],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "evelan-implementation-data",
+        "_type": "block",
+        "children": [{ "_key": "evelan-implementation-data-text", "_type": "span", "marks": [], "text": "Designed and updated PostgreSQL schemas with Prisma and added Jest coverage around core application logic." }],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
     "location": "Hamburg, Germany (Remote)",
     "order": 2,
     "period": "Aug. 2023 — Dec. 2023",
@@ -382,7 +546,49 @@
     "_type": "experience",
     "_updatedAt": "2026-08-20T15:04:33Z",
     "company": "Beyonder Inc.",
+    "slug": { "_type": "slug", "current": "beyonder-inc" },
     "companyUrl": "https://www.linkedin.com/company/beyonder-systems/",
+    "details": [
+      {
+        "_key": "beyonder-work-heading",
+        "_type": "block",
+        "children": [{ "_key": "beyonder-work-heading-text", "_type": "span", "marks": [], "text": "What I worked on" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "beyonder-work-products",
+        "_type": "block",
+        "children": [{ "_key": "beyonder-work-products-text", "_type": "span", "marks": [], "text": "Shipped web and mobile products including Kokuban, スマホ de マップ, and Doko?." }],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "beyonder-process-heading",
+        "_type": "block",
+        "children": [{ "_key": "beyonder-process-heading-text", "_type": "span", "marks": [], "text": "Processes I improved" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "beyonder-process-actions",
+        "_type": "block",
+        "children": [{ "_key": "beyonder-process-actions-text", "_type": "span", "marks": [], "text": "Set up GitHub Actions workflows for build and deployment tasks to reduce manual release work." }],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "beyonder-process-ownership",
+        "_type": "block",
+        "children": [{ "_key": "beyonder-process-ownership-text", "_type": "span", "marks": [], "text": "Owned frontend implementation across projects, kept patterns consistent, and reviewed other developers' work." }],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
     "location": "Makati City, Philippines ",
     "order": 1,
     "period": "Feb. 2022 — Aug. 2023",
@@ -458,6 +664,34 @@
     "_type": "experience",
     "_updatedAt": "2026-08-20T15:06:20Z",
     "company": "Freelance",
+    "slug": { "_type": "slug", "current": "freelance" },
+    "details": [
+      {
+        "_key": "freelance-work-heading",
+        "_type": "block",
+        "children": [{ "_key": "freelance-work-heading-text", "_type": "span", "marks": [], "text": "What I worked on" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "freelance-work-apps",
+        "_type": "block",
+        "children": [{ "_key": "freelance-work-apps-text", "_type": "span", "marks": [], "text": "Built and maintained web and mobile applications across frontend and backend development." }],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "freelance-work-ecommerce",
+        "_type": "block",
+        "children": [{ "_key": "freelance-work-ecommerce-text", "_type": "span", "marks": [], "text": "Worked with a small team, including a senior engineer, to build and deliver an e-commerce platform." }],
+        "level": 1,
+        "listItem": "bullet",
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
     "location": "Muntinlupa, Philippines",
     "order": 0,
     "period": "Sep. 2021 — Feb. 2022",

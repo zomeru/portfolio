@@ -1,25 +1,35 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
+import { LanguagePicker } from "@/components/layout/language-picker";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { SearchController } from "@/features/search/components/search-controller";
+import type { SearchItem } from "@/features/search/types/search";
+import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/", label: "About" },
-  { href: "/projects", label: "Projects" },
-  { href: "/blogs", label: "Blogs" },
-  { href: "/github-contributions", label: "GitHub" },
-  { href: "/ask", label: "Ask Zomer AI" },
-  { href: "/contact", label: "Let's talk" },
+  { href: "/", label: "about" },
+  { href: "/projects", label: "projects" },
+  { href: "/blogs", label: "blogs" },
+  { href: "/github-contributions", label: "github" },
+  { href: "/ask", label: "assistant" },
+  { href: "/contact", label: "contact" },
 ] as const;
 
-export function SiteNav() {
+export function SiteNav({
+  searchItems,
+  showLanguagePicker = true,
+}: {
+  searchItems?: SearchItem[];
+  showLanguagePicker?: boolean;
+}) {
   const pathname = usePathname();
+  const t = useTranslations("Common.nav");
 
   return (
-    <nav aria-label="Primary" className="border-b border-border py-2">
+    <nav aria-label={t("label")} className="border-b border-border py-2">
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <ul className="flex flex-wrap items-center gap-1 sm:gap-2">
           {links.map((link) => {
@@ -36,13 +46,17 @@ export function SiteNav() {
                       : "hover:text-foreground",
                   )}
                 >
-                  {link.label}
+                  {t(link.label)}
                 </Link>
               </li>
             );
           })}
         </ul>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          {searchItems ? <SearchController items={searchItems} /> : null}
+          {showLanguagePicker && <LanguagePicker />}
+          <ThemeToggle />
+        </div>
       </div>
     </nav>
   );

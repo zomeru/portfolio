@@ -17,6 +17,28 @@ export const rawPublicSnapshotFixture = {
     {
       company: "Example Co",
       companyUrl: "https://example.com",
+      details: [
+        {
+          _key: "detail-heading",
+          _type: "block",
+          children: [
+            { _key: "detail-heading-text", _type: "span", marks: [], text: "Technical work" },
+          ],
+          markDefs: [],
+          style: "h2",
+        },
+        {
+          _key: "detail-body",
+          _type: "block",
+          children: [
+            { _key: "detail-body-text", _type: "span", marks: [], text: "Improved the API." },
+          ],
+          level: 1,
+          listItem: "bullet",
+          markDefs: [],
+          style: "normal",
+        },
+      ],
       location: "Remote",
       period: "2024–Present",
       privateNote: "must not leak",
@@ -30,8 +52,10 @@ export const rawPublicSnapshotFixture = {
         },
       ],
       role: "Software Engineer",
+      slug: "example-co",
       summary: "Platform engineering.",
       technologies: ["TypeScript", "Next.js"],
+      updatedAt: "2026-08-03T00:00:00.000Z",
     },
   ],
   profile: {
@@ -68,11 +92,14 @@ export const rawPublicSnapshotFixture = {
       caseStudyUrl: null,
       demoUrl: "https://demo.example.com",
       description: "A public project.",
+      details: [],
       image: null,
       internalId: "secret-project-id",
       repositoryUrl: "https://github.com/example/project",
+      slug: "public-project",
       technologies: ["TypeScript"],
       title: "Public Project",
+      updatedAt: "2026-08-04T00:00:00.000Z",
       year: "2026",
     },
   ],
@@ -127,6 +154,12 @@ export function createTestPublicPortfolioService(): PublicPortfolioService {
         url: "https://portfolio.example/",
       };
     },
+    async getExperience(slug) {
+      return (await this.listExperience()).items.find((item) => item.slug === slug) ?? null;
+    },
+    async getProject(slug) {
+      return (await this.listProjects()).items.find((item) => item.slug === slug) ?? null;
+    },
     async getResume() {
       const profile = await this.getProfile();
       if (!profile) return null;
@@ -176,14 +209,23 @@ export function createTestPublicPortfolioService(): PublicPortfolioService {
       return {
         items: [
           {
+            canonicalUrl: "https://portfolio.example/work/example-co",
             company: "Example Co",
             companyUrl: "https://example.com",
+            details: [
+              {
+                content: [{ style: "bullet", text: "Improved the API." }],
+                title: "Technical work",
+              },
+            ],
             location: "Remote",
             period: "2024–Present",
             responsibilities: ["Built reliable systems."],
             role: "Software Engineer",
+            slug: "example-co",
             summary: "Platform engineering.",
             technologies: ["TypeScript", "Next.js"],
+            updatedAt: "2026-08-03T00:00:00.000Z",
           },
         ],
         total: 1,
@@ -193,14 +235,17 @@ export function createTestPublicPortfolioService(): PublicPortfolioService {
       return {
         items: [
           {
-            canonicalUrl: "https://portfolio.example/projects",
+            canonicalUrl: "https://portfolio.example/projects/public-project",
             caseStudyUrl: null,
             demoUrl: "https://demo.example.com",
             description: "A public project.",
+            details: [],
             image: null,
             repositoryUrl: "https://github.com/example/project",
+            slug: "public-project",
             technologies: ["TypeScript"],
             title: "Public Project",
+            updatedAt: "2026-08-04T00:00:00.000Z",
             year: "2026",
           },
         ],

@@ -9,6 +9,20 @@ export const experience: SchemaTypeDefinition = defineType({
   fields: [
     defineField({ name: "role", type: "string", validation: (rule) => rule.required() }),
     defineField({ name: "company", type: "string", validation: (rule) => rule.required() }),
+    defineField({
+      name: "slug",
+      type: "slug",
+      description: "Stable public URL segment for the work detail page.",
+      options: { source: "company", maxLength: 96 },
+      validation: (rule) =>
+        rule
+          .required()
+          .custom((value) =>
+            !value?.current || /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value.current)
+              ? true
+              : "Use lowercase letters, numbers, and single hyphens only.",
+          ),
+    }),
     defineField({ name: "location", type: "string" }),
     defineField({
       name: "period",
@@ -18,6 +32,13 @@ export const experience: SchemaTypeDefinition = defineType({
     }),
     defineField({ name: "summary", type: "text", rows: 3 }),
     defineField({ name: "responsibilities", type: "richText" }),
+    defineField({
+      name: "details",
+      title: "Detail page content",
+      description:
+        "Optional structured sections for problems solved, technical decisions, accomplishments, performance work, and lessons. Use headings to name each section.",
+      type: "richText",
+    }),
     defineField({
       name: "technologies",
       type: "array",

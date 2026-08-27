@@ -1,0 +1,26 @@
+{
+  "eyebrow": "Projekte",
+  "title": "Ausgewählte Arbeiten.",
+  "empty": "Es wurden noch keine Projekte veröffentlicht.",
+  "live": "Live",
+  "caseStudy": "Fallstudie",
+  "detail": {
+    "back": "Projekte",
+    "eyebrow": "Projekt",
+    "technologies": "Technologien",
+    "links": "Links",
+    "repository": "Repository",
+    "opensNewTab": "(öffnet in einem neuen Tab)"
+  },
+  "descriptions": {
+    "rezumerAi": "Rezumer AI ist ein KI-gestützter Lebenslauf-Editor für Arbeitssuchende, die Entwürfe, Überarbeitungen, Anpassungen und Exporte in einem Arbeitsbereich erledigen möchten. Die Anwendung verbindet strukturierte Bearbeitung mit KI-Optimierung einzelner Abschnitte, dem Abgleich mit Stellenbeschreibungen und einem berechtigungsbewussten Assistenten für öffentliche, Konto- und Verwaltungsfragen.",
+    "batibot": "Batibot ist ein KI-gestützter Messaging-Begleiter, der dabei hilft, passende Informationen und Dienstleistungen zu finden.",
+    "zomink": "Zomink ist eine quelloffene Plattform zur Linkverwaltung mit allen wichtigen Funktionen an einem Ort. URLs lassen sich mit eigenen Aliasen verwalten, verfolgen und kürzen.",
+    "sticaLms": "STICA LMS ist mein Hochschulabschlussprojekt: ein Online-Bibliotheksverwaltungssystem für das STI College Alabang.",
+    "kokuban": "Kokuban unterstützt Lehrkräfte in Japan dabei, Online-Lernmaterialien zu erstellen, die ihre Schülerinnen und Schüler im Browser nutzen können.",
+    "zomify": "Zomify ist ein Spotify-Klon, der mit SvelteKit, TypeScript und Tailwind CSS entwickelt wurde.",
+    "paymongo": "Eine schlanke, vollständige, modulare und TypeScript-kompatible JavaScript-Bibliothek für PayMongo.",
+    "groundwork": "Eine Online-B2B-Plattform, mit der Unternehmen auf den Philippinen Netzwerke aufbauen und erweitern können.",
+    "zomifyColors": "Eine von Flat UI Colors inspirierte Farbpaletten-App."
+  }
+}

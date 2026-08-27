@@ -1,0 +1,48 @@
+{
+  "root": {
+    "role": "Softwareentwickler",
+    "description": "Full-Stack-Softwareentwickler für moderne Webanwendungen und skalierbare Systeme."
+  },
+  "projects": { "title": "Projekte", "description": "Ausgewählte Arbeiten." },
+  "blogs": {
+    "title": "Blog",
+    "description": "Artikel über Softwareentwicklung, Webentwicklung, Architektur, Tools und KI."
+  },
+  "contact": {
+    "title": "Kontakt",
+    "description": "Hast du ein Projekt, eine Gelegenheit oder eine interessante Idee?"
+  },
+  "assistant": {
+    "title": "Zomer AI fragen",
+    "description": "Frage einen KI-Assistenten nach Zomers Arbeit, Erfahrung, Projekten und Artikeln."
+  },
+  "github": {
+    "title": "GitHub-Beiträge",
+    "description": "GitHub-Beiträge und Commitverlauf in meinen eigenen Repositorys."
+  },
+  "developers": {
+    "title": "Entwickler",
+    "description": "REST-, OpenAPI- und MCP-Integrationsleitfaden für die öffentliche Portfolio-API."
+  },
+  "unsubscribe": {
+    "title": "Blog-E-Mails abbestellen",
+    "description": "Verwalte dein E-Mail-Abonnement für den Blog von Zomer Gregorio."
+  },
+  "og": {
+    "portfolioEyebrow": "Portfolio",
+    "portfolioDescription": "Moderne Webanwendungen mit Next.js, TypeScript und praxisnaher KI-Integration.",
+    "projectsTitle": "Ausgewählte Arbeiten.",
+    "projectsDescription": "Produktentwicklung, Systeme und Software über den gesamten Stack hinweg.",
+    "blogsTitle": "Notizen zur Softwareentwicklung.",
+    "blogsDescription": "Praxisnahe Artikel über Architektur, Tools, KI und Webentwicklung.",
+    "contactTitle": "Hast du ein Projekt oder eine interessante Idee?",
+    "contactDescription": "Sprich mit mir über Softwareentwicklung, Produktarbeit oder Zusammenarbeit.",
+    "assistantTitle": "Ein quellenbasierter Wegweiser zu meiner Arbeit.",
+    "assistantDescription": "Frage nach Erfahrung, Projekten, technischen Stärken und veröffentlichten Artikeln.",
+    "githubTitle": "Beiträge und Commits.",
+    "githubDescription": "GitHub-Beiträge und eigene Commits in meinen Repositorys.",
+    "blogArticle": "Blogartikel",
+    "blogFallbackTitle": "Notizen zur Softwareentwicklung.",
+    "blogFallbackDescription": "Praxisnahe Notizen zum Bau zuverlässiger Software."
+  }
+}

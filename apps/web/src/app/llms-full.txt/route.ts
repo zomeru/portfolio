@@ -20,15 +20,27 @@ export async function GET(): Promise<Response> {
         job.responsibilities
           .map((responsibility) => `  - ${responsibility.replaceAll("\n", " ")}`)
           .join("\n") || "  - Not specified";
+      const details = job.details
+        .map(
+          (section) =>
+            `  ${section.title}:\n${section.content.map((item) => `  - ${item.text.replaceAll("\n", " ")}`).join("\n")}`,
+        )
+        .join("\n");
 
-      return `- ${job.role} at ${job.company}\n  Period: ${job.period}${job.location ? `\n  Location: ${job.location}` : ""}\n  Responsibilities:\n${responsibilities}\n  Technologies: ${job.technologies.join(", ") || "Not specified"}`;
+      return `- ${job.role} at ${job.company}\n  URL: ${job.canonicalUrl}\n  Period: ${job.period}${job.location ? `\n  Location: ${job.location}` : ""}\n  Responsibilities:\n${responsibilities}\n  Technologies: ${job.technologies.join(", ") || "Not specified"}${details ? `\n  Details:\n${details}` : ""}`;
     })
     .join("\n\n");
   const projectLines = projects
-    .map(
-      (project) =>
-        `- ${project.title}\n  Year: ${project.year}\n  Description: ${project.description}\n  Technologies: ${project.technologies.join(", ") || "Not specified"}${project.demoUrl ? `\n  Demo: ${project.demoUrl}` : ""}${project.repositoryUrl ? `\n  Repository: ${project.repositoryUrl}` : ""}${project.caseStudyUrl ? `\n  Case study: ${project.caseStudyUrl}` : ""}`,
-    )
+    .map((project) => {
+      const details = project.details
+        .map(
+          (section) =>
+            `  ${section.title}:\n${section.content.map((item) => `  - ${item.text.replaceAll("\n", " ")}`).join("\n")}`,
+        )
+        .join("\n");
+
+      return `- ${project.title}\n  URL: ${project.canonicalUrl}\n  Year: ${project.year}\n  Description: ${project.description}\n  Technologies: ${project.technologies.join(", ") || "Not specified"}${project.demoUrl ? `\n  Demo: ${project.demoUrl}` : ""}${project.repositoryUrl ? `\n  Repository: ${project.repositoryUrl}` : ""}${project.caseStudyUrl ? `\n  Case study: ${project.caseStudyUrl}` : ""}${details ? `\n  Details:\n${details}` : ""}`;
+    })
     .join("\n\n");
   const techStackLines = techStack
     .map((group) => {

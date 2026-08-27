@@ -2,9 +2,8 @@ import type { PublicPortfolioSnapshot } from "@portfolio/api/public-portfolio";
 
 type SchemaRecord = Record<string, unknown>;
 
-function projectId(title: string, siteUrl: URL) {
-  const slug = title.toLocaleLowerCase("en-US").replaceAll(/[^a-z0-9]+/g, "-");
-  return new URL(`/#project-${slug.replace(/^-|-$/g, "")}`, siteUrl).href;
+function projectId(slug: string, siteUrl: URL) {
+  return new URL(`/projects/${slug}#project`, siteUrl).href;
 }
 
 export function getSchemaFeedRecords(
@@ -60,7 +59,7 @@ export function getSchemaFeedRecords(
   records.push(
     ...projects.map((project) => ({
       "@context": "https://schema.org",
-      "@id": projectId(project.title, siteUrl),
+      "@id": projectId(project.slug, siteUrl),
       "@type": "CreativeWork",
       author: profile ? { "@id": personId } : undefined,
       dateCreated: project.year,
@@ -68,7 +67,7 @@ export function getSchemaFeedRecords(
       image: project.image?.url,
       keywords: project.technologies,
       name: project.title,
-      url: project.caseStudyUrl ?? project.demoUrl ?? project.repositoryUrl ?? project.canonicalUrl,
+      url: project.canonicalUrl,
     })),
     ...blogs.map((blog) => ({
       "@context": "https://schema.org",

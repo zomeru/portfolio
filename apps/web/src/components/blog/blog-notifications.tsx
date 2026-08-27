@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 
 import { client } from "@/lib/api";
@@ -124,16 +125,17 @@ function getIosInstallState() {
 }
 
 export function BlogNotifications({ initialNotice }: { initialNotice?: "confirmed" | "invalid" }) {
+  const t = useTranslations("Blogs.notifications");
   const emailId = useId();
   const emailHelpId = useId();
   const emailStatusId = useId();
   const emailRef = useRef<HTMLInputElement>(null);
   const [emailState, setEmailState] = useState<EmailState>(() => {
     if (initialNotice === "confirmed") {
-      return { kind: "success", message: "Your email subscription is confirmed." };
+      return { kind: "success", message: t("confirmed") };
     }
     if (initialNotice === "invalid") {
-      return { kind: "error", message: "This confirmation link is invalid or expired." };
+      return { kind: "error", message: t("invalidConfirmation") };
     }
     return { kind: "idle", message: "" };
   });
@@ -157,7 +159,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
         if (!config) {
           setPushState({
             kind: "unavailable",
-            message: "Browser notifications are not configured on the server yet.",
+            message: t("notConfigured"),
           });
           return;
         }
@@ -170,7 +172,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
           clearPushSync();
           setPushState({
             kind: "prompt",
-            message: "Notification security keys changed. Enable notifications again.",
+            message: t("keysChanged"),
           });
           return;
         }
@@ -179,7 +181,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
           if (!recentlySynced && !(await persistPushSubscription(subscription))) {
             setPushState({
               kind: "error",
-              message: "This browser is subscribed, but it could not sync with the server.",
+              message: t("syncError"),
             });
             return;
           }
@@ -189,7 +191,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
         if (Notification.permission === "denied") {
           setPushState({
             kind: "blocked",
-            message: "Notifications are blocked in this browser's site settings.",
+            message: t("blocked"),
           });
           return;
         }
@@ -197,8 +199,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
         if (ios && !standalone) {
           setPushState({
             kind: "ios-install",
-            message:
-              "On iPhone or iPad, add this site to your Home Screen before enabling notifications.",
+            message: t("iosInstall"),
           });
           return;
         }
@@ -208,7 +209,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
         if (active) {
           setPushState({
             kind: "unavailable",
-            message: "Browser notification status could not be checked. Try again shortly.",
+            message: t("statusError"),
           });
         }
       }
@@ -217,17 +218,17 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
     return () => {
       active = false;
     };
-  }, []);
+  }, [t]);
 
   async function handleEmailSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const input = emailRef.current;
     if (!input?.validity.valid) {
-      setEmailState({ kind: "error", message: "Enter a valid email address.", invalid: true });
+      setEmailState({ kind: "error", message: t("invalidEmail"), invalid: true });
       input?.focus();
       return;
     }
-    setEmailState({ kind: "submitting", message: "Subscribing…" });
+    setEmailState({ kind: "submitting", message: t("subscribing") });
     try {
       const response = await client.api.notifications.email.subscribe.$post({
         json: { email: input.value },
@@ -239,40 +240,37 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
           kind: "error",
           message:
             code === "RATE_LIMITED"
-              ? "Too many attempts. Try again in an hour."
+              ? t("rateLimited")
               : code === "INVALID_EMAIL"
-                ? "Enter a valid email address."
-                : "Unable to subscribe right now. Check your connection and try again.",
+                ? t("invalidEmail")
+                : t("subscribeError"),
           invalid: code === "INVALID_EMAIL",
         });
         if (code === "INVALID_EMAIL") input.focus();
         return;
       }
-      const messages = {
-        confirmation_required: "Check your inbox to confirm the subscription.",
-        confirmation_pending: "A confirmation email was already sent. Check your inbox.",
-        already_subscribed: "This email address is already subscribed.",
-        suppressed: "This address cannot receive blog email right now.",
-      } satisfies Record<typeof payload.status, string>;
-      setEmailState({ kind: "success", message: messages[payload.status] });
+      setEmailState({
+        kind: "success",
+        message: t("checkInbox"),
+      });
       input.value = "";
     } catch (error) {
       reportClientError("notifications.subscribeEmail", error);
       setEmailState({
         kind: "error",
-        message: "Unable to subscribe right now. Check your connection and try again.",
+        message: t("subscribeError"),
       });
     }
   }
 
   async function handleEnablePush() {
-    setPushState({ kind: "working", message: "Enabling notifications…" });
+    setPushState({ kind: "working", message: t("enabling") });
     try {
       const config = await getPushConfig();
       if (!config) {
         setPushState({
           kind: "unavailable",
-          message: "Browser notifications are not configured on the server yet.",
+          message: t("notConfigured"),
         });
         return;
       }
@@ -284,8 +282,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
         savePushDismissal();
         setPushState({
           kind: "blocked",
-          message:
-            "Notifications were not enabled. You can change this in the browser's site settings.",
+          message: t("permissionDenied"),
         });
         return;
       }
@@ -308,13 +305,13 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
       setPushState({
         kind: "subscribed",
         subscription,
-        message: "Browser notifications are enabled.",
+        message: t("enabled"),
       });
     } catch (error) {
       reportClientError("notifications.enablePush", error);
       setPushState({
         kind: "error",
-        message: "Unable to enable notifications. Check your connection and try again.",
+        message: t("enableError"),
       });
     }
   }
@@ -334,7 +331,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
           clearPushSync();
           setPushState({
             kind: "prompt",
-            message: "This subscription expired. Enable notifications again.",
+            message: t("expired"),
           });
           return;
         }
@@ -343,14 +340,14 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
       setPushState({
         kind: "subscribed",
         subscription,
-        message: "Test sent. Your browser should show it shortly.",
+        message: t("testSent"),
       });
     } catch (error) {
       reportClientError("notifications.testPush", error);
       setPushState({
         kind: "subscribed",
         subscription,
-        message: "The test notification failed. Check browser and server settings.",
+        message: t("testError"),
       });
     } finally {
       setPushTesting(false);
@@ -358,7 +355,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
   }
 
   async function handleDisablePush(subscription: PushSubscription) {
-    setPushState({ kind: "working", message: "Disabling notifications…" });
+    setPushState({ kind: "working", message: t("disabling") });
     try {
       const response = await client.api.notifications.push.unsubscribe.$delete({
         json: { endpoint: subscription.endpoint },
@@ -366,13 +363,13 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
       if (!response.ok) throw new Error("The push subscription could not be disabled.");
       await subscription.unsubscribe();
       clearPushSync();
-      setPushState({ kind: "prompt", message: "Browser notifications are disabled." });
+      setPushState({ kind: "prompt", message: t("disabled") });
     } catch (error) {
       reportClientError("notifications.disablePush", error);
       setPushState({
         kind: "subscribed",
         subscription,
-        message: "Unable to disable notifications. Check your connection and try again.",
+        message: t("disableError"),
       });
     }
   }
@@ -383,12 +380,9 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
   return (
     <section aria-labelledby="blog-updates-heading" className="mt-8 py-5">
       <h2 id="blog-updates-heading" className="text-sm font-medium">
-        Stay updated
+        {t("heading")}
       </h2>
-      <p className="mt-1 text-xs leading-relaxed text-muted">
-        Get a short note when I publish something new. Your email or browser subscription is stored
-        only to deliver these updates; unsubscribe anytime. No account or tracking profile required.
-      </p>
+      <p className="mt-1 text-xs leading-relaxed text-muted">{t("description")}</p>
 
       <form
         noValidate
@@ -398,7 +392,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
         className="mt-4"
       >
         <label htmlFor={emailId} className="block text-xs font-medium">
-          Get new posts by email
+          {t("emailLabel")}
         </label>
         <div className="mt-2 flex flex-col gap-2 sm:flex-row">
           <input
@@ -415,7 +409,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
             aria-invalid={emailState.invalid || undefined}
             aria-describedby={`${emailHelpId} ${emailStatusId}`}
             placeholder="email@example.com"
-            className="min-h-10 min-w-0 flex-1 rounded-md border border-border bg-transparent px-3 text-sm placeholder:text-muted/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+            className="min-h-10 min-w-0 flex-1 rounded-md border border-border bg-transparent px-3 text-sm outline-none placeholder:text-muted/70 focus-visible:bg-border/20"
           />
           <button
             type="submit"
@@ -423,16 +417,15 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
             aria-busy={emailState.kind === "submitting"}
             className="min-h-10 shrink-0 rounded-md bg-foreground px-4 text-sm font-medium text-background transition-opacity duration-150 hover:opacity-80 motion-safe:active:scale-[0.96] disabled:cursor-wait disabled:opacity-50 motion-reduce:transition-none"
           >
-            {emailState.kind === "submitting" ? "Subscribing…" : "Subscribe"}
+            {emailState.kind === "submitting" ? t("subscribing") : t("subscribe")}
           </button>
         </div>
         <p id={emailHelpId} className="sr-only">
-          A confirmation email is required before notifications begin.
+          {t("emailHelp")}
         </p>
         <p
           id={emailStatusId}
-          role="status"
-          aria-live="polite"
+          role={emailError ? "alert" : "status"}
           aria-atomic="true"
           className={
             emailState.message
@@ -447,13 +440,13 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
       {showPush ? (
         <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <p className="text-xs font-medium">Browser notifications</p>
+            <p className="text-xs font-medium">{t("browserHeading")}</p>
             <p role="status" aria-live="polite" className="mt-1 text-xs leading-relaxed text-muted">
               {"message" in pushState && pushState.message
                 ? pushState.message
                 : pushState.kind === "subscribed"
-                  ? "Enabled for this browser."
-                  : "Get notified when I publish a new post."}
+                  ? t("browserEnabled")
+                  : t("browserPrompt")}
             </p>
           </div>
           {pushState.kind === "prompt" || pushState.kind === "error" ? (
@@ -465,7 +458,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
                 }}
                 className="min-h-10 rounded-md border border-border px-3 text-xs font-medium transition-colors duration-150 hover:bg-foreground/5 motion-safe:active:scale-[0.96] motion-reduce:transition-none"
               >
-                Enable notifications
+                {t("enable")}
               </button>
               <button
                 type="button"
@@ -475,7 +468,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
                 }}
                 className="min-h-10 px-3 text-xs text-muted underline-offset-4 hover:text-foreground hover:underline"
               >
-                Not now
+                {t("notNow")}
               </button>
             </div>
           ) : null}
@@ -490,7 +483,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
                   disabled={pushTesting}
                   className="min-h-10 rounded-md border border-border px-3 text-xs font-medium transition-colors duration-150 hover:bg-foreground/5 motion-safe:active:scale-[0.96] disabled:cursor-wait disabled:opacity-50 motion-reduce:transition-none"
                 >
-                  {pushTesting ? "Sending test…" : "Send test"}
+                  {pushTesting ? t("sendingTest") : t("sendTest")}
                 </button>
               ) : null}
               <button
@@ -501,7 +494,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
                 disabled={pushTesting}
                 className="min-h-10 rounded-md border border-border px-3 text-xs text-muted transition-colors duration-150 hover:text-foreground motion-safe:active:scale-[0.96] disabled:opacity-50 motion-reduce:transition-none"
               >
-                Disable notifications
+                {t("disable")}
               </button>
             </div>
           ) : null}

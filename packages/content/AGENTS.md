@@ -1,11 +1,12 @@
 # Content package guidance
 
-This source-exported package owns stable content contracts shared by multiple workspaces. It is
-currently limited to `BLOG_CONTENT_LIMITS` through the `./blog` export.
+This source-exported package owns the generated-blog content limits shared by the API generation
+pipeline and Studio editor guardrails. That cross-workspace rule is its current package boundary,
+exposed only through `./blog`.
 
 ## Invariants
 
-- Add a value only when more than one workspace must enforce the same persisted field or content rule.
+- Add a value only when more than one workspace must enforce or present the same content rule.
 - Keep UI layout, cache durations, API versions, prompts, provider options, and feature-local behavior
   in the owning app.
 - Keep exports dependency-free and safe for API, web, and Studio consumers.

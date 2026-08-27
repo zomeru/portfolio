@@ -1,5 +1,6 @@
 import type { PublicProfile, PublicTechStackGroup } from "@portfolio/api/public-portfolio";
 import { ArrowUpRight } from "lucide-react";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { PublicProfileImage } from "@/components/portfolio/public-profile-image";
 import { SocialLinks } from "@/components/portfolio/social-links";
@@ -13,7 +14,8 @@ type SiteHeaderProps = {
   techStack: readonly PublicTechStackGroup[];
 };
 
-export function SiteHeader({ profile, techStack }: SiteHeaderProps) {
+export async function SiteHeader({ profile, techStack }: SiteHeaderProps) {
+  const [locale, t] = await Promise.all([getLocale(), getTranslations("Common")]);
   const socials = profile ? getProfileSocials(profile) : [];
   const resumeUrl = profile?.resumePdfUrl ?? "/assets/GREGORIO_ZOMER_RESUME.pdf";
 
@@ -36,7 +38,11 @@ export function SiteHeader({ profile, techStack }: SiteHeaderProps) {
               {profile.name && (
                 <p className="text-2xl font-medium tracking-tight">{profile.name}</p>
               )}
-              {profile.role && <p className="mt-0.5 text-base text-muted">{profile.role}</p>}
+              {profile.role && (
+                <p className="mt-0.5 text-base text-muted">
+                  {locale === "en" ? profile.role : t("profileRole")}
+                </p>
+              )}
             </div>
           )}
           {profile && (
@@ -46,10 +52,16 @@ export function SiteHeader({ profile, techStack }: SiteHeaderProps) {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 text-base font-medium underline-offset-4 transition-colors duration-200 hover:text-muted motion-reduce:transition-none"
             >
-              Resume <ArrowUpRight aria-hidden="true" size={16} />
+              {t("resume")} <ArrowUpRight aria-hidden="true" size={16} />
             </a>
           )}
-          {socials.length > 0 && <SocialLinks items={socials} className="flex items-center" />}
+          {socials.length > 0 && (
+            <SocialLinks
+              items={socials}
+              emailLabel={t("social.email")}
+              className="flex items-center"
+            />
+          )}
         </div>
         {techStack.length > 0 && (
           <div>

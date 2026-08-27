@@ -32,8 +32,7 @@ export function GenerationForm() {
       </div>
 
       <div
-        role="status"
-        aria-live="polite"
+        role={state.status === "error" ? "alert" : "status"}
         aria-atomic="true"
         className={state.message ? "pb-4 text-sm" : "sr-only"}
       >

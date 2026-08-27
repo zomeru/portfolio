@@ -6,7 +6,7 @@ A personal portfolio with a technical blog, GitHub activity, and Ask Zomer AI. S
 
 The project uses:
 
-- **Runtime and tooling**: Node.js 24.19.x, pnpm 11.22.0, Turborepo 2+, TypeScript 7 with the TypeScript 6 compatibility API, Oxfmt, and Oxlint
+- **Runtime and tooling**: Node.js 24.19.x, pnpm 11.24.0, Turborepo 2+, TypeScript 7 with the TypeScript 6 compatibility API, Oxfmt, and Oxlint
 - **Frontend**: Next.js 16+, React 19+, Tailwind CSS 4+, and React Compiler
 - **API**: Hono 4+
 - **Content**: Sanity Studio 6+, Sanity Client 7+, GROQ, Portable Text, and TypeGen
@@ -22,6 +22,18 @@ Development logs color warnings and errors. Production emits structured, redacte
 `apps/web` is the only deployed process. It serves the Next.js UI, mounts the Hono app from `apps/api`, and hosts the MCP transports. `apps/api` owns the canonical published-portfolio service shared by the website, REST API, OpenAPI contract, and MCP tools. Ask Zomer uses the derived portfolio index for portfolio questions and can use provider web search for general questions when Groq or OpenRouter is selected.
 
 Blog publication creates an idempotent PostgreSQL event after Sanity succeeds. Email, Web Push, and webhook deliveries run independently, so provider failures never roll back a published post. The protected admin page retries incomplete or transient deliveries.
+
+| Workspace                    | Responsibility                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------ |
+| `apps/web`                   | Deployed Next.js UI, Hono adapter, metadata, discovery routes, and MCP servers |
+| `apps/api`                   | Hono routes and server-side portfolio, AI, GitHub, and notification services   |
+| `apps/studio`                | Sanity Studio, schemas, fixtures, structure, and TypeGen                       |
+| `packages/database`          | Drizzle schema, migrations, and repository-only application data access        |
+| `packages/env`               | Runtime-scoped, type-safe environment parsing                                  |
+| `packages/content`           | Generated-blog limits shared by API validation and Studio guardrails           |
+| `packages/typescript-config` | Shared base and Next.js TypeScript presets                                     |
+
+Turbo boundary checks reject undeclared dependencies and imports that reach across package file boundaries. Browser code imports API types through `@portfolio/api/types`; server callers use the in-process API entrypoint.
 
 ## Notifications
 
@@ -51,20 +63,20 @@ pnpm --filter @portfolio/studio dev
 
 `.env.example` is the source of truth. Add only the services needed for your development path:
 
-| Service               | Variables                                                                                                                            |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| Site                  | `NEXT_PUBLIC_SITE_URL`                                                                                                               |
-| Sanity                | `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `NEXT_PUBLIC_SANITY_APP_ID`, `SANITY_API_TOKEN`                       |
-| GitHub                | `GH_PAT_TOKEN`                                                                                                                       |
-| Database              | `DATABASE_URL`, optional `DATABASE_DIRECT_URL`                                                                                       |
-| Blog AI               | `GOOGLE_GENERATIVE_AI_API_KEY`, `GOOGLE_GENERATIVE_AI_MODEL`                                                                         |
-| Ask Zomer providers   | `AI_CHAT_PROVIDER`, `GROQ_API_KEY`, `NVIDIA_NIM_API_KEY`, `OPENROUTER_API_KEY`                                                       |
-| Ask Zomer models      | `AI_GROQ_CHAT_MODEL`, `AI_NVIDIA_NIM_CHAT_MODEL`, `AI_OPENROUTER_CHAT_MODEL`, `AI_EMBEDDING_MODEL`                                   |
-| Admin                 | `ADMIN_ACCESS_KEY`, `CRON_SECRET`, `AI_INDEX_SECRET_KEY`                                                                             |
-| Email notifications   | `EMAIL_PROVIDER`, `EMAIL_FROM`, `EMAIL_FROM_NAME`, optional `EMAIL_REPLY_TO`; Gmail: `GOOGLE_APP_PASSWORD`; Resend: `RESEND_API_KEY` |
-| Web Push              | `NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY`, `WEB_PUSH_VAPID_PRIVATE_KEY`, `WEB_PUSH_SUBJECT`                                            |
-| Notification security | `NOTIFICATION_TOKEN_SECRET`, `WEBHOOK_ENCRYPTION_KEY`                                                                                |
-| Tracing               | `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, optional `LANGFUSE_BASE_URL`                                                           |
+| Service               | Variables                                                                                                                                                               |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Site                  | `NEXT_PUBLIC_SITE_URL`                                                                                                                                                  |
+| Sanity                | `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `NEXT_PUBLIC_SANITY_APP_ID`, `SANITY_API_TOKEN`                                                          |
+| GitHub                | `GH_PAT_TOKEN`                                                                                                                                                          |
+| Database              | `DATABASE_URL`, optional `DATABASE_DIRECT_URL`                                                                                                                          |
+| Blog AI               | `GOOGLE_GENERATIVE_AI_API_KEY`, `GOOGLE_GENERATIVE_AI_MODEL`                                                                                                            |
+| Ask Zomer providers   | `AI_CHAT_PROVIDER`, `GROQ_API_KEY`, `NVIDIA_NIM_API_KEY`, `OPENROUTER_API_KEY`                                                                                          |
+| Ask Zomer models      | `AI_GROQ_CHAT_MODEL`, `AI_NVIDIA_NIM_CHAT_MODEL`, `AI_OPENROUTER_CHAT_MODEL`, `AI_EMBEDDING_MODEL`                                                                      |
+| Admin                 | `ADMIN_ACCESS_KEY`, `CRON_SECRET`, `AI_INDEX_SECRET_KEY`                                                                                                                |
+| Email notifications   | `EMAIL_PROVIDER`, `EMAIL_FROM`, `EMAIL_FROM_NAME`, optional `EMAIL_REPLY_TO` and `EMAIL_CONFIRMATION_TTL_HOURS`; Gmail: `GOOGLE_APP_PASSWORD`; Resend: `RESEND_API_KEY` |
+| Web Push              | `NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY`, `WEB_PUSH_VAPID_PRIVATE_KEY`, `WEB_PUSH_SUBJECT`                                                                               |
+| Notification security | `NOTIFICATION_TOKEN_SECRET`, `WEBHOOK_ENCRYPTION_KEY`                                                                                                                   |
+| Tracing               | `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY`, optional `LANGFUSE_BASE_URL`                                                                                              |
 
 Never expose server-only variables to browser code. Confirm the target before seeding content, publishing, migrating, indexing, or deploying.
 
@@ -97,6 +109,8 @@ Use these commands for common development tasks:
 | `pnpm build:all`                          | Build all workspaces                                              |
 | `pnpm check:all`                          | Run lint, dependency, unused-code, type, and test checks          |
 | `pnpm run check:all:build`                | Run all checks and builds                                         |
+| `pnpm boundaries`                         | Enforce workspace dependency and file-import boundaries           |
+| `pnpm analyze`                            | Write the Next.js bundle analysis to `.next/diagnostics/analyze`  |
 | `pnpm lint`                               | Check formatting with Oxfmt and lint with type-aware Oxlint       |
 | `pnpm lint:fix`                           | Format with Oxfmt and apply safe Oxlint fixes                     |
 | `pnpm format`                             | Format supported files with Oxfmt                                 |
@@ -110,6 +124,8 @@ Use these commands for common development tasks:
 | `pnpm security:secrets`                   | Scan the Git repository for new secrets with GitGuardian ggshield |
 
 Run database, seed, publish, and indexing commands only against a confirmed target.
+
+Bundle analysis uses Next.js's built-in experimental analyzer and is intentionally manual: the repository does not impose a brittle size threshold without a stable production baseline.
 
 ### Local security scanning
 

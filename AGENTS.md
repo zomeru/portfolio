@@ -23,7 +23,7 @@ dependencies and public package exports. Browser code may import API types from
 
 ## Repository constraints
 
-- Use Node.js 24.19.x and pnpm 11.22.0. Do not use npm or Yarn for repository tasks.
+- Use Node.js 24.19.x and pnpm 11.24.0. Do not use npm or Yarn for repository tasks.
 - Run supported scripts through pnpm. Use a filtered workspace script when the root has no alias.
 - Keep changes scoped and preserve unrelated working-tree changes.
 - Preserve strict TypeScript and the repository Oxfmt rules: two spaces, double quotes, semicolons, and
@@ -66,6 +66,8 @@ Choose checks by affected scope:
 - Run the affected workspace's `check-types` after TypeScript changes.
 - Run the affected workspace's build after routing, bundling, runtime, schema, or configuration changes.
 - Run `pnpm lint` after code or configuration changes.
+- Run `pnpm boundaries` after workspace dependency or package-export changes. CI enforces Turbo's
+  undeclared-dependency and cross-package file-import checks.
 - Keep automated tests minimal. Add them only for complex logic, security boundaries, or stable public
   contracts where type checking and direct verification are insufficient.
 - Do not add tests for routine portfolio UI, presentation, source-code patterns, logging wrappers, or

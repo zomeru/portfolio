@@ -51,3 +51,5 @@ TypeGen pipeline that generates the web app's Sanity types.
   queries.
 - Run `pnpm --filter @portfolio/studio build` after schema, configuration, structure, or dependency
   changes.
+- Keep `check-types` artifact-free. Studio is small enough that a local `.tsbuildinfo` file does not
+  justify extra Turbo output handling.

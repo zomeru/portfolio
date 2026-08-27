@@ -4,7 +4,11 @@ import { getSiteEnv } from "@portfolio/env/site";
 import { createClient, type SanityClient } from "@sanity/client";
 import { z } from "zod";
 
-import { portableTextToParagraphs, portableTextToPlainText } from "./portable-text";
+import {
+  portableTextToDetailSections,
+  portableTextToParagraphs,
+  portableTextToPlainText,
+} from "./portable-text";
 import { PUBLIC_BLOG_POST_QUERY, PUBLIC_PORTFOLIO_SNAPSHOT_QUERY } from "./queries";
 import {
   type PublicBlogPost,
@@ -68,22 +72,28 @@ const rawProfileSchema = z
 const rawExperienceSchema = z.object({
   company: z.string().nullable(),
   companyUrl: z.string().nullable(),
+  details: z.unknown(),
   location: z.string().nullable(),
   period: z.string().nullable(),
   responsibilities: z.unknown(),
   role: z.string().nullable(),
+  slug: z.string().nullable(),
   summary: z.string().nullable(),
   technologies: z.array(z.string()).nullable(),
+  updatedAt: z.string(),
 });
 
 const rawProjectSchema = z.object({
   caseStudyUrl: z.string().nullable(),
   demoUrl: z.string().nullable(),
   description: z.string().nullable(),
+  details: z.unknown(),
   image: rawPhotoSchema,
   repositoryUrl: z.string().nullable(),
+  slug: z.string().nullable(),
   technologies: z.array(z.string()).nullable(),
   title: z.string().nullable(),
+  updatedAt: z.string(),
   year: z.string().nullable(),
 });
 
@@ -133,7 +143,9 @@ export type PublicBlogPostListOptions = {
 
 export type PublicPortfolioService = {
   getBlogPost(slug: string): Promise<PublicBlogPost | null>;
+  getExperience(slug: string): Promise<PublicExperience | null>;
   getProfile(): Promise<PublicProfile | null>;
+  getProject(slug: string): Promise<PublicProject | null>;
   getResume(): Promise<PublicResume | null>;
   getSnapshot(): Promise<PublicPortfolioSnapshot>;
   listBlogPosts(options?: PublicBlogPostListOptions): Promise<PublicBlogPostList>;
@@ -214,6 +226,22 @@ function cleanStringList(value: string[] | null | undefined) {
   return (value ?? []).map((item) => item.trim()).filter(Boolean);
 }
 
+function slugifySegment(value: string) {
+  return value
+    .normalize("NFKD")
+    .replaceAll(/[\u0300-\u036f]/g, "")
+    .toLocaleLowerCase("en-US")
+    .replaceAll(/[^a-z0-9]+/g, "-")
+    .replaceAll(/^-+|-+$/g, "");
+}
+
+function publicSlug(value: string | null, fallback: string) {
+  const candidate = cleanString(value);
+  return candidate && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(candidate)
+    ? candidate
+    : slugifySegment(fallback);
+}
+
 function toPublicPhoto(photo: z.infer<typeof rawPhotoSchema>): PublicPhoto | null {
   const url = cleanString(photo?.asset?.url);
   const alt = cleanString(photo?.alt);
@@ -261,21 +289,26 @@ function toPublicProfile(
   });
 }
 
-function toPublicExperience(raw: RawSnapshot["experience"][number]) {
+function toPublicExperience(raw: RawSnapshot["experience"][number], siteUrl: URL) {
   const company = cleanString(raw.company);
   const period = cleanString(raw.period);
   const role = cleanString(raw.role);
-  if (!company || !period || !role) return null;
+  const slug = company ? publicSlug(raw.slug, company) : "";
+  if (!company || !period || !role || !slug) return null;
 
   return {
+    canonicalUrl: new URL(`/work/${slug}`, siteUrl).href,
     company,
     companyUrl: cleanString(raw.companyUrl),
+    details: portableTextToDetailSections(raw.details),
     location: cleanString(raw.location),
     period,
     responsibilities: portableTextToParagraphs(raw.responsibilities),
     role,
+    slug,
     summary: cleanString(raw.summary),
     technologies: cleanStringList(raw.technologies),
+    updatedAt: raw.updatedAt,
   } satisfies PublicExperience;
 }
 
@@ -283,17 +316,21 @@ function toPublicProject(raw: RawSnapshot["projects"][number], siteUrl: URL) {
   const description = cleanString(raw.description);
   const title = cleanString(raw.title);
   const year = cleanString(raw.year);
-  if (!description || !title || !year) return null;
+  const slug = title ? publicSlug(raw.slug, title) : "";
+  if (!description || !title || !year || !slug) return null;
 
   return {
-    canonicalUrl: new URL("/projects", siteUrl).href,
+    canonicalUrl: new URL(`/projects/${slug}`, siteUrl).href,
     caseStudyUrl: cleanString(raw.caseStudyUrl),
     demoUrl: cleanString(raw.demoUrl),
     description,
+    details: portableTextToDetailSections(raw.details),
     image: toPublicPhoto(raw.image),
     repositoryUrl: cleanString(raw.repositoryUrl),
+    slug,
     technologies: cleanStringList(raw.technologies),
     title,
+    updatedAt: raw.updatedAt,
     year,
   } satisfies PublicProject;
 }
@@ -346,7 +383,7 @@ export function serializePublicSnapshot(value: unknown, siteUrl: URL): PublicPor
       .map((post) => toPublicBlogSummary(post, siteUrl))
       .filter((post): post is PublicBlogPostSummary => Boolean(post)),
     experience: raw.experience
-      .map(toPublicExperience)
+      .map((experience) => toPublicExperience(experience, siteUrl))
       .filter((item): item is PublicExperience => Boolean(item)),
     profile: toPublicProfile(raw.profile, siteUrl),
     projects: raw.projects
@@ -370,8 +407,16 @@ export function createPublicPortfolioService(
       const raw = rawBlogPostSchema.nullable().parse(await dependencies.fetchBlogPost(slug));
       return toPublicBlogPost(raw, dependencies.siteUrl);
     },
+    async getExperience(slug) {
+      return (
+        (await getSnapshot()).experience.find((experience) => experience.slug === slug) ?? null
+      );
+    },
     async getProfile() {
       return (await getSnapshot()).profile;
+    },
+    async getProject(slug) {
+      return (await getSnapshot()).projects.find((project) => project.slug === slug) ?? null;
     },
     async getResume() {
       const snapshot = await getSnapshot();
@@ -435,6 +480,9 @@ export function getPublicPortfolioService() {
 
 export const getPublicPortfolioSnapshot = () => getPublicPortfolioService().getSnapshot();
 export const getPublicProfile = () => getPublicPortfolioService().getProfile();
+export const getPublicExperience = (slug: string) =>
+  getPublicPortfolioService().getExperience(slug);
+export const getPublicProject = (slug: string) => getPublicPortfolioService().getProject(slug);
 export const getPublicResume = () => getPublicPortfolioService().getResume();
 export const listPublicExperience = () => getPublicPortfolioService().listExperience();
 export const listPublicProjects = () => getPublicPortfolioService().listProjects();

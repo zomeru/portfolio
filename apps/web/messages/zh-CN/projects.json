@@ -1,0 +1,26 @@
+{
+  "eyebrow": "项目",
+  "title": "精选作品。",
+  "empty": "尚未发布项目。",
+  "live": "在线演示",
+  "caseStudy": "案例研究",
+  "detail": {
+    "back": "项目",
+    "eyebrow": "项目",
+    "technologies": "技术栈",
+    "links": "链接",
+    "repository": "代码仓库",
+    "opensNewTab": "（在新标签页中打开）"
+  },
+  "descriptions": {
+    "rezumerAi": "Rezumer AI 是一款 AI 辅助简历生成工具，为求职者提供一个统一的工作区，用于起草、优化、定制和导出简历。它将结构化简历编辑与 AI 内容优化、职位描述匹配以及权限感知型助手结合起来；该助手可根据当前用户的访问权限回答公开、账户或管理员相关问题。",
+    "batibot": "Batibot 是一款 AI 消息助手，帮助你找到符合需求的信息和服务。",
+    "zomink": "Zomink 是一个开源链接管理平台，将所需功能集中在一处。你可以使用自定义别名管理、跟踪和缩短网址。",
+    "sticaLms": "STICA LMS 是我的大学毕业项目，是为 STI College Alabang 开发的在线图书馆管理系统。",
+    "kokuban": "Kokuban 帮助日本教师创建可供学生在浏览器中访问和使用的在线教学材料。",
+    "zomify": "Zomify 是使用 SvelteKit、TypeScript 和 Tailwind CSS 构建的 Spotify 克隆应用。",
+    "paymongo": "一个轻量、功能完整、模块化并兼容 TypeScript 的 PayMongo JavaScript 库。",
+    "groundwork": "一个面向菲律宾企业的平台，帮助企业建立并拓展 B2B 网络。",
+    "zomifyColors": "一款受 Flat UI Colors 启发的调色板应用。"
+  }
+}

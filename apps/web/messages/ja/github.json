@@ -1,0 +1,39 @@
+{
+  "eyebrow": "GitHubコントリビューション",
+  "title": "所有リポジトリでのコントリビューションとコミット履歴。",
+  "loading": "GitHubのアクティビティを読み込んでいます…",
+  "activityError": "GitHubのアクティビティを読み込めませんでした。",
+  "commitsError": "GitHubのコミット履歴を読み込めませんでした。",
+  "calendar": {
+    "heading": "コントリビューションカレンダー",
+    "description": "Gitコミット以外も含むGitHubプロフィールのコントリビューションです。",
+    "period": "期間",
+    "lastTwelveMonths": "過去12か月",
+    "updating": "カレンダーを更新しています。",
+    "updated": "カレンダーを更新しました。",
+    "total": "{range}のコントリビューション：{count}件",
+    "range": "過去12か月",
+    "empty": "この期間のコントリビューションはありません。",
+    "imageLabel": "{range}の日別GitHubコントリビューション：{count}件",
+    "dayLabel": "{date}のコントリビューション：{count}件",
+    "less": "少",
+    "more": "多",
+    "weekdays": { "monday": "月", "wednesday": "水", "friday": "金" }
+  },
+  "commits": {
+    "heading": "コミット履歴",
+    "description": "所有リポジトリのデフォルトブランチに作成したコミットを新しい順に表示します。",
+    "repository": "リポジトリ",
+    "allRepositories": "すべてのリポジトリ",
+    "perPage": "表示件数",
+    "updating": "コミット履歴を更新しています。",
+    "updated": "コミット履歴を更新しました。",
+    "view": "コミットを見る",
+    "empty": "条件に一致するコミットはありません。",
+    "limited": "GitHubのコミット検索は最初の1,000件に制限され、不完全な結果が返る場合があります。",
+    "paginationLabel": "コミット履歴のページ送り",
+    "newer": "新しい",
+    "older": "古い",
+    "page": "{total}ページ中{page}ページ"
+  }
+}

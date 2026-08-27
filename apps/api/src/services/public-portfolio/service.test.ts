@@ -12,12 +12,33 @@ void test("public serializers allowlist fields and produce canonical URLs", asyn
     serialized.profile?.resumePdfUrl,
     "https://portfolio.example/assets/GREGORIO_ZOMER_RESUME.pdf",
   );
-  assert.equal(serialized.projects[0]?.canonicalUrl, "https://portfolio.example/projects");
+  assert.equal(serialized.experience[0]?.canonicalUrl, "https://portfolio.example/work/example-co");
+  assert.equal(
+    serialized.projects[0]?.canonicalUrl,
+    "https://portfolio.example/projects/public-project",
+  );
+  assert.deepEqual(serialized.experience[0]?.details, [
+    {
+      content: [{ style: "bullet", text: "Improved the API." }],
+      title: "Technical work",
+    },
+  ]);
   assert.equal(
     serialized.blogs[0]?.canonicalUrl,
     "https://portfolio.example/blogs/published-article",
   );
   assert.doesNotMatch(json, /secret|internalScore|internalId|_id/);
+
+  const legacySnapshot = serializePublicSnapshot(
+    {
+      ...rawPublicSnapshotFixture,
+      experience: [{ ...rawPublicSnapshotFixture.experience[0], slug: null }],
+      projects: [{ ...rawPublicSnapshotFixture.projects[0], slug: "Invalid project slug" }],
+    },
+    testSiteUrl,
+  );
+  assert.equal(legacySnapshot.experience[0]?.slug, "example-co");
+  assert.equal(legacySnapshot.projects[0]?.slug, "public-project");
 
   const service = createPublicPortfolioService({
     async fetchBlogPost() {
@@ -31,6 +52,8 @@ void test("public serializers allowlist fields and produce canonical URLs", asyn
   const post = await service.getBlogPost("published-article");
   assert.equal(post?.body, "## Article body");
   assert.doesNotMatch(JSON.stringify(post), /internalId/);
+  assert.equal((await service.getExperience("example-co"))?.company, "Example Co");
+  assert.equal((await service.getProject("public-project"))?.title, "Public Project");
 });
 
 void test("blog listing searches titles case-insensitively before pagination", async () => {

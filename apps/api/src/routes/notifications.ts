@@ -13,6 +13,10 @@ import { verifyAdminSessionToken } from "../lib/admin-session";
 import { requireCronAuthorization } from "../lib/auth";
 import { log, logError, logWarning } from "../lib/log";
 import { retryNotificationDeliveries } from "../services/notifications/delivery";
+import {
+  validateEmailAddress,
+  validateEmailFormat,
+} from "../services/notifications/email-validation";
 import { NotificationDeliveryError } from "../services/notifications/errors";
 import {
   confirmEmailAddress,
@@ -28,8 +32,8 @@ import {
 import { registerWebhookSubscription, sendWebhookTest } from "../services/notifications/webhook";
 import type { ApiEnv } from "../types/hono";
 
-const emailSchema = z.object({
-  email: z.email().max(320).toLowerCase(),
+const emailInputSchema = z.object({
+  email: z.string().max(1_024),
 });
 const tokenSchema = z.string().min(32).max(256);
 const pushSubscriptionSchema = z.object({
@@ -89,6 +93,16 @@ function requireNotificationAdmin(authorization: string | undefined) {
   requireCronAuthorization(authorization);
 }
 
+function logEmailFailure(message: string, error: unknown, operation: string) {
+  log("error", message, {
+    operation,
+    errorType: error instanceof Error ? error.name : "NonErrorThrown",
+    ...(error instanceof NotificationDeliveryError
+      ? { notificationErrorCode: error.code, retryable: error.retryable }
+      : {}),
+  });
+}
+
 function errorResponse(c: Context<ApiEnv>, error: unknown, operation: string) {
   if (error instanceof NotificationRateLimitError) {
     logWarning("notification request rate limited", error, { operation });
@@ -140,8 +154,20 @@ export const notificationRoutes = new Hono<ApiEnv>()
   .use("/push/*", mutationBodyLimit)
   .use("/webhooks/*", mutationBodyLimit)
   .post("/email/subscribe", async (c) => {
-    const parsed = emailSchema.safeParse(await c.req.json().catch(() => null));
+    const parsed = emailInputSchema.safeParse(await c.req.json().catch(() => null));
     if (!parsed.success) {
+      return c.json(
+        {
+          error: { code: "INVALID_EMAIL", message: "Enter a valid email address." },
+          requestId: c.get("requestId"),
+        },
+        400,
+      );
+    }
+    const accepted = () =>
+      c.json({ success: true as const, status: "confirmation_sent" as const }, 202);
+    const format = validateEmailFormat(parsed.data.email);
+    if (!format.success) {
       return c.json(
         {
           error: { code: "INVALID_EMAIL", message: "Enter a valid email address." },
@@ -152,31 +178,82 @@ export const notificationRoutes = new Hono<ApiEnv>()
     }
     try {
       const fingerprint = requestFingerprint(c.req.raw.headers);
-      await Promise.all([
-        enforceNotificationRateLimit({
-          scope: "email-subscribe-ip",
-          key: fingerprint,
-          limit: 5,
-          windowMs: 60 * 60 * 1_000,
-        }),
-        enforceNotificationRateLimit({
-          scope: "email-subscribe-address",
-          key: parsed.data.email,
-          limit: 3,
-          windowMs: 60 * 60 * 1_000,
-        }),
-      ]);
-      const result = await subscribeEmailAddress(parsed.data.email);
-      return c.json({ success: true as const, status: result.outcome });
+      await enforceNotificationRateLimit({
+        scope: "email-subscribe-ip",
+        key: fingerprint,
+        limit: 5,
+        windowMs: 60 * 60 * 1_000,
+      });
+
+      const validation = await validateEmailAddress(format.email);
+      if (!validation.success) {
+        if (validation.retryable) {
+          logWarning("email MX validation lookup failed", new Error("DNS lookup failed."), {
+            operation: "notifications.validateEmail",
+          });
+          return c.json(
+            {
+              error: {
+                code: "EMAIL_VALIDATION_UNAVAILABLE",
+                message: "Email validation is temporarily unavailable. Try again shortly.",
+              },
+              requestId: c.get("requestId"),
+            },
+            503,
+          );
+        }
+        return c.json(
+          {
+            error: { code: "INVALID_EMAIL", message: "Enter a valid email address." },
+            requestId: c.get("requestId"),
+          },
+          400,
+        );
+      }
+
+      await enforceNotificationRateLimit({
+        scope: "email-subscribe-address",
+        key: validation.email,
+        limit: 3,
+        windowMs: 60 * 60 * 1_000,
+      });
+      try {
+        await subscribeEmailAddress(validation.email);
+      } catch (error) {
+        logEmailFailure("email subscription request failed", error, "notifications.subscribeEmail");
+      }
+      return accepted();
     } catch (error) {
       return errorResponse(c, error, "notifications.subscribeEmail");
     }
   })
   .get("/email/confirm", async (c) => {
     const token = tokenSchema.safeParse(c.req.query("token"));
-    const confirmed = token.success ? await confirmEmailAddress(token.data) : null;
     const redirectUrl = new URL("/blogs", getSiteEnv().siteUrl);
-    redirectUrl.searchParams.set("subscription", confirmed ? "confirmed" : "invalid");
+    try {
+      await enforceNotificationRateLimit({
+        scope: "email-confirm-ip",
+        key: requestFingerprint(c.req.raw.headers),
+        limit: 30,
+        windowMs: 60 * 60 * 1_000,
+      });
+      if (token.success) {
+        await enforceNotificationRateLimit({
+          scope: "email-confirm-token",
+          key: token.data,
+          limit: 10,
+          windowMs: 60 * 60 * 1_000,
+        });
+      }
+      const confirmed = token.success ? await confirmEmailAddress(token.data) : null;
+      redirectUrl.searchParams.set("subscription", confirmed ? "confirmed" : "invalid");
+    } catch (error) {
+      if (error instanceof NotificationRateLimitError) {
+        return errorResponse(c, error, "notifications.confirmEmail");
+      }
+      logEmailFailure("email confirmation failed", error, "notifications.confirmEmail");
+      redirectUrl.searchParams.set("subscription", "invalid");
+    }
     return c.redirect(redirectUrl.href, 303);
   })
   .post("/email/unsubscribe", async (c) => {
