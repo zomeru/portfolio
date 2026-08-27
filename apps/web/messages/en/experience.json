@@ -7,5 +7,15 @@
     "evelan": { "role": "Full Stack Developer", "period": "Aug. 2023 — Dec. 2023" },
     "beyonder": { "role": "Software Engineer", "period": "Feb. 2022 — Aug. 2023" },
     "freelance": { "role": "Full Stack Developer", "period": "Sep. 2021 — Feb. 2022" }
+  },
+  "detail": {
+    "back": "Experience",
+    "eyebrow": "Work experience",
+    "period": "Period",
+    "location": "Location",
+    "technologies": "Technologies",
+    "responsibilities": "Responsibilities",
+    "opensNewTab": "(opens in a new tab)",
+    "metadataDescription": "{role} at {company}. {summary}"
   }
 }

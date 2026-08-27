@@ -7,18 +7,7 @@ import { PageHeader } from "@/components/portfolio/page-header";
 import { ProjectItem } from "@/components/portfolio/project-item";
 import { resolveLocale, type LocaleParams } from "@/i18n/server";
 import { createPageMetadata } from "@/lib/metadata";
-
-const projectDescriptionKeys = {
-  "Rezumer AI": "rezumerAi",
-  Batibot: "batibot",
-  Zomink: "zomink",
-  "STICA LMS": "sticaLms",
-  Kokuban: "kokuban",
-  Zomify: "zomify",
-  "Paymongo.js": "paymongo",
-  "Groundwork PH": "groundwork",
-  "Zomify Colors": "zomifyColors",
-} as const;
+import { projectTranslationKeys } from "@/lib/portfolio-content";
 
 export async function generateMetadata({ params }: { params: LocaleParams }): Promise<Metadata> {
   const locale = await resolveLocale(params);
@@ -44,7 +33,7 @@ export default async function ProjectsPage({ params }: { params: LocaleParams })
       <ul className="mt-10 divide-y divide-border border-t border-border">
         {projects.items.map((project, index) => {
           const descriptionKey =
-            projectDescriptionKeys[project.title as keyof typeof projectDescriptionKeys];
+            projectTranslationKeys[project.title as keyof typeof projectTranslationKeys];
           const localizedProject =
             locale !== "en" && descriptionKey
               ? { ...project, description: t(`descriptions.${descriptionKey}`) }

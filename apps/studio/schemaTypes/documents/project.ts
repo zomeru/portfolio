@@ -9,6 +9,20 @@ export const project: SchemaTypeDefinition = defineType({
   fields: [
     defineField({ name: "title", type: "string", validation: (rule) => rule.required() }),
     defineField({
+      name: "slug",
+      type: "slug",
+      description: "Stable public URL segment for the project detail page.",
+      options: { source: "title", maxLength: 96 },
+      validation: (rule) =>
+        rule
+          .required()
+          .custom((value) =>
+            !value?.current || /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value.current)
+              ? true
+              : "Use lowercase letters, numbers, and single hyphens only.",
+          ),
+    }),
+    defineField({
       name: "year",
       type: "string",
       validation: (rule) => rule.required().regex(/^\d{4}$/, { name: "year" }),
@@ -18,6 +32,13 @@ export const project: SchemaTypeDefinition = defineType({
       type: "text",
       rows: 4,
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "details",
+      title: "Detail page content",
+      description:
+        "Optional structured technical content. Use headings for context, architecture, implementation, decisions, challenges, tradeoffs, security, integrations, and outcomes.",
+      type: "richText",
     }),
     defineField({
       name: "image",

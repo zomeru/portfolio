@@ -4,6 +4,14 @@
   "empty": "Es wurden noch keine Projekte veröffentlicht.",
   "live": "Live",
   "caseStudy": "Fallstudie",
+  "detail": {
+    "back": "Projekte",
+    "eyebrow": "Projekt",
+    "technologies": "Technologien",
+    "links": "Links",
+    "repository": "Repository",
+    "opensNewTab": "(öffnet in einem neuen Tab)"
+  },
   "descriptions": {
     "rezumerAi": "Rezumer AI ist ein KI-gestützter Lebenslauf-Editor für Arbeitssuchende, die Entwürfe, Überarbeitungen, Anpassungen und Exporte in einem Arbeitsbereich erledigen möchten. Die Anwendung verbindet strukturierte Bearbeitung mit KI-Optimierung einzelner Abschnitte, dem Abgleich mit Stellenbeschreibungen und einem berechtigungsbewussten Assistenten für öffentliche, Konto- und Verwaltungsfragen.",
     "batibot": "Batibot ist ein KI-gestützter Messaging-Begleiter, der dabei hilft, passende Informationen und Dienstleistungen zu finden.",

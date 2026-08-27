@@ -482,9 +482,6 @@ importers:
       '@portfolio/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
-      '@sanity/client':
-        specifier: ^7.26.2
-        version: 7.26.2
       '@tailwindcss/postcss':
         specifier: ^4.3.3
         version: 4.3.3

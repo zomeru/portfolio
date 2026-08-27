@@ -1,4 +1,4 @@
-export const PUBLIC_API_VERSION = "1.0.0";
+export const PUBLIC_API_VERSION = "1.1.0";
 export const PORTFOLIO_MCP_SERVER_NAME = "zomer-gregorio-portfolio";
 export const DOCS_MCP_SERVER_NAME = "zomer-gregorio-developer-docs";
 

@@ -30,5 +30,79 @@
   "social": {
     "email": "E-Mail"
   },
-  "opensNewTab": "(wird in einem neuen Tab geöffnet)"
+  "opensNewTab": "(wird in einem neuen Tab geöffnet)",
+  "search": {
+    "trigger": "Suchen",
+    "dialogTitle": "Portfolio durchsuchen",
+    "inputLabel": "Seiten, Berufserfahrung, Projekte und Aktionen durchsuchen",
+    "placeholder": "Projekte, Erfahrung, Technologien suchen…",
+    "close": "Suche schließen",
+    "resultsLabel": "Suchergebnisse",
+    "resultCount": "{count, plural, one {# Ergebnis} other {# Ergebnisse}}",
+    "noResults": "Keine passenden Ziele",
+    "noResultsHint": "Versuche ein Projekt, eine Technologie, Firma oder Aktion.",
+    "groups": {
+      "page": "Seiten",
+      "work": "Berufserfahrung",
+      "project": "Projekte",
+      "blog": "Blog",
+      "profile": "Profil",
+      "action": "Aktionen",
+      "assistant": "Zomer AI fragen"
+    },
+    "keyboard": { "navigate": "↑↓ Navigieren", "select": "↵ Auswählen" },
+    "ask": {
+      "title": "Zomer AI fragen: „{query}“",
+      "description": "Diese Frage an den Portfolio-Assistenten senden"
+    },
+    "pages": {
+      "home": {
+        "title": "Über mich",
+        "description": "Profil, Berufserfahrung und technische Fähigkeiten"
+      },
+      "projects": {
+        "title": "Projekte",
+        "description": "Ausgewählte Softwareprojekte und Fallstudien"
+      },
+      "blogs": { "title": "Blog", "description": "Artikel über Softwareentwicklung" },
+      "github": { "title": "GitHub-Aktivität", "description": "Beiträge und Commit-Verlauf" },
+      "assistant": {
+        "title": "Zomer AI fragen",
+        "description": "Fragen zu Erfahrung und Projekten stellen"
+      },
+      "contact": { "title": "Kontakt", "description": "Kontakt- und Buchungsmöglichkeiten" },
+      "developers": {
+        "title": "Entwickler",
+        "description": "REST-, OpenAPI- und MCP-Dokumentation"
+      }
+    },
+    "profile": {
+      "resume": { "title": "Lebenslauf", "description": "Aktuelles Lebenslauf-PDF öffnen" },
+      "github": { "title": "GitHub-Profil", "description": "Repositories und Open-Source-Arbeit" },
+      "linkedin": { "title": "LinkedIn-Profil", "description": "Berufsprofil und Erfahrung" },
+      "email": { "title": "E-Mail", "description": "Zomer eine E-Mail senden" }
+    },
+    "actions": {
+      "theme": {
+        "title": "Farbschema wechseln",
+        "description": "Zwischen heller und dunkler Darstellung wechseln"
+      },
+      "book": {
+        "title": "Gespräch buchen",
+        "description": "Kalender für ein 30-minütiges Gespräch öffnen"
+      },
+      "languages": {
+        "en": { "title": "Zu Englisch wechseln", "description": "Portfolio auf Englisch anzeigen" },
+        "ja": {
+          "title": "Zu Japanisch wechseln",
+          "description": "Portfolio auf Japanisch anzeigen"
+        },
+        "zh-CN": {
+          "title": "Zu Chinesisch wechseln",
+          "description": "Portfolio auf vereinfachtem Chinesisch anzeigen"
+        },
+        "de": { "title": "Zu Deutsch wechseln", "description": "Portfolio auf Deutsch anzeigen" }
+      }
+    }
+  }
 }

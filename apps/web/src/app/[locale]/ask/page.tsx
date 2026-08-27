@@ -18,14 +18,22 @@ export async function generateMetadata({ params }: { params: LocaleParams }): Pr
   });
 }
 
-export default async function AskPage({ params }: { params: LocaleParams }) {
+export default async function AskPage({
+  params,
+  searchParams,
+}: {
+  params: LocaleParams;
+  searchParams: Promise<{ q?: string | string[] }>;
+}) {
   const locale = await resolveLocale(params);
+  const query = (await searchParams).q;
+  const initialQuestion = (Array.isArray(query) ? query[0] : query)?.trim().slice(0, 4_000);
   const t = await getTranslations({ locale, namespace: "Assistant" });
   return (
     <PageTransition>
       <PageHeader index="05" eyebrow={t("eyebrow")} title={t("title")} />
       <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted">{t("description")}</p>
-      <AskZomerChat />
+      <AskZomerChat initialQuestion={initialQuestion} />
     </PageTransition>
   );
 }

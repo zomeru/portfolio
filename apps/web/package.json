@@ -44,7 +44,6 @@
   },
   "devDependencies": {
     "@portfolio/typescript-config": "workspace:*",
-    "@sanity/client": "^7.26.2",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.3.0",
     "@types/react": "^19.2.18",

@@ -409,7 +409,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
             aria-invalid={emailState.invalid || undefined}
             aria-describedby={`${emailHelpId} ${emailStatusId}`}
             placeholder="email@example.com"
-            className="min-h-10 min-w-0 flex-1 rounded-md border border-border bg-transparent px-3 text-sm placeholder:text-muted/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+            className="min-h-10 min-w-0 flex-1 rounded-md border border-border bg-transparent px-3 text-sm outline-none placeholder:text-muted/70 focus-visible:bg-border/20"
           />
           <button
             type="submit"

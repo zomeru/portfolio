@@ -3,8 +3,10 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { Select } from "@/components/ui/select";
+import { replaceLocale } from "@/i18n/client";
 import { usePathname } from "@/i18n/navigation";
-import { localeCodes, locales, localizedPath, type Locale } from "@/i18n/routing";
+import { localeCodes, locales, type Locale } from "@/i18n/routing";
 
 export function LanguagePicker() {
   const locale = useLocale();
@@ -16,32 +18,25 @@ export function LanguagePicker() {
     if (nextLocale === locale) return;
 
     setPending(true);
-    const href = `${localizedPath(pathname, nextLocale)}${window.location.search}${window.location.hash}`;
-
-    // Reinitialize the locale root document so <html lang> and bootstrap scripts match the locale.
-    window.location.replace(href);
+    replaceLocale(pathname, nextLocale);
   }
 
   return (
-    <label className="relative inline-flex min-h-8 items-center border border-border">
-      <span className="sr-only">{pending ? t("switching") : t("label")}</span>
-      <select
-        value={locale}
-        disabled={pending}
-        aria-label={t("label")}
-        onChange={(event) => switchLocale(event.currentTarget.value as Locale)}
-        className="min-h-8 cursor-pointer appearance-none bg-background py-1 pr-6 pl-2 font-mono text-[11px] font-medium text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 disabled:cursor-wait disabled:opacity-60"
-      >
-        {locales.map((candidate) => (
-          <option key={candidate} value={candidate}>
-            {localeCodes[candidate]}
-          </option>
-        ))}
-      </select>
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute right-2 size-1.5 rotate-45 border-r border-b border-foreground"
-      />
-    </label>
+    <Select
+      id="portfolio-language"
+      label={pending ? t("switching") : t("label")}
+      labelClassName="sr-only"
+      value={locale}
+      disabled={pending}
+      iconSize={14}
+      options={locales.map((candidate) => ({
+        label: localeCodes[candidate],
+        value: candidate,
+      }))}
+      onValueChangeAction={(value) => switchLocale(value as Locale)}
+      className="inline-grid gap-0"
+      triggerClassName="min-h-8 w-auto gap-2 rounded-none px-2 font-mono text-[11px] font-medium hover:bg-border/40"
+      contentClassName="mt-0 mb-1 min-w-24 rounded-none"
+    />
   );
 }

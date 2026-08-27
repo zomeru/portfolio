@@ -12,7 +12,7 @@ import {
 
 export const siteUrl = getSiteEnv().siteUrl;
 export const domain = siteUrl.replace(/^https?:\/\//, "");
-export const siteUpdatedAt = new Date("2026-08-25");
+export const siteUpdatedAt = new Date("2026-08-27");
 
 type PageMetadataOptions = {
   title: string;

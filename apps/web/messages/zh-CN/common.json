@@ -30,5 +30,55 @@
   "social": {
     "email": "电子邮件"
   },
-  "opensNewTab": "（在新标签页中打开）"
+  "opensNewTab": "（在新标签页中打开）",
+  "search": {
+    "trigger": "搜索",
+    "dialogTitle": "搜索作品集",
+    "inputLabel": "搜索页面、工作经历、项目和操作",
+    "placeholder": "搜索项目、经历、技术…",
+    "close": "关闭搜索",
+    "resultsLabel": "搜索结果",
+    "resultCount": "{count} 条结果",
+    "noResults": "没有匹配的内容",
+    "noResultsHint": "请尝试项目、技术、公司或操作。",
+    "groups": {
+      "page": "页面",
+      "work": "工作经历",
+      "project": "项目",
+      "blog": "博客",
+      "profile": "个人资料",
+      "action": "操作",
+      "assistant": "询问 Zomer AI"
+    },
+    "keyboard": { "navigate": "↑↓ 导航", "select": "↵ 选择" },
+    "ask": {
+      "title": "询问 Zomer AI：“{query}”",
+      "description": "将此问题发送给作品集助手"
+    },
+    "pages": {
+      "home": { "title": "关于", "description": "个人资料、工作经历和技术能力" },
+      "projects": { "title": "项目", "description": "精选软件项目和案例" },
+      "blogs": { "title": "博客", "description": "软件工程文章" },
+      "github": { "title": "GitHub 贡献", "description": "贡献活动和提交记录" },
+      "assistant": { "title": "询问 Zomer AI", "description": "询问工作经历和项目" },
+      "contact": { "title": "联系我", "description": "联系方式和通话预约" },
+      "developers": { "title": "开发者", "description": "REST、OpenAPI 和 MCP 文档" }
+    },
+    "profile": {
+      "resume": { "title": "简历", "description": "打开最新的简历 PDF" },
+      "github": { "title": "GitHub 主页", "description": "代码仓库和开源工作" },
+      "linkedin": { "title": "LinkedIn 主页", "description": "职业资料和经历" },
+      "email": { "title": "电子邮件", "description": "给 Zomer 发送邮件" }
+    },
+    "actions": {
+      "theme": { "title": "切换主题", "description": "在浅色和深色外观之间切换" },
+      "book": { "title": "预约通话", "description": "打开 30 分钟预约日历" },
+      "languages": {
+        "en": { "title": "切换为英语", "description": "以英语查看作品集" },
+        "ja": { "title": "切换为日语", "description": "以日语查看作品集" },
+        "zh-CN": { "title": "切换为中文", "description": "以简体中文查看作品集" },
+        "de": { "title": "切换为德语", "description": "以德语查看作品集" }
+      }
+    }
+  }
 }

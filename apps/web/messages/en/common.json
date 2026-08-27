@@ -30,5 +30,73 @@
   "social": {
     "email": "Email"
   },
-  "opensNewTab": "(opens in a new tab)"
+  "opensNewTab": "(opens in a new tab)",
+  "search": {
+    "trigger": "Search",
+    "dialogTitle": "Search the portfolio",
+    "inputLabel": "Search pages, work, projects, and actions",
+    "placeholder": "Search projects, experience, technologies…",
+    "close": "Close search",
+    "resultsLabel": "Search results",
+    "resultCount": "{count, plural, one {# result} other {# results}}",
+    "noResults": "No matching destinations",
+    "noResultsHint": "Try a project, technology, company, or action.",
+    "groups": {
+      "page": "Pages",
+      "work": "Work experience",
+      "project": "Projects",
+      "blog": "Blogs",
+      "profile": "Profile",
+      "action": "Actions",
+      "assistant": "Ask Zomer AI"
+    },
+    "keyboard": { "navigate": "↑↓ Navigate", "select": "↵ Select" },
+    "ask": {
+      "title": "Ask Zomer AI: “{query}”",
+      "description": "Send this question to the portfolio assistant"
+    },
+    "pages": {
+      "home": { "title": "About", "description": "Profile, experience, and technical skills" },
+      "projects": {
+        "title": "Projects",
+        "description": "Selected software projects and case studies"
+      },
+      "blogs": { "title": "Blogs", "description": "Software engineering articles" },
+      "github": {
+        "title": "GitHub Contributions",
+        "description": "Contribution activity and commit history"
+      },
+      "assistant": {
+        "title": "Ask Zomer AI",
+        "description": "Ask questions about experience and projects"
+      },
+      "contact": { "title": "Let’s talk", "description": "Contact and booking options" },
+      "developers": { "title": "Developers", "description": "REST, OpenAPI, and MCP documentation" }
+    },
+    "profile": {
+      "resume": { "title": "Resume", "description": "Open the current resume PDF" },
+      "github": { "title": "GitHub profile", "description": "Repositories and open-source work" },
+      "linkedin": {
+        "title": "LinkedIn profile",
+        "description": "Professional profile and experience"
+      },
+      "email": { "title": "Email", "description": "Send Zomer an email" }
+    },
+    "actions": {
+      "theme": {
+        "title": "Toggle theme",
+        "description": "Switch between light and dark appearance"
+      },
+      "book": { "title": "Book a call", "description": "Open the 30-minute booking calendar" },
+      "languages": {
+        "en": { "title": "Switch to English", "description": "View the portfolio in English" },
+        "ja": { "title": "Switch to Japanese", "description": "View the portfolio in Japanese" },
+        "zh-CN": {
+          "title": "Switch to Chinese",
+          "description": "View the portfolio in Simplified Chinese"
+        },
+        "de": { "title": "Switch to German", "description": "View the portfolio in German" }
+      }
+    }
+  }
 }

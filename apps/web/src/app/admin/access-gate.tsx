@@ -59,7 +59,7 @@ export function AdminAccessGate() {
           disabled={isPending}
           aria-invalid={state.error ? true : undefined}
           aria-describedby={state.error ? errorId : helpId}
-          className="mt-2 min-h-11 w-full rounded-md border border-border bg-transparent px-3 text-sm placeholder:text-muted/70"
+          className="mt-2 min-h-11 w-full rounded-md border border-border bg-transparent px-3 text-sm outline-none placeholder:text-muted/70 focus-visible:bg-border/20"
           placeholder="Admin access key…"
         />
         {state.error ? (

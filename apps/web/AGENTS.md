@@ -16,8 +16,9 @@ Hono backend and stateless MCP handlers are mounted inside the same deployment.
 
 ## Route and rendering invariants
 
-- Public routes are `/`, `/projects`, `/blogs`, `/blogs/[slug]`, `/github-contributions`, `/ask`,
-  `/contact`, and `/developers`. `/admin` is private and force-dynamic.
+- Public routes are `/`, `/work/[slug]`, `/projects`, `/projects/[slug]`, `/blogs`,
+  `/blogs/[slug]`, `/github-contributions`, `/ask`, `/contact`, and `/developers`. `/admin` is private
+  and force-dynamic.
   Keep pages and layouts as Server Components unless a browser API, interaction state, or effect
   requires a narrow client boundary.
 - `src/app/api/[[...route]]/route.ts` is only the `hono/vercel` adapter for `@portfolio/api`.

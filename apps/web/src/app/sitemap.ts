@@ -1,6 +1,8 @@
 import {
   getPublicPortfolioSnapshot,
   type PublicBlogPostSummary,
+  type PublicExperience,
+  type PublicProject,
 } from "@portfolio/api/public-portfolio";
 import type { MetadataRoute } from "next";
 
@@ -25,13 +27,15 @@ const machinePages = [
 ] as const;
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const blogPosts = (await getPublicPortfolioSnapshot()).blogs;
+  const { blogs, experience, projects } = await getPublicPortfolioSnapshot();
 
-  return getSitemapEntries(blogPosts);
+  return getSitemapEntries(blogs, experience, projects);
 }
 
 export function getSitemapEntries(
   blogPosts: PublicBlogPostSummary[],
+  experience: PublicExperience[],
+  projects: PublicProject[],
   baseUrl = siteUrl,
 ): MetadataRoute.Sitemap {
   const absoluteAlternates = (path: string) => ({
@@ -67,6 +71,28 @@ export function getSitemapEntries(
         changeFrequency: "yearly" as const,
         lastModified: new Date(date),
         priority: 0.6,
+        url: new URL(localizedPath(path, defaultLocale), baseUrl).href,
+      };
+    }),
+    ...experience.map(({ slug, updatedAt }) => {
+      const path = `/work/${slug}`;
+
+      return {
+        alternates: absoluteAlternates(path),
+        changeFrequency: "monthly" as const,
+        lastModified: new Date(updatedAt),
+        priority: 0.7,
+        url: new URL(localizedPath(path, defaultLocale), baseUrl).href,
+      };
+    }),
+    ...projects.map(({ slug, updatedAt }) => {
+      const path = `/projects/${slug}`;
+
+      return {
+        alternates: absoluteAlternates(path),
+        changeFrequency: "monthly" as const,
+        lastModified: new Date(updatedAt),
+        priority: 0.8,
         url: new URL(localizedPath(path, defaultLocale), baseUrl).href,
       };
     }),

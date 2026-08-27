@@ -20,6 +20,6 @@ const AskZomerChatContent = dynamic(
   },
 );
 
-export function AskZomerChat() {
-  return <AskZomerChatContent />;
+export function AskZomerChat({ initialQuestion }: { initialQuestion: string | undefined }) {
+  return <AskZomerChatContent initialQuestion={initialQuestion} />;
 }

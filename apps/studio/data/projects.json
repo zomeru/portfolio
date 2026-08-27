@@ -2,8 +2,53 @@
   {
     "_type": "project",
     "title": "Rezumer AI",
+    "slug": { "_type": "slug", "current": "rezumer-ai" },
     "year": "2026",
     "description": "Rezumerai is an AI-assisted resume builder for job seekers who want one workspace to draft, refine, tailor, and export resumes. It combines structured resume editing with AI-powered section optimization, job-description matching, and a scope-aware assistant that can answer public, account, or admin questions based on the current user's access.",
+    "details": [
+      {
+        "_key": "rezumer-context-heading",
+        "_type": "block",
+        "children": [{ "_key": "rezumer-context-heading-text", "_type": "span", "marks": [], "text": "Problem and context" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "rezumer-context-body",
+        "_type": "block",
+        "children": [{ "_key": "rezumer-context-body-text", "_type": "span", "marks": [], "text": "Job seekers can draft, refine, tailor, and export resumes from one structured workspace." }],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "rezumer-implementation-heading",
+        "_type": "block",
+        "children": [{ "_key": "rezumer-implementation-heading-text", "_type": "span", "marks": [], "text": "Implementation" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "rezumer-implementation-body",
+        "_type": "block",
+        "children": [{ "_key": "rezumer-implementation-body-text", "_type": "span", "marks": [], "text": "The product combines structured resume editing, AI-powered section optimization, job-description matching, and a scope-aware assistant that answers public, account, or admin questions according to the current user's access." }],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "rezumer-architecture-heading",
+        "_type": "block",
+        "children": [{ "_key": "rezumer-architecture-heading-text", "_type": "span", "marks": [], "text": "Architecture" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "rezumer-architecture-body",
+        "_type": "block",
+        "children": [{ "_key": "rezumer-architecture-body-text", "_type": "span", "marks": [], "text": "A TypeScript Turborepo brings together the Next.js and React interface, ElysiaJS services, AI SDK integrations, and Prisma-backed PostgreSQL and pgvector data." }],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
     "technologies": [
       "Turborepo",
       "TypeScript",
@@ -23,8 +68,39 @@
   {
     "_type": "project",
     "title": "Batibot",
+    "slug": { "_type": "slug", "current": "batibot" },
     "year": "2026",
     "description": "Batibot is an AI-powered messaging companion that helps you find the right information and services for your needs.",
+    "details": [
+      {
+        "_key": "batibot-context-heading",
+        "_type": "block",
+        "children": [{ "_key": "batibot-context-heading-text", "_type": "span", "marks": [], "text": "Project context" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "batibot-context-body",
+        "_type": "block",
+        "children": [{ "_key": "batibot-context-body-text", "_type": "span", "marks": [], "text": "Batibot is a mobile messaging companion designed to help people find information and services that match their needs." }],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "batibot-integration-heading",
+        "_type": "block",
+        "children": [{ "_key": "batibot-integration-heading-text", "_type": "span", "marks": [], "text": "Integrations" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "batibot-integration-body",
+        "_type": "block",
+        "children": [{ "_key": "batibot-integration-body-text", "_type": "span", "marks": [], "text": "The React Native application integrates OpenAI and ChatGPT capabilities with Supabase." }],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
     "technologies": [
       "React Native CLI",
       "Typescript",
@@ -40,8 +116,39 @@
   {
     "_type": "project",
     "title": "Zomink",
+    "slug": { "_type": "slug", "current": "zomink" },
     "year": "2026",
     "description": "Zomink is an open-source link management platform with all the features you need in one place. Manage, track, and shorten your URLs with your custom alias.",
+    "details": [
+      {
+        "_key": "zomink-context-heading",
+        "_type": "block",
+        "children": [{ "_key": "zomink-context-heading-text", "_type": "span", "marks": [], "text": "Problem and context" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "zomink-context-body",
+        "_type": "block",
+        "children": [{ "_key": "zomink-context-body-text", "_type": "span", "marks": [], "text": "Zomink brings URL management, tracking, shortening, and custom aliases into one open-source platform." }],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "zomink-architecture-heading",
+        "_type": "block",
+        "children": [{ "_key": "zomink-architecture-heading-text", "_type": "span", "marks": [], "text": "Architecture" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "zomink-architecture-body",
+        "_type": "block",
+        "children": [{ "_key": "zomink-architecture-body-text", "_type": "span", "marks": [], "text": "The TypeScript monorepo uses Next.js, React, tRPC, Prisma, and PostgreSQL." }],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
     "technologies": [
       "Typescript",
       "React.js",
@@ -59,8 +166,39 @@
   {
     "_type": "project",
     "title": "STICA LMS",
+    "slug": { "_type": "slug", "current": "stica-lms" },
     "year": "2026",
     "description": "STICA LMS is my capstone project for my college. It is an online library management system for STI College Alabang.",
+    "details": [
+      {
+        "_key": "stica-context-heading",
+        "_type": "block",
+        "children": [{ "_key": "stica-context-heading-text", "_type": "span", "marks": [], "text": "Project context" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "stica-context-body",
+        "_type": "block",
+        "children": [{ "_key": "stica-context-body-text", "_type": "span", "marks": [], "text": "STICA LMS is a college capstone project built as an online library management system for STI College Alabang." }],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "stica-architecture-heading",
+        "_type": "block",
+        "children": [{ "_key": "stica-architecture-heading-text", "_type": "span", "marks": [], "text": "Architecture and integrations" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "stica-architecture-body",
+        "_type": "block",
+        "children": [{ "_key": "stica-architecture-body-text", "_type": "span", "marks": [], "text": "The TypeScript Turborepo uses Next.js and React, with Firebase and Algolia integrations." }],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
     "technologies": [
       "Typescript",
       "React.js",
@@ -77,8 +215,39 @@
   {
     "_type": "project",
     "title": "Kokuban",
+    "slug": { "_type": "slug", "current": "kokuban" },
     "year": "2026",
     "description": "Kokuban is meant to assist the teachers in Japan to create online educational materials that their students can access and use from the browser.",
+    "details": [
+      {
+        "_key": "kokuban-context-heading",
+        "_type": "block",
+        "children": [{ "_key": "kokuban-context-heading-text", "_type": "span", "marks": [], "text": "Problem and context" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "kokuban-context-body",
+        "_type": "block",
+        "children": [{ "_key": "kokuban-context-body-text", "_type": "span", "marks": [], "text": "Kokuban helps teachers in Japan create browser-based educational materials that their students can access online." }],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "kokuban-architecture-heading",
+        "_type": "block",
+        "children": [{ "_key": "kokuban-architecture-heading-text", "_type": "span", "marks": [], "text": "Architecture" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "kokuban-architecture-body",
+        "_type": "block",
+        "children": [{ "_key": "kokuban-architecture-body-text", "_type": "span", "marks": [], "text": "The TypeScript application uses Next.js and React with Node.js, MongoDB, and Firebase." }],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
     "technologies": [
       "Typescript",
       "React.js",
@@ -95,8 +264,39 @@
   {
     "_type": "project",
     "title": "Zomify",
+    "slug": { "_type": "slug", "current": "zomify" },
     "year": "2026",
     "description": "Zomify is a spotify clone that is built with SvelteKit, Typescript, and Tailwind CSS.",
+    "details": [
+      {
+        "_key": "zomify-context-heading",
+        "_type": "block",
+        "children": [{ "_key": "zomify-context-heading-text", "_type": "span", "marks": [], "text": "Project context" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "zomify-context-body",
+        "_type": "block",
+        "children": [{ "_key": "zomify-context-body-text", "_type": "span", "marks": [], "text": "Zomify is a Spotify clone built with SvelteKit, TypeScript, and Tailwind CSS." }],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "zomify-integration-heading",
+        "_type": "block",
+        "children": [{ "_key": "zomify-integration-heading-text", "_type": "span", "marks": [], "text": "Integration" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "zomify-integration-body",
+        "_type": "block",
+        "children": [{ "_key": "zomify-integration-body-text", "_type": "span", "marks": [], "text": "The application integrates with the Spotify API." }],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
     "technologies": ["SvelteKit", "Typescript", "Tailwind CSS", "Spotify API"],
     "order": 3,
     "demoUrl": "https://zomify.vercel.app",
@@ -105,8 +305,25 @@
   {
     "_type": "project",
     "title": "Paymongo.js",
+    "slug": { "_type": "slug", "current": "paymongo-js" },
     "year": "2026",
     "description": "A lightweight, fully-featured, modular, typescript-compatible javascript library for Paymongo.",
+    "details": [
+      {
+        "_key": "paymongo-context-heading",
+        "_type": "block",
+        "children": [{ "_key": "paymongo-context-heading-text", "_type": "span", "marks": [], "text": "Project context" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "paymongo-context-body",
+        "_type": "block",
+        "children": [{ "_key": "paymongo-context-body-text", "_type": "span", "marks": [], "text": "Paymongo.js is a lightweight, full-featured, modular JavaScript library for PayMongo with TypeScript compatibility." }],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
     "technologies": ["Node.js", "TypeScript", "Paymongo"],
     "order": 2,
     "demoUrl": "https://www.npmjs.com/package/paymongo.js",
@@ -115,8 +332,39 @@
   {
     "_type": "project",
     "title": "Groundwork PH",
+    "slug": { "_type": "slug", "current": "groundwork-ph" },
     "year": "2026",
     "description": "An online B2B platform designed to create and gather networks for business establishments in the Philippines!",
+    "details": [
+      {
+        "_key": "groundwork-context-heading",
+        "_type": "block",
+        "children": [{ "_key": "groundwork-context-heading-text", "_type": "span", "marks": [], "text": "Project context" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "groundwork-context-body",
+        "_type": "block",
+        "children": [{ "_key": "groundwork-context-body-text", "_type": "span", "marks": [], "text": "Groundwork PH is an online B2B platform for building networks among business establishments in the Philippines." }],
+        "markDefs": [],
+        "style": "normal"
+      },
+      {
+        "_key": "groundwork-integration-heading",
+        "_type": "block",
+        "children": [{ "_key": "groundwork-integration-heading-text", "_type": "span", "marks": [], "text": "Integrations" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "groundwork-integration-body",
+        "_type": "block",
+        "children": [{ "_key": "groundwork-integration-body-text", "_type": "span", "marks": [], "text": "The Next.js and React application uses Firebase and PayMongo." }],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
     "technologies": ["Typescript", "React.js", "Next.js", "Tailwind CSS", "Firebase", "Paymongo"],
     "order": 1,
     "demoUrl": "https://shop.groundworkph.com/",
@@ -125,8 +373,25 @@
   {
     "_type": "project",
     "title": "Zomify Colors",
+    "slug": { "_type": "slug", "current": "zomify-colors" },
     "year": "2026",
     "description": "A color palette app inspired by Flat UI Colors.",
+    "details": [
+      {
+        "_key": "zomify-colors-context-heading",
+        "_type": "block",
+        "children": [{ "_key": "zomify-colors-context-heading-text", "_type": "span", "marks": [], "text": "Project context" }],
+        "markDefs": [],
+        "style": "h2"
+      },
+      {
+        "_key": "zomify-colors-context-body",
+        "_type": "block",
+        "children": [{ "_key": "zomify-colors-context-body-text", "_type": "span", "marks": [], "text": "Zomify Colors is a React color palette application inspired by Flat UI Colors." }],
+        "markDefs": [],
+        "style": "normal"
+      }
+    ],
     "technologies": ["React.js", "Material UI"],
     "order": 0,
     "demoUrl": "https://zomify-colors.netlify.app/",

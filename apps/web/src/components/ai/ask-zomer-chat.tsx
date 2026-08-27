@@ -5,7 +5,7 @@ import type { AskZomerMessage, AskZomerSource } from "@portfolio/api/types";
 import { DefaultChatTransport, getToolName, isToolUIPart } from "ai";
 import { ArrowUp, Globe2, LoaderCircle, RefreshCw, Square } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -231,12 +231,19 @@ function ChatMessages({
   );
 }
 
-function ChatSession({ sessionKey }: { sessionKey: string }) {
+function ChatSession({
+  initialQuestion,
+  sessionKey,
+}: {
+  initialQuestion: string | undefined;
+  sessionKey: string;
+}) {
   const locale = useLocale();
   const t = useTranslations("Assistant");
   const [input, setInput] = useState("");
   const [historyReady, setHistoryReady] = useState(false);
   const [historyWarning, setHistoryWarning] = useState(false);
+  const initialQuestionHandled = useRef(false);
   const transport = useMemo(
     () =>
       new DefaultChatTransport<AskZomerMessage>({
@@ -277,6 +284,18 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
     void restoreHistory();
     return () => controller.abort();
   }, [sessionKey, setMessages]);
+
+  useEffect(() => {
+    const trimmed = initialQuestion?.trim();
+    if (!trimmed || !historyReady || busy || initialQuestionHandled.current) return;
+    initialQuestionHandled.current = true;
+    const alreadySent = messages.some(
+      (message) => message.role === "user" && messageText(message).trim() === trimmed,
+    );
+    if (alreadySent) return;
+    clearError();
+    void sendMessage({ text: trimmed, metadata: { createdAt: new Date().toISOString() } });
+  }, [busy, clearError, historyReady, initialQuestion, messages, sendMessage]);
 
   const submit = (text: string) => {
     const trimmed = text.trim();
@@ -364,7 +383,7 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
                 submit(input);
               }
             }}
-            className="max-h-40 min-h-12 flex-1 resize-y bg-transparent px-2 py-2 text-base leading-relaxed outline-none placeholder:text-muted disabled:cursor-wait sm:text-sm"
+            className="max-h-40 min-h-12 flex-1 resize-y bg-transparent px-2 py-2 text-base leading-relaxed outline-none placeholder:text-muted focus-visible:bg-border/20 disabled:cursor-wait sm:text-sm"
           />
           {busy ? (
             <button
@@ -392,7 +411,7 @@ function ChatSession({ sessionKey }: { sessionKey: string }) {
   );
 }
 
-export function AskZomerChatContent() {
+export function AskZomerChatContent({ initialQuestion }: { initialQuestion: string | undefined }) {
   const t = useTranslations("Assistant");
   const [sessionKey, setSessionKey] = useState<string>();
 
@@ -406,5 +425,5 @@ export function AskZomerChatContent() {
     );
   }
 
-  return <ChatSession sessionKey={sessionKey} />;
+  return <ChatSession initialQuestion={initialQuestion} sessionKey={sessionKey} />;
 }

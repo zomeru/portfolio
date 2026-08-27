@@ -4,6 +4,14 @@
   "empty": "尚未发布项目。",
   "live": "在线演示",
   "caseStudy": "案例研究",
+  "detail": {
+    "back": "项目",
+    "eyebrow": "项目",
+    "technologies": "技术栈",
+    "links": "链接",
+    "repository": "代码仓库",
+    "opensNewTab": "（在新标签页中打开）"
+  },
   "descriptions": {
     "rezumerAi": "Rezumer AI 是一款 AI 辅助简历生成工具，为求职者提供一个统一的工作区，用于起草、优化、定制和导出简历。它将结构化简历编辑与 AI 内容优化、职位描述匹配以及权限感知型助手结合起来；该助手可根据当前用户的访问权限回答公开、账户或管理员相关问题。",
     "batibot": "Batibot 是一款 AI 消息助手，帮助你找到符合需求的信息和服务。",

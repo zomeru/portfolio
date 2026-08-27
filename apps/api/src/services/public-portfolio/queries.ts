@@ -25,20 +25,26 @@ export const PUBLIC_PORTFOLIO_SNAPSHOT_QUERY = defineQuery(/* groq */ `{
   },
   "experience": *[_type == "experience" && ${PUBLISHED_FILTER}]
     | order(order desc, _id asc) {
+      "updatedAt": _updatedAt,
       role,
       company,
+      "slug": slug.current,
       location,
       period,
       summary,
       responsibilities,
+      details,
       technologies,
       companyUrl
     },
   "projects": *[_type == "project" && ${PUBLISHED_FILTER}]
     | order(order desc, _id asc) {
+      "updatedAt": _updatedAt,
       title,
+      "slug": slug.current,
       year,
       description,
+      details,
       image {
         asset->{
           url,

@@ -5,14 +5,7 @@ import { PageTransition } from "@/components/layout/page-transition";
 import { ExperienceItem } from "@/components/portfolio/experience-item";
 import { PageHeader } from "@/components/portfolio/page-header";
 import { resolveLocale, type LocaleParams } from "@/i18n/server";
-
-const experienceKeys = {
-  "Seansoft Corporation": "seansoft",
-  Binbooker: "binbooker",
-  "Evelan GmbH": "evelan",
-  "Beyonder Inc.": "beyonder",
-  Freelance: "freelance",
-} as const;
+import { experienceTranslationKeys } from "@/lib/portfolio-content";
 
 export default async function AboutPage({ params }: { params: LocaleParams }) {
   const locale = await resolveLocale(params);
@@ -49,7 +42,8 @@ export default async function AboutPage({ params }: { params: LocaleParams }) {
             className="absolute bottom-2 left-1 top-2 w-0.5 bg-linear-to-b from-border via-border to-transparent"
           />
           {experience.items.map((job) => {
-            const entryKey = experienceKeys[job.company as keyof typeof experienceKeys];
+            const entryKey =
+              experienceTranslationKeys[job.company as keyof typeof experienceTranslationKeys];
             const localizedJob =
               locale !== "en" && entryKey
                 ? {

@@ -70,8 +70,10 @@ export type Project = {
   _updatedAt: string;
   _rev: string;
   title: string;
+  slug: Slug;
   year: string;
   description: string;
+  details?: RichText;
   image?: {
     asset?: SanityImageAssetReference;
     media?: unknown;
@@ -103,23 +105,6 @@ export type SanityImageHotspot = {
   width: number;
 };
 
-export type Experience = {
-  _id: string;
-  _type: "experience";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  role: string;
-  company: string;
-  location?: string;
-  period: string;
-  summary?: string;
-  responsibilities?: RichText;
-  technologies?: Array<string>;
-  companyUrl?: string;
-  order: number;
-};
-
 export type RichText = Array<{
   children?: Array<{
     marks?: Array<string>;
@@ -138,6 +123,25 @@ export type RichText = Array<{
   _type: "block";
   _key: string;
 }>;
+
+export type Experience = {
+  _id: string;
+  _type: "experience";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  role: string;
+  company: string;
+  slug: Slug;
+  location?: string;
+  period: string;
+  summary?: string;
+  responsibilities?: RichText;
+  details?: RichText;
+  technologies?: Array<string>;
+  companyUrl?: string;
+  order: number;
+};
 
 export type SanityFileAssetReference = {
   _ref: string;
@@ -291,8 +295,8 @@ export type AllSanitySchemaTypes =
   | Project
   | SanityImageCrop
   | SanityImageHotspot
-  | Experience
   | RichText
+  | Experience
   | SanityFileAssetReference
   | Profile
   | SocialLink
@@ -304,171 +308,3 @@ export type AllSanitySchemaTypes =
   | SanityAssetSourceData
   | SanityImageAsset
   | Geopoint;
-
-// Source: ../web/src/lib/sanity/queries.ts
-// Variable: PROFILE_QUERY
-// Query: *[_id == "profile"][0] {    _id,    name,    role,    email,    githubUrl,    linkedinUrl,    biography,    aboutContent,    photo {      asset->{        _id,        url,        metadata {          lqip,          dimensions { width, height }        }      },      alt,      hotspot,      crop    },    "resumeUrl": resume.asset->url  }
-export type PROFILE_QUERY_RESULT =
-  | {
-      _id: "profile";
-      name: string;
-      role: string;
-      email: string;
-      githubUrl: string;
-      linkedinUrl: string;
-      biography: RichText;
-      aboutContent: RichText;
-      photo: {
-        asset: {
-          _id: string;
-          url: string;
-          metadata: {
-            lqip: string | null;
-            dimensions: {
-              width: number;
-              height: number;
-            } | null;
-          } | null;
-        } | null;
-        alt: string;
-        hotspot: SanityImageHotspot | null;
-        crop: SanityImageCrop | null;
-      } | null;
-      resumeUrl: string | null;
-    }
-  | {
-      _id: "profile";
-      name: null;
-      role: null;
-      email: null;
-      githubUrl: null;
-      linkedinUrl: null;
-      biography: null;
-      aboutContent: null;
-      photo: null;
-      resumeUrl: null;
-    }
-  | {
-      _id: "profile";
-      name: null;
-      role: string;
-      email: null;
-      githubUrl: null;
-      linkedinUrl: null;
-      biography: null;
-      aboutContent: null;
-      photo: null;
-      resumeUrl: null;
-    }
-  | {
-      _id: "profile";
-      name: string;
-      role: null;
-      email: null;
-      githubUrl: null;
-      linkedinUrl: null;
-      biography: null;
-      aboutContent: null;
-      photo: null;
-      resumeUrl: null;
-    }
-  | null;
-
-// Source: ../web/src/lib/sanity/queries.ts
-// Variable: EXPERIENCE_QUERY
-// Query: *[_type == "experience"] | order(order desc, _id asc) {    _id,    role,    company,    period,    responsibilities,    technologies  }
-export type EXPERIENCE_QUERY_RESULT = Array<{
-  _id: string;
-  role: string;
-  company: string;
-  period: string;
-  responsibilities: RichText | null;
-  technologies: Array<string> | null;
-}>;
-
-// Source: ../web/src/lib/sanity/queries.ts
-// Variable: PROJECTS_QUERY
-// Query: *[_type == "project"] | order(order desc, _id asc) {    _id,    title,    year,    description,    image {      asset->{        _id,        url,        metadata {          lqip,          dimensions { width, height }        }      },      alt,      hotspot,      crop    },    technologies,    demoUrl,    repositoryUrl,    caseStudyUrl  }
-export type PROJECTS_QUERY_RESULT = Array<{
-  _id: string;
-  title: string;
-  year: string;
-  description: string;
-  image: {
-    asset: {
-      _id: string;
-      url: string;
-      metadata: {
-        lqip: string | null;
-        dimensions: {
-          width: number;
-          height: number;
-        } | null;
-      } | null;
-    } | null;
-    alt: string;
-    hotspot: SanityImageHotspot | null;
-    crop: SanityImageCrop | null;
-  } | null;
-  technologies: Array<string>;
-  demoUrl: string | null;
-  repositoryUrl: string | null;
-  caseStudyUrl: string | null;
-}>;
-
-// Source: ../web/src/lib/sanity/queries.ts
-// Variable: BLOG_POSTS_QUERY
-// Query: *[_type == "blogPost" && defined(slug.current) && defined(publishedAt)]  | order(publishedAt desc, _id asc) {    _id,    title,    "slug": slug.current,    "date": publishedAt,    "description": excerpt,    tags  }
-export type BLOG_POSTS_QUERY_RESULT = Array<{
-  _id: string;
-  title: string;
-  slug: string;
-  date: string;
-  description: string;
-  tags: Array<string> | null;
-}>;
-
-// Source: ../web/src/lib/sanity/queries.ts
-// Variable: BLOG_POST_QUERY
-// Query: *[_type == "blogPost" && slug.current == $slug && defined(publishedAt)][0] {    _id,    title,    "slug": slug.current,    "date": publishedAt,    "description": excerpt,    tags,    body,    readTime  }
-export type BLOG_POST_QUERY_RESULT = {
-  _id: string;
-  title: string;
-  slug: string;
-  date: string;
-  description: string;
-  tags: Array<string> | null;
-  body: string;
-  readTime: number | null;
-} | null;
-
-// Source: ../web/src/lib/sanity/queries.ts
-// Variable: BLOG_POST_SLUGS_QUERY
-// Query: *[_type == "blogPost" && defined(slug.current) && defined(publishedAt)] | order(_id asc) {    "slug": slug.current  }
-export type BLOG_POST_SLUGS_QUERY_RESULT = Array<{
-  slug: string;
-}>;
-
-// Source: ../web/src/lib/sanity/queries.ts
-// Variable: TECH_STACK_QUERY
-// Query: *[_type == "techStack"] | order(order asc, _id asc) {    _id,    name,    items,    order  }
-export type TECH_STACK_QUERY_RESULT = Array<{
-  _id: string;
-  name: string;
-  items: Array<string>;
-  order: number;
-}>;
-
-// Query TypeMap
-import "@sanity/client";
-declare module "@sanity/client" {
-  interface SanityQueries {
-    '\n  *[_id == "profile"][0] {\n    _id,\n    name,\n    role,\n    email,\n    githubUrl,\n    linkedinUrl,\n    biography,\n    aboutContent,\n    photo {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions { width, height }\n        }\n      },\n      alt,\n      hotspot,\n      crop\n    },\n    "resumeUrl": resume.asset->url\n  }\n': PROFILE_QUERY_RESULT;
-    '\n  *[_type == "experience"] | order(order desc, _id asc) {\n    _id,\n    role,\n    company,\n    period,\n    responsibilities,\n    technologies\n  }\n': EXPERIENCE_QUERY_RESULT;
-    '\n  *[_type == "project"] | order(order desc, _id asc) {\n    _id,\n    title,\n    year,\n    description,\n    image {\n      asset->{\n        _id,\n        url,\n        metadata {\n          lqip,\n          dimensions { width, height }\n        }\n      },\n      alt,\n      hotspot,\n      crop\n    },\n    technologies,\n    demoUrl,\n    repositoryUrl,\n    caseStudyUrl\n  }\n': PROJECTS_QUERY_RESULT;
-    '\n  *[_type == "blogPost" && defined(slug.current) && defined(publishedAt)]\n  | order(publishedAt desc, _id asc) {\n    _id,\n    title,\n    "slug": slug.current,\n    "date": publishedAt,\n    "description": excerpt,\n    tags\n  }\n': BLOG_POSTS_QUERY_RESULT;
-    '\n  *[_type == "blogPost" && slug.current == $slug && defined(publishedAt)][0] {\n    _id,\n    title,\n    "slug": slug.current,\n    "date": publishedAt,\n    "description": excerpt,\n    tags,\n    body,\n    readTime\n  }\n': BLOG_POST_QUERY_RESULT;
-    '\n  *[_type == "blogPost" && defined(slug.current) && defined(publishedAt)] | order(_id asc) {\n    "slug": slug.current\n  }\n': BLOG_POST_SLUGS_QUERY_RESULT;
-    '\n  *[_type == "techStack"] | order(order asc, _id asc) {\n    _id,\n    name,\n    items,\n    order\n  }\n': TECH_STACK_QUERY_RESULT;
-  }
-}

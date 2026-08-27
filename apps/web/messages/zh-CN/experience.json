@@ -7,5 +7,15 @@
     "evelan": { "role": "全栈开发工程师", "period": "2023年8月 — 2023年12月" },
     "beyonder": { "role": "软件工程师", "period": "2022年2月 — 2023年8月" },
     "freelance": { "role": "全栈开发工程师", "period": "2021年9月 — 2022年2月" }
+  },
+  "detail": {
+    "back": "工作经历",
+    "eyebrow": "工作经验",
+    "period": "任职时间",
+    "location": "地点",
+    "technologies": "技术栈",
+    "responsibilities": "职责",
+    "opensNewTab": "（在新标签页中打开）",
+    "metadataDescription": "在{company}担任{role}。{summary}"
   }
 }
