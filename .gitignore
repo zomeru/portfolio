@@ -43,6 +43,7 @@ yarn-error.log*
 generated/
 .serena
 prompts/
+ignored-docs
 
 graphify-out/cost.json 
 graphify-out/cache/

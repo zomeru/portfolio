@@ -1,6 +1,7 @@
 import type { PublicProfile } from "@portfolio/api/public-portfolio";
 
 import { appVersion } from "@/lib/app-version";
+import { siteCopyrightYear } from "@/lib/metadata";
 import { getProfileSocials } from "@/lib/sanity/profile";
 
 export function SiteFooter({ profile }: { profile: PublicProfile | null }) {
@@ -11,7 +12,7 @@ export function SiteFooter({ profile }: { profile: PublicProfile | null }) {
     <footer className="border-t border-border">
       <div className="flex flex-wrap items-center justify-between gap-3 py-6 text-sm text-muted">
         <p className="flex items-center gap-2">
-          © {new Date().getFullYear()} {profile?.name ? `${profile.name}. ` : ""}
+          © {siteCopyrightYear} {profile?.name ? `${profile.name}. ` : ""}
           <span>v{appVersion}</span>
         </p>
         <ul className="flex items-center gap-3">

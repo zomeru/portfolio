@@ -10,6 +10,7 @@ is a source-exported internal package; consumers import explicit subpaths.
   and the URL is required in production.
 - `./sanity`: public project, selected development/production dataset, app ID, and dataset map.
 - `./sanity-server`: required server-only `SANITY_API_TOKEN`.
+- `./sanity-revalidate-server`: signed Sanity webhook secret with a minimum length of 32.
 - `./github-server`: required server-only `GH_PAT_TOKEN`.
 - `./ai-server`: required Google API key and Gemini model identifier for blog generation.
 - `./assistant-server`: Ask Zomer provider keys, selected chat provider and model IDs, the OpenRouter

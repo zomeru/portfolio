@@ -13,6 +13,7 @@
     "./langfuse-server": "./src/langfuse-server.ts",
     "./notifications-server": "./src/notifications-server.ts",
     "./sanity": "./src/sanity.ts",
+    "./sanity-revalidate-server": "./src/sanity-revalidate-server.ts",
     "./sanity-server": "./src/sanity-server.ts",
     "./site": "./src/site.ts"
   },

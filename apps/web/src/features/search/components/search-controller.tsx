@@ -7,18 +7,42 @@ import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 
 import type { SearchItem } from "@/features/search/types/search";
+import { reportClientError } from "@/lib/client-log";
 
 const CommandPalette = dynamic(
   () => import("./command-palette").then((module) => module.CommandPalette),
   { ssr: false },
 );
 
-export function SearchController({ items }: { items: SearchItem[] }) {
+export function SearchController({ endpoint }: { endpoint: string }) {
   const t = useTranslations("Common.search");
+  const [items, setItems] = useState<SearchItem[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [open, setOpen] = useState(false);
   const [shortcut, setShortcut] = useState("⌘K");
   const triggerRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!loaded) return;
+    const controller = new AbortController();
+
+    void fetch(endpoint, {
+      headers: { Accept: "application/json" },
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        if (!response.ok) throw new Error(`Search index request failed with ${response.status}.`);
+        const payload: unknown = await response.json();
+        if (!Array.isArray(payload)) throw new Error("Search index response is invalid.");
+        setItems(payload as SearchItem[]);
+      })
+      .catch((error: unknown) => {
+        if (controller.signal.aborted) return;
+        reportClientError("search.loadIndex", error);
+      });
+
+    return () => controller.abort();
+  }, [endpoint, loaded]);
 
   useEffect(() => {
     setShortcut(/Mac|iPhone|iPad|iPod/i.test(navigator.platform) ? "⌘K" : "Ctrl K");

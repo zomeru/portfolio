@@ -22,6 +22,7 @@
     "@opentelemetry/sdk-node": "^0.221.0",
     "@portfolio/api": "workspace:*",
     "@portfolio/env": "workspace:*",
+    "@sanity/webhook": "^4.0.4",
     "ai": "^7.0.79",
     "client-only": "^0.0.1",
     "clsx": "^2.1.1",

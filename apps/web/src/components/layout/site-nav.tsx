@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { LanguagePicker } from "@/components/layout/language-picker";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { SearchController } from "@/features/search/components/search-controller";
-import type { SearchItem } from "@/features/search/types/search";
 import { Link, usePathname } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
@@ -19,10 +18,10 @@ const links = [
 ] as const;
 
 export function SiteNav({
-  searchItems,
+  searchEndpoint,
   showLanguagePicker = true,
 }: {
-  searchItems?: SearchItem[];
+  searchEndpoint?: string;
   showLanguagePicker?: boolean;
 }) {
   const pathname = usePathname();
@@ -53,7 +52,7 @@ export function SiteNav({
           })}
         </ul>
         <div className="flex items-center gap-2">
-          {searchItems ? <SearchController items={searchItems} /> : null}
+          {searchEndpoint ? <SearchController endpoint={searchEndpoint} /> : null}
           {showLanguagePicker && <LanguagePicker />}
           <ThemeToggle />
         </div>

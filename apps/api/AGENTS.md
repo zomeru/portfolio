@@ -23,8 +23,9 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
 
 - `src/services/public-portfolio` owns published-only Sanity queries, explicit public DTO schemas,
   serialization, OpenAPI generation, and discovery metadata. REST routes and MCP registrations must
-  call this service instead of querying Sanity independently. Keep the five-minute cache tags and
-  explicit public allowlist; never expose drafts, raw Sanity fields, or RAG/indexing state.
+  call this service instead of querying Sanity independently. Keep domain- and slug-scoped cache
+  tags with signed on-demand invalidation and the explicit public allowlist; never expose drafts,
+  raw Sanity fields, or RAG/indexing state.
 - Keep public GROQ projections explicit and parse their raw results before serialization. Studio
   TypeGen does not scan this workspace, so protect query changes with API contract tests and type
   checks.

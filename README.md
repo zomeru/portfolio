@@ -66,7 +66,7 @@ pnpm --filter @portfolio/studio dev
 | Service               | Variables                                                                                                                                                               |
 | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Site                  | `NEXT_PUBLIC_SITE_URL`                                                                                                                                                  |
-| Sanity                | `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `NEXT_PUBLIC_SANITY_APP_ID`, `SANITY_API_TOKEN`                                                          |
+| Sanity                | `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`, `NEXT_PUBLIC_SANITY_APP_ID`, `SANITY_API_TOKEN`, `SANITY_REVALIDATE_SECRET`                              |
 | GitHub                | `GH_PAT_TOKEN`                                                                                                                                                          |
 | Database              | `DATABASE_URL`, optional `DATABASE_DIRECT_URL`                                                                                                                          |
 | Blog AI               | `GOOGLE_GENERATIVE_AI_API_KEY`, `GOOGLE_GENERATIVE_AI_MODEL`                                                                                                            |
@@ -147,6 +147,23 @@ for other operating systems and installation options.
 ## Public agent interfaces
 
 Published Sanity content is normalized once in `@portfolio/api/public-portfolio` and shared by every public interface. Explicit DTOs exclude drafts, Sanity internals, embeddings, admin metadata, and secrets.
+
+Published reads are cached indefinitely and refreshed on demand. Configure a signed Sanity webhook
+at `/api/revalidate/sanity` with the same `SANITY_REVALIDATE_SECRET`, enable create, update, and
+delete events for published `profile`, `experience`, `project`, `blogPost`, and `techStack`
+documents. Use `_type in ["profile", "experience", "project", "blogPost", "techStack"]` as the
+filter and this projection so slug changes invalidate both URLs:
+
+```groq
+{
+  "_type": coalesce(after()._type, before()._type),
+  "slug": after().slug.current,
+  "previousSlug": before().slug.current
+}
+```
+
+The endpoint verifies the Sanity signature, project, and dataset before expiring only the affected
+type and slug tags. Do not configure a webhook that calls the publish or generation endpoints.
 
 | Resource                                                    | Purpose                                                  |
 | ----------------------------------------------------------- | -------------------------------------------------------- |

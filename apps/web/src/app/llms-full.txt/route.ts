@@ -2,7 +2,7 @@ import { getPublicPortfolioSnapshot } from "@portfolio/api/public-portfolio";
 
 import { siteUrl } from "@/lib/metadata";
 
-export const revalidate = 3600;
+export const revalidate = false;
 
 export async function GET(): Promise<Response> {
   const {

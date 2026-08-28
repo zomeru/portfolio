@@ -1,4 +1,4 @@
-import { getPublicExperience, getPublicPortfolioSnapshot } from "@portfolio/api/public-portfolio";
+import { getPublicExperience, listPublicExperience } from "@portfolio/api/public-portfolio";
 import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -19,7 +19,7 @@ type WorkPageProps = {
 const getExperience = cache((slug: string) => getPublicExperience(slug));
 
 export async function generateStaticParams() {
-  return (await getPublicPortfolioSnapshot()).experience.map(({ slug }) => ({ slug }));
+  return (await listPublicExperience()).items.map(({ slug }) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: WorkPageProps): Promise<Metadata> {

@@ -45,7 +45,7 @@ Hono backend and stateless MCP handlers are mounted inside the same deployment.
 
 - Website portfolio reads use `@portfolio/api/public-portfolio`; do not add web-specific Sanity
   queries for profile, resume, experience, projects, blogs, or tech stack. The API workspace owns
-  their published perspective, projections, DTOs, ordering, and 300-second revalidation.
+  their published perspective, projections, DTOs, ordering, and on-demand cache tags.
 - Do not edit `src/lib/sanity/sanity.types.ts`. Run the Studio `typegen` script after any schema
   change and review `apps/studio/schema.json` plus the generated web types. Studio TypeGen does not
   validate the canonical API queries.

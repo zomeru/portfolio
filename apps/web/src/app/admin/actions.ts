@@ -5,7 +5,7 @@ import { randomUUID } from "node:crypto";
 import { type AdminCapability, verifyAdminSecret } from "@portfolio/api";
 import { logError } from "@portfolio/api/logging";
 import { getCronEnv } from "@portfolio/env/cron";
-import { revalidatePath } from "next/cache";
+import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -149,9 +149,6 @@ export async function triggerBlogGeneration(
       };
     }
 
-    revalidatePath("/blogs");
-    revalidatePath(`/blogs/${payload.post.slug}`);
-
     return {
       status: "success",
       message:
@@ -231,7 +228,7 @@ export async function registerWebhook(
         message: payload.error?.message ?? "Unable to register the webhook. Check the URL.",
       };
     }
-    revalidatePath("/admin");
+    refresh();
     return {
       status: "success",
       message: `${parsed.data.name} is connected. Send a test to verify the destination.`,
@@ -322,7 +319,7 @@ export async function disableWebhook(
         message: payload.error?.message ?? "The webhook could not be disabled.",
       };
     }
-    revalidatePath("/admin");
+    refresh();
     return { status: "success", message: "Webhook disabled." };
   } catch (error) {
     logError("admin webhook disable failed", error, {
@@ -373,7 +370,7 @@ export async function retryNotifications(
       }),
       { attempted: 0, failed: 0, skipped: 0, succeeded: 0 },
     );
-    revalidatePath("/admin");
+    refresh();
 
     return totals.attempted === 0
       ? { status: "success", message: "No queued notifications are ready to retry." }
