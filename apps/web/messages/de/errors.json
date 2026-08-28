@@ -16,5 +16,18 @@
     "title": "Das Portfolio konnte nicht geladen werden.",
     "description": "Das Problem ist möglicherweise vorübergehend. Lade die Website erneut.",
     "action": "Erneut versuchen"
+  },
+  "request": {
+    "offline": "Du scheinst offline zu sein. Prüfe deine Verbindung und versuche es erneut.",
+    "network": "Der Dienst konnte nicht erreicht werden. Prüfe deine Verbindung und versuche es erneut.",
+    "timeout": "Die Anfrage hat zu lange gedauert. Versuche es erneut.",
+    "server": "Die Anfrage konnte nicht abgeschlossen werden. Versuche es erneut.",
+    "rateLimit": "Es wurden zu viele Anfragen gesendet. Versuche es später erneut.",
+    "authentication": "Diese Anfrage erfordert eine Anmeldung. Melde dich an und versuche es erneut.",
+    "authorization": "Du hast keine Berechtigung für diese Anfrage.",
+    "validation": "Prüfe die Angaben und versuche es erneut.",
+    "notFound": "Das angeforderte Element wurde nicht gefunden.",
+    "unavailable": "Der Dienst ist vorübergehend nicht verfügbar. Versuche es später erneut.",
+    "unknown": "Die Anfrage konnte nicht abgeschlossen werden. Versuche es erneut."
   }
 }

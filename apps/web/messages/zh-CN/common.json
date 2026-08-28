@@ -2,12 +2,14 @@
   "skipToContent": "跳到主要内容",
   "nav": {
     "label": "主导航",
+    "menu": "菜单",
+    "close": "关闭",
     "about": "关于",
     "projects": "项目",
     "blogs": "博客",
     "github": "GitHub",
-    "assistant": "询问 Zomer AI",
-    "contact": "联系我"
+    "assistant": "Zomer AI",
+    "contact": "联系"
   },
   "theme": {
     "legend": "颜色主题",
@@ -27,6 +29,11 @@
     "data": "数据",
     "infrastructure": "基础设施／工具"
   },
+  "techStack": {
+    "label": "技术栈",
+    "trigger": "技术栈",
+    "close": "关闭技术栈"
+  },
   "social": {
     "email": "电子邮件"
   },
@@ -41,7 +48,7 @@
     "resultCount": "{count} 条结果",
     "loading": "正在加载搜索项…",
     "loadError": "无法加载搜索",
-    "loadErrorHint": "请检查网络连接后重试。",
+    "loadErrorHint": "请重试。",
     "retry": "重试",
     "noResults": "没有匹配的内容",
     "noResultsHint": "请尝试项目、技术、公司或操作。",
@@ -52,11 +59,11 @@
       "blog": "博客",
       "profile": "个人资料",
       "action": "操作",
-      "assistant": "询问 Zomer AI"
+      "assistant": "Zomer AI"
     },
     "keyboard": { "navigate": "↑↓ 导航", "select": "↵ 选择" },
     "ask": {
-      "title": "询问 Zomer AI：“{query}”",
+      "title": "Zomer AI：“{query}”",
       "description": "将此问题发送给作品集助手"
     },
     "pages": {
@@ -64,8 +71,8 @@
       "projects": { "title": "项目", "description": "精选软件项目和案例" },
       "blogs": { "title": "博客", "description": "软件工程文章" },
       "github": { "title": "GitHub 贡献", "description": "贡献活动和提交记录" },
-      "assistant": { "title": "询问 Zomer AI", "description": "询问工作经历和项目" },
-      "contact": { "title": "联系我", "description": "联系方式和通话预约" },
+      "assistant": { "title": "Zomer AI", "description": "询问工作经历和项目" },
+      "contact": { "title": "联系", "description": "联系方式和通话预约" },
       "developers": { "title": "开发者", "description": "REST、OpenAPI 和 MCP 文档" }
     },
     "profile": {

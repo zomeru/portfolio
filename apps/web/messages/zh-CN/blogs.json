@@ -20,7 +20,7 @@
     "invalidConfirmation": "此确认链接无效或已过期。",
     "invalidEmail": "请输入有效的电子邮件地址。",
     "rateLimited": "尝试次数过多，请一小时后重试。",
-    "subscribeError": "目前无法订阅。请检查网络连接后重试。",
+    "subscribeError": "目前无法订阅，请重试。",
     "checkInbox": "如需确认，请在收件箱中查收确认链接。",
     "browserHeading": "浏览器通知",
     "browserEnabled": "已在此浏览器中启用。",
@@ -39,13 +39,13 @@
     "enabling": "正在启用通知…",
     "permissionDenied": "通知未启用。你可以在浏览器的网站设置中更改此选项。",
     "enabled": "浏览器通知已启用。",
-    "enableError": "无法启用通知。请检查网络连接后重试。",
+    "enableError": "无法启用通知，请重试。",
     "expired": "此订阅已过期，请重新启用通知。",
     "testSent": "测试已发送，浏览器应会很快显示通知。",
     "testError": "测试通知发送失败，请检查浏览器和服务器设置。",
     "disabling": "正在停用通知…",
     "disabled": "浏览器通知已停用。",
-    "disableError": "无法停用通知。请检查网络连接后重试。"
+    "disableError": "无法停用通知，请重试。"
   },
   "unsubscribe": {
     "eyebrow": "博客",

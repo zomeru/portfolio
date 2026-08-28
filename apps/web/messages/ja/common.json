@@ -2,11 +2,13 @@
   "skipToContent": "本文へ移動",
   "nav": {
     "label": "メインナビゲーション",
+    "menu": "メニュー",
+    "close": "閉じる",
     "about": "プロフィール",
     "projects": "プロジェクト",
     "blogs": "ブログ",
     "github": "GitHub",
-    "assistant": "Zomer AIに質問",
+    "assistant": "Zomer AI",
     "contact": "お問い合わせ"
   },
   "theme": {
@@ -27,6 +29,11 @@
     "data": "データ",
     "infrastructure": "インフラ／ツール"
   },
+  "techStack": {
+    "label": "技術スタック",
+    "trigger": "技術",
+    "close": "技術スタックを閉じる"
+  },
   "social": {
     "email": "メール"
   },
@@ -41,7 +48,7 @@
     "resultCount": "{count}件の結果",
     "loading": "検索項目を読み込んでいます…",
     "loadError": "検索を読み込めませんでした",
-    "loadErrorHint": "接続を確認して、もう一度お試しください。",
+    "loadErrorHint": "もう一度お試しください。",
     "retry": "再試行",
     "noResults": "一致する項目がありません",
     "noResultsHint": "プロジェクト、技術、会社名、操作を試してください。",
@@ -52,11 +59,11 @@
       "blog": "ブログ",
       "profile": "プロフィール",
       "action": "操作",
-      "assistant": "Zomer AIに質問"
+      "assistant": "Zomer AI"
     },
     "keyboard": { "navigate": "↑↓ 移動", "select": "↵ 選択" },
     "ask": {
-      "title": "Zomer AIに質問：「{query}」",
+      "title": "Zomer AI：「{query}」",
       "description": "この質問をポートフォリオアシスタントに送信します"
     },
     "pages": {
@@ -64,7 +71,7 @@
       "projects": { "title": "プロジェクト", "description": "主なソフトウェアプロジェクトと事例" },
       "blogs": { "title": "ブログ", "description": "ソフトウェアエンジニアリングの記事" },
       "github": { "title": "GitHubの活動", "description": "コントリビューションとコミット履歴" },
-      "assistant": { "title": "Zomer AIに質問", "description": "職歴やプロジェクトについて質問" },
+      "assistant": { "title": "Zomer AI", "description": "職歴やプロジェクトについて質問" },
       "contact": { "title": "お問い合わせ", "description": "連絡先と通話予約" },
       "developers": { "title": "開発者向け", "description": "REST、OpenAPI、MCPドキュメント" }
     },

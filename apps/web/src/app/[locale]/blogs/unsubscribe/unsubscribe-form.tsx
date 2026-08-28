@@ -6,9 +6,11 @@ import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { client } from "@/lib/api";
 import { reportClientError } from "@/lib/client-log";
+import { classifyRequestFailure, HttpRequestError } from "@/lib/request-failure";
 
 export function UnsubscribeForm({ token }: { token?: string }) {
   const t = useTranslations("Blogs.unsubscribe");
+  const tRequest = useTranslations("Errors.request");
   const [state, setState] = useState<"idle" | "submitting" | "success" | "error">(
     token ? "idle" : "error",
   );
@@ -22,13 +24,14 @@ export function UnsubscribeForm({ token }: { token?: string }) {
       const response = await client.api.notifications.email.unsubscribe.$post({
         query: { token },
       });
-      if (!response.ok) throw new Error("Unable to unsubscribe.");
+      if (!response.ok) throw new HttpRequestError(response.status);
       setState("success");
       setMessage(t("success"));
     } catch (error) {
       reportClientError("notifications.unsubscribeEmail", error);
       setState("error");
-      setMessage(t("error"));
+      const kind = classifyRequestFailure(error);
+      setMessage(kind === "validation" || kind === "notFound" ? t("invalid") : tRequest(kind));
     }
   }
 

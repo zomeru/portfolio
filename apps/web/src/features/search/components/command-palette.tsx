@@ -64,6 +64,7 @@ function cancelAnimation(animation: Animation | null) {
 }
 
 type CommandPaletteProps = {
+  indexError: string;
   indexStatus: SearchIndexStatus;
   items: SearchItem[];
   onOpenChange: (open: boolean) => void;
@@ -87,6 +88,7 @@ function defaultItems(items: SearchItem[]) {
 }
 
 export function CommandPalette({
+  indexError,
   indexStatus,
   items,
   onOpenChange,
@@ -429,7 +431,7 @@ export function CommandPalette({
           ) : indexStatus === "error" ? (
             <div className="flex min-h-40 flex-col items-center justify-center px-5 py-14 text-center">
               <p className="text-sm font-medium">{t("loadError")}</p>
-              <p className="mt-2 text-xs text-muted">{t("loadErrorHint")}</p>
+              <p className="mt-2 text-xs text-muted">{indexError || t("loadErrorHint")}</p>
               <button
                 type="button"
                 onClick={onRetry}
@@ -443,7 +445,7 @@ export function CommandPalette({
               id={listboxId}
               role="listbox"
               aria-label={t("resultsLabel")}
-              className="max-h-[min(34rem,calc(100dvh-5.5rem))] overflow-y-auto p-2 sm:max-h-[34rem]"
+              className="max-h-[min(34rem,calc(100dvh-5.5rem))] overflow-y-auto p-2 sm:max-h-136"
             >
               {grouped.map(({ group, items: groupItems }) => (
                 <SearchGroupResults

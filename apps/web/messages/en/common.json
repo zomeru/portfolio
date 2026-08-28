@@ -2,12 +2,14 @@
   "skipToContent": "Skip to content",
   "nav": {
     "label": "Primary navigation",
+    "menu": "Menu",
+    "close": "Close",
     "about": "About",
     "projects": "Projects",
     "blogs": "Blogs",
     "github": "GitHub",
-    "assistant": "Ask Zomer AI",
-    "contact": "Let's talk"
+    "assistant": "Zomer AI",
+    "contact": "Contact"
   },
   "theme": {
     "legend": "Color theme",
@@ -27,6 +29,11 @@
     "data": "Data",
     "infrastructure": "Infrastructure / Tools"
   },
+  "techStack": {
+    "label": "Tech stack",
+    "trigger": "Stack",
+    "close": "Close tech stack"
+  },
   "social": {
     "email": "Email"
   },
@@ -41,7 +48,7 @@
     "resultCount": "{count, plural, one {# result} other {# results}}",
     "loading": "Loading destinations…",
     "loadError": "Search could not be loaded",
-    "loadErrorHint": "Check your connection and try again.",
+    "loadErrorHint": "Try again.",
     "retry": "Try again",
     "noResults": "No matching destinations",
     "noResultsHint": "Try a project, technology, company, or action.",
@@ -52,11 +59,11 @@
       "blog": "Blogs",
       "profile": "Profile",
       "action": "Actions",
-      "assistant": "Ask Zomer AI"
+      "assistant": "Zomer AI"
     },
     "keyboard": { "navigate": "↑↓ Navigate", "select": "↵ Select" },
     "ask": {
-      "title": "Ask Zomer AI: “{query}”",
+      "title": "Zomer AI: “{query}”",
       "description": "Send this question to the portfolio assistant"
     },
     "pages": {
@@ -71,10 +78,10 @@
         "description": "Contribution activity and commit history"
       },
       "assistant": {
-        "title": "Ask Zomer AI",
+        "title": "Zomer AI",
         "description": "Ask questions about experience and projects"
       },
-      "contact": { "title": "Let’s talk", "description": "Contact and booking options" },
+      "contact": { "title": "Contact", "description": "Contact and booking options" },
       "developers": { "title": "Developers", "description": "REST, OpenAPI, and MCP documentation" }
     },
     "profile": {

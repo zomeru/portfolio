@@ -1,5 +1,5 @@
 {
-  "eyebrow": "Zomer AI fragen",
+  "eyebrow": "Zomer AI",
   "title": "Ein quellenbasierter Wegweiser zu meiner Erfahrung, meinen Projekten und Texten.",
   "description": "Stelle Fragen zu diesem Portfolio. Antworten über mich verweisen auf die jeweiligen Quellseiten.",
   "conversationLabel": "Unterhaltung mit Zomer AI",
@@ -24,7 +24,7 @@
   "retry": "Erneut versuchen",
   "preparingResponse": "Antwort wird vorbereitet…",
   "writingResponse": "Antwort wird geschrieben…",
-  "inputLabel": "Zomer AI eine Frage stellen",
+  "inputLabel": "Frage an Zomer AI",
   "inputPlaceholder": "Frage nach Zomers Arbeit…",
   "restoring": "Unterhaltung wird wiederhergestellt…",
   "stop": "Generierung stoppen",

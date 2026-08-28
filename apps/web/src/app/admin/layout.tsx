@@ -67,7 +67,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </a>
             <div className="flex min-h-dvh flex-col">
               <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-5 sm:px-8">
-                <SiteHeader profile={profile} techStack={techStack.groups} />
+                <SiteHeader
+                  profile={profile}
+                  showLanguagePicker={false}
+                  techStack={techStack.groups}
+                />
                 <SiteNav showLanguagePicker={false} />
                 <main id="main-content" tabIndex={-1} className="flex-1 scroll-mt-4 py-12 sm:py-16">
                   {children}

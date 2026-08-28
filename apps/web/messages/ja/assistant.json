@@ -1,5 +1,5 @@
 {
-  "eyebrow": "Zomer AIに質問",
+  "eyebrow": "Zomer AI",
   "title": "私の職歴、プロジェクト、執筆内容を根拠付きで案内します。",
   "description": "このポートフォリオについて質問できます。私に関する回答には参照元のページが表示されます。",
   "conversationLabel": "Zomer AIとの会話",
@@ -24,7 +24,7 @@
   "retry": "再試行",
   "preparingResponse": "回答を準備しています…",
   "writingResponse": "回答を作成しています…",
-  "inputLabel": "Zomer AIに質問する",
+  "inputLabel": "Zomer AIへの質問",
   "inputPlaceholder": "Zomerの仕事について質問…",
   "restoring": "会話を復元しています…",
   "stop": "生成を停止",

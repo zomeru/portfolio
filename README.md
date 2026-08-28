@@ -1,6 +1,6 @@
 # Portfolio
 
-A personal portfolio with a technical blog, GitHub activity, and Ask Zomer AI. Sanity manages published content, while PostgreSQL supports grounded portfolio retrieval and chat persistence.
+A personal portfolio with a technical blog, GitHub activity, and Zomer AI. Sanity manages published content, while PostgreSQL supports grounded portfolio retrieval and chat persistence.
 
 ## Tech stack
 
@@ -19,7 +19,7 @@ Development logs color warnings and errors. Production emits structured, redacte
 
 ## Architecture
 
-`apps/web` is the only deployed process. It serves the Next.js UI, mounts the Hono app from `apps/api`, and hosts the MCP transports. `apps/api` owns the canonical published-portfolio service shared by the website, REST API, OpenAPI contract, and MCP tools. Ask Zomer uses the derived portfolio index for portfolio questions and can use provider web search for general questions when Groq or OpenRouter is selected.
+`apps/web` is the only deployed process. It serves the Next.js UI, mounts the Hono app from `apps/api`, and hosts the MCP transports. `apps/api` owns the canonical published-portfolio service shared by the website, REST API, OpenAPI contract, and MCP tools. Zomer AI uses the derived portfolio index for portfolio questions and can use provider web search for general questions when Groq or OpenRouter is selected.
 
 Blog publication creates an idempotent PostgreSQL event after Sanity succeeds. Email, Web Push, and webhook deliveries run independently, so provider failures never roll back a published post. The protected admin page retries incomplete or transient deliveries.
 
@@ -42,6 +42,10 @@ Turbo boundary checks reject undeclared dependencies and imports that reach acro
 - **Webhooks**: admin-approved Discord, Slack, or signed generic HTTPS destinations with server-side request forgery (SSRF) protection
 
 Notification schemas and migrations live in `packages/database`. See `/developers` for webhook payloads, signature verification, retries, and local testing.
+
+## PWA install metadata
+
+The web manifest provides desktop and mobile install screenshots plus separate standard and padded maskable icons. Protocol handlers are intentionally omitted because the portfolio has no custom-protocol action to handle. Window Controls Overlay is also omitted: the site does not implement title-bar controls, and standalone mode is the clearer installed experience.
 
 ## Local setup
 
@@ -70,8 +74,8 @@ pnpm --filter @portfolio/studio dev
 | GitHub                | `GH_PAT_TOKEN`                                                                                                                                                          |
 | Database              | `DATABASE_URL`, optional `DATABASE_DIRECT_URL`                                                                                                                          |
 | Blog AI               | `GOOGLE_GENERATIVE_AI_API_KEY`, `GOOGLE_GENERATIVE_AI_MODEL`                                                                                                            |
-| Ask Zomer providers   | `AI_CHAT_PROVIDER`, `GROQ_API_KEY`, `NVIDIA_NIM_API_KEY`, `OPENROUTER_API_KEY`                                                                                          |
-| Ask Zomer models      | `AI_GROQ_CHAT_MODEL`, `AI_NVIDIA_NIM_CHAT_MODEL`, `AI_OPENROUTER_CHAT_MODEL`, `AI_EMBEDDING_MODEL`                                                                      |
+| Zomer AI providers    | `AI_CHAT_PROVIDER`, `GROQ_API_KEY`, `NVIDIA_NIM_API_KEY`, `OPENROUTER_API_KEY`                                                                                          |
+| Zomer AI models       | `AI_GROQ_CHAT_MODEL`, `AI_NVIDIA_NIM_CHAT_MODEL`, `AI_OPENROUTER_CHAT_MODEL`, `AI_EMBEDDING_MODEL`                                                                      |
 | Admin                 | `ADMIN_ACCESS_KEY`, `CRON_SECRET`, `AI_INDEX_SECRET_KEY`                                                                                                                |
 | Email notifications   | `EMAIL_PROVIDER`, `EMAIL_FROM`, `EMAIL_FROM_NAME`, optional `EMAIL_REPLY_TO` and `EMAIL_CONFIRMATION_TTL_HOURS`; Gmail: `GOOGLE_APP_PASSWORD`; Resend: `RESEND_API_KEY` |
 | Web Push              | `NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY`, `WEB_PUSH_VAPID_PRIVATE_KEY`, `WEB_PUSH_SUBJECT`                                                                               |

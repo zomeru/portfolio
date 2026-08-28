@@ -39,7 +39,7 @@ export function SiteNav({
                   href={link.href}
                   aria-current={isActive ? "page" : undefined}
                   className={cn(
-                    "cursor-pointer inline-flex items-center rounded-full pr-2.5 py-1.5 text-sm text-muted transition-colors duration-200 motion-reduce:transition-none",
+                    "inline-flex sscursor-pointer items-center rounded-full pr-2.5 text-sm text-muted transition-colors duration-200 motion-reduce:transition-none min-h-8 md:py-1.5",
                     isActive
                       ? "text-foreground underline underline-offset-4"
                       : "hover:text-foreground",
@@ -51,9 +51,9 @@ export function SiteNav({
             );
           })}
         </ul>
-        <div className="flex items-center gap-2">
+        <div className="hidden items-center gap-2 md:flex">
           {searchEndpoint ? <SearchController endpoint={searchEndpoint} /> : null}
-          {showLanguagePicker && <LanguagePicker />}
+          {showLanguagePicker ? <LanguagePicker /> : null}
           <ThemeToggle />
         </div>
       </div>

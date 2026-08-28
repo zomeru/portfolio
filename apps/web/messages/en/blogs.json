@@ -20,7 +20,7 @@
     "invalidConfirmation": "This confirmation link is invalid or expired.",
     "invalidEmail": "Enter a valid email address.",
     "rateLimited": "Too many attempts. Try again in an hour.",
-    "subscribeError": "Unable to subscribe right now. Check your connection and try again.",
+    "subscribeError": "Unable to subscribe right now. Try again.",
     "checkInbox": "If confirmation is needed, check your inbox for a confirmation link.",
     "browserHeading": "Browser notifications",
     "browserEnabled": "Enabled for this browser.",
@@ -39,13 +39,13 @@
     "enabling": "Enabling notifications…",
     "permissionDenied": "Notifications were not enabled. You can change this in the browser's site settings.",
     "enabled": "Browser notifications are enabled.",
-    "enableError": "Unable to enable notifications. Check your connection and try again.",
+    "enableError": "Unable to enable notifications. Try again.",
     "expired": "This subscription expired. Enable notifications again.",
     "testSent": "Test sent. Your browser should show it shortly.",
     "testError": "The test notification failed. Check browser and server settings.",
     "disabling": "Disabling notifications…",
     "disabled": "Browser notifications are disabled.",
-    "disableError": "Unable to disable notifications. Check your connection and try again."
+    "disableError": "Unable to disable notifications. Try again."
   },
   "unsubscribe": {
     "eyebrow": "Blog",

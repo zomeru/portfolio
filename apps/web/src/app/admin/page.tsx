@@ -292,7 +292,7 @@ export default async function AdminPage() {
           AI knowledge index
         </h2>
         <p className="mt-1 text-xs leading-relaxed text-muted">
-          Inspect and refresh the published portfolio data available to Ask Zomer.
+          Inspect and refresh the published portfolio data available to Zomer AI.
         </p>
         {reindexToken ? (
           <div className="mt-4 divide-y divide-border/70">

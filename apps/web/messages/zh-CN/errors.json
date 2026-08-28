@@ -16,5 +16,18 @@
     "title": "无法加载作品集。",
     "description": "这可能是暂时性问题，请重新加载网站。",
     "action": "重试"
+  },
+  "request": {
+    "offline": "你似乎处于离线状态。请检查网络连接后重试。",
+    "network": "无法连接到服务。请检查网络连接后重试。",
+    "timeout": "请求耗时过长，请重试。",
+    "server": "无法完成请求，请重试。",
+    "rateLimit": "请求次数过多，请稍后重试。",
+    "authentication": "此请求需要身份验证。请登录后重试。",
+    "authorization": "你没有权限完成此请求。",
+    "validation": "请检查输入内容后重试。",
+    "notFound": "找不到所请求的项目。",
+    "unavailable": "服务暂时不可用，请稍后重试。",
+    "unknown": "无法完成请求，请重试。"
   }
 }
