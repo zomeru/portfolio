@@ -42,6 +42,7 @@ type NotificationSummary = {
   deliveries: Array<{
     channel: "email" | "push" | "webhook";
     status: "pending" | "processing" | "delivered" | "failed";
+    count: number;
   }>;
 };
 
@@ -96,12 +97,15 @@ async function loadWebhookSummaries(token: string) {
 
 function deliveryCounts(summary: NotificationSummary, channel: "email" | "push" | "webhook") {
   const rows = summary.deliveries.filter((delivery) => delivery.channel === channel);
+  const total = (...statuses: NotificationSummary["deliveries"][number]["status"][]) =>
+    rows.reduce(
+      (count, delivery) => count + (statuses.includes(delivery.status) ? delivery.count : 0),
+      0,
+    );
   return {
-    delivered: rows.filter((delivery) => delivery.status === "delivered").length,
-    failed: rows.filter((delivery) => delivery.status === "failed").length,
-    pending: rows.filter(
-      (delivery) => delivery.status === "pending" || delivery.status === "processing",
-    ).length,
+    delivered: total("delivered"),
+    failed: total("failed"),
+    pending: total("pending", "processing"),
   };
 }
 
@@ -292,7 +296,7 @@ export default async function AdminPage() {
           AI knowledge index
         </h2>
         <p className="mt-1 text-xs leading-relaxed text-muted">
-          Inspect and refresh the published portfolio data available to Ask Zomer.
+          Inspect and refresh the published portfolio data available to Zomer AI.
         </p>
         {reindexToken ? (
           <div className="mt-4 divide-y divide-border/70">

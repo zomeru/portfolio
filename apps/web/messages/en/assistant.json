@@ -1,8 +1,8 @@
 {
-  "eyebrow": "Ask Zomer AI",
+  "eyebrow": "Zomer AI",
   "title": "A grounded guide to my experience, projects, and writing.",
   "description": "Ask about anything on this portfolio. Answers about me cite the pages they came from.",
-  "conversationLabel": "Ask Zomer AI conversation",
+  "conversationLabel": "Zomer AI conversation",
   "suggestedQuestions": "Suggested questions",
   "initialSuggestions": {
     "experience": "What's Zomer's experience?",
@@ -24,7 +24,7 @@
   "retry": "Retry",
   "preparingResponse": "Preparing a response…",
   "writingResponse": "Writing a response…",
-  "inputLabel": "Ask Zomer AI a question",
+  "inputLabel": "Question for Zomer AI",
   "inputPlaceholder": "Ask about Zomer's work…",
   "restoring": "Restoring conversation…",
   "stop": "Stop generating",

@@ -1,5 +1,6 @@
 "use client";
 
+import "./command-palette.css";
 import {
   Bot,
   BriefcaseBusiness,
@@ -8,6 +9,7 @@ import {
   FileText,
   FolderKanban,
   Languages,
+  LoaderCircle,
   Mail,
   MoonStar,
   Newspaper,
@@ -24,6 +26,7 @@ import { rankSearchItems } from "@/features/search/lib/rank";
 import {
   type RankedSearchItem,
   type SearchGroup,
+  type SearchIndexStatus,
   type SearchItem,
 } from "@/features/search/types/search";
 import { replaceLocale } from "@/i18n/client";
@@ -62,8 +65,11 @@ function cancelAnimation(animation: Animation | null) {
 }
 
 type CommandPaletteProps = {
+  indexError: string;
+  indexStatus: SearchIndexStatus;
   items: SearchItem[];
   onOpenChange: (open: boolean) => void;
+  onRetry: () => void;
   open: boolean;
   triggerRef: RefObject<HTMLButtonElement | null>;
 };
@@ -82,7 +88,15 @@ function defaultItems(items: SearchItem[]) {
     .map((item) => ({ ...item, score: 1 }));
 }
 
-export function CommandPalette({ items, onOpenChange, open, triggerRef }: CommandPaletteProps) {
+export function CommandPalette({
+  indexError,
+  indexStatus,
+  items,
+  onOpenChange,
+  onRetry,
+  open,
+  triggerRef,
+}: CommandPaletteProps) {
   const locale = useLocale() as Locale;
   const pathname = usePathname();
   const router = useRouter();
@@ -131,16 +145,18 @@ export function CommandPalette({ items, onOpenChange, open, triggerRef }: Comman
 
   useEffect(() => {
     const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const wasClosed = !dialog.open;
+    if (open && wasClosed) dialog.showModal();
+    if (!open && wasClosed) return;
+
     const panel = panelRef.current;
     const content = contentRef.current;
-    if (!dialog || !panel || !content) return;
+    if (!panel || !content) return;
 
     const animationRun = ++animationRunRef.current;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const wasClosed = !dialog.open;
-
-    if (open && wasClosed) dialog.showModal();
-    if (!open && wasClosed) return;
 
     const computedPanel = window.getComputedStyle(panel);
     const computedContent = window.getComputedStyle(content);
@@ -361,8 +377,9 @@ export function CommandPalette({ items, onOpenChange, open, triggerRef }: Comman
               id={`${listboxId}-input`}
               role="combobox"
               aria-autocomplete="list"
-              aria-controls={listboxId}
-              aria-expanded="true"
+              aria-busy={indexStatus === "loading"}
+              aria-controls={indexStatus === "ready" ? listboxId : undefined}
+              aria-expanded={indexStatus === "ready"}
               aria-activedescendant={activeItem ? `${listboxId}-${activeItem.id}` : undefined}
               autoComplete="off"
               spellCheck="false"
@@ -400,14 +417,38 @@ export function CommandPalette({ items, onOpenChange, open, triggerRef }: Comman
           </div>
 
           <p aria-live="polite" className="sr-only">
-            {t("resultCount", { count: orderedResults.length })}
+            {indexStatus === "loading"
+              ? t("loading")
+              : indexStatus === "error"
+                ? t("loadError")
+                : t("resultCount", { count: orderedResults.length })}
           </p>
-          {orderedResults.length ? (
+          {indexStatus === "loading" ? (
+            <div className="flex min-h-40 flex-col items-center justify-center px-5 py-14 text-center">
+              <LoaderCircle
+                aria-hidden="true"
+                className="size-5 animate-spin text-muted motion-reduce:animate-none"
+              />
+              <p className="mt-3 text-sm font-medium">{t("loading")}</p>
+            </div>
+          ) : indexStatus === "error" ? (
+            <div className="flex min-h-40 flex-col items-center justify-center px-5 py-14 text-center">
+              <p className="text-sm font-medium">{t("loadError")}</p>
+              <p className="mt-2 text-xs text-muted">{indexError || t("loadErrorHint")}</p>
+              <button
+                type="button"
+                onClick={onRetry}
+                className="mt-4 min-h-9 border border-border px-3 text-xs font-medium transition-colors duration-150 hover:bg-foreground/6 motion-reduce:transition-none"
+              >
+                {t("retry")}
+              </button>
+            </div>
+          ) : orderedResults.length ? (
             <div
               id={listboxId}
               role="listbox"
               aria-label={t("resultsLabel")}
-              className="max-h-[min(34rem,calc(100dvh-5.5rem))] overflow-y-auto p-2 sm:max-h-[34rem]"
+              className="max-h-[min(34rem,calc(100dvh-5.5rem))] overflow-y-auto p-2 sm:max-h-136"
             >
               {grouped.map(({ group, items: groupItems }) => (
                 <SearchGroupResults
@@ -431,10 +472,12 @@ export function CommandPalette({ items, onOpenChange, open, triggerRef }: Comman
               <p className="mt-2 text-xs text-muted">{t("noResultsHint")}</p>
             </div>
           )}
-          <div className="hidden items-center justify-between border-t border-border px-4 py-2 font-mono text-[10px] text-muted sm:flex">
-            <span>{t("keyboard.navigate")}</span>
-            <span>{t("keyboard.select")}</span>
-          </div>
+          {indexStatus === "ready" && orderedResults.length ? (
+            <div className="hidden items-center justify-between border-t border-border px-4 py-2 font-mono text-[10px] text-muted sm:flex">
+              <span>{t("keyboard.navigate")}</span>
+              <span>{t("keyboard.select")}</span>
+            </div>
+          ) : null}
         </div>
       </div>
       <button

@@ -1,8 +1,6 @@
 "use client";
 
-import { ChevronDown, ChevronUp } from "lucide";
-import { Check } from "lucide-react";
-import { MorphIcon } from "morphicons/react";
+import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import {
   type KeyboardEvent,
   type PointerEvent as ReactPointerEvent,
@@ -219,15 +217,11 @@ export function Select({
         <span id={valueId} className="min-w-0 truncate">
           {selectedOption?.label}
         </span>
-        <MorphIcon
-          aria-hidden="true"
-          icon={open ? ChevronUp : ChevronDown}
-          reducedMotion="user"
-          spring="snappy"
-          size={iconSize}
-          strokeWidth={1.5}
-          className="shrink-0"
-        />
+        {open ? (
+          <ChevronUp aria-hidden="true" size={iconSize} strokeWidth={1.5} className="shrink-0" />
+        ) : (
+          <ChevronDown aria-hidden="true" size={iconSize} strokeWidth={1.5} className="shrink-0" />
+        )}
       </button>
 
       {open && (

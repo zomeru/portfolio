@@ -1,5 +1,7 @@
 import {
-  getPublicPortfolioSnapshot,
+  listPublicBlogPosts,
+  listPublicExperience,
+  listPublicProjects,
   type PublicBlogPostSummary,
   type PublicExperience,
   type PublicProject,
@@ -26,10 +28,16 @@ const machinePages = [
   { path: "/llms-full.txt", priority: 0.6 },
 ] as const;
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const { blogs, experience, projects } = await getPublicPortfolioSnapshot();
+export const revalidate = false;
 
-  return getSitemapEntries(blogs, experience, projects);
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const [blogs, experience, projects] = await Promise.all([
+    listPublicBlogPosts({ limit: 10_000 }),
+    listPublicExperience(),
+    listPublicProjects(),
+  ]);
+
+  return getSitemapEntries(blogs.items, experience.items, projects.items);
 }
 
 export function getSitemapEntries(

@@ -1,9 +1,11 @@
-const CACHE_VERSION = "zomer-pwa-v2";
+const CACHE_VERSION = "zomer-pwa-v3";
 const OFFLINE_URL = "/offline.html";
 const CORE_ASSETS = [
   OFFLINE_URL,
   "/web-app-manifest-192x192.png",
   "/web-app-manifest-512x512.png",
+  "/web-app-manifest-maskable-192x192.png",
+  "/web-app-manifest-maskable-512x512.png",
 ];
 
 self.addEventListener("install", (event) => {

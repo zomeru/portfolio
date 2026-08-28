@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { Select } from "@/components/ui/select";
 import { replaceLocale } from "@/i18n/client";
@@ -12,6 +12,7 @@ export function LanguagePicker() {
   const locale = useLocale();
   const pathname = usePathname();
   const t = useTranslations("Common.language");
+  const id = useId();
   const [pending, setPending] = useState(false);
 
   function switchLocale(nextLocale: Locale) {
@@ -23,7 +24,7 @@ export function LanguagePicker() {
 
   return (
     <Select
-      id="portfolio-language"
+      id={`portfolio-language-${id}`}
       label={pending ? t("switching") : t("label")}
       labelClassName="sr-only"
       value={locale}

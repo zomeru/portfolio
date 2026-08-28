@@ -6,6 +6,7 @@ import {
   deleteKnowledgeDocumentsNotIn,
   expireStaleIngestionRuns,
   failIngestionRun,
+  findIndexedKnowledgeDocumentBySanityId,
   listIndexedKnowledgeDocuments,
   listRecentIngestionRuns,
   readKnowledgeIndexStatus,
@@ -317,8 +318,8 @@ export async function synchronizePublishedKnowledgeDocument(options: {
         summary.documentsSeen = 1;
         const embeddingModelId = getAssistantModels().embeddingModelId;
 
-        const existing = await listIndexedKnowledgeDocuments();
-        const existingBySanityId = new Map(existing.map((item) => [item.sanityDocumentId, item]));
+        const existing = await findIndexedKnowledgeDocumentBySanityId(document.sanityDocumentId);
+        const existingBySanityId = new Map(existing ? [[existing.sanityDocumentId, existing]] : []);
         await indexDocument({
           document,
           documentCount: 1,

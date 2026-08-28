@@ -2,6 +2,7 @@ import type { PublicProfile, PublicTechStackGroup } from "@portfolio/api/public-
 import { ArrowUpRight } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { MobileHeaderControls } from "@/components/layout/mobile-header-controls";
 import { PublicProfileImage } from "@/components/portfolio/public-profile-image";
 import { SocialLinks } from "@/components/portfolio/social-links";
 import { TechStack } from "@/components/portfolio/tech-stack";
@@ -11,17 +12,24 @@ const AVATAR_SIZE = 512;
 
 type SiteHeaderProps = {
   profile: PublicProfile | null;
+  searchEndpoint?: string;
+  showLanguagePicker?: boolean;
   techStack: readonly PublicTechStackGroup[];
 };
 
-export async function SiteHeader({ profile, techStack }: SiteHeaderProps) {
+export async function SiteHeader({
+  profile,
+  searchEndpoint,
+  showLanguagePicker = true,
+  techStack,
+}: SiteHeaderProps) {
   const [locale, t] = await Promise.all([getLocale(), getTranslations("Common")]);
   const socials = profile ? getProfileSocials(profile) : [];
   const resumeUrl = profile?.resumePdfUrl ?? "/assets/GREGORIO_ZOMER_RESUME.pdf";
 
   return (
     <header className="border-b border-border">
-      <div className="grid gap-10 py-10 md:grid-cols-2 md:gap-16 sm:py-12">
+      <div className="relative grid gap-10 py-10 sm:py-12 md:grid-cols-2 md:gap-16">
         <div className="flex flex-col items-start gap-5">
           {profile && (
             <div className="relative size-24 overflow-hidden rounded-full border border-border">
@@ -58,16 +66,22 @@ export async function SiteHeader({ profile, techStack }: SiteHeaderProps) {
           {socials.length > 0 && (
             <SocialLinks
               items={socials}
-              emailLabel={t("social.email")}
+              labels={{
+                Email: t("social.email"),
+                GitHub: t("search.profile.github.title"),
+                LinkedIn: t("search.profile.linkedin.title"),
+              }}
               className="flex items-center"
             />
           )}
         </div>
-        {techStack.length > 0 && (
-          <div>
-            <TechStack groups={techStack} />
-          </div>
-        )}
+        <MobileHeaderControls
+          hasTechStack={techStack.length > 0}
+          searchEndpoint={searchEndpoint}
+          showLanguagePicker={showLanguagePicker}
+        >
+          {techStack.length > 0 ? <TechStack groups={techStack} /> : null}
+        </MobileHeaderControls>
       </div>
     </header>
   );

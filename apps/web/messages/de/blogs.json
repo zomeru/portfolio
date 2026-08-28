@@ -20,7 +20,7 @@
     "invalidConfirmation": "Dieser Bestätigungslink ist ungültig oder abgelaufen.",
     "invalidEmail": "Gib eine gültige E-Mail-Adresse ein.",
     "rateLimited": "Zu viele Versuche. Versuche es in einer Stunde erneut.",
-    "subscribeError": "Das Abonnement kann derzeit nicht eingerichtet werden. Prüfe deine Verbindung und versuche es erneut.",
+    "subscribeError": "Das Abonnement kann derzeit nicht eingerichtet werden. Versuche es erneut.",
     "checkInbox": "Falls eine Bestätigung erforderlich ist, prüfe deinen Posteingang auf den Bestätigungslink.",
     "browserHeading": "Browserbenachrichtigungen",
     "browserEnabled": "Für diesen Browser aktiviert.",
@@ -39,13 +39,13 @@
     "enabling": "Benachrichtigungen werden aktiviert…",
     "permissionDenied": "Benachrichtigungen wurden nicht aktiviert. Du kannst dies in den Website-Einstellungen des Browsers ändern.",
     "enabled": "Browserbenachrichtigungen wurden aktiviert.",
-    "enableError": "Benachrichtigungen können nicht aktiviert werden. Prüfe deine Verbindung und versuche es erneut.",
+    "enableError": "Benachrichtigungen können nicht aktiviert werden. Versuche es erneut.",
     "expired": "Dieses Abonnement ist abgelaufen. Aktiviere Benachrichtigungen erneut.",
     "testSent": "Test gesendet. Dein Browser sollte ihn gleich anzeigen.",
     "testError": "Die Testbenachrichtigung ist fehlgeschlagen. Prüfe die Browser- und Servereinstellungen.",
     "disabling": "Benachrichtigungen werden deaktiviert…",
     "disabled": "Browserbenachrichtigungen wurden deaktiviert.",
-    "disableError": "Benachrichtigungen können nicht deaktiviert werden. Prüfe deine Verbindung und versuche es erneut."
+    "disableError": "Benachrichtigungen können nicht deaktiviert werden. Versuche es erneut."
   },
   "unsubscribe": {
     "eyebrow": "Blog",

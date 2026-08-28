@@ -9,7 +9,10 @@ let configuration: Promise<void> | undefined;
 export function prepareBookingWidget() {
   configuration ??= getCalApi({ namespace: CAL_NAMESPACE }).then((cal) => {
     cal("ui", {
-      styles: { branding: { brandColor: "#000000" } },
+      cssVarsPerTheme: {
+        dark: { "cal-brand": "#000000" },
+        light: { "cal-brand": "#000000" },
+      },
       hideEventTypeDetails: false,
       layout: "month_view",
     });

@@ -2,11 +2,13 @@
   "skipToContent": "Zum Inhalt springen",
   "nav": {
     "label": "Hauptnavigation",
+    "menu": "Menü",
+    "close": "Schließen",
     "about": "Über mich",
     "projects": "Projekte",
     "blogs": "Blog",
     "github": "GitHub",
-    "assistant": "Zomer AI fragen",
+    "assistant": "Zomer AI",
     "contact": "Kontakt"
   },
   "theme": {
@@ -27,6 +29,11 @@
     "data": "Daten",
     "infrastructure": "Infrastruktur / Tools"
   },
+  "techStack": {
+    "label": "Tech-Stack",
+    "trigger": "Stack",
+    "close": "Tech-Stack schließen"
+  },
   "social": {
     "email": "E-Mail"
   },
@@ -39,6 +46,10 @@
     "close": "Suche schließen",
     "resultsLabel": "Suchergebnisse",
     "resultCount": "{count, plural, one {# Ergebnis} other {# Ergebnisse}}",
+    "loading": "Ziele werden geladen…",
+    "loadError": "Die Suche konnte nicht geladen werden",
+    "loadErrorHint": "Versuche es erneut.",
+    "retry": "Erneut versuchen",
     "noResults": "Keine passenden Ziele",
     "noResultsHint": "Versuche ein Projekt, eine Technologie, Firma oder Aktion.",
     "groups": {
@@ -48,11 +59,11 @@
       "blog": "Blog",
       "profile": "Profil",
       "action": "Aktionen",
-      "assistant": "Zomer AI fragen"
+      "assistant": "Zomer AI"
     },
     "keyboard": { "navigate": "↑↓ Navigieren", "select": "↵ Auswählen" },
     "ask": {
-      "title": "Zomer AI fragen: „{query}“",
+      "title": "Zomer AI: „{query}“",
       "description": "Diese Frage an den Portfolio-Assistenten senden"
     },
     "pages": {
@@ -67,7 +78,7 @@
       "blogs": { "title": "Blog", "description": "Artikel über Softwareentwicklung" },
       "github": { "title": "GitHub-Aktivität", "description": "Beiträge und Commit-Verlauf" },
       "assistant": {
-        "title": "Zomer AI fragen",
+        "title": "Zomer AI",
         "description": "Fragen zu Erfahrung und Projekten stellen"
       },
       "contact": { "title": "Kontakt", "description": "Kontakt- und Buchungsmöglichkeiten" },

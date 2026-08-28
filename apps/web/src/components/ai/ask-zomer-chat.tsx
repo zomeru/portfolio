@@ -9,8 +9,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+import "@/components/portfolio/markdown-content.css";
 import { client } from "@/lib/api";
 import { reportClientWarning } from "@/lib/client-log";
+import { classifyRequestFailure, HttpRequestError } from "@/lib/request-failure";
 
 const SESSION_STORAGE_KEY = "ask-zomer-session";
 function getOrCreateSessionKey() {
@@ -240,6 +242,7 @@ function ChatSession({
 }) {
   const locale = useLocale();
   const t = useTranslations("Assistant");
+  const tRequest = useTranslations("Errors.request");
   const [input, setInput] = useState("");
   const [historyReady, setHistoryReady] = useState(false);
   const [historyWarning, setHistoryWarning] = useState(false);
@@ -267,7 +270,7 @@ function ChatSession({
           { param: { sessionKey } },
           { init: { signal: controller.signal } },
         );
-        if (!response.ok) throw new Error("Conversation history is unavailable.");
+        if (!response.ok) throw new HttpRequestError(response.status);
         const payload = (await (response as Response).json()) as {
           messages?: AskZomerMessage[];
         };
@@ -340,7 +343,9 @@ function ChatSession({
           role="alert"
           className="flex items-center justify-between gap-4 border-t border-border py-3"
         >
-          <p className="text-sm text-red-600 dark:text-red-400">{t("responseError")}</p>
+          <p className="text-sm text-red-600 dark:text-red-400">
+            {tRequest(classifyRequestFailure(error))}
+          </p>
           <button
             type="button"
             onClick={() => {

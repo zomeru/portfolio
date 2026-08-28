@@ -58,31 +58,48 @@ export type KnowledgeChunkWrite = {
   tokenCount: number;
 };
 
-export async function createOrTouchChatSession(sessionKey: string) {
-  const now = new Date();
-  const [session] = await db
+export async function findOrCreateChatSession(sessionKey: string) {
+  const [existing] = await db
+    .select({ id: chatSessions.id })
+    .from(chatSessions)
+    .where(eq(chatSessions.sessionKey, sessionKey))
+    .limit(1);
+  if (existing) return existing;
+
+  const [created] = await db
     .insert(chatSessions)
-    .values({ sessionKey, updatedAt: now })
-    .onConflictDoUpdate({
-      target: chatSessions.sessionKey,
-      set: { updatedAt: now },
-    })
-    .returning();
-  return session;
+    .values({ sessionKey })
+    .onConflictDoNothing({ target: chatSessions.sessionKey })
+    .returning({ id: chatSessions.id });
+  if (created) return created;
+
+  const [concurrent] = await db
+    .select({ id: chatSessions.id })
+    .from(chatSessions)
+    .where(eq(chatSessions.sessionKey, sessionKey))
+    .limit(1);
+  return concurrent;
 }
 
-export async function countUserMessagesSince(sessionId: string, since: Date) {
+export async function countUserMessagesInWindows(options: {
+  sessionId: string;
+  minuteSince: Date;
+  daySince: Date;
+}) {
   const [result] = await db
-    .select({ value: count() })
+    .select({
+      minute: sql<number>`count(*) filter (where ${chatMessages.createdAt} >= ${options.minuteSince})::int`,
+      day: sql<number>`count(*)::int`,
+    })
     .from(chatMessages)
     .where(
       and(
-        eq(chatMessages.sessionId, sessionId),
+        eq(chatMessages.sessionId, options.sessionId),
         eq(chatMessages.role, "user"),
-        gte(chatMessages.createdAt, since),
+        gte(chatMessages.createdAt, options.daySince),
       ),
     );
-  return result?.value ?? 0;
+  return { minute: result?.minute ?? 0, day: result?.day ?? 0 };
 }
 
 export function listRecentChatMessages(sessionId: string, limit: number) {
@@ -114,7 +131,7 @@ export async function createUserChatMessage(options: {
       .insert(chatMessages)
       .values({ ...options, role: "user" })
       .onConflictDoNothing({ target: chatMessages.providerMessageId })
-      .returning(),
+      .returning({ id: chatMessages.id }),
     db
       .update(chatSessions)
       .set({ updatedAt: now, lastMessageAt: now })
@@ -125,7 +142,11 @@ export async function createUserChatMessage(options: {
 
 export async function findChatMessageByProviderId(providerMessageId: string) {
   const [message] = await db
-    .select()
+    .select({
+      id: chatMessages.id,
+      role: chatMessages.role,
+      sessionId: chatMessages.sessionId,
+    })
     .from(chatMessages)
     .where(eq(chatMessages.providerMessageId, providerMessageId))
     .limit(1);
@@ -166,7 +187,17 @@ export async function findChatSessionByKey(sessionKey: string) {
 
 export function listStoredChatMessages(sessionId: string, limit: number) {
   return db
-    .select()
+    .select({
+      id: chatMessages.id,
+      providerMessageId: chatMessages.providerMessageId,
+      role: chatMessages.role,
+      content: chatMessages.content,
+      intent: chatMessages.intent,
+      model: chatMessages.model,
+      citations: chatMessages.citations,
+      suggestions: chatMessages.suggestions,
+      createdAt: chatMessages.createdAt,
+    })
     .from(chatMessages)
     .where(eq(chatMessages.sessionId, sessionId))
     .orderBy(desc(chatMessages.createdAt))
@@ -241,7 +272,7 @@ export function findKeywordKnowledgeCandidates(
     .limit(options.limit);
 }
 
-export async function findLatestKnowledgeCandidates(options: {
+export function findLatestKnowledgeCandidates(options: {
   embeddingModel: string;
   indexVersion: string;
   sourceType: "blog" | "experience";
@@ -251,27 +282,26 @@ export async function findLatestKnowledgeCandidates(options: {
     options.sourceType === "blog"
       ? sql`coalesce(nullif(${knowledgeDocuments.metadata}->>'publishedAt', '')::timestamptz, ${knowledgeDocuments.sanityUpdatedAt})`
       : sql`coalesce(nullif(${knowledgeDocuments.metadata}->>'periodEnd', '')::date, ${knowledgeDocuments.sanityUpdatedAt}::date)`;
-  const [latestDocument] = await db
+  const latestDocument = db
     .select({ id: knowledgeDocuments.id })
     .from(knowledgeDocuments)
     .where(
       and(eq(knowledgeDocuments.sourceType, options.sourceType), knowledgeIndexCondition(options)),
     )
     .orderBy(desc(recency), desc(knowledgeDocuments.sanityUpdatedAt))
-    .limit(1);
-
-  if (!latestDocument) return [];
+    .limit(1)
+    .as("latest_knowledge_document");
 
   return db
     .select(candidateSelection)
     .from(knowledgeChunks)
     .innerJoin(knowledgeDocuments, eq(knowledgeChunks.documentId, knowledgeDocuments.id))
-    .where(eq(knowledgeDocuments.id, latestDocument.id))
+    .innerJoin(latestDocument, eq(knowledgeDocuments.id, latestDocument.id))
     .orderBy(knowledgeChunks.chunkIndex)
     .limit(options.limit);
 }
 
-export async function findOldestKnowledgeCandidates(options: {
+export function findOldestKnowledgeCandidates(options: {
   embeddingModel: string;
   indexVersion: string;
   sourceType: "blog" | "experience";
@@ -281,22 +311,21 @@ export async function findOldestKnowledgeCandidates(options: {
     options.sourceType === "blog"
       ? sql`coalesce(nullif(${knowledgeDocuments.metadata}->>'publishedAt', '')::timestamptz, ${knowledgeDocuments.sanityUpdatedAt})`
       : sql`coalesce(nullif(${knowledgeDocuments.metadata}->>'periodStart', '')::date, ${knowledgeDocuments.sanityUpdatedAt}::date)`;
-  const [oldestDocument] = await db
+  const oldestDocument = db
     .select({ id: knowledgeDocuments.id })
     .from(knowledgeDocuments)
     .where(
       and(eq(knowledgeDocuments.sourceType, options.sourceType), knowledgeIndexCondition(options)),
     )
     .orderBy(asc(chronology), asc(knowledgeDocuments.sanityUpdatedAt))
-    .limit(1);
-
-  if (!oldestDocument) return [];
+    .limit(1)
+    .as("oldest_knowledge_document");
 
   return db
     .select(candidateSelection)
     .from(knowledgeChunks)
     .innerJoin(knowledgeDocuments, eq(knowledgeChunks.documentId, knowledgeDocuments.id))
-    .where(eq(knowledgeDocuments.id, oldestDocument.id))
+    .innerJoin(oldestDocument, eq(knowledgeDocuments.id, oldestDocument.id))
     .orderBy(knowledgeChunks.chunkIndex)
     .limit(options.limit);
 }
@@ -366,32 +395,34 @@ export async function countDistinctExperienceCompanies(options: KnowledgeIndexFi
   return result?.value ?? 0;
 }
 
-function knowledgeTextMatchesTerms(terms: readonly string[]) {
+function knowledgeSearchMatchesTerms(terms: readonly string[]) {
   const conditions = terms.map((term) => {
-    const pattern = `%${term.toLocaleLowerCase()}%`;
-    return sql`(
-      lower(${knowledgeDocuments.title}) like ${pattern}
-      or lower((${knowledgeDocuments.metadata})::text) like ${pattern}
-      or exists (
-        select 1
-        from "knowledge_chunks" as "matching_chunk"
-        where "matching_chunk"."document_id" = ${knowledgeDocuments.id}
-          and lower("matching_chunk"."content") like ${pattern}
-      )
+    // PostgreSQL's parser drops language-significant `+` and `#` suffixes (for example C++).
+    const chunkCondition = /[+#]/u.test(term)
+      ? sql`lower("matching_chunk"."content") like ${`%${term.toLocaleLowerCase()}%`}`
+      : sql`"matching_chunk"."search" @@ websearch_to_tsquery('english', ${term})`;
+    return sql`exists (
+      select 1
+      from "knowledge_chunks" as "matching_chunk"
+      where "matching_chunk"."document_id" = ${knowledgeDocuments.id}
+        and ${chunkCondition}
     )`;
   });
   return conditions.length > 0 ? and(...conditions) : sql`false`;
 }
 
-export function findBlogCandidatesMatchingTerms(
+export async function findBlogCandidatesMatchingTerms(
   options: KnowledgeIndexFilter & {
     terms: readonly string[];
     limit: number;
   },
 ) {
   const recency = sql`coalesce(nullif(${knowledgeDocuments.metadata}->>'publishedAt', '')::timestamptz, ${knowledgeDocuments.sanityUpdatedAt})`;
-  return db
-    .select(candidateSelection)
+  const rows = await db
+    .select({
+      ...candidateSelection,
+      totalCount: sql<number>`count(*) over()::int`,
+    })
     .from(knowledgeChunks)
     .innerJoin(knowledgeDocuments, eq(knowledgeChunks.documentId, knowledgeDocuments.id))
     .where(
@@ -399,29 +430,15 @@ export function findBlogCandidatesMatchingTerms(
         eq(knowledgeDocuments.sourceType, "blog"),
         eq(knowledgeChunks.chunkIndex, 0),
         knowledgeIndexCondition(options),
-        knowledgeTextMatchesTerms(options.terms),
+        knowledgeSearchMatchesTerms(options.terms),
       ),
     )
     .orderBy(desc(recency), desc(knowledgeDocuments.sanityUpdatedAt))
     .limit(options.limit);
-}
-
-export async function countBlogDocumentsMatchingTerms(
-  options: KnowledgeIndexFilter & {
-    terms: readonly string[];
-  },
-) {
-  const [result] = await db
-    .select({ value: count() })
-    .from(knowledgeDocuments)
-    .where(
-      and(
-        eq(knowledgeDocuments.sourceType, "blog"),
-        knowledgeIndexCondition(options),
-        knowledgeTextMatchesTerms(options.terms),
-      ),
-    );
-  return result?.value ?? 0;
+  return {
+    candidates: rows.map(({ totalCount: _totalCount, ...candidate }) => candidate),
+    count: rows[0]?.totalCount ?? 0,
+  };
 }
 
 export function findExperienceOverviewCandidates(options: {
@@ -480,7 +497,7 @@ export async function createIngestionRun(options: {
       lockKey: options.lockKey,
       metadata: { force: options.force },
     })
-    .returning();
+    .returning({ id: ingestionRuns.id });
   return run;
 }
 
@@ -492,6 +509,19 @@ export function listIndexedKnowledgeDocuments() {
       contentHash: knowledgeDocuments.contentHash,
     })
     .from(knowledgeDocuments);
+}
+
+export async function findIndexedKnowledgeDocumentBySanityId(sanityDocumentId: string) {
+  const [document] = await db
+    .select({
+      id: knowledgeDocuments.id,
+      sanityDocumentId: knowledgeDocuments.sanityDocumentId,
+      contentHash: knowledgeDocuments.contentHash,
+    })
+    .from(knowledgeDocuments)
+    .where(eq(knowledgeDocuments.sanityDocumentId, sanityDocumentId))
+    .limit(1);
+  return document ?? null;
 }
 
 export async function touchIndexedKnowledgeDocument(id: string, sanityUpdatedAt: Date) {

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { type FormEvent, useRef, useState } from "react";
 
 import { reportClientError } from "@/lib/client-log";
+import { HttpRequestError } from "@/lib/request-failure";
 
 type ReindexSummary = {
   chunksCreated: number;
@@ -45,10 +46,8 @@ export function KnowledgeIndexForm() {
       });
 
       if (!response.ok || !response.body) {
-        const payload = (await response.json().catch(() => null)) as {
-          error?: { message?: string };
-        } | null;
-        throw new Error(payload?.error?.message ?? "Knowledge indexing could not be started.");
+        await response.body?.cancel();
+        throw new HttpRequestError(response.status);
       }
 
       const reader = response.body.getReader();
@@ -66,7 +65,7 @@ export function KnowledgeIndexForm() {
           setState({ status: "running", message: update.message });
           return;
         }
-        if (update.type === "error") throw new Error(update.message);
+        if (update.type === "error") throw new Error("Knowledge indexing failed.");
 
         completed = true;
         setState({
@@ -91,8 +90,8 @@ export function KnowledgeIndexForm() {
       setState({
         status: "error",
         message:
-          error instanceof Error
-            ? error.message
+          error instanceof HttpRequestError && error.status === 401
+            ? "Indexing access expired. Unlock it again."
             : "Knowledge indexing could not be completed. Try again or inspect server logs.",
       });
     }

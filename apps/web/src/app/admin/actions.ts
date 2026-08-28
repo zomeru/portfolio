@@ -5,7 +5,7 @@ import { randomUUID } from "node:crypto";
 import { type AdminCapability, verifyAdminSecret } from "@portfolio/api";
 import { logError } from "@portfolio/api/logging";
 import { getCronEnv } from "@portfolio/env/cron";
-import { revalidatePath } from "next/cache";
+import { refresh } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -144,13 +144,9 @@ export async function triggerBlogGeneration(
     if (!response.ok || !payload.success || !payload.post?.slug || !payload.post.title) {
       return {
         status: "error",
-        message:
-          payload.error?.message ?? "Blog generation failed. Try again or inspect server logs.",
+        message: "Blog generation failed. Try again or inspect server logs.",
       };
     }
-
-    revalidatePath("/blogs");
-    revalidatePath(`/blogs/${payload.post.slug}`);
 
     return {
       status: "success",
@@ -162,7 +158,7 @@ export async function triggerBlogGeneration(
             : payload.indexing?.status === "failed"
               ? "The article was published, but its AI index update failed. Use Reindex AI data below to retry."
               : payload.created
-                ? "The article was generated, published, and indexed for Ask Zomer AI."
+                ? "The article was generated, published, and indexed for Zomer AI."
                 : "This request resolved to an existing generated article and refreshed its AI index.",
       post: { slug: payload.post.slug, title: payload.post.title },
     };
@@ -228,10 +224,10 @@ export async function registerWebhook(
     if (!response.ok || !payload.success) {
       return {
         status: "error",
-        message: payload.error?.message ?? "Unable to register the webhook. Check the URL.",
+        message: "Unable to register the webhook. Try again or inspect server logs.",
       };
     }
-    revalidatePath("/admin");
+    refresh();
     return {
       status: "success",
       message: `${parsed.data.name} is connected. Send a test to verify the destination.`,
@@ -279,7 +275,7 @@ export async function testWebhook(
       ? { status: "success", message: "Test delivered. Check the destination." }
       : {
           status: "error",
-          message: payload.error?.message ?? "The test could not be delivered.",
+          message: "The test could not be delivered. Try again or inspect server logs.",
         };
   } catch (error) {
     logError("admin webhook test failed", error, {
@@ -319,10 +315,10 @@ export async function disableWebhook(
     if (!response.ok || !payload.success) {
       return {
         status: "error",
-        message: payload.error?.message ?? "The webhook could not be disabled.",
+        message: "The webhook could not be disabled. Try again or inspect server logs.",
       };
     }
-    revalidatePath("/admin");
+    refresh();
     return { status: "success", message: "Webhook disabled." };
   } catch (error) {
     logError("admin webhook disable failed", error, {
@@ -360,7 +356,7 @@ export async function retryNotifications(
     if (!response.ok || !payload.success || !payload.deliveries) {
       return {
         status: "error",
-        message: payload.error?.message ?? "Queued notifications could not be retried.",
+        message: "Queued notifications could not be retried. Try again or inspect server logs.",
       };
     }
 
@@ -373,7 +369,7 @@ export async function retryNotifications(
       }),
       { attempted: 0, failed: 0, skipped: 0, succeeded: 0 },
     );
-    revalidatePath("/admin");
+    refresh();
 
     return totals.attempted === 0
       ? { status: "success", message: "No queued notifications are ready to retry." }

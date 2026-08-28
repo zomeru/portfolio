@@ -1,7 +1,6 @@
 import { createHash } from "node:crypto";
 
 import {
-  countBlogDocumentsMatchingTerms,
   countDistinctExperienceCompanies,
   countKnowledgeDocumentsBySource,
   createRetrievalEvent,
@@ -207,13 +206,29 @@ function fuseCandidates(
   return [...fused.values()].sort((left, right) => right.score - left.score);
 }
 
+function searchableMetadataValues(value: unknown): string {
+  if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+  if (Array.isArray(value)) return value.map(searchableMetadataValues).join(" ");
+  if (value && typeof value === "object") {
+    return Object.values(value).map(searchableMetadataValues).join(" ");
+  }
+  return "";
+}
+
 function searchableCandidateText(candidate: RetrievedKnowledge) {
-  return `${candidate.title}\n${candidate.content}\n${JSON.stringify(candidate.metadata)}`.toLocaleLowerCase();
+  return `${candidate.title}\n${candidate.content}\n${searchableMetadataValues(candidate.metadata)}`;
+}
+
+function namedTermPresent(text: string, term: string) {
+  const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return new RegExp(`(?<![\\p{L}\\p{N}])${escapedTerm}(?![\\p{L}\\p{N}])`, "iu").test(text);
 }
 
 function namedTermCoverage(candidate: RetrievedKnowledge, namedTerms: readonly string[]) {
   const text = searchableCandidateText(candidate);
-  return namedTerms.filter((term) => text.includes(term.toLocaleLowerCase())).length;
+  return namedTerms.filter((term) => namedTermPresent(text, term)).length;
 }
 
 function finalizeCandidates(
@@ -466,14 +481,11 @@ async function structuredCandidates(
   if (strategy === "blog-filter-list") {
     const requestedLimit = explicitRecentBlogCount(options.query) ?? RECENT_BLOG_MAX_RESULT_LIMIT;
     const resultLimit = Math.min(RECENT_BLOG_MAX_RESULT_LIMIT, Math.max(1, requestedLimit));
-    const [value, candidates] = await Promise.all([
-      countBlogDocumentsMatchingTerms({ ...identity, terms: options.namedTerms }),
-      findBlogCandidatesMatchingTerms({
-        ...identity,
-        terms: options.namedTerms,
-        limit: resultLimit,
-      }),
-    ]);
+    const { count: value, candidates } = await findBlogCandidatesMatchingTerms({
+      ...identity,
+      terms: options.namedTerms,
+      limit: resultLimit,
+    });
     return {
       aggregate: { kind: "blog-filter-count" as const, value },
       candidates,
@@ -505,7 +517,7 @@ async function structuredCandidates(
 
 function retrievalEvidence(results: readonly RetrievedKnowledge[], namedTerms: readonly string[]) {
   const foundNamedTerms = namedTerms.filter((term) =>
-    results.some((result) => searchableCandidateText(result).includes(term.toLocaleLowerCase())),
+    results.some((result) => namedTermPresent(searchableCandidateText(result), term)),
   );
   const missingNamedTerms = namedTerms.filter((term) => !foundNamedTerms.includes(term));
   const kind = results.some((result) => result.structuredRank)

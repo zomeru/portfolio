@@ -1,4 +1,4 @@
-import { getPublicPortfolioSnapshot, getPublicProject } from "@portfolio/api/public-portfolio";
+import { getPublicProject, listPublicProjects } from "@portfolio/api/public-portfolio";
 import { ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
@@ -20,7 +20,7 @@ type ProjectPageProps = {
 const getProject = cache((slug: string) => getPublicProject(slug));
 
 export async function generateStaticParams() {
-  return (await getPublicPortfolioSnapshot()).projects.map(({ slug }) => ({ slug }));
+  return (await listPublicProjects()).items.map(({ slug }) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {

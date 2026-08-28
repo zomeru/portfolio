@@ -9,7 +9,16 @@ import {
   portableTextToParagraphs,
   portableTextToPlainText,
 } from "./portable-text";
-import { PUBLIC_BLOG_POST_QUERY, PUBLIC_PORTFOLIO_SNAPSHOT_QUERY } from "./queries";
+import {
+  PUBLIC_BLOG_POST_LIST_QUERY,
+  PUBLIC_BLOG_POST_QUERY,
+  PUBLIC_EXPERIENCE_LIST_QUERY,
+  PUBLIC_EXPERIENCE_QUERY,
+  PUBLIC_PROFILE_QUERY,
+  PUBLIC_PROJECT_LIST_QUERY,
+  PUBLIC_PROJECT_QUERY,
+  PUBLIC_TECH_STACK_QUERY,
+} from "./queries";
 import {
   type PublicBlogPost,
   type PublicBlogPostList,
@@ -33,7 +42,7 @@ import {
 } from "./schemas";
 
 const SANITY_API_VERSION = "2026-08-20";
-const PUBLIC_REVALIDATE_SECONDS = 300;
+const SANITY_REQUEST_TIMEOUT_MS = 15_000;
 const DEFAULT_RESUME_PATH = "/assets/GREGORIO_ZOMER_RESUME.pdf";
 
 const rawPhotoSchema = z
@@ -156,7 +165,14 @@ export type PublicPortfolioService = {
 
 type ServiceDependencies = {
   fetchBlogPost(slug: string): Promise<unknown>;
-  fetchSnapshot(): Promise<unknown>;
+  fetchBlogPosts?(): Promise<unknown>;
+  fetchExperience?(slug: string): Promise<unknown>;
+  fetchExperienceList?(): Promise<unknown>;
+  fetchProfile?(): Promise<unknown>;
+  fetchProject?(slug: string): Promise<unknown>;
+  fetchProjectList?(): Promise<unknown>;
+  fetchSnapshot?(): Promise<unknown>;
+  fetchTechStack?(): Promise<unknown>;
   siteUrl: URL;
 };
 
@@ -173,15 +189,20 @@ function getReadClient() {
     perspective: "published",
     projectId: sanity.projectId,
     token: server.token,
-    useCdn: process.env.NODE_ENV === "production",
+    timeout: SANITY_REQUEST_TIMEOUT_MS,
+    maxRetries: 2,
+    // Next.js owns the durable cache. Reading from the Content Lake API after invalidation avoids
+    // repopulating it with a briefly stale CDN response immediately after a publish webhook.
+    useCdn: false,
   });
 
   return sanityClient;
 }
 
 type NextSanityFetchOptions = {
+  cache: "force-cache";
   next: {
-    revalidate: number;
+    revalidate: false;
     tags: string[];
   };
 };
@@ -196,25 +217,48 @@ function fetchWithNextCache(query: string, params: Record<string, unknown>, tags
   ) => Promise<unknown>;
 
   return fetch(query, params, {
+    // Next.js 16 does not cache fetches by default. Make the Data Cache opt-in explicit rather
+    // than relying only on the equivalent indefinite revalidation setting.
+    cache: "force-cache",
     next: {
-      revalidate: PUBLIC_REVALIDATE_SECONDS,
+      // Published CMS content is invalidated by the signed Sanity webhook. Avoid tying every
+      // static route to a timer when the underlying content has not changed.
+      revalidate: false,
       tags,
     },
   });
 }
 
-function fetchSnapshot() {
-  return fetchWithNextCache(PUBLIC_PORTFOLIO_SNAPSHOT_QUERY, {}, [
-    "profile",
-    "experience",
-    "project",
-    "blogPost",
-    "techStack",
-  ]);
+function fetchBlogPost(slug: string) {
+  return fetchWithNextCache(PUBLIC_BLOG_POST_QUERY, { slug }, [`blogPost:${slug}`]);
 }
 
-function fetchBlogPost(slug: string) {
-  return fetchWithNextCache(PUBLIC_BLOG_POST_QUERY, { slug }, ["blogPost", `blogPost:${slug}`]);
+function fetchBlogPosts() {
+  return fetchWithNextCache(PUBLIC_BLOG_POST_LIST_QUERY, {}, ["blogPost"]);
+}
+
+function fetchExperience(slug: string) {
+  return fetchWithNextCache(PUBLIC_EXPERIENCE_QUERY, { slug }, [`experience:${slug}`]);
+}
+
+function fetchExperienceList() {
+  return fetchWithNextCache(PUBLIC_EXPERIENCE_LIST_QUERY, {}, ["experience"]);
+}
+
+function fetchProfile() {
+  return fetchWithNextCache(PUBLIC_PROFILE_QUERY, {}, ["profile"]);
+}
+
+function fetchProject(slug: string) {
+  return fetchWithNextCache(PUBLIC_PROJECT_QUERY, { slug }, [`project:${slug}`]);
+}
+
+function fetchProjectList() {
+  return fetchWithNextCache(PUBLIC_PROJECT_LIST_QUERY, {}, ["project"]);
+}
+
+function fetchTechStack() {
+  return fetchWithNextCache(PUBLIC_TECH_STACK_QUERY, {}, ["techStack"]);
 }
 
 function cleanString(value: string | null | undefined) {
@@ -395,11 +439,112 @@ export function serializePublicSnapshot(value: unknown, siteUrl: URL): PublicPor
   };
 }
 
+function serializePublicProfile(value: unknown, siteUrl: URL) {
+  return toPublicProfile(rawProfileSchema.parse(value), siteUrl);
+}
+
+function serializePublicExperience(value: unknown, siteUrl: URL) {
+  const raw = rawExperienceSchema.nullable().parse(value);
+  return raw ? toPublicExperience(raw, siteUrl) : null;
+}
+
+function serializePublicExperienceList(value: unknown, siteUrl: URL) {
+  return z
+    .array(rawExperienceSchema)
+    .parse(value)
+    .map((item) => toPublicExperience(item, siteUrl))
+    .filter((item): item is PublicExperience => Boolean(item));
+}
+
+function serializePublicProject(value: unknown, siteUrl: URL) {
+  const raw = rawProjectSchema.nullable().parse(value);
+  return raw ? toPublicProject(raw, siteUrl) : null;
+}
+
+function serializePublicProjectList(value: unknown, siteUrl: URL) {
+  return z
+    .array(rawProjectSchema)
+    .parse(value)
+    .map((item) => toPublicProject(item, siteUrl))
+    .filter((item): item is PublicProject => Boolean(item));
+}
+
+function serializePublicBlogPostList(value: unknown, siteUrl: URL) {
+  return z
+    .array(rawBlogSummarySchema)
+    .parse(value)
+    .map((item) => toPublicBlogSummary(item, siteUrl))
+    .filter((item): item is PublicBlogPostSummary => Boolean(item));
+}
+
+function serializePublicTechStack(value: unknown) {
+  return z
+    .array(rawTechStackSchema)
+    .parse(value)
+    .map(toPublicTechStack)
+    .filter((group): group is PublicTechStackGroup => Boolean(group));
+}
+
 export function createPublicPortfolioService(
   dependencies: ServiceDependencies,
 ): PublicPortfolioService {
   async function getSnapshot() {
+    if (
+      dependencies.fetchBlogPosts &&
+      dependencies.fetchExperienceList &&
+      dependencies.fetchProfile &&
+      dependencies.fetchProjectList &&
+      dependencies.fetchTechStack
+    ) {
+      const [blogs, experience, profile, projects, techStack] = await Promise.all([
+        dependencies
+          .fetchBlogPosts()
+          .then((value) => serializePublicBlogPostList(value, dependencies.siteUrl)),
+        dependencies
+          .fetchExperienceList()
+          .then((value) => serializePublicExperienceList(value, dependencies.siteUrl)),
+        dependencies
+          .fetchProfile()
+          .then((value) => serializePublicProfile(value, dependencies.siteUrl)),
+        dependencies
+          .fetchProjectList()
+          .then((value) => serializePublicProjectList(value, dependencies.siteUrl)),
+        dependencies.fetchTechStack().then(serializePublicTechStack),
+      ]);
+
+      return { blogs, experience, profile, projects, techStack };
+    }
+
+    if (!dependencies.fetchSnapshot) {
+      throw new Error("Public portfolio service requires domain fetchers or a snapshot fetcher.");
+    }
     return serializePublicSnapshot(await dependencies.fetchSnapshot(), dependencies.siteUrl);
+  }
+
+  async function getResumeSource() {
+    if (
+      dependencies.fetchExperienceList &&
+      dependencies.fetchProfile &&
+      dependencies.fetchTechStack
+    ) {
+      const [experience, profile, techStack] = await Promise.all([
+        dependencies
+          .fetchExperienceList()
+          .then((value) => serializePublicExperienceList(value, dependencies.siteUrl)),
+        dependencies
+          .fetchProfile()
+          .then((value) => serializePublicProfile(value, dependencies.siteUrl)),
+        dependencies.fetchTechStack().then(serializePublicTechStack),
+      ]);
+      return { experience, profile, techStack };
+    }
+
+    const snapshot = await getSnapshot();
+    return {
+      experience: snapshot.experience,
+      profile: snapshot.profile,
+      techStack: snapshot.techStack,
+    };
   }
 
   return {
@@ -408,38 +553,52 @@ export function createPublicPortfolioService(
       return toPublicBlogPost(raw, dependencies.siteUrl);
     },
     async getExperience(slug) {
+      if (dependencies.fetchExperience) {
+        return serializePublicExperience(
+          await dependencies.fetchExperience(slug),
+          dependencies.siteUrl,
+        );
+      }
       return (
         (await getSnapshot()).experience.find((experience) => experience.slug === slug) ?? null
       );
     },
     async getProfile() {
+      if (dependencies.fetchProfile) {
+        return serializePublicProfile(await dependencies.fetchProfile(), dependencies.siteUrl);
+      }
       return (await getSnapshot()).profile;
     },
     async getProject(slug) {
+      if (dependencies.fetchProject) {
+        return serializePublicProject(await dependencies.fetchProject(slug), dependencies.siteUrl);
+      }
       return (await getSnapshot()).projects.find((project) => project.slug === slug) ?? null;
     },
     async getResume() {
-      const snapshot = await getSnapshot();
-      if (!snapshot.profile) return null;
+      const source = await getResumeSource();
+      if (!source.profile) return null;
 
       return publicResumeSchema.parse({
-        name: snapshot.profile.name,
-        role: snapshot.profile.role,
-        pdfUrl: snapshot.profile.resumePdfUrl,
-        summary: [snapshot.profile.biography, snapshot.profile.about].filter(Boolean).join("\n\n"),
+        name: source.profile.name,
+        role: source.profile.role,
+        pdfUrl: source.profile.resumePdfUrl,
+        summary: [source.profile.biography, source.profile.about].filter(Boolean).join("\n\n"),
         contact: {
-          email: snapshot.profile.email,
-          github: snapshot.profile.links.github,
-          linkedin: snapshot.profile.links.linkedin,
-          website: snapshot.profile.url,
+          email: source.profile.email,
+          github: source.profile.links.github,
+          linkedin: source.profile.links.linkedin,
+          website: source.profile.url,
         },
-        experience: snapshot.experience,
-        techStack: snapshot.techStack,
+        experience: source.experience,
+        techStack: source.techStack,
       });
     },
     getSnapshot,
     async listBlogPosts({ limit = 10, offset = 0, query = "" } = {}) {
-      const blogs = (await getSnapshot()).blogs;
+      const blogs = dependencies.fetchBlogPosts
+        ? serializePublicBlogPostList(await dependencies.fetchBlogPosts(), dependencies.siteUrl)
+        : (await getSnapshot()).blogs;
       const normalizedQuery = query.trim().toLocaleLowerCase("en-US");
       const matches = normalizedQuery
         ? blogs.filter((blog) => blog.title.toLocaleLowerCase("en-US").includes(normalizedQuery))
@@ -453,15 +612,24 @@ export function createPublicPortfolioService(
       });
     },
     async listExperience() {
-      const items = (await getSnapshot()).experience;
+      const items = dependencies.fetchExperienceList
+        ? serializePublicExperienceList(
+            await dependencies.fetchExperienceList(),
+            dependencies.siteUrl,
+          )
+        : (await getSnapshot()).experience;
       return publicExperienceListSchema.parse({ items, total: items.length });
     },
     async listProjects() {
-      const items = (await getSnapshot()).projects;
+      const items = dependencies.fetchProjectList
+        ? serializePublicProjectList(await dependencies.fetchProjectList(), dependencies.siteUrl)
+        : (await getSnapshot()).projects;
       return publicProjectListSchema.parse({ items, total: items.length });
     },
     async listTechStack() {
-      const groups = (await getSnapshot()).techStack;
+      const groups = dependencies.fetchTechStack
+        ? serializePublicTechStack(await dependencies.fetchTechStack())
+        : (await getSnapshot()).techStack;
       return publicTechStackSchema.parse({ groups, total: groups.length });
     },
   };
@@ -472,7 +640,13 @@ let service: PublicPortfolioService | undefined;
 export function getPublicPortfolioService() {
   service ??= createPublicPortfolioService({
     fetchBlogPost,
-    fetchSnapshot,
+    fetchBlogPosts,
+    fetchExperience,
+    fetchExperienceList,
+    fetchProfile,
+    fetchProject,
+    fetchProjectList,
+    fetchTechStack,
     siteUrl: new URL(getSiteEnv().siteUrl),
   });
   return service;

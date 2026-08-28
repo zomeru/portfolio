@@ -9,6 +9,7 @@ import {
   failNotificationDelivery,
   findEmailSubscriptionById,
   findNotificationEventById,
+  findNotificationEventsByIds,
   findPushSubscriptionById,
   findWebhookSubscriptionById,
   listActiveNotificationDestinationIds,
@@ -69,6 +70,29 @@ type DeliveryResult = {
   staleDestinationRemoved: boolean;
 };
 
+type NotificationEventLoader = (eventId: string) => ReturnType<typeof findNotificationEventById>;
+
+function createNotificationEventLoader(
+  initialEvents: Array<{ id: string; payload: StoredBlogPublishedEvent }>,
+): NotificationEventLoader {
+  const events = new Map<string, ReturnType<typeof findNotificationEventById>>();
+  for (const event of initialEvents) {
+    events.set(event.id, Promise.resolve({ payload: event.payload }));
+  }
+
+  return (eventId) => {
+    const cached = events.get(eventId);
+    if (cached) return cached;
+
+    const pending = findNotificationEventById(eventId).catch((error) => {
+      events.delete(eventId);
+      throw error;
+    });
+    events.set(eventId, pending);
+    return pending;
+  };
+}
+
 async function mapWithConcurrency<T, R>(
   values: T[],
   concurrency: number,
@@ -128,8 +152,9 @@ async function recoverIncompleteMaterializations() {
 
 async function deliverClaimedNotification(
   delivery: NonNullable<Awaited<ReturnType<typeof claimNotificationDelivery>>>,
+  loadEvent: NotificationEventLoader,
 ) {
-  const event = await findNotificationEventById(delivery.eventId);
+  const event = await loadEvent(delivery.eventId);
   if (!event) {
     throw new NotificationDeliveryError("Notification event no longer exists.", {
       code: "EVENT_NOT_FOUND",
@@ -172,10 +197,13 @@ async function deliverClaimedNotification(
   return { httpStatus } as const;
 }
 
-async function processOneDelivery(candidate: {
-  id: string;
-  channel: NotificationDeliveryChannelValue;
-}): Promise<DeliveryResult> {
+async function processOneDelivery(
+  candidate: {
+    id: string;
+    channel: NotificationDeliveryChannelValue;
+  },
+  loadEvent: NotificationEventLoader,
+): Promise<DeliveryResult> {
   const now = new Date();
   const delivery = await claimNotificationDelivery({
     id: candidate.id,
@@ -186,7 +214,7 @@ async function processOneDelivery(candidate: {
     return { channel: candidate.channel, status: "skipped", staleDestinationRemoved: false };
   }
   try {
-    const result = await deliverClaimedNotification(delivery);
+    const result = await deliverClaimedNotification(delivery, loadEvent);
     if ("skipped" in result) {
       await abandonNotificationDelivery({ id: delivery.id, errorCode: "DESTINATION_INACTIVE" });
       return { channel: delivery.channel, status: "skipped", staleDestinationRemoved: false };
@@ -271,7 +299,12 @@ async function processOneDelivery(candidate: {
 }
 
 async function processNotificationDeliveries(
-  options: { eventId?: string; channel?: NotificationDeliveryChannelValue; limit?: number } = {},
+  options: {
+    eventId?: string;
+    event?: { id: string; payload: StoredBlogPublishedEvent };
+    channel?: NotificationDeliveryChannelValue;
+    limit?: number;
+  } = {},
 ) {
   const now = new Date();
   const deliveries = await listReadyNotificationDeliveries({
@@ -281,10 +314,22 @@ async function processNotificationDeliveries(
     ...(options.channel ? { channel: options.channel } : {}),
     limit: options.limit ?? MAX_IMMEDIATE_DELIVERIES,
   });
+  const eventIds = [
+    ...new Set(
+      deliveries
+        .map((delivery) => delivery.eventId)
+        .filter((eventId) => eventId !== options.event?.id),
+    ),
+  ];
+  const storedEvents = await findNotificationEventsByIds(eventIds);
+  const loadEvent = createNotificationEventLoader([
+    ...storedEvents,
+    ...(options.event ? [options.event] : []),
+  ]);
   const results = await mapWithConcurrency(
     deliveries.map((delivery) => ({ id: delivery.id, channel: delivery.channel })),
     DELIVERY_CONCURRENCY,
-    processOneDelivery,
+    (delivery) => processOneDelivery(delivery, loadEvent),
   );
   const summary = Object.fromEntries(
     (["email", "push", "webhook"] as const).map((channel) => {
@@ -347,7 +392,10 @@ export async function dispatchBlogPublished(blog: BlogPublishedInput) {
       }
     }),
   );
-  const deliveries = await processNotificationDeliveries({ eventId: persisted.event.id });
+  const deliveries = await processNotificationDeliveries({
+    eventId: persisted.event.id,
+    ...(persisted.created ? { event: { id: persisted.event.id, payload } } : {}),
+  });
   log("info", "blog.published dispatched", {
     eventId,
     blogId: blog.id,

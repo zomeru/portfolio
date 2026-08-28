@@ -1,5 +1,5 @@
 {
-  "eyebrow": "询问 Zomer AI",
+  "eyebrow": "Zomer AI",
   "title": "基于可靠资料了解我的经历、项目和文章。",
   "description": "你可以询问此作品集中的任何内容。与我有关的回答会引用其来源页面。",
   "conversationLabel": "与 Zomer AI 对话",
@@ -24,7 +24,7 @@
   "retry": "重试",
   "preparingResponse": "正在准备回答…",
   "writingResponse": "正在生成回答…",
-  "inputLabel": "向 Zomer AI 提问",
+  "inputLabel": "给 Zomer AI 的问题",
   "inputPlaceholder": "询问 Zomer 的工作…",
   "restoring": "正在恢复对话…",
   "stop": "停止生成",

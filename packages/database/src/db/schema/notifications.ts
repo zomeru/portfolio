@@ -139,7 +139,6 @@ export const notificationEvents = pgTable(
   },
   (table) => [
     uniqueIndex("notification_events_event_key_idx").on(table.eventKey),
-    index("notification_events_source_idx").on(table.sourceId, table.sourceRevision),
     index("notification_events_occurred_at_idx").on(table.occurredAt),
   ],
 );
@@ -173,7 +172,6 @@ export const notificationDeliveries = pgTable(
       table.destinationId,
     ),
     index("notification_deliveries_ready_idx").on(table.status, table.nextAttemptAt),
-    index("notification_deliveries_event_channel_idx").on(table.eventId, table.channel),
   ],
 );
 

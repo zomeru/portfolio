@@ -1,7 +1,8 @@
-import { getPublicBlogPost, getPublicPortfolioSnapshot } from "@portfolio/api/public-portfolio";
+import { getPublicBlogPost, listPublicBlogPosts } from "@portfolio/api/public-portfolio";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 
 import { BlogNotifications } from "@/components/blog/blog-notifications";
 import { PageTransition } from "@/components/layout/page-transition";
@@ -14,14 +15,18 @@ type BlogPostPageProps = {
   params: Promise<{ locale: string; slug: string }>;
 };
 
+const PREBUILT_BLOG_POST_COUNT = 12;
+const getBlogPost = cache(getPublicBlogPost);
+
 export async function generateStaticParams() {
-  return (await getPublicPortfolioSnapshot()).blogs.map(({ slug }) => ({ slug }));
+  const { items } = await listPublicBlogPosts({ limit: PREBUILT_BLOG_POST_COUNT });
+  return items.map(({ slug }) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const locale = await resolveLocale(params);
   const { slug } = await params;
-  const post = await getPublicBlogPost(slug);
+  const post = await getBlogPost(slug);
   if (!post) return {};
 
   const metadata = createPageMetadata({
@@ -48,7 +53,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     params,
     getTranslations({ locale, namespace: "Blogs" }),
   ]);
-  const post = await getPublicBlogPost(slug);
+  const post = await getBlogPost(slug);
   if (!post) notFound();
 
   const date = new Intl.DateTimeFormat(locale, {

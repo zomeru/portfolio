@@ -69,7 +69,6 @@ export const knowledgeDocuments = pgTable(
   (table) => [
     uniqueIndex("knowledge_documents_sanity_document_id_idx").on(table.sanityDocumentId),
     index("knowledge_documents_source_type_idx").on(table.sourceType),
-    index("knowledge_documents_slug_idx").on(table.slug),
   ],
 );
 
@@ -135,10 +134,7 @@ export const chatSessions = pgTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
     lastMessageAt: timestamp("last_message_at", { withTimezone: true }).defaultNow().notNull(),
   },
-  (table) => [
-    uniqueIndex("chat_sessions_session_key_idx").on(table.sessionKey),
-    index("chat_sessions_last_message_at_idx").on(table.lastMessageAt),
-  ],
+  (table) => [uniqueIndex("chat_sessions_session_key_idx").on(table.sessionKey)],
 );
 
 export type ChatCitation = {

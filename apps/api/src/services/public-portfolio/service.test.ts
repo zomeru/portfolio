@@ -82,3 +82,38 @@ void test("blog listing searches titles case-insensitively before pagination", a
   assert.equal(result.total, 1);
   assert.equal(result.items[0]?.title, "Published Article");
 });
+
+void test("resume fetches only the profile, experience, and tech-stack domains", async () => {
+  const calls: string[] = [];
+  const service = createPublicPortfolioService({
+    async fetchBlogPost() {
+      return rawPublicBlogPostFixture;
+    },
+    async fetchBlogPosts() {
+      calls.push("blogs");
+      return rawPublicSnapshotFixture.blogs;
+    },
+    async fetchExperienceList() {
+      calls.push("experience");
+      return rawPublicSnapshotFixture.experience;
+    },
+    async fetchProfile() {
+      calls.push("profile");
+      return rawPublicSnapshotFixture.profile;
+    },
+    async fetchProjectList() {
+      calls.push("projects");
+      return rawPublicSnapshotFixture.projects;
+    },
+    async fetchTechStack() {
+      calls.push("techStack");
+      return rawPublicSnapshotFixture.techStack;
+    },
+    siteUrl: testSiteUrl,
+  });
+
+  const resume = await service.getResume();
+
+  assert.equal(resume?.name, rawPublicSnapshotFixture.profile?.name);
+  assert.deepEqual(calls.sort(), ["experience", "profile", "techStack"]);
+});

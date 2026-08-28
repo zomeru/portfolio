@@ -5,6 +5,7 @@ import { useEffect, useId, useRef, useState } from "react";
 
 import { client } from "@/lib/api";
 import { reportClientError } from "@/lib/client-log";
+import { classifyRequestFailure, HttpRequestError } from "@/lib/request-failure";
 
 const PUSH_DISMISSAL_KEY = "blog-push-prompt:v1";
 const PUSH_DISMISSAL_TTL_MS = 30 * 24 * 60 * 60 * 1_000;
@@ -95,8 +96,9 @@ async function persistPushSubscription(subscription: PushSubscription) {
   const serialized = serializePushSubscription(subscription);
   if (!serialized) return false;
   const response = await client.api.notifications.push.subscribe.$post({ json: serialized });
-  if (response.ok) savePushSync();
-  return response.ok;
+  if (!response.ok) throw new HttpRequestError(response.status);
+  savePushSync();
+  return true;
 }
 
 function subscriptionUsesKey(subscription: PushSubscription, publicKey: string) {
@@ -111,6 +113,7 @@ function subscriptionUsesKey(subscription: PushSubscription, publicKey: string) 
 
 async function getPushConfig() {
   const response = await client.api.notifications.push.config.$get();
+  if (!response.ok) throw new HttpRequestError(response.status);
   const config = await response.json();
   return response.ok && config.enabled && config.publicKey
     ? { enabled: true as const, publicKey: config.publicKey }
@@ -126,6 +129,7 @@ function getIosInstallState() {
 
 export function BlogNotifications({ initialNotice }: { initialNotice?: "confirmed" | "invalid" }) {
   const t = useTranslations("Blogs.notifications");
+  const tRequest = useTranslations("Errors.request");
   const emailId = useId();
   const emailHelpId = useId();
   const emailStatusId = useId();
@@ -209,7 +213,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
         if (active) {
           setPushState({
             kind: "unavailable",
-            message: t("statusError"),
+            message: tRequest(classifyRequestFailure(error)),
           });
         }
       }
@@ -218,7 +222,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
     return () => {
       active = false;
     };
-  }, [t]);
+  }, [t, tRequest]);
 
   async function handleEmailSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -243,7 +247,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
               ? t("rateLimited")
               : code === "INVALID_EMAIL"
                 ? t("invalidEmail")
-                : t("subscribeError"),
+                : tRequest(classifyRequestFailure(new HttpRequestError(response.status, code))),
           invalid: code === "INVALID_EMAIL",
         });
         if (code === "INVALID_EMAIL") input.focus();
@@ -258,7 +262,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
       reportClientError("notifications.subscribeEmail", error);
       setEmailState({
         kind: "error",
-        message: t("subscribeError"),
+        message: tRequest(classifyRequestFailure(error)),
       });
     }
   }
@@ -311,7 +315,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
       reportClientError("notifications.enablePush", error);
       setPushState({
         kind: "error",
-        message: t("enableError"),
+        message: tRequest(classifyRequestFailure(error)),
       });
     }
   }
@@ -335,7 +339,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
           });
           return;
         }
-        throw new Error("The test notification could not be sent.");
+        throw new HttpRequestError(response.status);
       }
       setPushState({
         kind: "subscribed",
@@ -347,7 +351,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
       setPushState({
         kind: "subscribed",
         subscription,
-        message: t("testError"),
+        message: tRequest(classifyRequestFailure(error)),
       });
     } finally {
       setPushTesting(false);
@@ -360,7 +364,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
       const response = await client.api.notifications.push.unsubscribe.$delete({
         json: { endpoint: subscription.endpoint },
       });
-      if (!response.ok) throw new Error("The push subscription could not be disabled.");
+      if (!response.ok) throw new HttpRequestError(response.status);
       await subscription.unsubscribe();
       clearPushSync();
       setPushState({ kind: "prompt", message: t("disabled") });
@@ -369,7 +373,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
       setPushState({
         kind: "subscribed",
         subscription,
-        message: t("disableError"),
+        message: tRequest(classifyRequestFailure(error)),
       });
     }
   }
