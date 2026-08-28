@@ -109,7 +109,6 @@ function getEmailClient(): EmailClient | null {
         provider: "gmail",
         client: transporter,
         from: emailFrom,
-        replyTo: environment.emailReplyTo,
       } as GmailClient;
     }
 
@@ -122,7 +121,6 @@ function getEmailClient(): EmailClient | null {
         provider: "resend",
         client: new Resend(environment.resendApiKey),
         from: emailFrom,
-        replyTo: environment.emailReplyTo,
       } as ResendClient;
     }
 
