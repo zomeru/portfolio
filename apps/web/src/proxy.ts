@@ -49,6 +49,13 @@ function countryLocale(request: NextRequest) {
 
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  if (pathname === "/admin/error" || pathname.startsWith("/admin/error/")) {
+    const response = NextResponse.next();
+    response.headers.set("Cache-Control", "private, no-store, max-age=0");
+    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+    return response;
+  }
+
   const selectedLocale = request.cookies.get(localeCookieName)?.value;
   const hasSelectedLocale = Boolean(selectedLocale && isLocale(selectedLocale));
 
@@ -69,5 +76,5 @@ export default function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: "/((?!api|admin|_next|_vercel|.*\\..*).*)",
+  matcher: ["/admin/error/:path*", "/((?!api|admin|_next|_vercel|.*\\..*).*)"],
 };

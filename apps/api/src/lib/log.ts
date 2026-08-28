@@ -1,4 +1,7 @@
 import { AsyncLocalStorage } from "node:async_hooks";
+import { createHash } from "node:crypto";
+
+import { recordApplicationError } from "@portfolio/database";
 
 type LogLevel = "error" | "info" | "warn";
 type LogMetadata = Record<string, unknown>;
@@ -6,6 +9,7 @@ type LogMetadata = Record<string, unknown>;
 type SerializedError = {
   type: string;
   message: string;
+  stack?: string;
   origin?: string;
   code?: string | number;
   status?: number;
@@ -21,17 +25,26 @@ const MAX_ERROR_MESSAGE_LENGTH = 1_000;
 const MAX_PROVIDER_MESSAGE_LENGTH = 1_000;
 const MAX_ERROR_CAUSE_DEPTH = 3;
 const MAX_STACK_FRAME_LENGTH = 4_096;
+const MAX_STACK_LENGTH = 16_000;
+const MAX_METADATA_DEPTH = 5;
+const MAX_METADATA_ARRAY_ITEMS = 25;
+const MAX_METADATA_KEYS = 50;
+const MAX_METADATA_STRING_LENGTH = 2_000;
+const MAX_METADATA_JSON_LENGTH = 32_000;
 const ANSI_RESET = "\u001b[0m";
 const ANSI_RED = "\u001b[31m";
 const ANSI_ORANGE = "\u001b[38;5;208m";
 const SENSITIVE_KEY_PATTERN =
-  /^(authorization|api[_-]?key|access[_-]?token|refresh[_-]?token|password|prompt|secret|token)$/i;
+  /(?:authorization|cookie|password|passphrase|prompt|secret|^token$|(?:api|access|refresh|session|auth)[_-]?(?:key|token)|private[_-]?key|client[_-]?secret|database[_-]?url|connection[_-]?string|credential)/i;
+const errorPersistence = new WeakMap<Error, Promise<void>>();
 
 function redactSensitiveText(value: string) {
   return value
     .replace(/(Bearer\s+)[A-Za-z0-9._~+/=-]+/gi, "$1[REDACTED]")
+    .replace(/\bpostgres(?:ql)?:\/\/[^\s)]+/gi, "[REDACTED_DATABASE_URL]")
+    .replace(/([?&](?:api[_-]?key|key|secret|signature|token)=)[^&\s]+/gi, "$1[REDACTED]")
     .replace(
-      /((?:api[_-]?key|access[_-]?token|refresh[_-]?token|password|secret|token)\s*[=:]\s*)[^\s,;]+/gi,
+      /((?:authorization|cookie|set-cookie|api[_-]?key|access[_-]?token|refresh[_-]?token|session[_-]?(?:key|token)|password|secret|token)\s*[=:]\s*)[^\s,;]+/gi,
       "$1[REDACTED]",
     );
 }
@@ -195,6 +208,7 @@ export function serializeError(error: unknown, depth = 0): SerializedError {
   return {
     type: error.name || "Error",
     message: truncate(error.message || "No error message provided", MAX_ERROR_MESSAGE_LENGTH),
+    ...(error.stack ? { stack: truncate(error.stack, MAX_STACK_LENGTH) } : {}),
     ...(origin ? { origin } : {}),
     ...(code !== undefined ? { code } : {}),
     ...(status !== undefined ? { status } : {}),
@@ -224,6 +238,17 @@ export function logError(
 ) {
   const { operation, ...context } = metadata;
   log("error", message, { ...context, ...errorLogMetadata(error, operation) });
+  void persistError(error, { ...context, operation, event: message });
+}
+
+export async function captureError(
+  message: string,
+  error: unknown,
+  metadata: LogMetadata & { operation: string },
+) {
+  const { operation, ...context } = metadata;
+  log("error", message, { ...context, ...errorLogMetadata(error, operation) });
+  await persistError(error, { ...context, operation, event: message });
 }
 
 export function logWarning(
@@ -235,25 +260,152 @@ export function logWarning(
   log("warn", message, { ...context, ...errorLogMetadata(error, operation) });
 }
 
-function sanitizeValue(value: unknown, seen: WeakSet<object>): unknown {
-  if (typeof value === "string") return redactSensitiveText(value);
+function sanitizeValue(value: unknown, seen: WeakSet<object>, depth = 0): unknown {
+  if (typeof value === "string") return truncate(value, MAX_METADATA_STRING_LENGTH);
+  if (typeof value === "bigint") return value.toString();
   if (value === null || typeof value !== "object") return value;
   if (value instanceof Error) return serializeError(value);
+  if (depth >= MAX_METADATA_DEPTH) return "[Depth limited]";
   if (seen.has(value)) return "[Circular]";
   seen.add(value);
 
-  if (Array.isArray(value)) return value.map((item) => sanitizeValue(item, seen));
+  if (Array.isArray(value)) {
+    const items = value
+      .slice(0, MAX_METADATA_ARRAY_ITEMS)
+      .map((item) => sanitizeValue(item, seen, depth + 1));
+    if (value.length > MAX_METADATA_ARRAY_ITEMS) {
+      items.push(`[${value.length - MAX_METADATA_ARRAY_ITEMS} more items]`);
+    }
+    return items;
+  }
 
   return Object.fromEntries(
-    Object.entries(value).map(([key, item]) => [
-      key,
-      SENSITIVE_KEY_PATTERN.test(key) ? "[REDACTED]" : sanitizeValue(item, seen),
-    ]),
+    Object.entries(value)
+      .slice(0, MAX_METADATA_KEYS)
+      .map(([key, item]) => [
+        key,
+        SENSITIVE_KEY_PATTERN.test(key) ? "[REDACTED]" : sanitizeValue(item, seen, depth + 1),
+      ]),
   );
 }
 
 function sanitize(metadata: LogMetadata) {
   return sanitizeValue(metadata, new WeakSet()) as LogMetadata;
+}
+
+function existingErrorPersistence(error: unknown, depth = 0): Promise<void> | undefined {
+  if (!(error instanceof Error) || depth > MAX_ERROR_CAUSE_DEPTH) return undefined;
+  return errorPersistence.get(error) ?? existingErrorPersistence(error.cause, depth + 1);
+}
+
+function markErrorChain(error: unknown, persistence: Promise<void>, depth = 0) {
+  if (!(error instanceof Error) || depth > MAX_ERROR_CAUSE_DEPTH) return;
+  errorPersistence.set(error, persistence);
+  markErrorChain(error.cause, persistence, depth + 1);
+}
+
+function normalizedFingerprintText(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}/gi, "{uuid}")
+    .replace(/\b\d{3,}\b/g, "{number}")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function boundedRecord(value: LogMetadata) {
+  const json = JSON.stringify(value);
+  if (json.length <= MAX_METADATA_JSON_LENGTH) return value;
+  return {
+    truncated: true,
+    originalLength: json.length,
+    preview: truncate(json, MAX_METADATA_JSON_LENGTH / 2),
+  };
+}
+
+async function persistErrorRecord(error: unknown, metadata: LogMetadata) {
+  const serialized = serializeError(error);
+  const context = sanitize({ ...logContext.getStore(), ...metadata });
+  const route = typeof context.route === "string" ? context.route : context.path;
+  const method = typeof context.method === "string" ? context.method : undefined;
+  const requestId = typeof context.requestId === "string" ? context.requestId : undefined;
+  const userAgent = typeof context.userAgent === "string" ? context.userAgent : undefined;
+  const service =
+    typeof context.service === "string"
+      ? context.service
+      : typeof context.operation === "string" && context.operation.startsWith("web.")
+        ? "portfolio-web"
+        : "portfolio-api";
+  const errorCode =
+    serialized.code === undefined
+      ? typeof context.errorCode === "string"
+        ? context.errorCode
+        : undefined
+      : String(serialized.code);
+  const fingerprint = createHash("sha256")
+    .update(
+      [
+        serialized.type,
+        normalizedFingerprintText(serialized.message),
+        serialized.origin ?? "",
+        serialized.cause?.type ?? "",
+        normalizedFingerprintText(serialized.cause?.message ?? ""),
+        typeof route === "string" ? route : "",
+      ].join("\n"),
+    )
+    .digest("hex");
+
+  const reservedKeys = new Set([
+    "errorCode",
+    "method",
+    "path",
+    "requestId",
+    "route",
+    "service",
+    "userAgent",
+  ]);
+  const storedMetadata = Object.fromEntries(
+    Object.entries(context).filter(([key]) => !reservedKeys.has(key)),
+  );
+
+  try {
+    await recordApplicationError({
+      fingerprint,
+      severity: "error",
+      name: truncate(serialized.type, 255),
+      message: serialized.message,
+      ...(serialized.stack ? { stack: serialized.stack } : {}),
+      ...(serialized.origin ? { source: truncate(serialized.origin, 1_024) } : {}),
+      ...(typeof route === "string" ? { route: truncate(route, 512) } : {}),
+      ...(method ? { method: truncate(method, 16) } : {}),
+      ...(requestId ? { requestId: truncate(requestId, 255) } : {}),
+      ...(userAgent ? { userAgent: truncate(userAgent, 1_024) } : {}),
+      environment: truncate(process.env.VERCEL_ENV ?? process.env.NODE_ENV ?? "development", 64),
+      service: truncate(service, 100),
+      ...(errorCode ? { errorCode: truncate(errorCode, 255) } : {}),
+      metadata: boundedRecord(storedMetadata),
+      ...(serialized.cause ? { cause: boundedRecord(serialized.cause as LogMetadata) } : {}),
+    });
+  } catch (loggingError) {
+    console.error(
+      JSON.stringify({
+        timestamp: new Date().toISOString(),
+        level: "error",
+        message: "failed to persist application error log",
+        service: "portfolio-api",
+        loggingError: serializeError(loggingError),
+        originalError: { type: serialized.type, message: serialized.message },
+      }),
+    );
+  }
+}
+
+async function persistError(error: unknown, metadata: LogMetadata) {
+  const existing = existingErrorPersistence(error);
+  if (existing) return existing;
+  const persistence = persistErrorRecord(error, metadata);
+  markErrorChain(error, persistence);
+  await persistence;
 }
 
 function shouldColor(stream: NodeJS.WriteStream) {

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 
-import { and, asc, count, desc, eq, gte, inArray, lt, notInArray, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, lt, notInArray, or, sql } from "drizzle-orm";
 
 import { db } from "../client";
 import {
@@ -114,7 +114,7 @@ export function listRecentChatMessages(sessionId: string, limit: number) {
     })
     .from(chatMessages)
     .where(eq(chatMessages.sessionId, sessionId))
-    .orderBy(desc(chatMessages.createdAt))
+    .orderBy(desc(chatMessages.createdAt), desc(chatMessages.id))
     .limit(limit);
 }
 
@@ -185,7 +185,11 @@ export async function findChatSessionByKey(sessionKey: string) {
   return session;
 }
 
-export function listStoredChatMessages(sessionId: string, limit: number) {
+export function listStoredChatMessagesPage(options: {
+  sessionId: string;
+  cursor?: { createdAt: Date; id: string };
+  limit: number;
+}) {
   return db
     .select({
       id: chatMessages.id,
@@ -193,15 +197,27 @@ export function listStoredChatMessages(sessionId: string, limit: number) {
       role: chatMessages.role,
       content: chatMessages.content,
       intent: chatMessages.intent,
-      model: chatMessages.model,
       citations: chatMessages.citations,
       suggestions: chatMessages.suggestions,
       createdAt: chatMessages.createdAt,
     })
     .from(chatMessages)
-    .where(eq(chatMessages.sessionId, sessionId))
-    .orderBy(desc(chatMessages.createdAt))
-    .limit(limit);
+    .where(
+      and(
+        eq(chatMessages.sessionId, options.sessionId),
+        options.cursor
+          ? or(
+              lt(chatMessages.createdAt, options.cursor.createdAt),
+              and(
+                eq(chatMessages.createdAt, options.cursor.createdAt),
+                lt(chatMessages.id, options.cursor.id),
+              ),
+            )
+          : undefined,
+      ),
+    )
+    .orderBy(desc(chatMessages.createdAt), desc(chatMessages.id))
+    .limit(options.limit + 1);
 }
 
 const candidateSelection = {

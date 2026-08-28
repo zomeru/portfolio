@@ -1,10 +1,15 @@
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
+import { validator } from "hono/validator";
 import { z } from "zod";
 
 import { ApiError } from "../errors";
 import { createAssistantChatResponse } from "../services/assistant/chat";
-import { AssistantRateLimitError, loadChatHistory } from "../services/assistant/conversation";
+import {
+  AssistantRateLimitError,
+  decodeChatHistoryCursor,
+  loadChatHistoryPage,
+} from "../services/assistant/conversation";
 import type { ApiEnv } from "../types/hono";
 
 const chatRequestSchema = z.object({
@@ -18,6 +23,7 @@ const chatRequestSchema = z.object({
       .max(1),
   }),
 });
+const chatHistoryQuerySchema = z.object({ cursor: z.string().max(512).optional() });
 
 function invalidRequest(cause?: unknown): never {
   throw new ApiError("The chat request is invalid.", {
@@ -71,8 +77,24 @@ export const assistantRoutes = new Hono<ApiEnv>()
       }
     },
   )
-  .get("/sessions/:sessionKey/messages", async (c) => {
-    const sessionKey = z.string().uuid().safeParse(c.req.param("sessionKey"));
-    if (!sessionKey.success) invalidRequest(sessionKey.error);
-    return c.json({ messages: await loadChatHistory(sessionKey.data) });
-  });
+  .get(
+    "/sessions/:sessionKey/messages",
+    validator("query", (value) => {
+      const query = chatHistoryQuerySchema.safeParse(value);
+      if (!query.success) invalidRequest(query.error);
+      return query.data;
+    }),
+    async (c) => {
+      const sessionKey = z.string().uuid().safeParse(c.req.param("sessionKey"));
+      if (!sessionKey.success) invalidRequest(sessionKey.error);
+      const cursorValue = c.req.valid("query").cursor;
+      const cursor = cursorValue ? decodeChatHistoryCursor(cursorValue) : undefined;
+      if (cursorValue && !cursor) invalidRequest();
+      return c.json(
+        await loadChatHistoryPage({
+          sessionKey: sessionKey.data,
+          ...(cursor ? { cursor } : {}),
+        }),
+      );
+    },
+  );

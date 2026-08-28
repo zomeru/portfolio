@@ -162,7 +162,7 @@ export const chatMessages = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [
-    index("chat_messages_session_created_at_idx").on(table.sessionId, table.createdAt),
+    index("chat_messages_session_created_at_id_idx").on(table.sessionId, table.createdAt, table.id),
     uniqueIndex("chat_messages_provider_message_id_idx").on(table.providerMessageId),
   ],
 );

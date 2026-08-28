@@ -7,16 +7,17 @@ import {
   findChatMessageByProviderId,
   findChatSessionByKey,
   listRecentChatMessages,
-  listStoredChatMessages,
+  listStoredChatMessagesPage,
 } from "@portfolio/database";
+import { z } from "zod";
 
-import type { AskZomerMessage, QueryIntent } from "../../types";
+import type { AskZomerHistoryPage, AskZomerMessage, QueryIntent } from "../../types";
 import { normalizeAssistantCitations } from "./citations";
 import type { ConversationMessage } from "./types";
 
 const MAX_CONTEXT_TOKENS = 6_000;
 const MAX_HISTORY_MESSAGES = 30;
-const MAX_STORED_HISTORY_MESSAGES = 50;
+const CHAT_HISTORY_PAGE_SIZE = 30;
 const SESSION_RATE_LIMIT_PER_MINUTE = 8;
 const SESSION_RATE_LIMIT_PER_DAY = 120;
 
@@ -113,13 +114,46 @@ export async function saveAssistantMessage(options: {
   });
 }
 
-export async function loadChatHistory(sessionKey: string): Promise<AskZomerMessage[]> {
-  const session = await findChatSessionByKey(sessionKey);
-  if (!session) return [];
+const chatHistoryCursorSchema = z.object({
+  createdAt: z.iso.datetime({ offset: true }),
+  id: z.uuid(),
+});
 
-  const rows = await listStoredChatMessages(session.id, MAX_STORED_HISTORY_MESSAGES);
+function encodeChatHistoryCursor(cursor: { createdAt: Date; id: string }) {
+  return Buffer.from(
+    JSON.stringify({ createdAt: cursor.createdAt.toISOString(), id: cursor.id }),
+  ).toString("base64url");
+}
 
-  return rows.reverse().map((message) => {
+export function decodeChatHistoryCursor(value: string) {
+  try {
+    const parsed = chatHistoryCursorSchema.safeParse(
+      JSON.parse(Buffer.from(value, "base64url").toString("utf8")),
+    );
+    if (!parsed.success) return null;
+    return { createdAt: new Date(parsed.data.createdAt), id: parsed.data.id };
+  } catch {
+    return null;
+  }
+}
+
+export async function loadChatHistoryPage(options: {
+  sessionKey: string;
+  cursor?: { createdAt: Date; id: string };
+}): Promise<AskZomerHistoryPage> {
+  const session = await findChatSessionByKey(options.sessionKey);
+  if (!session) return { messages: [], nextCursor: null };
+
+  const rows = await listStoredChatMessagesPage({
+    sessionId: session.id,
+    ...(options.cursor ? { cursor: options.cursor } : {}),
+    limit: CHAT_HISTORY_PAGE_SIZE,
+  });
+  const hasMore = rows.length > CHAT_HISTORY_PAGE_SIZE;
+  const pageRows = rows.slice(0, CHAT_HISTORY_PAGE_SIZE);
+  const oldest = pageRows.at(-1);
+
+  const messages = pageRows.reverse().map((message): AskZomerMessage => {
     const content =
       message.role === "assistant" && message.intent !== "general"
         ? normalizeAssistantCitations(message.content, message.citations.length)
@@ -128,7 +162,6 @@ export async function loadChatHistory(sessionKey: string): Promise<AskZomerMessa
     const metadata = {
       createdAt: message.createdAt.toISOString(),
       ...(message.intent ? { intent: message.intent } : {}),
-      ...(message.model ? { model: message.model } : {}),
       ...(webSearch ? { webSearch: true } : {}),
       sources: message.citations,
       suggestions: message.suggestions,
@@ -140,4 +173,9 @@ export async function loadChatHistory(sessionKey: string): Promise<AskZomerMessa
       metadata,
     };
   });
+
+  return {
+    messages,
+    nextCursor: hasMore && oldest ? encodeChatHistoryCursor(oldest) : null,
+  };
 }
