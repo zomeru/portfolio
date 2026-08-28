@@ -1,15 +1,17 @@
-import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
+import { GoogleTagManager } from "@next/third-parties/google";
 import { getPublicProfile, getPublicTechStack } from "@portfolio/api/public-portfolio";
-import type { Viewport } from "next";
+import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { Geist, Geist_Mono } from "next/font/google";
 
+import { GoogleAnalyticsViaGtm } from "@/components/analytics/google-analytics-via-gtm";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteNav } from "@/components/layout/site-nav";
 import { ServiceWorkerRegistration } from "@/components/pwa/service-worker-registration";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { siteUrl } from "@/lib/metadata";
 import { cn } from "@/lib/utils";
 
 import "../globals.css";
@@ -23,6 +25,10 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
+};
 
 export const viewport: Viewport = {
   colorScheme: "light dark",
@@ -82,7 +88,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>
-      <GoogleAnalytics gaId="G-XNJS2S5JPX" />
+      <GoogleAnalyticsViaGtm />
     </html>
   );
 }

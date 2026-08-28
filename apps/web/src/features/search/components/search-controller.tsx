@@ -1,7 +1,6 @@
 "use client";
 
-import { Search, X } from "lucide";
-import { MorphIcon } from "morphicons/react";
+import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
@@ -100,14 +99,7 @@ export function SearchController({
         )}
       >
         <span className="inline-flex items-center gap-2">
-          <MorphIcon
-            aria-hidden="true"
-            icon={open ? X : Search}
-            reducedMotion="user"
-            spring="snappy"
-            size={14}
-            strokeWidth={1.75}
-          />
+          <Search aria-hidden="true" size={14} strokeWidth={1.75} />
           <span className={compact ? "sr-only" : undefined}>{t("trigger")}</span>
         </span>
         <kbd className="rounded-sm border border-foreground/20 bg-foreground/5 px-1.5 py-0.5 font-mono text-[10px] font-medium leading-none text-foreground shadow-[inset_0_-1px_0_rgb(0_0_0/0.12)] dark:shadow-[inset_0_-1px_0_rgb(255_255_255/0.12)]">

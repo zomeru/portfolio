@@ -1,4 +1,4 @@
-import { GoogleAnalytics, GoogleTagManager } from "@next/third-parties/google";
+import { GoogleTagManager } from "@next/third-parties/google";
 import { getPublicProfile, getPublicTechStack } from "@portfolio/api/public-portfolio";
 import type { Metadata, Viewport } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
@@ -6,6 +6,7 @@ import { getMessages, getTranslations, setRequestLocale } from "next-intl/server
 import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 
+import { GoogleAnalyticsViaGtm } from "@/components/analytics/google-analytics-via-gtm";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteNav } from "@/components/layout/site-nav";
@@ -55,7 +56,7 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
   const canonicalPath = localizedPath("/", locale);
 
   return {
-    metadataBase: siteUrl,
+    metadataBase: new URL(siteUrl),
     applicationName: name,
     title: { default: `${name} — ${role}`, template: `%s — ${name}` },
     description,
@@ -142,7 +143,7 @@ export default async function RootLayout({ children, params }: LocaleLayoutProps
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>
-      <GoogleAnalytics gaId="G-XNJS2S5JPX" />
+      <GoogleAnalyticsViaGtm />
     </html>
   );
 }

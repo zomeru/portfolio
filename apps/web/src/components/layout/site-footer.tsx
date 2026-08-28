@@ -1,10 +1,12 @@
 import type { PublicProfile } from "@portfolio/api/public-portfolio";
+import { getTranslations } from "next-intl/server";
 
 import { appVersion } from "@/lib/app-version";
 import { siteCopyrightYear } from "@/lib/metadata";
 import { getProfileSocials } from "@/lib/sanity/profile";
 
-export function SiteFooter({ profile }: { profile: PublicProfile | null }) {
+export async function SiteFooter({ profile }: { profile: PublicProfile | null }) {
+  const t = await getTranslations("Common.search.profile");
   const footerSocials = profile
     ? getProfileSocials(profile).filter((social) => social.name !== "Email")
     : [];
@@ -20,6 +22,7 @@ export function SiteFooter({ profile }: { profile: PublicProfile | null }) {
             <li key={social.name}>
               <a
                 href={social.href}
+                aria-label={social.name === "GitHub" ? t("github.title") : t("linkedin.title")}
                 className="inline-flex min-h-6 items-center underline-offset-4 transition-colors duration-200 hover:text-foreground hover:underline motion-reduce:transition-none"
                 target="_blank"
                 rel="noopener noreferrer"

@@ -25,10 +25,10 @@ export function SiteNav({
   showLanguagePicker?: boolean;
 }) {
   const pathname = usePathname();
-  const t = useTranslations("Common.nav");
+  const t = useTranslations("Common");
 
   return (
-    <nav aria-label={t("label")} className="border-b border-border py-2">
+    <nav aria-label={t("nav.label")} className="border-b border-border py-2">
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <ul className="flex flex-wrap items-center gap-1 sm:gap-2">
           {links.map((link) => {
@@ -38,6 +38,7 @@ export function SiteNav({
                 <Link
                   href={link.href}
                   aria-current={isActive ? "page" : undefined}
+                  aria-label={link.label === "github" ? t("search.pages.github.title") : undefined}
                   className={cn(
                     "inline-flex sscursor-pointer items-center rounded-full pr-2.5 text-sm text-muted transition-colors duration-200 motion-reduce:transition-none min-h-8 md:py-1.5",
                     isActive
@@ -45,7 +46,7 @@ export function SiteNav({
                       : "hover:text-foreground",
                   )}
                 >
-                  {t(link.label)}
+                  {t(`nav.${link.label}`)}
                 </Link>
               </li>
             );

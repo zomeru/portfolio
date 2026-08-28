@@ -2,6 +2,9 @@
 
 import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
+import { z } from "zod";
+
+z.config({ jitless: true });
 
 function AskZomerLoading() {
   const t = useTranslations("Assistant");

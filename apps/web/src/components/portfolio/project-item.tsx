@@ -38,17 +38,29 @@ export async function ProjectItem({ project, index }: ProjectItemProps) {
         {(project.repositoryUrl || project.demoUrl || project.caseStudyUrl) && (
           <div className="relative z-10 mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm">
             {project.repositoryUrl && (
-              <ExternalLink href={project.repositoryUrl} newTabLabel={t("detail.opensNewTab")}>
+              <ExternalLink
+                href={project.repositoryUrl}
+                context={project.title}
+                newTabLabel={t("detail.opensNewTab")}
+              >
                 GitHub
               </ExternalLink>
             )}
             {project.demoUrl && (
-              <ExternalLink href={project.demoUrl} newTabLabel={t("detail.opensNewTab")}>
+              <ExternalLink
+                href={project.demoUrl}
+                context={project.title}
+                newTabLabel={t("detail.opensNewTab")}
+              >
                 {t("live")}
               </ExternalLink>
             )}
             {project.caseStudyUrl && (
-              <ExternalLink href={project.caseStudyUrl} newTabLabel={t("detail.opensNewTab")}>
+              <ExternalLink
+                href={project.caseStudyUrl}
+                context={project.title}
+                newTabLabel={t("detail.opensNewTab")}
+              >
                 {t("caseStudy")}
               </ExternalLink>
             )}
@@ -62,15 +74,18 @@ export async function ProjectItem({ project, index }: ProjectItemProps) {
 function ExternalLink({
   href,
   children,
+  context,
   newTabLabel,
 }: {
   href: string;
-  children: React.ReactNode;
+  children: string;
+  context: string;
   newTabLabel: string;
 }) {
   return (
     <a
       href={href}
+      aria-label={`${children} — ${context} ${newTabLabel}`}
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex items-center gap-1 text-foreground underline-offset-4 transition-colors duration-200 hover:text-muted motion-reduce:transition-none"

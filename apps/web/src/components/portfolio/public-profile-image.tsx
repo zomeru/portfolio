@@ -21,6 +21,7 @@ export function PublicProfileImage({
         alt="Zomer Gregorio"
         width={size}
         height={size}
+        sizes="96px"
         priority={priority}
         {...(className ? { className } : {})}
       />
@@ -33,6 +34,7 @@ export function PublicProfileImage({
       alt={value.alt}
       width={value.width ?? size}
       height={value.height ?? size}
+      sizes="96px"
       priority={priority}
       {...(value.lqip ? { placeholder: "blur" as const, blurDataURL: value.lqip } : {})}
       {...(className ? { className } : {})}

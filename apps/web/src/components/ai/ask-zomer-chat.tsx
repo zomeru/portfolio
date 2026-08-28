@@ -9,6 +9,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
+import "@/components/portfolio/markdown-content.css";
 import { client } from "@/lib/api";
 import { reportClientWarning } from "@/lib/client-log";
 import { classifyRequestFailure, HttpRequestError } from "@/lib/request-failure";

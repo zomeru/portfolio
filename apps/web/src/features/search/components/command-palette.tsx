@@ -1,5 +1,6 @@
 "use client";
 
+import "./command-palette.css";
 import {
   Bot,
   BriefcaseBusiness,
@@ -144,16 +145,18 @@ export function CommandPalette({
 
   useEffect(() => {
     const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const wasClosed = !dialog.open;
+    if (open && wasClosed) dialog.showModal();
+    if (!open && wasClosed) return;
+
     const panel = panelRef.current;
     const content = contentRef.current;
-    if (!dialog || !panel || !content) return;
+    if (!panel || !content) return;
 
     const animationRun = ++animationRunRef.current;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const wasClosed = !dialog.open;
-
-    if (open && wasClosed) dialog.showModal();
-    if (!open && wasClosed) return;
 
     const computedPanel = window.getComputedStyle(panel);
     const computedContent = window.getComputedStyle(content);

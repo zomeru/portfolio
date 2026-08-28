@@ -4,6 +4,8 @@ import type { Options as PrettyCodeOptions } from "rehype-pretty-code";
 import rehypePrettyCode from "rehype-pretty-code";
 import remarkGfm from "remark-gfm";
 
+import "./markdown-content.css";
+
 import type { RichText } from "@/lib/sanity/sanity.types";
 
 type MarkdownContentProps = {

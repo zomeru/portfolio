@@ -66,7 +66,11 @@ export async function SiteHeader({
           {socials.length > 0 && (
             <SocialLinks
               items={socials}
-              emailLabel={t("social.email")}
+              labels={{
+                Email: t("social.email"),
+                GitHub: t("search.profile.github.title"),
+                LinkedIn: t("search.profile.linkedin.title"),
+              }}
               className="flex items-center"
             />
           )}
