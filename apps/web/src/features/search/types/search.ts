@@ -12,6 +12,8 @@ const searchGroupOrder = [
 
 export type SearchGroup = (typeof searchGroupOrder)[number];
 
+export type SearchIndexStatus = "loading" | "ready" | "error";
+
 type SearchAction =
   | { kind: "book-call" }
   | { kind: "switch-locale"; locale: Locale }

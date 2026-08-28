@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 
-import type { SearchItem } from "@/features/search/types/search";
+import type { SearchIndexStatus, SearchItem } from "@/features/search/types/search";
 import { reportClientError } from "@/lib/client-log";
 
 const CommandPalette = dynamic(
@@ -17,6 +17,8 @@ const CommandPalette = dynamic(
 export function SearchController({ endpoint }: { endpoint: string }) {
   const t = useTranslations("Common.search");
   const [items, setItems] = useState<SearchItem[]>([]);
+  const [indexRequest, setIndexRequest] = useState(0);
+  const [indexStatus, setIndexStatus] = useState<SearchIndexStatus>("loading");
   const [loaded, setLoaded] = useState(false);
   const [open, setOpen] = useState(false);
   const [shortcut, setShortcut] = useState("⌘K");
@@ -25,6 +27,8 @@ export function SearchController({ endpoint }: { endpoint: string }) {
   useEffect(() => {
     if (!loaded) return;
     const controller = new AbortController();
+    setItems([]);
+    setIndexStatus("loading");
 
     void fetch(endpoint, {
       headers: { Accept: "application/json" },
@@ -35,14 +39,16 @@ export function SearchController({ endpoint }: { endpoint: string }) {
         const payload: unknown = await response.json();
         if (!Array.isArray(payload)) throw new Error("Search index response is invalid.");
         setItems(payload as SearchItem[]);
+        setIndexStatus("ready");
       })
       .catch((error: unknown) => {
         if (controller.signal.aborted) return;
+        setIndexStatus("error");
         reportClientError("search.loadIndex", error);
       });
 
     return () => controller.abort();
-  }, [endpoint, loaded]);
+  }, [endpoint, indexRequest, loaded]);
 
   useEffect(() => {
     setShortcut(/Mac|iPhone|iPad|iPod/i.test(navigator.platform) ? "⌘K" : "Ctrl K");
@@ -92,7 +98,17 @@ export function SearchController({ endpoint }: { endpoint: string }) {
         <span className="sr-only sm:hidden">{t("trigger")}</span>
       </button>
       {loaded ? (
-        <CommandPalette items={items} open={open} onOpenChange={setOpen} triggerRef={triggerRef} />
+        <CommandPalette
+          indexStatus={indexStatus}
+          items={items}
+          open={open}
+          onOpenChange={setOpen}
+          onRetry={() => {
+            setIndexStatus("loading");
+            setIndexRequest((current) => current + 1);
+          }}
+          triggerRef={triggerRef}
+        />
       ) : null}
     </>
   );

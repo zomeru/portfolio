@@ -39,6 +39,10 @@
     "close": "Close search",
     "resultsLabel": "Search results",
     "resultCount": "{count, plural, one {# result} other {# results}}",
+    "loading": "Loading destinations…",
+    "loadError": "Search could not be loaded",
+    "loadErrorHint": "Check your connection and try again.",
+    "retry": "Try again",
     "noResults": "No matching destinations",
     "noResultsHint": "Try a project, technology, company, or action.",
     "groups": {

@@ -39,6 +39,10 @@
     "close": "検索を閉じる",
     "resultsLabel": "検索結果",
     "resultCount": "{count}件の結果",
+    "loading": "検索項目を読み込んでいます…",
+    "loadError": "検索を読み込めませんでした",
+    "loadErrorHint": "接続を確認して、もう一度お試しください。",
+    "retry": "再試行",
     "noResults": "一致する項目がありません",
     "noResultsHint": "プロジェクト、技術、会社名、操作を試してください。",
     "groups": {

@@ -39,6 +39,10 @@
     "close": "Suche schließen",
     "resultsLabel": "Suchergebnisse",
     "resultCount": "{count, plural, one {# Ergebnis} other {# Ergebnisse}}",
+    "loading": "Ziele werden geladen…",
+    "loadError": "Die Suche konnte nicht geladen werden",
+    "loadErrorHint": "Überprüfe deine Verbindung und versuche es erneut.",
+    "retry": "Erneut versuchen",
     "noResults": "Keine passenden Ziele",
     "noResultsHint": "Versuche ein Projekt, eine Technologie, Firma oder Aktion.",
     "groups": {

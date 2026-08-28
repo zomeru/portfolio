@@ -39,6 +39,10 @@
     "close": "关闭搜索",
     "resultsLabel": "搜索结果",
     "resultCount": "{count} 条结果",
+    "loading": "正在加载搜索项…",
+    "loadError": "无法加载搜索",
+    "loadErrorHint": "请检查网络连接后重试。",
+    "retry": "重试",
     "noResults": "没有匹配的内容",
     "noResultsHint": "请尝试项目、技术、公司或操作。",
     "groups": {
