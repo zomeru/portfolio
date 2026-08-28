@@ -5,7 +5,7 @@ import { useActionState, useEffect, useRef } from "react";
 import { initialLoginState } from "./action-state";
 import { authenticateAdminAccess } from "./actions";
 
-export function AdminAccessGate() {
+export function AdminAccessGate({ redirectTo = "/admin" }: { redirectTo?: string }) {
   const [state, formAction, isPending] = useActionState(authenticateAdminAccess, initialLoginState);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -43,6 +43,7 @@ export function AdminAccessGate() {
       </p>
 
       <form action={formAction} className="mt-6">
+        <input type="hidden" name="redirectTo" value={redirectTo} />
         <label htmlFor="admin-access-key" className="block text-sm font-medium">
           Admin access key
         </label>

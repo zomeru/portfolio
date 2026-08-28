@@ -43,6 +43,17 @@ Turbo boundary checks reject undeclared dependencies and imports that reach acro
 
 Notification schemas and migrations live in `packages/database`. See `/developers` for webhook payloads, signature verification, retries, and local testing.
 
+## Error monitoring
+
+Unexpected server failures are redacted, fingerprinted, and grouped in PostgreSQL. The existing admin
+access session protects `/admin/error`, where issues can be searched, filtered, inspected, resolved,
+ignored, or reopened after a recurrence. Expected validation, authentication, not-found, and rate-limit
+responses remain in structured runtime logs and are not persisted as error issues.
+
+Automated retention is intentionally deferred until the application has an existing scheduled database
+maintenance path. When that path is introduced, prune resolved or ignored issues after 90 days; do not
+delete open issues or add a timer solely for error-log cleanup.
+
 ## PWA install metadata
 
 The web manifest provides desktop and mobile install screenshots plus separate standard and padded maskable icons. Protocol handlers are intentionally omitted because the portfolio has no custom-protocol action to handle. Window Controls Overlay is also omitted: the site does not implement title-bar controls, and standalone mode is the clearer installed experience.

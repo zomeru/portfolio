@@ -91,6 +91,46 @@ export type AskZomerMessageMetadata = {
 
 export type AskZomerMessage = UIMessage<AskZomerMessageMetadata>;
 
+export type AskZomerHistoryPage = {
+  messages: AskZomerMessage[];
+  nextCursor: string | null;
+};
+
+export type AdminErrorSeverity = "error" | "warning";
+export type AdminErrorStatus = "open" | "resolved" | "ignored";
+
+export type AdminErrorIssueSummary = {
+  id: string;
+  severity: AdminErrorSeverity;
+  name: string;
+  message: string;
+  source: string | null;
+  route: string | null;
+  service: string;
+  errorCode: string | null;
+  status: AdminErrorStatus;
+  occurrenceCount: number;
+  firstSeenAt: string;
+  lastSeenAt: string;
+};
+
+export type AdminErrorIssuePage = {
+  issues: AdminErrorIssueSummary[];
+  nextCursor: string | null;
+};
+
+export type AdminErrorDetail = AdminErrorIssueSummary & {
+  fingerprint: string;
+  stack: string | null;
+  method: string | null;
+  requestId: string | null;
+  userAgent: string | null;
+  environment: string;
+  metadata: Record<string, unknown>;
+  cause: Record<string, unknown> | null;
+  resolvedAt: string | null;
+};
+
 export const INITIAL_ASK_ZOMER_SUGGESTIONS = [
   "What's Zomer's experience?",
   "What projects has he built?",

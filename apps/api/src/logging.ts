@@ -1,3 +1,10 @@
 import "server-only";
 
-export { errorLogMetadata, log, logError, logWarning, serializeError } from "./lib/log";
+export {
+  captureError,
+  errorLogMetadata,
+  log,
+  logError,
+  logWarning,
+  serializeError,
+} from "./lib/log";

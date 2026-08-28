@@ -1,11 +1,11 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import type { AskZomerMessage, AskZomerSource } from "@portfolio/api/types";
+import type { AskZomerHistoryPage, AskZomerMessage, AskZomerSource } from "@portfolio/api/types";
 import { DefaultChatTransport, getToolName, isToolUIPart } from "ai";
-import { ArrowUp, Globe2, LoaderCircle, RefreshCw, Square } from "lucide-react";
+import { ArrowDown, ArrowUp, Globe2, LoaderCircle, RefreshCw, Square } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -169,66 +169,199 @@ function SuggestionList({
 
 function ChatMessages({
   busy,
+  hasOlderMessages,
+  historyError,
+  historyLoading,
   loading,
   messages,
+  onLoadOlder,
 }: {
   busy: boolean;
+  hasOlderMessages: boolean;
+  historyError: boolean;
+  historyLoading: boolean;
   loading: boolean;
   messages: AskZomerMessage[];
+  onLoadOlder: () => Promise<void>;
 }) {
   const t = useTranslations("Assistant");
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const initialPositionedRef = useRef(false);
+  const nearBottomRef = useRef(true);
+  const prependSnapshotRef = useRef<{ height: number; top: number } | null>(null);
+  const previousFirstIdRef = useRef<string | undefined>(undefined);
+  const previousLastSignatureRef = useRef<string | undefined>(undefined);
+  const [showJumpToLatest, setShowJumpToLatest] = useState(false);
+  const firstMessageId = messages[0]?.id;
+  const lastMessage = messages.at(-1);
+  const lastMessageSignature = lastMessage
+    ? `${lastMessage.id}:${messageText(lastMessage).length}:${lastMessage.parts.length}`
+    : undefined;
+
+  const scrollToLatest = useCallback((behavior: ScrollBehavior = "smooth") => {
+    const viewport = viewportRef.current;
+    if (!viewport) return;
+    viewport.scrollTo({ top: viewport.scrollHeight, behavior });
+    nearBottomRef.current = true;
+    setShowJumpToLatest(false);
+  }, []);
+
+  useLayoutEffect(() => {
+    const viewport = viewportRef.current;
+    if (!viewport || loading) return;
+
+    if (!initialPositionedRef.current) {
+      initialPositionedRef.current = true;
+      viewport.scrollTop = viewport.scrollHeight;
+      previousFirstIdRef.current = firstMessageId;
+      previousLastSignatureRef.current = lastMessageSignature;
+      return;
+    }
+
+    const prepended =
+      prependSnapshotRef.current !== null && previousFirstIdRef.current !== firstMessageId;
+    if (prepended) {
+      const snapshot = prependSnapshotRef.current;
+      if (snapshot) {
+        viewport.scrollTop = snapshot.top + (viewport.scrollHeight - snapshot.height);
+      }
+      prependSnapshotRef.current = null;
+    } else if (previousLastSignatureRef.current !== lastMessageSignature) {
+      if (nearBottomRef.current) {
+        viewport.scrollTop = viewport.scrollHeight;
+      } else {
+        setShowJumpToLatest(true);
+      }
+    }
+
+    previousFirstIdRef.current = firstMessageId;
+    previousLastSignatureRef.current = lastMessageSignature;
+  }, [firstMessageId, lastMessageSignature, loading]);
+
+  const loadOlder = useCallback(() => {
+    const viewport = viewportRef.current;
+    if (!viewport || historyLoading || !hasOlderMessages) return;
+    prependSnapshotRef.current = { height: viewport.scrollHeight, top: viewport.scrollTop };
+    void onLoadOlder();
+  }, [hasOlderMessages, historyLoading, onLoadOlder]);
+
   return (
-    <div aria-live="polite" aria-relevant="additions text" className="space-y-5 py-6">
-      {loading ? (
-        <div
-          role="status"
-          aria-busy="true"
-          className="flex items-center justify-center gap-2 py-10 text-sm text-muted sm:py-14"
-        >
-          <LoaderCircle
-            aria-hidden="true"
-            className="size-4 animate-spin motion-reduce:animate-none"
-          />
-          {t("loadingMessages")}
-        </div>
-      ) : messages.length === 0 ? (
-        <div className="flex items-center justify-center py-10 text-center sm:py-14">
-          <div className="max-w-md">
-            <p className="text-sm font-medium">{t("emptyTitle")}</p>
-            <p className="mt-2 text-sm leading-relaxed text-muted">{t("emptyDescription")}</p>
+    <div className="relative">
+      <div
+        ref={viewportRef}
+        aria-live="polite"
+        aria-relevant="additions text"
+        className="chat-scrollbar max-h-[min(65dvh,44rem)] min-h-72 overflow-y-auto overscroll-contain py-6 pr-1"
+        onScroll={(event) => {
+          const viewport = event.currentTarget;
+          const distanceFromBottom =
+            viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight;
+          nearBottomRef.current = distanceFromBottom < 96;
+          if (nearBottomRef.current) setShowJumpToLatest(false);
+          if (
+            initialPositionedRef.current &&
+            viewport.scrollHeight > viewport.clientHeight &&
+            viewport.scrollTop < 192
+          ) {
+            loadOlder();
+          }
+        }}
+      >
+        {loading ? (
+          <div
+            role="status"
+            aria-busy="true"
+            className="flex items-center justify-center gap-2 py-10 text-sm text-muted sm:py-14"
+          >
+            <LoaderCircle
+              aria-hidden="true"
+              className="size-4 animate-spin motion-reduce:animate-none"
+            />
+            {t("loadingMessages")}
           </div>
-        </div>
-      ) : (
-        messages.map((message, index) => {
-          const text = messageText(message);
-          const sources = messageSources(message);
-          const isLatestAssistant = message.role === "assistant" && index === messages.length - 1;
-          const searchState = isLatestAssistant ? webSearchState(message, busy) : undefined;
-          return (
-            <article
-              key={message.id}
-              className={
-                message.role === "user"
-                  ? "chat-message-user ml-auto max-w-[88%] rounded-2xl rounded-br-sm border border-border bg-chat-user-surface px-4 py-3 text-sm leading-relaxed text-foreground sm:max-w-[72%]"
-                  : "chat-message-assistant max-w-2xl"
-              }
-            >
-              <p className="sr-only">{message.role === "user" ? t("you") : t("assistant")}</p>
-              {message.role === "assistant" && searchState ? (
-                <WebSearchStatus state={searchState} />
-              ) : null}
-              {message.role === "assistant" ? (
-                <div className="markdown-content">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
-                </div>
+        ) : messages.length === 0 ? (
+          <div className="flex items-center justify-center py-10 text-center sm:py-14">
+            <div className="max-w-md">
+              <p className="text-sm font-medium">{t("emptyTitle")}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{t("emptyDescription")}</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            <div className="mb-5 flex min-h-8 items-center justify-center text-xs text-muted">
+              {historyLoading ? (
+                <span role="status" className="inline-flex items-center gap-2">
+                  <LoaderCircle
+                    aria-hidden="true"
+                    className="size-3.5 animate-spin motion-reduce:animate-none"
+                  />
+                  {t("loadingOlderMessages")}
+                </span>
+              ) : historyError ? (
+                <button
+                  type="button"
+                  onClick={loadOlder}
+                  className="min-h-10 rounded-md border border-border px-3 hover:border-foreground hover:text-foreground"
+                >
+                  {t("retryOlderMessages")}
+                </button>
+              ) : hasOlderMessages ? (
+                <button
+                  type="button"
+                  onClick={loadOlder}
+                  className="min-h-10 rounded-md px-3 hover:text-foreground"
+                >
+                  {t("loadOlderMessages")}
+                </button>
               ) : (
-                <p className="whitespace-pre-wrap">{text}</p>
+                <span>{t("beginningOfConversation")}</span>
               )}
-              {message.role === "assistant" ? <SourceList sources={sources} /> : null}
-            </article>
-          );
-        })
-      )}
+            </div>
+            <div className="space-y-5">
+              {messages.map((message, index) => {
+                const text = messageText(message);
+                const sources = messageSources(message);
+                const isLatestAssistant =
+                  message.role === "assistant" && index === messages.length - 1;
+                const searchState = isLatestAssistant ? webSearchState(message, busy) : undefined;
+                return (
+                  <article
+                    key={message.id}
+                    className={
+                      message.role === "user"
+                        ? "chat-message-user ml-auto max-w-[88%] rounded-2xl rounded-br-sm border border-border bg-chat-user-surface px-4 py-3 text-sm leading-relaxed text-foreground sm:max-w-[72%]"
+                        : "chat-message-assistant max-w-2xl"
+                    }
+                  >
+                    <p className="sr-only">{message.role === "user" ? t("you") : t("assistant")}</p>
+                    {message.role === "assistant" && searchState ? (
+                      <WebSearchStatus state={searchState} />
+                    ) : null}
+                    {message.role === "assistant" ? (
+                      <div className="markdown-content">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{text}</ReactMarkdown>
+                      </div>
+                    ) : (
+                      <p className="whitespace-pre-wrap">{text}</p>
+                    )}
+                    {message.role === "assistant" ? <SourceList sources={sources} /> : null}
+                  </article>
+                );
+              })}
+            </div>
+          </>
+        )}
+      </div>
+      {showJumpToLatest ? (
+        <button
+          type="button"
+          onClick={() => scrollToLatest()}
+          className="absolute right-3 bottom-3 inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-background/95 px-3 text-xs shadow-lg backdrop-blur hover:border-foreground"
+        >
+          <ArrowDown aria-hidden="true" size={14} />
+          {t("jumpToLatest")}
+        </button>
+      ) : null}
     </div>
   );
 }
@@ -246,6 +379,11 @@ function ChatSession({
   const [input, setInput] = useState("");
   const [historyReady, setHistoryReady] = useState(false);
   const [historyWarning, setHistoryWarning] = useState(false);
+  const [historyError, setHistoryError] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [nextHistoryCursor, setNextHistoryCursor] = useState<string | null>(null);
+  const historyLoadingRef = useRef(false);
+  const historyRequestControllerRef = useRef<AbortController | null>(null);
   const initialQuestionHandled = useRef(false);
   const transport = useMemo(
     () =>
@@ -264,17 +402,20 @@ function ChatSession({
 
   useEffect(() => {
     const controller = new AbortController();
+    setHistoryReady(false);
+    setHistoryWarning(false);
+    setHistoryError(false);
+    setNextHistoryCursor(null);
     async function restoreHistory() {
       try {
         const response = await client.api.ai.sessions[":sessionKey"].messages.$get(
-          { param: { sessionKey } },
+          { param: { sessionKey }, query: {} },
           { init: { signal: controller.signal } },
         );
         if (!response.ok) throw new HttpRequestError(response.status);
-        const payload = (await (response as Response).json()) as {
-          messages?: AskZomerMessage[];
-        };
-        setMessages(payload.messages ?? []);
+        const payload = (await (response as Response).json()) as AskZomerHistoryPage;
+        setMessages(payload.messages);
+        setNextHistoryCursor(payload.nextCursor);
       } catch (restoreError) {
         if (!(restoreError instanceof DOMException && restoreError.name === "AbortError")) {
           reportClientWarning("assistant.restoreHistory", restoreError, { sessionKey });
@@ -287,6 +428,48 @@ function ChatSession({
     void restoreHistory();
     return () => controller.abort();
   }, [sessionKey, setMessages]);
+
+  useEffect(
+    () => () => {
+      historyRequestControllerRef.current?.abort();
+    },
+    [],
+  );
+
+  const loadOlderMessages = useCallback(async () => {
+    if (!nextHistoryCursor || historyLoadingRef.current) return;
+    historyLoadingRef.current = true;
+    setHistoryLoading(true);
+    setHistoryError(false);
+    const controller = new AbortController();
+    historyRequestControllerRef.current = controller;
+
+    try {
+      const response = await client.api.ai.sessions[":sessionKey"].messages.$get(
+        { param: { sessionKey }, query: { cursor: nextHistoryCursor } },
+        { init: { signal: controller.signal } },
+      );
+      if (!response.ok) throw new HttpRequestError(response.status);
+      const payload = (await (response as Response).json()) as AskZomerHistoryPage;
+      setMessages((current) => {
+        const existingIds = new Set(current.map((message) => message.id));
+        const older = payload.messages.filter((message) => !existingIds.has(message.id));
+        return [...older, ...current];
+      });
+      setNextHistoryCursor(payload.nextCursor);
+    } catch (loadError) {
+      if (!(loadError instanceof DOMException && loadError.name === "AbortError")) {
+        reportClientWarning("assistant.loadOlderHistory", loadError, { sessionKey });
+        setHistoryError(true);
+      }
+    } finally {
+      if (historyRequestControllerRef.current === controller) {
+        historyRequestControllerRef.current = null;
+        historyLoadingRef.current = false;
+        setHistoryLoading(false);
+      }
+    }
+  }, [nextHistoryCursor, sessionKey, setMessages]);
 
   useEffect(() => {
     const trimmed = initialQuestion?.trim();
@@ -326,7 +509,15 @@ function ChatSession({
           {t("historyUnavailable")}
         </p>
       ) : null}
-      <ChatMessages busy={busy} loading={!historyReady} messages={messages} />
+      <ChatMessages
+        busy={busy}
+        hasOlderMessages={nextHistoryCursor !== null}
+        historyError={historyError}
+        historyLoading={historyLoading}
+        loading={!historyReady}
+        messages={messages}
+        onLoadOlder={loadOlderMessages}
+      />
 
       {historyReady && suggestions.length > 0 ? (
         <div className="py-4">

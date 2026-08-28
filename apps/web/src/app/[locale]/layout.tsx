@@ -134,7 +134,11 @@ export default async function RootLayout({ children, params }: LocaleLayoutProps
                   techStack={techStack.groups}
                 />
                 <SiteNav searchEndpoint={localizedPath("/search-index.json", locale)} />
-                <main id="main-content" tabIndex={-1} className="flex-1 scroll-mt-4 py-12 sm:py-16">
+                <main
+                  id="main-content"
+                  tabIndex={-1}
+                  className="flex-1 scroll-mt-4 py-12 sm:py-16 overflow-y-hidden"
+                >
                   {children}
                 </main>
                 <SiteFooter profile={profile} />

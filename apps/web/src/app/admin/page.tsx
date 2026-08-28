@@ -1,5 +1,6 @@
 import { logError } from "@portfolio/api/logging";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { PageHeader } from "@/components/portfolio/page-header";
 import { isAdminAccessAuthenticated } from "@/lib/admin-access";
@@ -161,6 +162,21 @@ export default async function AdminPage() {
           </button>
         </form>
       </div>
+
+      <Link
+        href="/admin/error"
+        className="mt-4 flex min-h-16 items-center justify-between gap-4 rounded-lg border border-border/70 bg-foreground/2.5 px-4 py-3 transition-colors hover:bg-foreground/5"
+      >
+        <span>
+          <span className="block text-sm font-medium">Error monitoring</span>
+          <span className="mt-1 block text-xs text-muted">
+            Inspect grouped application failures and resolve issues.
+          </span>
+        </span>
+        <span aria-hidden="true" className="text-muted">
+          →
+        </span>
+      </Link>
 
       <section
         aria-labelledby="publishing-heading"

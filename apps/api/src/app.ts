@@ -4,8 +4,9 @@ import { secureHeaders } from "hono/secure-headers";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 
 import { ApiError } from "./errors";
-import { errorLogMetadata, log, withLogContext } from "./lib/log";
+import { captureError, errorLogMetadata, log, withLogContext } from "./lib/log";
 import { adminAiRoutes } from "./routes/admin-ai";
+import { adminErrorRoutes } from "./routes/admin-errors";
 import { assistantRoutes } from "./routes/assistant";
 import { blogGenerationRoutes } from "./routes/blog-generation";
 import { githubRoutes } from "./routes/github";
@@ -24,6 +25,7 @@ app.use("*", async (c, next) => {
       requestId: c.get("requestId"),
       method: c.req.method,
       path: c.req.path,
+      userAgent: c.req.header("user-agent"),
     },
     next,
   );
@@ -41,6 +43,7 @@ export const apiApp = app
   .get("/", (c) => c.json({ service: "portfolio-api", status: "ok" }))
   .route("/ai", assistantRoutes)
   .route("/admin/ai", adminAiRoutes)
+  .route("/admin/errors", adminErrorRoutes)
   .route("/blog", blogGenerationRoutes)
   .route("/github", githubRoutes)
   .route("/notifications", notificationRoutes)
@@ -53,16 +56,24 @@ apiApp.notFound((c) =>
   ),
 );
 
-apiApp.onError((error, c) => {
+apiApp.onError(async (error, c) => {
   const apiError = error instanceof ApiError ? error : null;
   const status = (apiError?.status ?? 500) as ContentfulStatusCode;
 
-  log(status >= 500 ? "error" : "warn", "request failed", {
+  const metadata = {
     requestId: c.get("requestId"),
     errorCode: apiError?.code ?? "INTERNAL_ERROR",
     status,
-    ...errorLogMetadata(error, "api.request"),
-  });
+    route: c.req.path,
+    method: c.req.method,
+    userAgent: c.req.header("user-agent"),
+    operation: "api.request",
+  };
+  if (status >= 500) {
+    await captureError("request failed", error, metadata);
+  } else {
+    log("warn", "request failed", { ...metadata, ...errorLogMetadata(error, "api.request") });
+  }
 
   return c.json(
     {
