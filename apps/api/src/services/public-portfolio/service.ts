@@ -42,6 +42,7 @@ import {
 } from "./schemas";
 
 const SANITY_API_VERSION = "2026-08-20";
+const SANITY_REQUEST_TIMEOUT_MS = 15_000;
 const DEFAULT_RESUME_PATH = "/assets/GREGORIO_ZOMER_RESUME.pdf";
 
 const rawPhotoSchema = z
@@ -188,6 +189,8 @@ function getReadClient() {
     perspective: "published",
     projectId: sanity.projectId,
     token: server.token,
+    timeout: SANITY_REQUEST_TIMEOUT_MS,
+    maxRetries: 2,
     // Next.js owns the durable cache. Reading from the Content Lake API after invalidation avoids
     // repopulating it with a briefly stale CDN response immediately after a publish webhook.
     useCdn: false,
@@ -518,6 +521,32 @@ export function createPublicPortfolioService(
     return serializePublicSnapshot(await dependencies.fetchSnapshot(), dependencies.siteUrl);
   }
 
+  async function getResumeSource() {
+    if (
+      dependencies.fetchExperienceList &&
+      dependencies.fetchProfile &&
+      dependencies.fetchTechStack
+    ) {
+      const [experience, profile, techStack] = await Promise.all([
+        dependencies
+          .fetchExperienceList()
+          .then((value) => serializePublicExperienceList(value, dependencies.siteUrl)),
+        dependencies
+          .fetchProfile()
+          .then((value) => serializePublicProfile(value, dependencies.siteUrl)),
+        dependencies.fetchTechStack().then(serializePublicTechStack),
+      ]);
+      return { experience, profile, techStack };
+    }
+
+    const snapshot = await getSnapshot();
+    return {
+      experience: snapshot.experience,
+      profile: snapshot.profile,
+      techStack: snapshot.techStack,
+    };
+  }
+
   return {
     async getBlogPost(slug) {
       const raw = rawBlogPostSchema.nullable().parse(await dependencies.fetchBlogPost(slug));
@@ -547,22 +576,22 @@ export function createPublicPortfolioService(
       return (await getSnapshot()).projects.find((project) => project.slug === slug) ?? null;
     },
     async getResume() {
-      const snapshot = await getSnapshot();
-      if (!snapshot.profile) return null;
+      const source = await getResumeSource();
+      if (!source.profile) return null;
 
       return publicResumeSchema.parse({
-        name: snapshot.profile.name,
-        role: snapshot.profile.role,
-        pdfUrl: snapshot.profile.resumePdfUrl,
-        summary: [snapshot.profile.biography, snapshot.profile.about].filter(Boolean).join("\n\n"),
+        name: source.profile.name,
+        role: source.profile.role,
+        pdfUrl: source.profile.resumePdfUrl,
+        summary: [source.profile.biography, source.profile.about].filter(Boolean).join("\n\n"),
         contact: {
-          email: snapshot.profile.email,
-          github: snapshot.profile.links.github,
-          linkedin: snapshot.profile.links.linkedin,
-          website: snapshot.profile.url,
+          email: source.profile.email,
+          github: source.profile.links.github,
+          linkedin: source.profile.links.linkedin,
+          website: source.profile.url,
         },
-        experience: snapshot.experience,
-        techStack: snapshot.techStack,
+        experience: source.experience,
+        techStack: source.techStack,
       });
     },
     getSnapshot,

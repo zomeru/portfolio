@@ -16,6 +16,8 @@ export type NotificationDeliveryChannelValue =
 export type WebhookDestinationTypeValue =
   (typeof blogWebhookSubscriptions.$inferInsert)["destinationType"];
 
+const MAX_WEBHOOK_SUMMARIES = 100;
+
 export async function createOrReuseEmailSubscription(options: {
   email: string;
   verificationTokenHash: string;
@@ -30,14 +32,18 @@ export async function createOrReuseEmailSubscription(options: {
       verificationExpiresAt: options.verificationExpiresAt,
     })
     .onConflictDoNothing({ target: blogEmailSubscriptions.email })
-    .returning();
+    .returning({ id: blogEmailSubscriptions.id });
 
   if (inserted) {
     return { subscription: inserted, outcome: "confirmation_required" as const };
   }
 
   const [existing] = await db
-    .select()
+    .select({
+      id: blogEmailSubscriptions.id,
+      status: blogEmailSubscriptions.status,
+      unsubscribeTokenVersion: blogEmailSubscriptions.unsubscribeTokenVersion,
+    })
     .from(blogEmailSubscriptions)
     .where(eq(blogEmailSubscriptions.email, options.email))
     .limit(1);
@@ -65,14 +71,17 @@ export async function createOrReuseEmailSubscription(options: {
       unsubscribedAt: null,
     })
     .where(and(eq(blogEmailSubscriptions.id, existing.id), reusableStatus))
-    .returning();
+    .returning({ id: blogEmailSubscriptions.id });
 
   if (updated) {
     return { subscription: updated, outcome: "confirmation_required" as const };
   }
 
   const [current] = await db
-    .select()
+    .select({
+      id: blogEmailSubscriptions.id,
+      status: blogEmailSubscriptions.status,
+    })
     .from(blogEmailSubscriptions)
     .where(eq(blogEmailSubscriptions.id, existing.id))
     .limit(1);
@@ -105,7 +114,7 @@ export async function confirmEmailSubscription(tokenHash: string, now = new Date
         gte(blogEmailSubscriptions.verificationExpiresAt, now),
       ),
     )
-    .returning();
+    .returning({ id: blogEmailSubscriptions.id });
   return subscription ?? null;
 }
 
@@ -124,7 +133,12 @@ export async function expireEmailVerificationToken(id: string, tokenHash: string
 
 export async function findEmailSubscriptionById(id: string) {
   const [subscription] = await db
-    .select()
+    .select({
+      id: blogEmailSubscriptions.id,
+      email: blogEmailSubscriptions.email,
+      status: blogEmailSubscriptions.status,
+      unsubscribeTokenVersion: blogEmailSubscriptions.unsubscribeTokenVersion,
+    })
     .from(blogEmailSubscriptions)
     .where(eq(blogEmailSubscriptions.id, id))
     .limit(1);
@@ -149,7 +163,7 @@ export async function unsubscribeEmailSubscription(id: string, tokenVersion: num
         inArray(blogEmailSubscriptions.status, ["pending", "confirmed", "unsubscribed"]),
       ),
     )
-    .returning();
+    .returning({ id: blogEmailSubscriptions.id });
   return subscription ?? null;
 }
 
@@ -180,7 +194,7 @@ export async function upsertPushSubscription(options: {
         updatedAt: now,
       },
     })
-    .returning();
+    .returning({ id: blogPushSubscriptions.id });
   if (!subscription) throw new Error("Push subscription upsert returned no row.");
   return subscription;
 }
@@ -191,7 +205,7 @@ export async function disablePushSubscriptionByEndpoint(endpoint: string) {
     .update(blogPushSubscriptions)
     .set({ disabledAt: now, updatedAt: now })
     .where(eq(blogPushSubscriptions.endpoint, endpoint))
-    .returning();
+    .returning({ id: blogPushSubscriptions.id });
   return subscription ?? null;
 }
 
@@ -205,7 +219,12 @@ export async function disablePushSubscriptionById(id: string) {
 
 export async function findPushSubscriptionById(id: string) {
   const [subscription] = await db
-    .select()
+    .select({
+      endpoint: blogPushSubscriptions.endpoint,
+      p256dh: blogPushSubscriptions.p256dh,
+      auth: blogPushSubscriptions.auth,
+      disabledAt: blogPushSubscriptions.disabledAt,
+    })
     .from(blogPushSubscriptions)
     .where(eq(blogPushSubscriptions.id, id))
     .limit(1);
@@ -214,7 +233,12 @@ export async function findPushSubscriptionById(id: string) {
 
 export async function findPushSubscriptionByEndpoint(endpoint: string) {
   const [subscription] = await db
-    .select()
+    .select({
+      endpoint: blogPushSubscriptions.endpoint,
+      p256dh: blogPushSubscriptions.p256dh,
+      auth: blogPushSubscriptions.auth,
+      disabledAt: blogPushSubscriptions.disabledAt,
+    })
     .from(blogPushSubscriptions)
     .where(eq(blogPushSubscriptions.endpoint, endpoint))
     .limit(1);
@@ -244,7 +268,11 @@ export async function upsertWebhookSubscription(options: {
         updatedAt: now,
       },
     })
-    .returning();
+    .returning({
+      id: blogWebhookSubscriptions.id,
+      name: blogWebhookSubscriptions.name,
+      destinationType: blogWebhookSubscriptions.destinationType,
+    });
   if (!subscription) throw new Error("Webhook subscription upsert returned no row.");
   return subscription;
 }
@@ -255,13 +283,20 @@ export async function disableWebhookSubscription(id: string) {
     .update(blogWebhookSubscriptions)
     .set({ status: "disabled", disabledAt: now, updatedAt: now })
     .where(eq(blogWebhookSubscriptions.id, id))
-    .returning();
+    .returning({ id: blogWebhookSubscriptions.id });
   return subscription ?? null;
 }
 
 export async function findWebhookSubscriptionById(id: string) {
   const [subscription] = await db
-    .select()
+    .select({
+      id: blogWebhookSubscriptions.id,
+      name: blogWebhookSubscriptions.name,
+      destinationType: blogWebhookSubscriptions.destinationType,
+      encryptedUrl: blogWebhookSubscriptions.encryptedUrl,
+      encryptedSecret: blogWebhookSubscriptions.encryptedSecret,
+      status: blogWebhookSubscriptions.status,
+    })
     .from(blogWebhookSubscriptions)
     .where(eq(blogWebhookSubscriptions.id, id))
     .limit(1);
@@ -279,7 +314,8 @@ export function listWebhookSubscriptionSummaries() {
       disabledAt: blogWebhookSubscriptions.disabledAt,
     })
     .from(blogWebhookSubscriptions)
-    .orderBy(desc(blogWebhookSubscriptions.createdAt));
+    .orderBy(desc(blogWebhookSubscriptions.createdAt))
+    .limit(MAX_WEBHOOK_SUMMARIES);
 }
 
 export async function createNotificationEvent(options: {
@@ -293,11 +329,11 @@ export async function createNotificationEvent(options: {
     .insert(notificationEvents)
     .values({ ...options, type: "blog.published" })
     .onConflictDoNothing({ target: notificationEvents.eventKey })
-    .returning();
+    .returning({ id: notificationEvents.id, createdAt: notificationEvents.createdAt });
   if (inserted) return { created: true, event: inserted };
 
   const [event] = await db
-    .select()
+    .select({ id: notificationEvents.id, createdAt: notificationEvents.createdAt })
     .from(notificationEvents)
     .where(eq(notificationEvents.eventKey, options.eventKey))
     .limit(1);
@@ -307,11 +343,19 @@ export async function createNotificationEvent(options: {
 
 export async function findNotificationEventById(id: string) {
   const [event] = await db
-    .select()
+    .select({ payload: notificationEvents.payload })
     .from(notificationEvents)
     .where(eq(notificationEvents.id, id))
     .limit(1);
   return event ?? null;
+}
+
+export function findNotificationEventsByIds(ids: string[]) {
+  if (ids.length === 0) return Promise.resolve([]);
+  return db
+    .select({ id: notificationEvents.id, payload: notificationEvents.payload })
+    .from(notificationEvents)
+    .where(inArray(notificationEvents.id, ids));
 }
 
 export async function listActiveNotificationDestinationIds(
@@ -445,7 +489,11 @@ export function listReadyNotificationDeliveries(options: {
   limit: number;
 }) {
   return db
-    .select()
+    .select({
+      id: notificationDeliveries.id,
+      eventId: notificationDeliveries.eventId,
+      channel: notificationDeliveries.channel,
+    })
     .from(notificationDeliveries)
     .where(
       and(
@@ -478,7 +526,14 @@ export async function claimNotificationDelivery(options: {
         readyDeliveryCondition(options.now, options.staleClaimBefore),
       ),
     )
-    .returning();
+    .returning({
+      id: notificationDeliveries.id,
+      eventId: notificationDeliveries.eventId,
+      channel: notificationDeliveries.channel,
+      destinationId: notificationDeliveries.destinationId,
+      attemptCount: notificationDeliveries.attemptCount,
+      maxAttempts: notificationDeliveries.maxAttempts,
+    });
   return delivery ?? null;
 }
 
@@ -587,7 +642,15 @@ export async function getNotificationAdminSummary() {
       .select({ count: count() })
       .from(blogWebhookSubscriptions)
       .where(eq(blogWebhookSubscriptions.status, "active")),
-    db.select().from(notificationEvents).orderBy(desc(notificationEvents.occurredAt)).limit(1),
+    db
+      .select({
+        id: notificationEvents.id,
+        occurredAt: notificationEvents.occurredAt,
+        payload: notificationEvents.payload,
+      })
+      .from(notificationEvents)
+      .orderBy(desc(notificationEvents.occurredAt))
+      .limit(1),
   ]);
   const latestEvent = latestEvents[0] ?? null;
   const deliveries = latestEvent
@@ -595,9 +658,11 @@ export async function getNotificationAdminSummary() {
         .select({
           channel: notificationDeliveries.channel,
           status: notificationDeliveries.status,
+          count: count(),
         })
         .from(notificationDeliveries)
         .where(eq(notificationDeliveries.eventId, latestEvent.id))
+        .groupBy(notificationDeliveries.channel, notificationDeliveries.status)
     : [];
 
   return {

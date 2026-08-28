@@ -6,6 +6,8 @@ import { Resend } from "resend";
 import { NotificationDeliveryError } from "./errors";
 
 const SITE_NAME = "Zomer Gregorio";
+const EMAIL_CONNECTION_TIMEOUT_MS = 10_000;
+const EMAIL_SOCKET_TIMEOUT_MS = 20_000;
 
 type GmailClient = {
   provider: "gmail";
@@ -78,6 +80,9 @@ function getGmailTransporter(environment: ReturnType<typeof getNotificationsServ
 
   gmailTransporter = nodemailer.createTransport({
     service: "gmail",
+    connectionTimeout: EMAIL_CONNECTION_TIMEOUT_MS,
+    greetingTimeout: EMAIL_CONNECTION_TIMEOUT_MS,
+    socketTimeout: EMAIL_SOCKET_TIMEOUT_MS,
     auth: {
       user: environment.emailFrom,
       pass: environment.googleAppPassword,

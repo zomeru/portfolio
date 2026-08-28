@@ -5,6 +5,7 @@ import { createClient, type SanityClient } from "@sanity/client";
 import type { GeneratedBlogDraft } from "./draft";
 
 const SANITY_API_VERSION = "2026-08-01";
+const SANITY_REQUEST_TIMEOUT_MS = 30_000;
 
 export type BlogGenerationTrigger = "manual" | "scheduled";
 
@@ -50,6 +51,9 @@ function getWriteClient(): SanityClient {
     perspective: "published",
     projectId: sanity.projectId,
     token: server.token,
+    timeout: SANITY_REQUEST_TIMEOUT_MS,
+    // Creating a generated post is not idempotent; the durable job owns any retry.
+    maxRetries: 0,
     useCdn: false,
   });
 

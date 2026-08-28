@@ -1,8 +1,8 @@
 import {
   type ChatCitation,
-  countUserMessagesSince,
+  countUserMessagesInWindows,
   createAssistantChatMessage,
-  createOrTouchChatSession,
+  findOrCreateChatSession,
   createUserChatMessage,
   findChatMessageByProviderId,
   findChatSessionByKey,
@@ -32,7 +32,7 @@ function approximateTokenCount(value: string) {
 }
 
 export async function getOrCreateChatSession(sessionKey: string) {
-  const session = await createOrTouchChatSession(sessionKey);
+  const session = await findOrCreateChatSession(sessionKey);
   if (!session) throw new Error("Chat session could not be created.");
   return session;
 }
@@ -41,10 +41,11 @@ export async function enforceSessionRateLimit(sessionId: string) {
   const now = Date.now();
   const minuteAgo = new Date(now - 60_000);
   const dayAgo = new Date(now - 86_400_000);
-  const [minute, day] = await Promise.all([
-    countUserMessagesSince(sessionId, minuteAgo),
-    countUserMessagesSince(sessionId, dayAgo),
-  ]);
+  const { minute, day } = await countUserMessagesInWindows({
+    sessionId,
+    minuteSince: minuteAgo,
+    daySince: dayAgo,
+  });
 
   if (minute >= SESSION_RATE_LIMIT_PER_MINUTE || day >= SESSION_RATE_LIMIT_PER_DAY) {
     throw new AssistantRateLimitError();
