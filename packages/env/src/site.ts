@@ -11,7 +11,7 @@ const siteSchema = z
     nodeEnv: environment.NODE_ENV,
     siteUrl:
       environment.NEXT_PUBLIC_SITE_URL ??
-      (environment.NODE_ENV === "development" ? "http://localhost:3000" : undefined),
+      (environment.NODE_ENV === "development" ? "https://portfolio.localhost" : undefined),
   }))
   .pipe(
     z.object({

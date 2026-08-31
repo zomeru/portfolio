@@ -71,6 +71,14 @@
     },
     "dev": {
       "cache": false,
+      "env": [
+        "PORTLESS",
+        "PORTLESS_APP_PORT",
+        "PORTLESS_HTTPS",
+        "PORTLESS_LAN",
+        "PORTLESS_PORT",
+        "PORTLESS_SYNC_HOSTS"
+      ],
       "persistent": true
     },
     "db:generate": {

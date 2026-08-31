@@ -8,8 +8,18 @@ import { getBlogLanguageModel } from "../ai/models";
 import type { BlogGenerationTrigger } from "./repository";
 
 const SYSTEM_INSTRUCTION = `You are a principal full-stack software engineer and expert technical writer. Write for experienced software engineers. Be practical, concise, technically credible, and specific. Avoid hype, filler, generic advice, and obvious AI-generated phrasing. Focus on real-world engineering problems, tradeoffs, architecture, and implementation details. Use code only when it materially improves understanding. Prefer TypeScript when code is useful. Return strict JSON only with no extra commentary or Markdown fences.`;
-const BLOG_GENERATION_TIMEOUT_MS = 45_000;
+const BLOG_GENERATION_TIMEOUT_MS = 60_000;
 const BLOG_GENERATION_MAX_RETRIES = 0;
+const BLOG_GENERATION_CHARACTERS_PER_TOKEN = 4;
+const BLOG_GENERATION_JSON_TOKEN_BUFFER = 256;
+const BLOG_GENERATION_MAX_OUTPUT_TOKENS =
+  Math.ceil(
+    (BLOG_CONTENT_LIMITS.body.maximumCharacters +
+      BLOG_CONTENT_LIMITS.excerpt.maximumCharacters +
+      BLOG_CONTENT_LIMITS.title.maximumCharacters +
+      BLOG_CONTENT_LIMITS.tags.maximumItems * BLOG_CONTENT_LIMITS.tags.maximumCharacters) /
+      BLOG_GENERATION_CHARACTERS_PER_TOKEN,
+  ) + BLOG_GENERATION_JSON_TOKEN_BUFFER;
 
 const BLOG_DOMAINS = [
   // Full-stack web development
@@ -159,6 +169,7 @@ Title & Excerpt:
 
 Content & Technical Depth:
 * Return a Markdown body without repeating the title or using an H1. Use descriptive H2 and H3 headings with a logical reading order.
+* Keep the complete Markdown body between ${BLOG_CONTENT_LIMITS.body.minimumCharacters} and ${BLOG_CONTENT_LIMITS.body.maximumCharacters} characters, including headings, code blocks, and links.
 * Establish the problem quickly, answer the main question directly, then explain implementation, tradeoffs, constraints, assumptions, failure modes, edge cases, security, performance, operations, verification, and alternatives where relevant.
 * Keep paragraphs focused. Prefer precise technical language over marketing language.
 * Include minimal, realistic, internally consistent code only when it materially improves understanding. Prefer TypeScript when appropriate and explain important details.
@@ -301,7 +312,7 @@ export async function generateBlogDraft(
       prompt: generatePrompt(),
       temperature: 0.7,
       reasoning: "none",
-      maxOutputTokens: 8192,
+      maxOutputTokens: BLOG_GENERATION_MAX_OUTPUT_TOKENS,
       maxRetries: BLOG_GENERATION_MAX_RETRIES,
       timeout: BLOG_GENERATION_TIMEOUT_MS,
       runtimeContext: {

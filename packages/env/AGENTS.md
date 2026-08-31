@@ -6,7 +6,8 @@ is a source-exported internal package; consumers import explicit subpaths.
 ## Export contracts
 
 - `./admin`: `ADMIN_ACCESS_KEY` with a minimum length of 32 for the page-wide admin gate.
-- `./site`: `NODE_ENV` and `NEXT_PUBLIC_SITE_URL`; localhost fallback is development-only
+- `./site`: `NODE_ENV` and `NEXT_PUBLIC_SITE_URL`; the Portless `.localhost` fallback is
+  development-only
   and the URL is required in production.
 - `./sanity`: public project, selected development/production dataset, app ID, and dataset map.
 - `./sanity-server`: required server-only `SANITY_API_TOKEN`.
