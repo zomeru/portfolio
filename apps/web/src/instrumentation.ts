@@ -11,6 +11,8 @@ export const onRequestError: Instrumentation.onRequestError = async (error, requ
     const { logError } = await import("@portfolio/api/logging");
     logError("Next.js server request failed", error, {
       operation: "next.onRequestError",
+      service: "portfolio-web",
+      route: context.routePath,
       requestPath: request.path,
       method: request.method,
       routerKind: context.routerKind,

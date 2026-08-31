@@ -68,7 +68,10 @@ pnpm install
 pnpm dev
 ```
 
-The site runs at [http://localhost:3000](http://localhost:3000). Start every workspace with `pnpm dev:all`, or run Sanity Studio on its own:
+The site runs at [https://portfolio.localhost](https://portfolio.localhost) through
+[Portless](https://portless.sh/). On the first run, Portless creates and trusts a local certificate
+and may ask for administrator access. Start every workspace with `pnpm dev:all`, bypass Portless with
+`PORTLESS=0 pnpm dev`, or run Sanity Studio on its own:
 
 ```sh
 pnpm --filter @portfolio/studio dev

@@ -1,4 +1,5 @@
 import { getRequestConfig } from "next-intl/server";
+import * as rootParams from "next/root-params";
 
 import { defaultLocale, isLocale, type Locale } from "./routing";
 
@@ -67,8 +68,8 @@ const messageLoaders = {
   de: createMessageLoader("de"),
 } satisfies Record<Locale, MessageLoader>;
 
-export default getRequestConfig(async ({ requestLocale }) => {
-  const requestedLocale = await requestLocale;
+export default getRequestConfig(async ({ locale: localeOverride }) => {
+  const requestedLocale = localeOverride ?? (await rootParams.locale());
   const locale = requestedLocale && isLocale(requestedLocale) ? requestedLocale : defaultLocale;
 
   return {

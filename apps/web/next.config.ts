@@ -7,7 +7,7 @@ const sanityEnv = getSanityEnv();
 const siteEnv = getSiteEnv(
   process.env.NEXT_PUBLIC_SITE_URL ? process.env : { ...process.env, NODE_ENV: "development" },
 );
-const canonicalSiteUrl = new URL(siteEnv.siteUrl ?? "http://localhost:3000");
+const canonicalSiteUrl = new URL(siteEnv.siteUrl ?? "https://portfolio.localhost");
 
 const isDevelopment = process.env.NODE_ENV === "development";
 const contentSecurityPolicy = [

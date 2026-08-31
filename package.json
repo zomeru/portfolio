@@ -15,7 +15,7 @@
     "ai:index": "turbo run ai:index --filter=@portfolio/api --",
     "ai:index:prod": "turbo run ai:index:prod --filter=@portfolio/api --",
     "cron:blog": "pnpm --filter @portfolio/web run cron:blog",
-    "kill:ports": "kill $(lsof -tiTCP:3000-3005 -iTCP:8787 -sTCP:LISTEN 2>/dev/null) 2>/dev/null || true",
+    "kill:ports": "pnpm --filter @portfolio/web exec portless proxy stop && pnpm --filter @portfolio/web exec portless prune",
     "db:generate": "turbo run db:generate --filter=@portfolio/database",
     "db:migrate": "turbo run db:migrate --filter=@portfolio/database",
     "db:push": "turbo run db:push --filter=@portfolio/database",
