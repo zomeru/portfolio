@@ -1,8 +1,10 @@
 import { GoogleTagManager } from "@next/third-parties/google";
 import { getPublicProfile, getPublicTechStack } from "@portfolio/api/public-portfolio";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { getMessages } from "next-intl/server";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { GoogleAnalyticsViaGtm } from "@/components/analytics/google-analytics-via-gtm";
@@ -38,8 +40,9 @@ export const viewport: Viewport = {
   ],
 };
 
+const SHOULD_RENDER_VERCEL_INSIGHTS = process.env.VERCEL === "1";
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  setRequestLocale("en");
   const [profile, techStack, messages] = await Promise.all([
     getPublicProfile(),
     getPublicTechStack(),
@@ -87,6 +90,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             </div>
           </ThemeProvider>
         </NextIntlClientProvider>
+        {SHOULD_RENDER_VERCEL_INSIGHTS ? <Analytics /> : null}
+        {SHOULD_RENDER_VERCEL_INSIGHTS ? <SpeedInsights /> : null}
       </body>
       <GoogleAnalyticsViaGtm />
     </html>
