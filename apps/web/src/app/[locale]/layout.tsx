@@ -1,8 +1,10 @@
 import { GoogleTagManager } from "@next/third-parties/google";
 import { getPublicProfile, getPublicTechStack } from "@portfolio/api/public-portfolio";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations } from "next-intl/server";
 import { Geist, Geist_Mono } from "next/font/google";
 import { notFound } from "next/navigation";
 
@@ -89,10 +91,11 @@ export const viewport: Viewport = {
   ],
 };
 
+const SHOULD_RENDER_VERCEL_INSIGHTS = process.env.VERCEL === "1";
+
 export default async function RootLayout({ children, params }: LocaleLayoutProps) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
-  setRequestLocale(locale);
 
   const [profile, techStack, messages, t] = await Promise.all([
     getPublicProfile(),
@@ -146,6 +149,8 @@ export default async function RootLayout({ children, params }: LocaleLayoutProps
             </div>
           </ThemeProvider>
         </NextIntlClientProvider>
+        {SHOULD_RENDER_VERCEL_INSIGHTS ? <Analytics /> : null}
+        {SHOULD_RENDER_VERCEL_INSIGHTS ? <SpeedInsights /> : null}
       </body>
       <GoogleAnalyticsViaGtm />
     </html>
