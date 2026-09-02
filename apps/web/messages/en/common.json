@@ -1,5 +1,9 @@
 {
   "skipToContent": "Skip to content",
+  "network": {
+    "offline": "Offline. Cached portfolio content remains available.",
+    "restored": "Back online. Updating cached content and pending messages."
+  },
   "nav": {
     "label": "Primary navigation",
     "menu": "Menu",

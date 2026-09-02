@@ -96,6 +96,19 @@ export type AskZomerHistoryPage = {
   nextCursor: string | null;
 };
 
+export type AskZomerOfflineSyncMessage = {
+  content: string;
+  createdAt: string;
+  id: string;
+  model?: string;
+  role: "assistant" | "user";
+  sources?: AskZomerSource[];
+};
+
+export type AskZomerOfflineSyncResult = {
+  syncedMessageIds: string[];
+};
+
 export type AdminErrorSeverity = "error" | "warning";
 export type AdminErrorStatus = "open" | "resolved" | "ignored";
 

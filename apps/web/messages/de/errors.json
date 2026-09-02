@@ -18,7 +18,7 @@
     "action": "Erneut versuchen"
   },
   "request": {
-    "offline": "Du scheinst offline zu sein. Prüfe deine Verbindung und versuche es erneut.",
+    "offline": "Keine Internetverbindung. Diese Aktion benötigt eine Internetverbindung.",
     "network": "Der Dienst konnte nicht erreicht werden. Prüfe deine Verbindung und versuche es erneut.",
     "timeout": "Die Anfrage hat zu lange gedauert. Versuche es erneut.",
     "server": "Die Anfrage konnte nicht abgeschlossen werden. Versuche es erneut.",

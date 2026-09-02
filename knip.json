@@ -7,7 +7,7 @@
       "ignore": [".agents/**"]
     },
     "apps/web": {
-      "ignore": ["public/sw.js", "src/lib/sanity/sanity.types.ts"]
+      "ignore": ["src/lib/sanity/sanity.types.ts"]
     },
     "packages/database": {
       "ignoreDependencies": ["tsx"],

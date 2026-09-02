@@ -12,12 +12,12 @@ const canonicalSiteUrl = new URL(siteEnv.siteUrl ?? "https://portfolio.localhost
 const isDevelopment = process.env.NODE_ENV === "development";
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDevelopment ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://app.cal.com`,
+  `script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'${isDevelopment ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://app.cal.com`,
   "script-src-attr 'none'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://cdn.sanity.io https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com",
   "font-src 'self'",
-  "connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://app.cal.com",
+  "connect-src 'self' https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://app.cal.com https://huggingface.co https://*.huggingface.co https://*.hf.co https://raw.githubusercontent.com",
   "frame-src https://app.cal.com",
   "worker-src 'self' blob:",
   "manifest-src 'self'",

@@ -35,5 +35,41 @@
   "stop": "生成を停止",
   "send": "メッセージを送信",
   "keyboardHint": "Enterで送信 · Shift+Enterで改行",
-  "preparingConversation": "会話を準備しています…"
+  "preparingConversation": "会話を準備しています…",
+  "onlineMode": "オンライン AI",
+  "offlineMode": "オフライン AI",
+  "offlineModeUnavailable": "オフライン AI は未インストールです",
+  "syncing": "オフラインのメッセージを同期しています…",
+  "syncComplete": "オフラインのメッセージを同期しました",
+  "syncFailed": "メッセージは端末に保存され、後で再同期されます",
+  "offlineGenerating": "この端末で回答を生成しています…",
+  "offlineModelRequired": "インターネット接続がありません。オンライン中に任意のオフライン AI モデルをインストールしてください。",
+  "offlineKnowledgeMissing": "この言語のポートフォリオ情報はキャッシュされていません。再接続してオフライン AI を更新してください。",
+  "offlineKnowledgeUnavailable": "その情報はキャッシュ済みのオフラインポートフォリオにありません。",
+  "offlineGenerationFailed": "端末上のモデルが回答を完了できませんでした。質問は端末に保存されています。",
+  "offlineModel": {
+    "title": "オフライン AI",
+    "description": "ローカルモデル（約 {size} MB）を任意でダウンロードできます。この端末に保存され、オフライン時のみ使用されます。",
+    "available": "空き容量 {size}",
+    "enable": "オフライン AI を有効にする",
+    "confirm": "約 {size} MB と現在の公開ポートフォリオ情報をダウンロードしますか？モデルは端末上で動作し、後から削除できます。",
+    "download": "モデルをダウンロード",
+    "cancel": "キャンセル",
+    "downloading": "モデルをダウンロードしています…",
+    "preparingKnowledge": "ポートフォリオ情報を保存しています…",
+    "installed": "オフライン AI を利用できます",
+    "remove": "モデルを削除",
+    "removing": "オフラインモデルを削除しています…",
+    "removed": "オフラインモデルを削除しました。チャット履歴は保持されています。",
+    "requiresConnection": "インターネット接続がありません。モデルはオンライン中にダウンロードする必要があります。",
+    "insufficientStorage": "モデルを保存するためのブラウザ容量が不足しています。",
+    "installFailed": "オフラインモデルをインストールできませんでした。接続、容量、WebGPU 対応状況を確認してください。",
+    "removeFailed": "オフラインモデルを削除できませんでした。",
+    "stateFailed": "オフライン AI の保存状態を確認できませんでした。",
+    "unsupported": {
+      "webgpu": "このブラウザまたは端末は WebGPU に対応していないため、オフライン AI を利用できません。",
+      "insecure": "オフライン AI には安全な HTTPS 接続が必要です。",
+      "storage": "ブラウザのストレージ管理に対応していないため、オフライン AI を利用できません。"
+    }
+  }
 }

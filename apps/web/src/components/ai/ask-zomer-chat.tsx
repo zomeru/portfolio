@@ -5,16 +5,72 @@ import type { AskZomerHistoryPage, AskZomerMessage, AskZomerSource } from "@port
 import { DefaultChatTransport, getToolName, isToolUIPart } from "ai";
 import { ArrowDown, ArrowUp, Globe2, LoaderCircle, RefreshCw, Square } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+import dynamic from "next/dynamic";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import "@/components/portfolio/markdown-content.css";
+import { NETWORK_AVAILABLE_EVENT, useNetworkStatus } from "@/components/pwa/network-status";
 import { client } from "@/lib/api";
 import { reportClientWarning } from "@/lib/client-log";
+import { selectAssistantMode } from "@/lib/offline/assistant-mode";
+import {
+  cacheServerMessages,
+  getCachedMessages,
+  getOfflineKnowledge,
+  putLocalMessage,
+  setOfflineModelState,
+} from "@/lib/offline/chat-database";
+import { retrieveOfflineKnowledge } from "@/lib/offline/knowledge";
+import { synchronizePendingMessages } from "@/lib/offline/sync";
 import { classifyRequestFailure, HttpRequestError } from "@/lib/request-failure";
 
 const SESSION_STORAGE_KEY = "ask-zomer-session";
+const OUTBOX_SYNC_TAG = "zomer-chat-outbox";
+const OfflineAiManager = dynamic(
+  () => import("./offline-ai-manager").then((module) => module.OfflineAiManager),
+  { ssr: false },
+);
+
+function compareMessages(left: AskZomerMessage, right: AskZomerMessage) {
+  const leftDate = left.metadata?.createdAt ?? "";
+  const rightDate = right.metadata?.createdAt ?? "";
+  return leftDate.localeCompare(rightDate) || left.id.localeCompare(right.id);
+}
+
+function mergeMessages(...groups: AskZomerMessage[][]) {
+  const messages = new Map<string, AskZomerMessage>();
+  for (const message of groups.flat()) messages.set(message.id, message);
+  return [...messages.values()].sort(compareMessages);
+}
+
+function createTextMessage(options: {
+  content: string;
+  createdAt?: string;
+  id?: string;
+  metadata?: Omit<NonNullable<AskZomerMessage["metadata"]>, "createdAt"> & {
+    createdAt?: string;
+  };
+  role: "assistant" | "user";
+}): AskZomerMessage {
+  const createdAt = options.createdAt ?? new Date().toISOString();
+  return {
+    id: options.id ?? crypto.randomUUID(),
+    role: options.role,
+    parts: [{ type: "text", text: options.content }],
+    metadata: { createdAt, ...options.metadata },
+  };
+}
+
+async function requestBackgroundSync() {
+  if (!("serviceWorker" in navigator)) return;
+  const registration = await navigator.serviceWorker.ready;
+  const syncRegistration = registration as ServiceWorkerRegistration & {
+    sync?: { register: (tag: string) => Promise<void> };
+  };
+  await syncRegistration.sync?.register(OUTBOX_SYNC_TAG);
+}
 function getOrCreateSessionKey() {
   const stored = window.localStorage.getItem(SESSION_STORAGE_KEY);
   if (stored) return stored;
@@ -59,8 +115,21 @@ function webSearchState(
 }
 
 function messageSources(message: AskZomerMessage): AskZomerSource[] {
-  const sources = [...(message.metadata?.sources ?? [])];
-  const seenUrls = new Set(sources.map((source) => source.url));
+  const sources: AskZomerSource[] = [];
+  const seenUrls = new Set<string>();
+
+  for (const source of message.metadata?.sources ?? []) {
+    try {
+      const url = new URL(source.url, window.location.origin);
+      if (url.protocol !== "http:" && url.protocol !== "https:") continue;
+      url.hash = "";
+      if (seenUrls.has(url.href)) continue;
+      seenUrls.add(url.href);
+      sources.push({ ...source, url: url.href });
+    } catch {
+      // Ignore malformed cached or persisted source URLs.
+    }
+  }
 
   for (const part of message.parts) {
     if (part.type !== "source-url") continue;
@@ -376,15 +445,25 @@ function ChatSession({
   const locale = useLocale();
   const t = useTranslations("Assistant");
   const tRequest = useTranslations("Errors.request");
+  const { isOffline } = useNetworkStatus();
   const [input, setInput] = useState("");
   const [historyReady, setHistoryReady] = useState(false);
   const [historyWarning, setHistoryWarning] = useState(false);
   const [historyError, setHistoryError] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [nextHistoryCursor, setNextHistoryCursor] = useState<string | null>(null);
+  const [offlineModelInstalled, setOfflineModelInstalled] = useState(false);
+  const [localBusy, setLocalBusy] = useState(false);
+  const [localError, setLocalError] = useState("");
+  const [syncStatus, setSyncStatus] = useState<"failed" | "idle" | "synced" | "syncing">("idle");
   const historyLoadingRef = useRef(false);
   const historyRequestControllerRef = useRef<AbortController | null>(null);
   const initialQuestionHandled = useRef(false);
+  const localAbortRequestedRef = useRef(false);
+  const onlinePendingIdRef = useRef<string | null>(null);
+  const submissionRunningRef = useRef(false);
+  const syncRunningRef = useRef(false);
+  const syncOwnerIdRef = useRef(crypto.randomUUID());
   const transport = useMemo(
     () =>
       new DefaultChatTransport<AskZomerMessage>({
@@ -397,8 +476,36 @@ function ChatSession({
     [sessionKey],
   );
   const { clearError, error, messages, regenerate, sendMessage, setMessages, status, stop } =
-    useChat<AskZomerMessage>({ id: sessionKey, transport, throttle: 50 });
-  const busy = status === "submitted" || status === "streaming";
+    useChat<AskZomerMessage>({
+      id: sessionKey,
+      transport,
+      throttle: 50,
+      onFinish: ({ isAbort, isDisconnect, isError, message, messages: finishedMessages }) => {
+        const userMessageId = onlinePendingIdRef.current;
+        onlinePendingIdRef.current = null;
+        if (isAbort || isDisconnect || isError) return;
+        if (userMessageId) {
+          const userMessage = finishedMessages.find((candidate) => candidate.id === userMessageId);
+          if (userMessage) {
+            void putLocalMessage(sessionKey, userMessage, "synced").catch(
+              (persistenceError: unknown) => {
+                reportClientWarning("assistant.persistFinishedUser", persistenceError, {
+                  sessionKey,
+                });
+              },
+            );
+          }
+        }
+        void putLocalMessage(sessionKey, message, "synced").catch((persistenceError: unknown) => {
+          reportClientWarning("assistant.persistFinishedAssistant", persistenceError, {
+            sessionKey,
+          });
+        });
+      },
+    });
+  const remoteBusy = status === "submitted" || status === "streaming";
+  const busy = remoteBusy || localBusy;
+  const assistantMode = selectAssistantMode(isOffline, offlineModelInstalled);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -407,19 +514,25 @@ function ChatSession({
     setHistoryError(false);
     setNextHistoryCursor(null);
     async function restoreHistory() {
+      let cachedMessages: AskZomerMessage[] = [];
       try {
+        cachedMessages = (await getCachedMessages(sessionKey)).map((record) => record.message);
+        if (!controller.signal.aborted && cachedMessages.length > 0) setMessages(cachedMessages);
+        if (isOffline) return;
         const response = await client.api.ai.sessions[":sessionKey"].messages.$get(
           { param: { sessionKey }, query: {} },
           { init: { signal: controller.signal } },
         );
         if (!response.ok) throw new HttpRequestError(response.status);
         const payload = (await (response as Response).json()) as AskZomerHistoryPage;
-        setMessages(payload.messages);
+        await cacheServerMessages(sessionKey, payload.messages);
+        const localMessages = (await getCachedMessages(sessionKey)).map((record) => record.message);
+        setMessages(mergeMessages(payload.messages, localMessages));
         setNextHistoryCursor(payload.nextCursor);
       } catch (restoreError) {
         if (!(restoreError instanceof DOMException && restoreError.name === "AbortError")) {
           reportClientWarning("assistant.restoreHistory", restoreError, { sessionKey });
-          setHistoryWarning(true);
+          setHistoryWarning(cachedMessages.length === 0);
         }
       } finally {
         if (!controller.signal.aborted) setHistoryReady(true);
@@ -427,7 +540,7 @@ function ChatSession({
     }
     void restoreHistory();
     return () => controller.abort();
-  }, [sessionKey, setMessages]);
+  }, [isOffline, sessionKey, setMessages]);
 
   useEffect(
     () => () => {
@@ -437,7 +550,7 @@ function ChatSession({
   );
 
   const loadOlderMessages = useCallback(async () => {
-    if (!nextHistoryCursor || historyLoadingRef.current) return;
+    if (!nextHistoryCursor || historyLoadingRef.current || isOffline) return;
     historyLoadingRef.current = true;
     setHistoryLoading(true);
     setHistoryError(false);
@@ -451,11 +564,8 @@ function ChatSession({
       );
       if (!response.ok) throw new HttpRequestError(response.status);
       const payload = (await (response as Response).json()) as AskZomerHistoryPage;
-      setMessages((current) => {
-        const existingIds = new Set(current.map((message) => message.id));
-        const older = payload.messages.filter((message) => !existingIds.has(message.id));
-        return [...older, ...current];
-      });
+      await cacheServerMessages(sessionKey, payload.messages);
+      setMessages((current) => mergeMessages(payload.messages, current));
       setNextHistoryCursor(payload.nextCursor);
     } catch (loadError) {
       if (!(loadError instanceof DOMException && loadError.name === "AbortError")) {
@@ -469,7 +579,176 @@ function ChatSession({
         setHistoryLoading(false);
       }
     }
-  }, [nextHistoryCursor, sessionKey, setMessages]);
+  }, [isOffline, nextHistoryCursor, sessionKey, setMessages]);
+
+  const syncOutbox = useCallback(async () => {
+    if (isOffline || syncRunningRef.current) return;
+    syncRunningRef.current = true;
+    setSyncStatus("syncing");
+    try {
+      const result = await synchronizePendingMessages(sessionKey, syncOwnerIdRef.current);
+      setSyncStatus(result.synced > 0 ? "synced" : "idle");
+    } catch (syncError) {
+      reportClientWarning("assistant.syncOfflineMessages", syncError, { sessionKey });
+      setSyncStatus("failed");
+    } finally {
+      syncRunningRef.current = false;
+    }
+  }, [isOffline, sessionKey]);
+
+  useEffect(() => {
+    if (!historyReady || isOffline) return;
+    void syncOutbox();
+  }, [historyReady, isOffline, syncOutbox]);
+
+  useEffect(() => {
+    const handleReconnect = () => void syncOutbox();
+    const handleServiceWorkerMessage = (event: MessageEvent) => {
+      if (event.data?.type === "SYNC_CHAT_OUTBOX") void syncOutbox();
+    };
+    window.addEventListener(NETWORK_AVAILABLE_EVENT, handleReconnect);
+    navigator.serviceWorker?.addEventListener("message", handleServiceWorkerMessage);
+    return () => {
+      window.removeEventListener(NETWORK_AVAILABLE_EVENT, handleReconnect);
+      navigator.serviceWorker?.removeEventListener("message", handleServiceWorkerMessage);
+    };
+  }, [syncOutbox]);
+
+  useEffect(() => {
+    if (!("BroadcastChannel" in window)) return;
+    const channel = new BroadcastChannel(`ask-zomer:${sessionKey}`);
+    channel.addEventListener("message", () => {
+      if (busy) return;
+      void getCachedMessages(sessionKey)
+        .then((records) => {
+          setMessages((current) =>
+            mergeMessages(
+              current,
+              records.map((record) => record.message),
+            ),
+          );
+        })
+        .catch((cacheError: unknown) => {
+          reportClientWarning("assistant.readBroadcastMessages", cacheError, { sessionKey });
+        });
+    });
+    return () => channel.close();
+  }, [busy, sessionKey, setMessages]);
+
+  const submit = useCallback(
+    async (text: string) => {
+      const trimmed = text.trim();
+      if (!trimmed || busy || !historyReady) return;
+      clearError();
+      setLocalError("");
+
+      if (assistantMode === "online") {
+        const messageId = crypto.randomUUID();
+        const userMessage = createTextMessage({ content: trimmed, id: messageId, role: "user" });
+        await putLocalMessage(sessionKey, userMessage);
+        setInput("");
+        setMessages((current) => mergeMessages(current, [userMessage]));
+        onlinePendingIdRef.current = messageId;
+        await sendMessage({
+          text: trimmed,
+          messageId,
+          metadata: userMessage.metadata!,
+        });
+        return;
+      }
+
+      if (assistantMode === "unavailable") {
+        setLocalError(t("offlineModelRequired"));
+        return;
+      }
+      const knowledge = await getOfflineKnowledge(locale);
+      if (!knowledge?.items.length) {
+        setLocalError(t("offlineKnowledgeMissing"));
+        return;
+      }
+
+      const userMessage = createTextMessage({ content: trimmed, role: "user" });
+      await putLocalMessage(sessionKey, userMessage);
+      setInput("");
+      setMessages((current) => mergeMessages(current, [userMessage]));
+      setLocalBusy(true);
+      localAbortRequestedRef.current = false;
+      try {
+        const matches = retrieveOfflineKnowledge(trimmed, knowledge.items, window.location.origin);
+        const content =
+          matches.length === 0
+            ? t("offlineKnowledgeUnavailable")
+            : await import("@/lib/offline/offline-ai").then((module) =>
+                module.generateOfflineAnswer({
+                  question: trimmed,
+                  matches,
+                  history: messages,
+                }),
+              );
+        const assistantMessage = createTextMessage({
+          content,
+          role: "assistant",
+          metadata: {
+            model: "offline:SmolLM2-360M-Instruct-q4f16_1-MLC",
+            sources: matches.map((match) => match.source),
+          },
+        });
+        await putLocalMessage(sessionKey, assistantMessage);
+        setMessages((current) => mergeMessages(current, [assistantMessage]));
+        void requestBackgroundSync().catch(() => undefined);
+        if ("BroadcastChannel" in window) {
+          const channel = new BroadcastChannel(`ask-zomer:${sessionKey}`);
+          channel.postMessage({ type: "messages-updated" });
+          channel.close();
+        }
+      } catch (generationError) {
+        if (!localAbortRequestedRef.current) {
+          reportClientWarning("assistant.generateOffline", generationError, { sessionKey });
+          if (
+            generationError instanceof Error &&
+            /has not been installed/iu.test(generationError.message)
+          ) {
+            setOfflineModelInstalled(false);
+            void setOfflineModelState(undefined).catch((persistenceError: unknown) => {
+              reportClientWarning("assistant.clearOfflineModelState", persistenceError);
+            });
+          }
+          setLocalError(t("offlineGenerationFailed"));
+        }
+      } finally {
+        localAbortRequestedRef.current = false;
+        setLocalBusy(false);
+      }
+    },
+    [
+      busy,
+      clearError,
+      historyReady,
+      assistantMode,
+      locale,
+      messages,
+      sendMessage,
+      sessionKey,
+      setMessages,
+      t,
+    ],
+  );
+
+  const submitSafely = useCallback(
+    (text: string) => {
+      if (submissionRunningRef.current) return;
+      submissionRunningRef.current = true;
+      void submit(text)
+        .catch((submitError: unknown) => {
+          reportClientWarning("assistant.submit", submitError, { sessionKey });
+          setLocalError(tRequest(classifyRequestFailure(submitError)));
+        })
+        .finally(() => {
+          submissionRunningRef.current = false;
+        });
+    },
+    [sessionKey, submit, tRequest],
+  );
 
   useEffect(() => {
     const trimmed = initialQuestion?.trim();
@@ -479,17 +758,8 @@ function ChatSession({
       (message) => message.role === "user" && messageText(message).trim() === trimmed,
     );
     if (alreadySent) return;
-    clearError();
-    void sendMessage({ text: trimmed, metadata: { createdAt: new Date().toISOString() } });
-  }, [busy, clearError, historyReady, initialQuestion, messages, sendMessage]);
-
-  const submit = (text: string) => {
-    const trimmed = text.trim();
-    if (!trimmed || busy || !historyReady) return;
-    clearError();
-    setInput("");
-    void sendMessage({ text: trimmed, metadata: { createdAt: new Date().toISOString() } });
-  };
+    submitSafely(trimmed);
+  }, [busy, historyReady, initialQuestion, messages, submitSafely]);
   const lastAssistant = [...messages].reverse().find((message) => message.role === "assistant");
   const initialSuggestions = [
     t("initialSuggestions.experience"),
@@ -504,6 +774,32 @@ function ChatSession({
 
   return (
     <section aria-label={t("conversationLabel")} className="mt-10 border-y border-border">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border py-3 text-xs text-muted">
+        <p className="inline-flex items-center gap-2">
+          <span
+            aria-hidden="true"
+            className={`size-2 rounded-full ${isOffline ? "bg-amber-500" : "bg-emerald-500"}`}
+          />
+          {assistantMode === "online"
+            ? t("onlineMode")
+            : assistantMode === "offline"
+              ? t("offlineMode")
+              : t("offlineModeUnavailable")}
+        </p>
+        {syncStatus !== "idle" ? (
+          <p role="status">
+            {syncStatus === "syncing"
+              ? t("syncing")
+              : syncStatus === "synced"
+                ? t("syncComplete")
+                : t("syncFailed")}
+          </p>
+        ) : null}
+      </div>
+      <OfflineAiManager
+        installed={offlineModelInstalled}
+        onInstalledChange={setOfflineModelInstalled}
+      />
       {historyWarning ? (
         <p role="status" className="border-b border-border py-3 text-xs text-muted">
           {t("historyUnavailable")}
@@ -523,7 +819,7 @@ function ChatSession({
         <div className="py-4">
           <SuggestionList
             disabled={busy || !historyReady}
-            onSelect={submit}
+            onSelect={submitSafely}
             suggestions={suggestions}
           />
         </div>
@@ -539,26 +835,42 @@ function ChatSession({
           </p>
           <button
             type="button"
+            disabled={isOffline}
             onClick={() => {
               clearError();
               void regenerate();
             }}
-            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-md border border-border px-3 text-xs hover:border-foreground"
+            className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-md border border-border px-3 text-xs hover:border-foreground disabled:cursor-not-allowed disabled:opacity-50"
           >
             <RefreshCw aria-hidden="true" size={14} /> {t("retry")}
           </button>
         </div>
       ) : null}
 
+      {localError ? (
+        <p
+          role="alert"
+          className="border-t border-border py-3 text-sm text-red-600 dark:text-red-400"
+        >
+          {localError}
+        </p>
+      ) : null}
+
       <p aria-live="polite" className={busy ? "py-3 text-xs text-muted" : "sr-only"}>
-        {busy ? (status === "submitted" ? t("preparingResponse") : t("writingResponse")) : ""}
+        {busy
+          ? localBusy
+            ? t("offlineGenerating")
+            : status === "submitted"
+              ? t("preparingResponse")
+              : t("writingResponse")
+          : ""}
       </p>
 
       <form
         className="py-4"
         onSubmit={(event) => {
           event.preventDefault();
-          submit(input);
+          submitSafely(input);
         }}
       >
         <label htmlFor="ask-zomer-input" className="sr-only">
@@ -576,7 +888,7 @@ function ChatSession({
             onKeyDown={(event) => {
               if (event.key === "Enter" && !event.shiftKey) {
                 event.preventDefault();
-                submit(input);
+                submitSafely(input);
               }
             }}
             className="max-h-40 min-h-12 flex-1 resize-y bg-transparent px-2 py-2 text-base leading-relaxed outline-none placeholder:text-muted focus-visible:bg-border/20 disabled:cursor-wait sm:text-sm"
@@ -584,7 +896,19 @@ function ChatSession({
           {busy ? (
             <button
               type="button"
-              onClick={() => void stop()}
+              onClick={() => {
+                if (localBusy) {
+                  localAbortRequestedRef.current = true;
+                  void import("@/lib/offline/offline-ai")
+                    .then((module) => module.interruptOfflineGeneration())
+                    .catch((interruptError: unknown) => {
+                      localAbortRequestedRef.current = false;
+                      reportClientWarning("assistant.interruptOfflineGeneration", interruptError);
+                    });
+                } else {
+                  void stop();
+                }
+              }}
               aria-label={t("stop")}
               className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg bg-foreground text-background hover:opacity-80"
             >
