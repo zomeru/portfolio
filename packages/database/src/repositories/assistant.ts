@@ -143,6 +143,7 @@ export async function createUserChatMessage(options: {
 export async function findChatMessageByProviderId(providerMessageId: string) {
   const [message] = await db
     .select({
+      content: chatMessages.content,
       id: chatMessages.id,
       role: chatMessages.role,
       sessionId: chatMessages.sessionId,
@@ -151,6 +152,50 @@ export async function findChatMessageByProviderId(providerMessageId: string) {
     .where(eq(chatMessages.providerMessageId, providerMessageId))
     .limit(1);
   return message;
+}
+
+export async function createImportedChatMessage(options: {
+  sessionId: string;
+  providerMessageId: string;
+  role: "assistant" | "user";
+  content: string;
+  intent: QueryIntentValue;
+  model?: string;
+  citations?: ChatCitation[];
+  tokenCount: number;
+  createdAt: Date;
+}) {
+  const [created] = await db
+    .insert(chatMessages)
+    .values({
+      ...options,
+      citations: options.citations ?? [],
+      suggestions: [],
+    })
+    .onConflictDoNothing({ target: chatMessages.providerMessageId })
+    .returning({ id: chatMessages.id });
+
+  let result: "created" | "existing" | "conflict" = created ? "created" : "conflict";
+  if (!created) {
+    const existing = await findChatMessageByProviderId(options.providerMessageId);
+    if (
+      existing?.sessionId === options.sessionId &&
+      existing.role === options.role &&
+      existing.content === options.content
+    ) {
+      result = "existing";
+    }
+  }
+  if (result === "conflict") return result;
+
+  await db
+    .update(chatSessions)
+    .set({
+      updatedAt: new Date(),
+      lastMessageAt: sql`greatest(${chatSessions.lastMessageAt}, ${options.createdAt})`,
+    })
+    .where(eq(chatSessions.id, options.sessionId));
+  return result;
 }
 
 export async function createAssistantChatMessage(options: {

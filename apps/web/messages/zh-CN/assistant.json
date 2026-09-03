@@ -35,5 +35,41 @@
   "stop": "停止生成",
   "send": "发送消息",
   "keyboardHint": "按 Enter 发送 · 按 Shift+Enter 换行",
-  "preparingConversation": "正在准备对话…"
+  "preparingConversation": "正在准备对话…",
+  "onlineMode": "在线 AI",
+  "offlineMode": "离线 AI",
+  "offlineModeUnavailable": "未安装离线 AI",
+  "syncing": "正在同步离线消息…",
+  "syncComplete": "离线消息已同步",
+  "syncFailed": "离线消息已保存在本地，稍后会重试",
+  "offlineGenerating": "正在此设备上生成回答…",
+  "offlineModelRequired": "没有互联网连接。请在联网时安装可选的离线 AI 模型。",
+  "offlineKnowledgeMissing": "此语言没有已缓存的作品集资料。请重新联网并更新离线 AI。",
+  "offlineKnowledgeUnavailable": "已缓存的离线作品集中没有这项信息。",
+  "offlineGenerationFailed": "设备上的模型未能完成回答。你的问题已保存在本地。",
+  "offlineModel": {
+    "title": "离线 AI",
+    "description": "可选择下载本地模型（约 {size} MB）。模型保存在此设备上，仅在离线时使用。",
+    "available": "可用空间 {size}",
+    "enable": "启用离线 AI",
+    "confirm": "下载约 {size} MB 的模型及当前公开作品集资料吗？模型在本地运行，之后可删除。",
+    "download": "下载模型",
+    "cancel": "取消",
+    "downloading": "正在下载模型…",
+    "preparingKnowledge": "正在保存作品集资料…",
+    "installed": "离线 AI 已就绪",
+    "remove": "删除模型",
+    "removing": "正在删除离线模型…",
+    "removed": "离线模型已删除，聊天记录已保留。",
+    "requiresConnection": "没有互联网连接。必须在联网时下载模型。",
+    "insufficientStorage": "浏览器没有足够的可用存储空间。",
+    "installFailed": "无法安装离线模型。请检查网络、存储空间和 WebGPU 支持。",
+    "removeFailed": "无法删除离线模型。",
+    "stateFailed": "无法检查离线 AI 的存储状态。",
+    "unsupported": {
+      "webgpu": "此浏览器或设备不支持 WebGPU，因此无法使用离线 AI。",
+      "insecure": "离线 AI 需要安全的 HTTPS 连接。",
+      "storage": "浏览器不支持存储管理，因此无法使用离线 AI。"
+    }
+  }
 }

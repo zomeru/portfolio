@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 
+import { useNetworkStatus } from "@/components/pwa/network-status";
 import { client } from "@/lib/api";
 import { reportClientError } from "@/lib/client-log";
 import { classifyRequestFailure, HttpRequestError } from "@/lib/request-failure";
@@ -133,6 +134,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
   const emailId = useId();
   const emailHelpId = useId();
   const emailStatusId = useId();
+  const { isOffline } = useNetworkStatus();
   const emailRef = useRef<HTMLInputElement>(null);
   const [emailState, setEmailState] = useState<EmailState>(() => {
     if (initialNotice === "confirmed") {
@@ -147,6 +149,10 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
   const [pushTesting, setPushTesting] = useState(false);
 
   useEffect(() => {
+    if (isOffline) {
+      setPushState({ kind: "unavailable", message: tRequest("offline") });
+      return;
+    }
     if (
       !("serviceWorker" in navigator) ||
       !("PushManager" in window) ||
@@ -222,7 +228,7 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
     return () => {
       active = false;
     };
-  }, [t, tRequest]);
+  }, [isOffline, t, tRequest]);
 
   async function handleEmailSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -230,6 +236,10 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
     if (!input?.validity.valid) {
       setEmailState({ kind: "error", message: t("invalidEmail"), invalid: true });
       input?.focus();
+      return;
+    }
+    if (isOffline) {
+      setEmailState({ kind: "error", message: tRequest("offline") });
       return;
     }
     setEmailState({ kind: "submitting", message: t("subscribing") });
@@ -268,6 +278,10 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
   }
 
   async function handleEnablePush() {
+    if (isOffline) {
+      setPushState({ kind: "error", message: tRequest("offline") });
+      return;
+    }
     setPushState({ kind: "working", message: t("enabling") });
     try {
       const config = await getPushConfig();
@@ -321,6 +335,10 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
   }
 
   async function handleTestPush(subscription: PushSubscription) {
+    if (isOffline) {
+      setPushState({ kind: "subscribed", subscription, message: tRequest("offline") });
+      return;
+    }
     setPushTesting(true);
     try {
       if (!(await persistPushSubscription(subscription))) {
@@ -359,6 +377,10 @@ export function BlogNotifications({ initialNotice }: { initialNotice?: "confirme
   }
 
   async function handleDisablePush(subscription: PushSubscription) {
+    if (isOffline) {
+      setPushState({ kind: "subscribed", subscription, message: tRequest("offline") });
+      return;
+    }
     setPushState({ kind: "working", message: t("disabling") });
     try {
       const response = await client.api.notifications.push.unsubscribe.$delete({

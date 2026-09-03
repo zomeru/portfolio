@@ -1,5 +1,9 @@
 {
   "skipToContent": "Zum Inhalt springen",
+  "network": {
+    "offline": "Offline. Zwischengespeicherte Portfolio-Inhalte bleiben verfügbar.",
+    "restored": "Wieder online. Inhalte und ausstehende Nachrichten werden aktualisiert."
+  },
   "nav": {
     "label": "Hauptnavigation",
     "menu": "Menü",
