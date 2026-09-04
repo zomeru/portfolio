@@ -44,6 +44,7 @@ generated/
 .serena
 prompts/
 ignored-docs
+apps/web/public/offline-ai-worker.js
 
 graphify-out/cost.json 
 graphify-out/cache/

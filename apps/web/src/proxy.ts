@@ -49,6 +49,10 @@ function countryLocale(request: NextRequest) {
 
 export default function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  if (pathname === "/") {
+    return NextResponse.next();
+  }
+
   if (pathname === "/admin/error" || pathname.startsWith("/admin/error/")) {
     const response = NextResponse.next();
     response.headers.set("Cache-Control", "private, no-store, max-age=0");

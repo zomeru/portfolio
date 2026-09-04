@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: WorkPageProps): Promise<Metad
   const role = locale !== "en" && entryKey ? t(`entries.${entryKey}.role`) : experience.role;
 
   return createPageMetadata({
-    title: `${role} — ${experience.company}`,
+    title: `${role} - ${experience.company}`,
     description:
       experience.summary ??
       t("detail.metadataDescription", {
