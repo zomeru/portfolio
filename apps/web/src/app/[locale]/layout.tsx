@@ -60,7 +60,7 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
   return {
     metadataBase: new URL(siteUrl),
     applicationName: name,
-    title: { default: `${name} — ${role}`, template: `%s — ${name}` },
+    title: { default: `${name} - ${role}`, template: `%s - ${name}` },
     description,
     authors: [{ name, url: siteUrl }],
     creator: name,
@@ -69,7 +69,7 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
     alternates: { canonical: canonicalPath, languages: languageAlternates("/") },
     verification: { google: "vIm46RcPpRP4YQjS20F6RUACLwKggpLpEwLKn3rMXVw" },
     openGraph: {
-      title: `${name} — ${role}`,
+      title: `${name} - ${role}`,
       description,
       locale: openGraphLocales[locale],
       alternateLocale: locales
@@ -79,7 +79,7 @@ export async function generateMetadata({ params }: LocaleLayoutProps): Promise<M
       siteName: name,
       url: new URL(canonicalPath, siteUrl),
     },
-    twitter: { card: "summary_large_image", title: `${name} — ${role}`, description },
+    twitter: { card: "summary_large_image", title: `${name} - ${role}`, description },
   };
 }
 
