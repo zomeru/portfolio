@@ -5,6 +5,15 @@ import { createClient, type SanityClient } from "@sanity/client";
 import { z } from "zod";
 
 import {
+  BLOG_POST_CACHE_TAG,
+  EXPERIENCE_CACHE_TAG,
+  PROFILE_CACHE_TAG,
+  PROJECT_CACHE_TAG,
+  TECH_STACK_CACHE_TAG,
+  blogPostCacheTag,
+  sanitySlugTag,
+} from "./cache-tags";
+import {
   portableTextToDetailSections,
   portableTextToParagraphs,
   portableTextToPlainText,
@@ -43,7 +52,7 @@ import {
 
 const SANITY_API_VERSION = "2026-08-20";
 const SANITY_REQUEST_TIMEOUT_MS = 15_000;
-const DEFAULT_RESUME_PATH = "/assets/GREGORIO_ZOMER_RESUME.pdf";
+const DEFAULT_RESUME_PATH = "/assets/Zomer_Gregorio_Resume.pdf";
 
 const rawPhotoSchema = z
   .object({
@@ -230,35 +239,39 @@ function fetchWithNextCache(query: string, params: Record<string, unknown>, tags
 }
 
 function fetchBlogPost(slug: string) {
-  return fetchWithNextCache(PUBLIC_BLOG_POST_QUERY, { slug }, [`blogPost:${slug}`]);
+  return fetchWithNextCache(PUBLIC_BLOG_POST_QUERY, { slug }, [blogPostCacheTag(slug)]);
 }
 
 function fetchBlogPosts() {
-  return fetchWithNextCache(PUBLIC_BLOG_POST_LIST_QUERY, {}, ["blogPost"]);
+  return fetchWithNextCache(PUBLIC_BLOG_POST_LIST_QUERY, {}, [BLOG_POST_CACHE_TAG]);
 }
 
 function fetchExperience(slug: string) {
-  return fetchWithNextCache(PUBLIC_EXPERIENCE_QUERY, { slug }, [`experience:${slug}`]);
+  return fetchWithNextCache(PUBLIC_EXPERIENCE_QUERY, { slug }, [
+    sanitySlugTag(EXPERIENCE_CACHE_TAG, slug),
+  ]);
 }
 
 function fetchExperienceList() {
-  return fetchWithNextCache(PUBLIC_EXPERIENCE_LIST_QUERY, {}, ["experience"]);
+  return fetchWithNextCache(PUBLIC_EXPERIENCE_LIST_QUERY, {}, [EXPERIENCE_CACHE_TAG]);
 }
 
 function fetchProfile() {
-  return fetchWithNextCache(PUBLIC_PROFILE_QUERY, {}, ["profile"]);
+  return fetchWithNextCache(PUBLIC_PROFILE_QUERY, {}, [PROFILE_CACHE_TAG]);
 }
 
 function fetchProject(slug: string) {
-  return fetchWithNextCache(PUBLIC_PROJECT_QUERY, { slug }, [`project:${slug}`]);
+  return fetchWithNextCache(PUBLIC_PROJECT_QUERY, { slug }, [
+    sanitySlugTag(PROJECT_CACHE_TAG, slug),
+  ]);
 }
 
 function fetchProjectList() {
-  return fetchWithNextCache(PUBLIC_PROJECT_LIST_QUERY, {}, ["project"]);
+  return fetchWithNextCache(PUBLIC_PROJECT_LIST_QUERY, {}, [PROJECT_CACHE_TAG]);
 }
 
 function fetchTechStack() {
-  return fetchWithNextCache(PUBLIC_TECH_STACK_QUERY, {}, ["techStack"]);
+  return fetchWithNextCache(PUBLIC_TECH_STACK_QUERY, {}, [TECH_STACK_CACHE_TAG]);
 }
 
 function cleanString(value: string | null | undefined) {

@@ -23,7 +23,7 @@ dependencies and public package exports. Browser code may import API types from
 
 ## Repository constraints
 
-- Use Node.js 24.19.x and pnpm 11.24.0. Do not use npm or Yarn for repository tasks.
+- Use Node.js 24.19.x and pnpm 12.3.4. Do not use npm or Yarn for repository tasks.
 - Run supported scripts through pnpm. Use a filtered workspace script when the root has no alias.
 - Keep changes scoped and preserve unrelated working-tree changes.
 - Preserve strict TypeScript and the repository Oxfmt rules: two spaces, double quotes, semicolons, and

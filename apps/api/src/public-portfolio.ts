@@ -1,5 +1,6 @@
 import "server-only";
 
+export * from "./services/public-portfolio/cache-tags";
 export * from "./services/public-portfolio/contract";
 export * from "./services/public-portfolio/discovery";
 export * from "./services/public-portfolio/openapi";

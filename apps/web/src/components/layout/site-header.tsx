@@ -25,7 +25,7 @@ export async function SiteHeader({
 }: SiteHeaderProps) {
   const [locale, t] = await Promise.all([getLocale(), getTranslations("Common")]);
   const socials = profile ? getProfileSocials(profile) : [];
-  const resumeUrl = profile?.resumePdfUrl ?? "/assets/GREGORIO_ZOMER_RESUME.pdf";
+  const resumeUrl = profile?.resumePdfUrl ?? "/assets/Zomer_Gregorio_Resume.pdf";
 
   return (
     <header className="border-b border-border">
