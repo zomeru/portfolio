@@ -35,5 +35,41 @@
   "stop": "Stop generating",
   "send": "Send message",
   "keyboardHint": "Enter to send · Shift+Enter for a new line",
-  "preparingConversation": "Preparing your conversation…"
+  "preparingConversation": "Preparing your conversation…",
+  "onlineMode": "Online AI",
+  "offlineMode": "Offline AI",
+  "offlineModeUnavailable": "Offline AI not installed",
+  "syncing": "Syncing offline messages…",
+  "syncComplete": "Offline messages synced",
+  "syncFailed": "Offline messages are saved locally and will retry",
+  "offlineGenerating": "Generating on this device…",
+  "offlineModelRequired": "No internet connection. Install the optional offline AI model while online to ask questions offline.",
+  "offlineKnowledgeMissing": "No cached portfolio knowledge is available in this language. Reconnect and update Offline AI.",
+  "offlineKnowledgeUnavailable": "That information is not available in the cached offline portfolio.",
+  "offlineGenerationFailed": "The on-device model could not finish this response. Your question is saved locally.",
+  "offlineModel": {
+    "title": "Offline AI",
+    "description": "Optionally download a local model (about {size} MB). It stays on this device and is used only without a connection.",
+    "available": "{size} available",
+    "enable": "Enable offline AI",
+    "confirm": "Download about {size} MB plus the current public portfolio knowledge? The model runs locally and can be removed later.",
+    "download": "Download model",
+    "cancel": "Cancel",
+    "downloading": "Downloading model…",
+    "preparingKnowledge": "Saving portfolio knowledge…",
+    "installed": "Offline AI is ready",
+    "remove": "Remove model",
+    "removing": "Removing the offline model…",
+    "removed": "Offline model removed. Chat history was kept.",
+    "requiresConnection": "No internet connection. The model must be downloaded while online.",
+    "insufficientStorage": "There is not enough available browser storage for the model.",
+    "installFailed": "The offline model could not be installed. Check the connection, storage, and WebGPU support.",
+    "removeFailed": "The offline model could not be removed.",
+    "stateFailed": "Offline AI storage could not be checked.",
+    "unsupported": {
+      "webgpu": "Offline AI is unavailable because this browser or device does not provide WebGPU.",
+      "insecure": "Offline AI requires a secure HTTPS connection.",
+      "storage": "Offline AI is unavailable because browser storage management is not supported."
+    }
+  }
 }

@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 
+import { useNetworkStatus } from "@/components/pwa/network-status";
 import { Link } from "@/i18n/navigation";
 import { client } from "@/lib/api";
 import { reportClientError } from "@/lib/client-log";
@@ -11,6 +12,7 @@ import { classifyRequestFailure, HttpRequestError } from "@/lib/request-failure"
 export function UnsubscribeForm({ token }: { token?: string }) {
   const t = useTranslations("Blogs.unsubscribe");
   const tRequest = useTranslations("Errors.request");
+  const { isOffline } = useNetworkStatus();
   const [state, setState] = useState<"idle" | "submitting" | "success" | "error">(
     token ? "idle" : "error",
   );
@@ -18,6 +20,11 @@ export function UnsubscribeForm({ token }: { token?: string }) {
 
   async function unsubscribe() {
     if (!token) return;
+    if (isOffline) {
+      setState("error");
+      setMessage(tRequest("offline"));
+      return;
+    }
     setState("submitting");
     setMessage(t("working"));
     try {

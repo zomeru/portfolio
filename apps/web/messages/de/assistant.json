@@ -35,5 +35,41 @@
   "stop": "Generierung stoppen",
   "send": "Nachricht senden",
   "keyboardHint": "Enter zum Senden · Umschalt+Enter für eine neue Zeile",
-  "preparingConversation": "Unterhaltung wird vorbereitet…"
+  "preparingConversation": "Unterhaltung wird vorbereitet…",
+  "onlineMode": "Online-KI",
+  "offlineMode": "Offline-KI",
+  "offlineModeUnavailable": "Offline-KI nicht installiert",
+  "syncing": "Offline-Nachrichten werden synchronisiert…",
+  "syncComplete": "Offline-Nachrichten synchronisiert",
+  "syncFailed": "Offline-Nachrichten sind lokal gespeichert und werden erneut versucht",
+  "offlineGenerating": "Antwort wird auf diesem Gerät erzeugt…",
+  "offlineModelRequired": "Keine Internetverbindung. Installiere das optionale Offline-KI-Modell, solange du online bist.",
+  "offlineKnowledgeMissing": "Für diese Sprache sind keine Portfolio-Daten offline gespeichert. Verbinde dich erneut und aktualisiere Offline-KI.",
+  "offlineKnowledgeUnavailable": "Diese Information ist im zwischengespeicherten Offline-Portfolio nicht verfügbar.",
+  "offlineGenerationFailed": "Das lokale Modell konnte die Antwort nicht abschließen. Deine Frage bleibt lokal gespeichert.",
+  "offlineModel": {
+    "title": "Offline-KI",
+    "description": "Optional ein lokales Modell herunterladen (ca. {size} MB). Es bleibt auf diesem Gerät und wird nur offline verwendet.",
+    "available": "{size} verfügbar",
+    "enable": "Offline-KI aktivieren",
+    "confirm": "Etwa {size} MB sowie die aktuellen öffentlichen Portfolio-Daten herunterladen? Das Modell läuft lokal und kann später entfernt werden.",
+    "download": "Modell herunterladen",
+    "cancel": "Abbrechen",
+    "downloading": "Modell wird heruntergeladen…",
+    "preparingKnowledge": "Portfolio-Daten werden gespeichert…",
+    "installed": "Offline-KI ist bereit",
+    "remove": "Modell entfernen",
+    "removing": "Offline-Modell wird entfernt…",
+    "removed": "Offline-Modell entfernt. Der Chatverlauf wurde behalten.",
+    "requiresConnection": "Keine Internetverbindung. Das Modell muss online heruntergeladen werden.",
+    "insufficientStorage": "Für das Modell ist nicht genug Browserspeicher verfügbar.",
+    "installFailed": "Das Offline-Modell konnte nicht installiert werden. Prüfe Verbindung, Speicher und WebGPU-Unterstützung.",
+    "removeFailed": "Das Offline-Modell konnte nicht entfernt werden.",
+    "stateFailed": "Der Offline-KI-Speicher konnte nicht geprüft werden.",
+    "unsupported": {
+      "webgpu": "Offline-KI ist nicht verfügbar, weil dieser Browser oder dieses Gerät kein WebGPU bereitstellt.",
+      "insecure": "Offline-KI benötigt eine sichere HTTPS-Verbindung.",
+      "storage": "Offline-KI ist nicht verfügbar, weil die Browserspeicherverwaltung nicht unterstützt wird."
+    }
+  }
 }

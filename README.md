@@ -58,6 +58,64 @@ delete open issues or add a timer solely for error-log cleanup.
 
 The web manifest provides desktop and mobile install screenshots plus separate standard and padded maskable icons. Protocol handlers are intentionally omitted because the portfolio has no custom-protocol action to handle. Window Controls Overlay is also omitted: the site does not implement title-bar controls, and standalone mode is the clearer installed experience.
 
+## Offline-first PWA and Zomer AI
+
+The service worker keeps the real, locale-aware application available after a connection loss. It
+uses separate, bounded caches so their lifecycles and privacy rules remain explicit:
+
+- hashed Next.js assets and local images are cache-first;
+- public page navigations and React Server Component payloads are network-first with a cached fallback;
+- localized search data, the public `/api/v1` contract, and anonymized GitHub reads are
+  stale-while-revalidate;
+- `/admin`, Zomer AI HTTP traffic, notifications, mutations, and all other API routes are never
+  intercepted or cached.
+
+One previous application-cache generation is retained for rollback/offline safety. The worker never
+deletes the `zomer-offline` IndexedDB database or WebLLM model caches. An uncached route can still use
+`offline.html` as a last resort, but previously visited routes render the normal application.
+
+Zomer AI stores up to 500 acknowledged messages per chat, plus every unsynchronized message, in an
+IndexedDB history and outbox. Reconnect, foreground, and optional Background Sync signals start an
+idempotent batch sync. A short, renewable IndexedDB lease coordinates tabs, while PostgreSQL's
+unique provider message ID prevents duplicate server rows. Pending state remains local until the
+server acknowledges every ID in a batch.
+
+Offline AI is optional. The Ask page can explicitly download WebLLM 0.2 with
+`SmolLM2-360M-Instruct-q4f16_1-MLC` (roughly 220 MB of downloaded model data and about 376 MB of
+documented GPU memory). The runtime lives in a lazily loaded Web Worker and uses compact lexical
+retrieval over the localized public search corpus; it does not ship production embeddings to the
+browser. WebGPU, HTTPS, and sufficient browser storage are required. Unsupported Safari/iOS or other
+devices keep all non-AI offline behavior and show a compatibility explanation. Removing the model
+does not remove chat history.
+
+The worker is bundled separately before development, production builds, and bundle analysis because
+Turbopack currently treats a TypeScript `new Worker(new URL(...))` target as an uncompiled media
+asset. Its versioned same-origin URL is fetched only when offline AI is explicitly installed and is
+then available to the service worker's bounded static cache.
+
+### Manual offline verification
+
+Use a production build because development mode is not a reliable service-worker test:
+
+1. Run `pnpm --filter @portfolio/web build` and `pnpm --filter @portfolio/web start`.
+2. Open the site online and visit the home, projects, one project detail, blogs, one blog detail, and
+   Zomer AI routes in at least two locales.
+3. Open Zomer AI, expand **Offline AI**, confirm the storage estimate, and explicitly download the
+   model. Do not interrupt the first download.
+4. Send one online message and verify the response still streams from the server.
+5. In browser DevTools, set Network to **Offline**. Navigate between visited routes and hard-refresh
+   a cached detail route. Confirm the normal application and cached content render.
+6. Try an uncached route and a network action such as subscribing or changing GitHub filters. Confirm
+   the last-resort page or the immediate connection-required message appears as appropriate.
+7. On Zomer AI, confirm the **Offline AI** badge, send a portfolio question, and verify the answer has
+   cached portfolio sources. Restart the browser or installed PWA and confirm the messages remain.
+8. Restore the network. Confirm the status banner changes without a reload, the outbox reports a
+   successful sync, and a normal online question uses the server AI again.
+9. Reload Zomer AI and verify each offline message appears once. Check PostgreSQL only in an
+   authorized environment and confirm the provider message IDs are unique.
+10. Repeat the navigation/restart flow in standalone installed-PWA mode. Finally, remove the offline
+    model and confirm chat history remains while model storage is released.
+
 ## Local setup
 
 Use the Node.js and pnpm versions declared in `package.json`. Then create your local environment and start the web app:

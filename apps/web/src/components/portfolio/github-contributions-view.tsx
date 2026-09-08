@@ -6,6 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ContributionCalendar } from "@/components/portfolio/contribution-calendar";
+import { useNetworkStatus } from "@/components/pwa/network-status";
 import { Select, type SelectOption } from "@/components/ui/select";
 import { client } from "@/lib/api";
 import { reportClientError } from "@/lib/client-log";
@@ -98,22 +99,30 @@ export function GithubContributionCalendarSection({
   initialYear,
 }: CalendarSectionProps) {
   const t = useTranslations("Github");
+  const tRequest = useTranslations("Errors.request");
+  const { isOffline } = useNetworkStatus();
   const normalizedInitialYear = initialResult.data?.year
     ? String(initialResult.data.year)
     : initialYear;
   const [result, setResult] = useState(initialResult);
   const [selectedYear, setSelectedYear] = useState(normalizedInitialYear);
   const [pending, setPending] = useState(false);
+  const [actionError, setActionError] = useState("");
   const requestRef = useRef<AbortController | null>(null);
   const yearRef = useRef(normalizedInitialYear);
   yearRef.current = selectedYear;
 
   const loadCalendar = useCallback(
     async (year: string) => {
+      if (isOffline) {
+        setActionError(tRequest("offline"));
+        return;
+      }
       requestRef.current?.abort();
       const controller = new AbortController();
       requestRef.current = controller;
       setPending(true);
+      setActionError("");
 
       try {
         const response = await client.api.github.contributions.$get(
@@ -135,7 +144,7 @@ export function GithubContributionCalendarSection({
         if (requestRef.current === controller) setPending(false);
       }
     },
-    [t],
+    [isOffline, t, tRequest],
   );
 
   useEffect(() => {
@@ -155,6 +164,10 @@ export function GithubContributionCalendarSection({
 
   function changeYear(year: string) {
     if (year === selectedYear) return;
+    if (isOffline) {
+      setActionError(tRequest("offline"));
+      return;
+    }
     setSelectedYear(year);
     updateLocation({ year: year || null });
     void loadCalendar(year);
@@ -189,6 +202,11 @@ export function GithubContributionCalendarSection({
         />
       </div>
       <div aria-busy={pending} className="mt-6 border-t border-border pt-6">
+        {actionError ? (
+          <p role="alert" className="mb-4 text-sm text-muted">
+            {actionError}
+          </p>
+        ) : null}
         <p role="status" className="sr-only">
           {pending ? t("calendar.updating") : t("calendar.updated")}
         </p>
@@ -206,6 +224,8 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
   const locale = useLocale();
   const t = useTranslations("Github");
   const tCommon = useTranslations("Common");
+  const tRequest = useTranslations("Errors.request");
+  const { isOffline } = useNetworkStatus();
   const initialData = initialResult.data;
   const [result, setResult] = useState(initialResult);
   const [filters, setFilters] = useState<CommitFilters>({
@@ -214,16 +234,22 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
     repo: initialData?.selectedRepository ?? initialFilters.repo,
   });
   const [pending, setPending] = useState(false);
+  const [actionError, setActionError] = useState("");
   const requestRef = useRef<AbortController | null>(null);
   const filtersRef = useRef(filters);
   filtersRef.current = filters;
 
   const loadCommits = useCallback(
     async (nextFilters: CommitFilters) => {
+      if (isOffline) {
+        setActionError(tRequest("offline"));
+        return;
+      }
       requestRef.current?.abort();
       const controller = new AbortController();
       requestRef.current = controller;
       setPending(true);
+      setActionError("");
 
       try {
         const response = await client.api.github.commits.$get(
@@ -257,7 +283,7 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
         if (requestRef.current === controller) setPending(false);
       }
     },
-    [t],
+    [isOffline, t, tRequest],
   );
 
   useEffect(() => {
@@ -283,6 +309,10 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
   }, [loadCommits]);
 
   function changeFilters(nextFilters: CommitFilters) {
+    if (isOffline) {
+      setActionError(tRequest("offline"));
+      return;
+    }
     setFilters(nextFilters);
     updateLocation({
       page: nextFilters.page > 1 ? String(nextFilters.page) : null,
@@ -333,6 +363,11 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
       </div>
 
       <div aria-busy={pending}>
+        {actionError ? (
+          <p role="alert" className="mt-4 text-sm text-muted">
+            {actionError}
+          </p>
+        ) : null}
         <p role="status" className="sr-only">
           {pending ? t("commits.updating") : t("commits.updated")}
         </p>

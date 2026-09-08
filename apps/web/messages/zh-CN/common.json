@@ -1,5 +1,9 @@
 {
   "skipToContent": "跳到主要内容",
+  "network": {
+    "offline": "当前离线。已缓存的作品集内容仍可使用。",
+    "restored": "已恢复联网。正在更新缓存内容和待同步消息。"
+  },
   "nav": {
     "label": "主导航",
     "menu": "菜单",

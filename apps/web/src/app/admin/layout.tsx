@@ -11,6 +11,7 @@ import { GoogleAnalyticsViaGtm } from "@/components/analytics/google-analytics-v
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteNav } from "@/components/layout/site-nav";
+import { NetworkStatusProvider } from "@/components/pwa/network-status";
 import { ServiceWorkerRegistration } from "@/components/pwa/service-worker-registration";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { siteUrl } from "@/lib/metadata";
@@ -67,27 +68,33 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <body>
         <NextIntlClientProvider locale="en" messages={clientMessages}>
           <ThemeProvider>
-            <ServiceWorkerRegistration />
-            <a
-              href="#main-content"
-              className="sr-only fixed top-4 left-4 z-50 rounded-sm bg-foreground px-4 py-2 text-sm font-medium text-background focus:not-sr-only"
-            >
-              Skip to content
-            </a>
-            <div className="flex min-h-dvh flex-col">
-              <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-5 sm:px-8">
-                <SiteHeader
-                  profile={profile}
-                  showLanguagePicker={false}
-                  techStack={techStack.groups}
-                />
-                <SiteNav showLanguagePicker={false} />
-                <main id="main-content" tabIndex={-1} className="flex-1 scroll-mt-4 py-12 sm:py-16">
-                  {children}
-                </main>
-                <SiteFooter profile={profile} />
+            <NetworkStatusProvider blockNetworkFormsWhenOffline>
+              <ServiceWorkerRegistration />
+              <a
+                href="#main-content"
+                className="sr-only fixed top-4 left-4 z-50 rounded-sm bg-foreground px-4 py-2 text-sm font-medium text-background focus:not-sr-only"
+              >
+                Skip to content
+              </a>
+              <div className="flex min-h-dvh flex-col">
+                <div className="mx-auto flex w-full max-w-4xl flex-1 flex-col px-5 sm:px-8">
+                  <SiteHeader
+                    profile={profile}
+                    showLanguagePicker={false}
+                    techStack={techStack.groups}
+                  />
+                  <SiteNav showLanguagePicker={false} />
+                  <main
+                    id="main-content"
+                    tabIndex={-1}
+                    className="flex-1 scroll-mt-4 py-12 sm:py-16"
+                  >
+                    {children}
+                  </main>
+                  <SiteFooter profile={profile} />
+                </div>
               </div>
-            </div>
+            </NetworkStatusProvider>
           </ThemeProvider>
         </NextIntlClientProvider>
         {SHOULD_RENDER_VERCEL_INSIGHTS ? <Analytics /> : null}

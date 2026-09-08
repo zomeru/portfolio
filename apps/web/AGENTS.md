@@ -34,9 +34,13 @@ Hono backend and stateless MCP handlers are mounted inside the same deployment.
 - `src/components/layout/page-transition.tsx` owns route enter transitions through React View
   Transitions. Keep the animation CSS in `src/app/globals.css` and preserve the reduced-motion
   override.
-- `public/sw.js` is a deliberately small standards-based worker: cache only same-origin static assets,
-  keep pages and APIs network-owned, preserve the offline fallback, and validate notification-click
-  URLs against the site origin. Blog subscription UI stays in a narrow client component.
+- `public/sw.js` is a standards-based offline worker. Keep immutable assets cache-first; public
+  locale navigations and RSC payloads bounded network-first; the localized search index, public REST
+  contract, and anonymized GitHub reads bounded stale-while-revalidate. Never cache admin, assistant,
+  notification, mutation, or other private API traffic. Preserve one rollback cache generation,
+  keep WebLLM caches and IndexedDB outside worker cleanup, retain the last-resort fallback, and
+  validate notification-click URLs against the site origin. Blog subscription UI stays in a narrow
+  client component.
 - Reuse components under `src/components` and tokens in `src/app/globals.css`. Preserve keyboard
   access, visible focus, semantic headings, live-region behavior, touch targets, and reduced-motion
   handling.
