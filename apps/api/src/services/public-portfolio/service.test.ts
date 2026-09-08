@@ -10,7 +10,7 @@ void test("public serializers allowlist fields and produce canonical URLs", asyn
 
   assert.equal(
     serialized.profile?.resumePdfUrl,
-    "https://portfolio.example/assets/GREGORIO_ZOMER_RESUME.pdf",
+    "https://portfolio.example/assets/Zomer_Gregorio_Resume.pdf",
   );
   assert.equal(serialized.experience[0]?.canonicalUrl, "https://portfolio.example/work/example-co");
   assert.equal(

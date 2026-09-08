@@ -43,7 +43,7 @@ import {
 
 const SANITY_API_VERSION = "2026-08-20";
 const SANITY_REQUEST_TIMEOUT_MS = 15_000;
-const DEFAULT_RESUME_PATH = "/assets/GREGORIO_ZOMER_RESUME.pdf";
+const DEFAULT_RESUME_PATH = "/assets/Zomer_Gregorio_Resume.pdf";
 
 const rawPhotoSchema = z
   .object({
