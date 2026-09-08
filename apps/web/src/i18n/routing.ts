@@ -9,7 +9,7 @@ export type Locale = (typeof locales)[number];
 export const routing = defineRouting({
   locales,
   defaultLocale,
-  localePrefix: "always",
+  localePrefix: "as-needed",
   localeCookie: {
     name: localeCookieName,
     maxAge: 365 * 24 * 60 * 60,
@@ -39,6 +39,9 @@ export function isLocale(value: string): value is Locale {
 
 export function localizedPath(path: string, locale: Locale) {
   const normalizedPath = path === "/" ? "" : path.startsWith("/") ? path : `/${path}`;
+  if (locale === defaultLocale) {
+    return normalizedPath === "" ? "/" : normalizedPath;
+  }
   return `/${locale}${normalizedPath}`;
 }
 

@@ -73,14 +73,14 @@
     ],
     "*.{json,jsonc,json5,css,scss,less,html,md,mdx,yaml,yml,graphql,gql}": "oxfmt --write --no-error-on-unmatched-pattern"
   },
-  "packageManager": "pnpm@11.24.0",
+  "packageManager": "pnpm@12.3.4",
   "engines": {
     "node": ">=24.19.0 <25"
   },
   "devEngines": {
     "packageManager": {
       "name": "pnpm",
-      "version": "11.24.0",
+      "version": "12.3.4",
       "onFail": "warn"
     },
     "runtime": {
