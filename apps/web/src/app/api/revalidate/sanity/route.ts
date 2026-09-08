@@ -1,3 +1,4 @@
+import { getSanityCacheTags } from "@portfolio/api/public-portfolio";
 import { getSanityEnv } from "@portfolio/env/sanity";
 import { getSanityRevalidateServerEnv } from "@portfolio/env/sanity-revalidate-server";
 import { isValidSignature, SIGNATURE_HEADER_NAME } from "@sanity/webhook";
@@ -15,17 +16,7 @@ const payloadSchema = z.object({
   slug: slugSchema,
 });
 
-const SLUGGED_TYPES = new Set(["experience", "project", "blogPost"]);
 const MAX_WEBHOOK_BYTES = 16_384;
-
-function getAffectedTags(payload: z.infer<typeof payloadSchema>) {
-  const tags = new Set<string>([payload._type]);
-  if (!SLUGGED_TYPES.has(payload._type)) return [...tags];
-
-  if (payload.slug) tags.add(`${payload._type}:${payload.slug}`);
-  if (payload.previousSlug) tags.add(`${payload._type}:${payload.previousSlug}`);
-  return [...tags];
-}
 
 export async function POST(request: Request) {
   const contentLength = Number(request.headers.get("content-length") ?? "0");
@@ -64,7 +55,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Unsupported webhook payload." }, { status: 400 });
   }
 
-  const tags = getAffectedTags(parsed.data);
+  const tags = getSanityCacheTags(parsed.data);
   for (const tag of tags) revalidateTag(tag, { expire: 0 });
 
   return Response.json({ revalidated: true, tags });

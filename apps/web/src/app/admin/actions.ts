@@ -22,6 +22,7 @@ import {
   isAdminAuthenticated,
 } from "@/lib/admin-session";
 import { serverClient } from "@/lib/api-server";
+import { revalidateBlogCache } from "@/lib/blog-cache";
 
 import type {
   GenerationActionState,
@@ -154,6 +155,14 @@ export async function triggerBlogGeneration(
         status: "error",
         message: "Blog generation failed. Try again or inspect server logs.",
       };
+    }
+
+    try {
+      revalidateBlogCache(payload.post.slug);
+    } catch (error) {
+      logError("admin blog cache invalidation failed", error, {
+        operation: "web.admin.triggerBlogGeneration",
+      });
     }
 
     return {
