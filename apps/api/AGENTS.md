@@ -1,6 +1,6 @@
 # API guidance
 
-This workspace is the reusable Hono backend and all server-side feature orchestration. Next.js
+This workspace is the reusable Hono backend and all server-side feature orchestration. TanStack Start
 compiles its TypeScript source and mounts `apiApp`; there is no standalone listener or API build.
 
 ## Package and routing invariants
@@ -75,7 +75,7 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
   the other.
 - `/admin/ai/*` accepts only the signed reindex bearer token. Do not expose raw capability secrets in
   API responses or client code.
-- Deployed AI calls run inside the Next.js Node telemetry registration when Langfuse is enabled;
+- Deployed AI calls run inside the Worker telemetry registration when Langfuse is enabled;
   standalone CLI and evaluation scripts do not initialize it themselves. Ask Zomer chat and evaluation
   disable raw model input and output recording; blog generation records both. Make recording an explicit
   privacy decision for every new AI call.
@@ -91,7 +91,7 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
   contract, cryptographic operation, SSRF rule, authentication boundary, or durable delivery flow.
 - Run `pnpm ai:eval` after intent classification or structured retrieval changes.
 - Use `pnpm ai:eval --live` only against an explicitly authorized migrated/indexed database.
-- After route or middleware changes, exercise the affected path through the Next.js adapter and verify
+- After route or middleware changes, exercise the affected path through the TanStack Start adapter and verify
   request IDs, security headers, status codes, JSON errors, and streaming behavior where applicable.
 - There is no API build script; validate the consuming web build for bundling or runtime-boundary
   changes.

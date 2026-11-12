@@ -1,3 +1,5 @@
+import "@tanstack/react-start/server-only";
+import { createMcpHandler, McpServer } from "@modelcontextprotocol/server";
 import {
   getPublicPortfolioService,
   PORTFOLIO_MCP_SERVER_NAME,
@@ -13,7 +15,6 @@ import {
   publicTechStackSchema,
   READ_ONLY_TOOL_ANNOTATIONS,
 } from "@portfolio/api/public-portfolio";
-import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 
 const emptyInputSchema = z.object({}).strict();
@@ -68,112 +69,113 @@ function notFound(resource: string) {
 export function createPortfolioMcpHandler(
   service: PublicPortfolioService = getPublicPortfolioService(),
 ) {
-  return createMcpHandler(
-    (server) => {
-      const profile = metadata("get_profile");
-      server.registerTool(
-        profile.name,
-        {
-          annotations: READ_ONLY_TOOL_ANNOTATIONS,
-          description: profile.description,
-          inputSchema: emptyInputSchema,
-          outputSchema: publicProfileSchema,
-          title: profile.title,
-        },
-        async () => {
-          const value = await service.getProfile();
-          return value ? success(value) : notFound("profile");
-        },
-      );
+  return createMcpHandler(() => {
+    const server = new McpServer(
+      { name: PORTFOLIO_MCP_SERVER_NAME, version: PUBLIC_API_VERSION },
+      {
+        instructions:
+          "Use these read-only tools for Zomer Gregorio's canonical published portfolio data. Prefer list_blog_posts before get_blog_post when you do not already have a canonical slug.",
+      },
+    );
+    const profile = metadata("get_profile");
+    server.registerTool(
+      profile.name,
+      {
+        annotations: READ_ONLY_TOOL_ANNOTATIONS,
+        description: profile.description,
+        inputSchema: emptyInputSchema,
+        outputSchema: publicProfileSchema,
+        title: profile.title,
+      },
+      async () => {
+        const value = await service.getProfile();
+        return value ? success(value) : notFound("profile");
+      },
+    );
 
-      const resume = metadata("get_resume");
-      server.registerTool(
-        resume.name,
-        {
-          annotations: READ_ONLY_TOOL_ANNOTATIONS,
-          description: resume.description,
-          inputSchema: emptyInputSchema,
-          outputSchema: publicResumeSchema,
-          title: resume.title,
-        },
-        async () => {
-          const value = await service.getResume();
-          return value ? success(value) : notFound("resume");
-        },
-      );
+    const resume = metadata("get_resume");
+    server.registerTool(
+      resume.name,
+      {
+        annotations: READ_ONLY_TOOL_ANNOTATIONS,
+        description: resume.description,
+        inputSchema: emptyInputSchema,
+        outputSchema: publicResumeSchema,
+        title: resume.title,
+      },
+      async () => {
+        const value = await service.getResume();
+        return value ? success(value) : notFound("resume");
+      },
+    );
 
-      const techStack = metadata("get_tech_stack");
-      server.registerTool(
-        techStack.name,
-        {
-          annotations: READ_ONLY_TOOL_ANNOTATIONS,
-          description: techStack.description,
-          inputSchema: emptyInputSchema,
-          outputSchema: publicTechStackSchema,
-          title: techStack.title,
-        },
-        async () => success(await service.listTechStack()),
-      );
+    const techStack = metadata("get_tech_stack");
+    server.registerTool(
+      techStack.name,
+      {
+        annotations: READ_ONLY_TOOL_ANNOTATIONS,
+        description: techStack.description,
+        inputSchema: emptyInputSchema,
+        outputSchema: publicTechStackSchema,
+        title: techStack.title,
+      },
+      async () => success(await service.listTechStack()),
+    );
 
-      const experience = metadata("list_experience");
-      server.registerTool(
-        experience.name,
-        {
-          annotations: READ_ONLY_TOOL_ANNOTATIONS,
-          description: experience.description,
-          inputSchema: emptyInputSchema,
-          outputSchema: publicExperienceListSchema,
-          title: experience.title,
-        },
-        async () => success(await service.listExperience()),
-      );
+    const experience = metadata("list_experience");
+    server.registerTool(
+      experience.name,
+      {
+        annotations: READ_ONLY_TOOL_ANNOTATIONS,
+        description: experience.description,
+        inputSchema: emptyInputSchema,
+        outputSchema: publicExperienceListSchema,
+        title: experience.title,
+      },
+      async () => success(await service.listExperience()),
+    );
 
-      const projects = metadata("list_projects");
-      server.registerTool(
-        projects.name,
-        {
-          annotations: READ_ONLY_TOOL_ANNOTATIONS,
-          description: projects.description,
-          inputSchema: emptyInputSchema,
-          outputSchema: publicProjectListSchema,
-          title: projects.title,
-        },
-        async () => success(await service.listProjects()),
-      );
+    const projects = metadata("list_projects");
+    server.registerTool(
+      projects.name,
+      {
+        annotations: READ_ONLY_TOOL_ANNOTATIONS,
+        description: projects.description,
+        inputSchema: emptyInputSchema,
+        outputSchema: publicProjectListSchema,
+        title: projects.title,
+      },
+      async () => success(await service.listProjects()),
+    );
 
-      const blogList = metadata("list_blog_posts");
-      server.registerTool(
-        blogList.name,
-        {
-          annotations: READ_ONLY_TOOL_ANNOTATIONS,
-          description: blogList.description,
-          inputSchema: blogListInputSchema,
-          outputSchema: publicBlogPostListSchema,
-          title: blogList.title,
-        },
-        async (input) => success(await service.listBlogPosts(input)),
-      );
+    const blogList = metadata("list_blog_posts");
+    server.registerTool(
+      blogList.name,
+      {
+        annotations: READ_ONLY_TOOL_ANNOTATIONS,
+        description: blogList.description,
+        inputSchema: blogListInputSchema,
+        outputSchema: publicBlogPostListSchema,
+        title: blogList.title,
+      },
+      async (input) => success(await service.listBlogPosts(input)),
+    );
 
-      const blogPost = metadata("get_blog_post");
-      server.registerTool(
-        blogPost.name,
-        {
-          annotations: READ_ONLY_TOOL_ANNOTATIONS,
-          description: blogPost.description,
-          inputSchema: blogPostInputSchema,
-          outputSchema: publicBlogPostSchema,
-          title: blogPost.title,
-        },
-        async ({ slug }) => {
-          const value = await service.getBlogPost(slug);
-          return value ? success(value) : notFound(`blog post at slug ${slug}`);
-        },
-      );
-    },
-    {
-      instructions:
-        "Use these read-only tools for Zomer Gregorio's canonical published portfolio data. Prefer list_blog_posts before get_blog_post when you do not already have a canonical slug.",
-      serverInfo: { name: PORTFOLIO_MCP_SERVER_NAME, version: PUBLIC_API_VERSION },
-    },
-  );
+    const blogPost = metadata("get_blog_post");
+    server.registerTool(
+      blogPost.name,
+      {
+        annotations: READ_ONLY_TOOL_ANNOTATIONS,
+        description: blogPost.description,
+        inputSchema: blogPostInputSchema,
+        outputSchema: publicBlogPostSchema,
+        title: blogPost.title,
+      },
+      async ({ slug }) => {
+        const value = await service.getBlogPost(slug);
+        return value ? success(value) : notFound(`blog post at slug ${slug}`);
+      },
+    );
+    return server;
+  }).fetch;
 }

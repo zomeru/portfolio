@@ -1,7 +1,7 @@
 "use client";
 
-import { useLocale, useTranslations } from "next-intl";
 import { useId, useState } from "react";
+import { useLocale, useTranslations } from "use-intl";
 
 import { Select } from "@/components/ui/select";
 import { replaceLocale } from "@/i18n/client";

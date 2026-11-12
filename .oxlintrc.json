@@ -8,7 +8,6 @@
     "import",
     "react",
     "jsx-a11y",
-    "nextjs",
     "promise",
     "node"
   ],
@@ -20,11 +19,8 @@
     "node": true
   },
   "settings": {
-    "next": {
-      "rootDir": ["apps/web"]
-    },
     "react": {
-      "version": "19.2"
+      "version": "19.3"
     }
   },
   "options": {
@@ -53,7 +49,6 @@
     "**/.opencode",
     "**/.codex",
     "**/.turbo",
-    "**/.next",
     "**/dist",
     "**/node_modules",
     "**/coverage",
@@ -62,6 +57,9 @@
     "**/graphify-out",
     "**/drizzle",
     "**/sanity.types.ts",
-    "apps/studio/data"
+    "apps/studio/data",
+    "**/.wrangler",
+    "**/routeTree.gen.ts",
+    "**/worker-configuration.d.ts"
   ]
 }

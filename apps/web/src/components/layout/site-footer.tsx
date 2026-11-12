@@ -1,12 +1,12 @@
 import type { PublicProfile } from "@portfolio/api/public-portfolio";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "use-intl";
 
 import { appVersion } from "@/lib/app-version";
-import { siteCopyrightYear } from "@/lib/metadata";
 import { getProfileSocials } from "@/lib/sanity/profile";
+import { siteCopyrightYear } from "@/lib/site-version";
 
-export async function SiteFooter({ profile }: { profile: PublicProfile | null }) {
-  const t = await getTranslations("Common.search.profile");
+export function SiteFooter({ profile }: { profile: PublicProfile | null }) {
+  const t = useTranslations("Common.search.profile");
   const footerSocials = profile
     ? getProfileSocials(profile).filter((social) => social.name !== "Email")
     : [];

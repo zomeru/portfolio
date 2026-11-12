@@ -25,7 +25,7 @@ type Messages = {
   Projects: typeof projects;
 };
 
-declare module "next-intl" {
+declare module "use-intl" {
   interface AppConfig {
     Locale: Locale;
     Messages: Messages;

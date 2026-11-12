@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import type { LookupAddress } from "node:dns";
-import { lookup } from "node:dns/promises";
+import { lookup, resolve4, resolve6 } from "node:dns/promises";
 import { request as httpsRequest } from "node:https";
 import { BlockList, isIP } from "node:net";
 
@@ -9,6 +9,7 @@ import {
   upsertWebhookSubscription,
   type WebhookDestinationTypeValue,
 } from "@portfolio/database";
+import { getWebhookRelayEnv } from "@portfolio/env/notifications-server";
 
 import {
   createSecretToken,
@@ -99,9 +100,32 @@ function validateDestinationHost(url: URL, destinationType: WebhookDestinationTy
   }
 }
 
+async function lookupDestination(hostname: string): Promise<LookupAddress[]> {
+  const host = hostname.replace(/^\[|\]$/g, "");
+  const family = isIP(host);
+  if (family) return [{ address: host, family }];
+  if (process.env.PORTFOLIO_RUNTIME !== "workers") return lookup(host, { all: true });
+
+  const resolve = async (resolver: typeof resolve4, family: number) => {
+    try {
+      return (await resolver(host)).map((address) => ({ address, family }));
+    } catch (error) {
+      if (
+        (error as NodeJS.ErrnoException).code === "ENODATA" ||
+        (error as NodeJS.ErrnoException).code === "ENOTFOUND"
+      )
+        return [];
+      throw error;
+    }
+  };
+  const results = await Promise.all([resolve(resolve4, 4), resolve(resolve6, 6)]);
+  return results.flat();
+}
+
 export async function validateWebhookUrl(
   value: string,
   destinationType: WebhookDestinationTypeValue = "generic",
+  nodeEnvironment = process.env.NODE_ENV,
 ) {
   let url: URL;
   try {
@@ -127,14 +151,17 @@ export async function validateWebhookUrl(
 
   let records: LookupAddress[];
   try {
-    records = await lookup(url.hostname, { all: true, verbatim: true });
+    records = await lookupDestination(url.hostname);
   } catch (error) {
     throw new NotificationDeliveryError("Webhook DNS lookup failed.", {
       cause: error,
       code: "WEBHOOK_DNS_ERROR",
     });
   }
-  if (records.length === 0 || records.some((record) => isBlockedWebhookAddress(record.address))) {
+  if (
+    records.length === 0 ||
+    records.some((record) => isBlockedWebhookAddress(record.address, nodeEnvironment))
+  ) {
     throw new NotificationDeliveryError(
       "Webhook URL does not resolve to a permitted public address.",
       {
@@ -158,6 +185,7 @@ function postPinnedHttps(options: {
     const finish = (callback: () => void) => {
       if (settled) return;
       settled = true;
+      clearTimeout(timeout);
       callback();
     };
     const request = httpsRequest(
@@ -193,9 +221,10 @@ function postPinnedHttps(options: {
           }
         });
         response.on("end", () => finish(() => resolve({ statusCode: response.statusCode ?? 502 })));
+        response.on("error", (error) => finish(() => reject(error)));
       },
     );
-    request.setTimeout(REQUEST_TIMEOUT_MS, () => {
+    const timeout = setTimeout(() => {
       request.destroy();
       finish(() =>
         reject(
@@ -204,7 +233,7 @@ function postPinnedHttps(options: {
           }),
         ),
       );
-    });
+    }, REQUEST_TIMEOUT_MS);
     request.on("error", (error) =>
       finish(() =>
         reject(
@@ -217,6 +246,103 @@ function postPinnedHttps(options: {
     );
     request.end(options.body);
   });
+}
+
+export async function postValidatedWebhook(
+  validated: Awaited<ReturnType<typeof validateWebhookUrl>>,
+  body: string,
+  headers: Record<string, string>,
+) {
+  const target = validated.records[0];
+  if (!target) {
+    throw new NotificationDeliveryError("Webhook URL has no permitted public address.", {
+      code: "WEBHOOK_DNS_EMPTY",
+      retryable: false,
+    });
+  }
+  return postPinnedHttps({
+    url: validated.url,
+    address: target.address,
+    family: target.family,
+    body,
+    headers,
+  });
+}
+
+async function postToKnownProvider(url: URL, body: string, headers: Record<string, string>) {
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body,
+      redirect: "manual",
+      signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+    });
+    const reader = response.body?.getReader();
+    if (reader) {
+      let bytes = 0;
+      try {
+        for (let part = await reader.read(); !part.done; part = await reader.read()) {
+          bytes += part.value.byteLength;
+          if (bytes > MAX_RESPONSE_BYTES) {
+            throw new NotificationDeliveryError("Webhook response exceeded the permitted size.", {
+              code: "WEBHOOK_RESPONSE_TOO_LARGE",
+              retryable: false,
+            });
+          }
+        }
+      } finally {
+        await reader.cancel().catch(() => {});
+        reader.releaseLock();
+      }
+    }
+    return { statusCode: response.status };
+  } catch (error) {
+    if (error instanceof NotificationDeliveryError) throw error;
+    throw new NotificationDeliveryError("Webhook delivery failed before a response was received.", {
+      cause: error,
+      code: "WEBHOOK_NETWORK_ERROR",
+    });
+  }
+}
+
+async function postViaRelay(url: URL, body: string, headers: Record<string, string>) {
+  const relay = getWebhookRelayEnv();
+  try {
+    const response = await fetch(relay.WEBHOOK_RELAY_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${relay.WEBHOOK_RELAY_SECRET}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ url: url.href, body, headers }),
+      redirect: "error",
+      signal: AbortSignal.timeout(15_000),
+    });
+    const result = (await response.json()) as {
+      statusCode?: number;
+      code?: string;
+      retryable?: boolean;
+    };
+    if (
+      response.ok &&
+      typeof result.statusCode === "number" &&
+      result.statusCode >= 100 &&
+      result.statusCode <= 599
+    ) {
+      return { statusCode: result.statusCode };
+    }
+    throw new NotificationDeliveryError("The webhook relay could not deliver the request.", {
+      code: result.code ?? "WEBHOOK_RELAY_ERROR",
+      retryable: result.retryable ?? true,
+    });
+  } catch (error) {
+    if (error instanceof NotificationDeliveryError) throw error;
+    throw new NotificationDeliveryError("The webhook relay is unavailable.", {
+      cause: error,
+      code: "WEBHOOK_RELAY_UNAVAILABLE",
+    });
+  }
 }
 
 function escapeSlack(value: string) {
@@ -377,20 +503,12 @@ async function postWebhook(options: {
     headers["X-Portfolio-Signature"] = `v1=${signWebhookPayload(secret, timestamp, options.body)}`;
     headers["X-Webhook-Version"] = options.apiVersion;
   }
-  const target = validated.records[0];
-  if (!target) {
-    throw new NotificationDeliveryError("Webhook URL has no permitted public address.", {
-      code: "WEBHOOK_DNS_EMPTY",
-      retryable: false,
-    });
-  }
-  const response = await postPinnedHttps({
-    url: validated.url,
-    address: target.address,
-    family: target.family,
-    body: options.body,
-    headers,
-  });
+  const response =
+    process.env.PORTFOLIO_RUNTIME === "workers"
+      ? options.subscription.destinationType === "generic"
+        ? await postViaRelay(validated.url, options.body, headers)
+        : await postToKnownProvider(validated.url, options.body, headers)
+      : await postValidatedWebhook(validated, options.body, headers);
   if (response.statusCode < 200 || response.statusCode >= 300) {
     throw new NotificationDeliveryError("Webhook destination returned a non-success response.", {
       code: `WEBHOOK_HTTP_${response.statusCode}`,

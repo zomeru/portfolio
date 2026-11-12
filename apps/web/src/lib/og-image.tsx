@@ -1,7 +1,13 @@
-import "server-only";
-import { ImageResponse } from "next/og";
+import "@tanstack/react-start/server-only";
+import { googleFonts } from "@takumi-rs/helpers";
+import { fromJsx } from "@takumi-rs/helpers/jsx";
+import init, { Renderer } from "@takumi-rs/wasm";
+import wasm from "@takumi-rs/wasm/takumi_wasm_bg.wasm?module";
 
-import { domain, siteCopyrightYear } from "./metadata";
+import type { Locale } from "@/i18n/routing";
+
+import { getSiteUrl } from "./metadata";
+import { siteCopyrightYear } from "./site-version";
 
 type PortfolioOgImageOptions = {
   description: string;
@@ -11,12 +17,27 @@ type PortfolioOgImageOptions = {
   title: string;
 };
 
-export const OG_IMAGE_SIZE = { width: 1200, height: 630 } as const;
+const OG_IMAGE_SIZE = { width: 1200, height: 630 } as const;
 
-export function createPortfolioOgImage(options: PortfolioOgImageOptions) {
+let renderer: Renderer | undefined;
+
+export async function createPortfolioOgImage(locale: Locale, options: PortfolioOgImageOptions) {
+  const family = locale === "ja" ? "Noto Sans JP" : locale === "zh-CN" ? "Noto Sans SC" : undefined;
+  const fonts = family
+    ? googleFonts({
+        families: [{ name: family, weight: "400..600", generic: "sans-serif" }],
+        timeout: 5_000,
+        maxBytes: 2 * 1024 * 1024,
+        allowUrl: (url) =>
+          ["https://fonts.googleapis.com", "https://fonts.gstatic.com"].includes(
+            new URL(url).origin,
+          ),
+      })
+    : undefined;
   const titleSize = options.title.length > 72 ? 54 : options.title.length > 44 ? 62 : 72;
 
-  return new ImageResponse(
+  const domain = new URL(getSiteUrl()).host;
+  const { node, css } = await fromJsx(
     <div
       style={{
         width: "100%",
@@ -66,7 +87,7 @@ export function createPortfolioOgImage(options: PortfolioOgImageOptions) {
             minWidth: 0,
             alignItems: "center",
             justifyContent: "space-between",
-            fontFamily: "monospace",
+            fontFamily: family ? `monospace, "${family}"` : "monospace",
             fontSize: 20,
             letterSpacing: "0.16em",
             textTransform: "uppercase",
@@ -126,7 +147,7 @@ export function createPortfolioOgImage(options: PortfolioOgImageOptions) {
             borderTop: "1px solid #e4e4e7",
             paddingTop: 18,
             color: "#52525b",
-            fontFamily: "monospace",
+            fontFamily: family ? `monospace, "${family}"` : "monospace",
             fontSize: 18,
           }}
         >
@@ -135,6 +156,11 @@ export function createPortfolioOgImage(options: PortfolioOgImageOptions) {
         </div>
       </div>
     </div>,
-    OG_IMAGE_SIZE,
   );
+  await init({ module_or_path: wasm });
+  renderer ??= new Renderer({ fontCacheMaxBytes: 12 * 1024 * 1024 });
+  const png = await renderer.render(node, { ...OG_IMAGE_SIZE, css, ...(fonts ? { fonts } : {}) });
+  return new Response(png, {
+    headers: { "Content-Type": "image/png", "Cache-Control": "no-cache" },
+  });
 }

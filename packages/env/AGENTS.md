@@ -6,7 +6,7 @@ is a source-exported internal package; consumers import explicit subpaths.
 ## Export contracts
 
 - `./admin`: `ADMIN_ACCESS_KEY` with a minimum length of 32 for the page-wide admin gate.
-- `./site`: `NODE_ENV` and `NEXT_PUBLIC_SITE_URL`; the Portless `.localhost` fallback is
+- `./site`: `NODE_ENV` and `SITE_URL`; the loopback development fallback is
   development-only
   and the URL is required in production.
 - `./sanity`: public project, selected development/production dataset, app ID, and dataset map.
@@ -31,10 +31,10 @@ is a source-exported internal package; consumers import explicit subpaths.
 - Parse every schema through `parseEnv` so errors keep the shared field-oriented format.
 - Return small normalized consumer contracts from accessors instead of leaking raw environment names;
   schema validation errors should still use the original variable names.
-- Never expose server-only values through `NEXT_PUBLIC_*`, browser modules, logs, errors, or
+- Never expose server-only values through `VITE_*`, browser modules, logs, errors, or
   generated client code.
 - Keep `package.json` exports synchronized with `src` modules and preserve the package-private
-  `#utils` import mapping used by Node.js, Next.js, and Studio.
+  `#utils` import mapping used by Node.js, Cloudflare Workers, and Studio.
 - Update all consumers, `.env.example`, `README.md`, `turbo.json`, and relevant workflows when
   a variable name, default, or requirement changes. The direct database variable is
   `DATABASE_DIRECT_URL`.

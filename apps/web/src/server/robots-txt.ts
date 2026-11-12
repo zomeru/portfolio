@@ -1,0 +1,8 @@
+import "@tanstack/react-start/server-only";
+import { getSiteUrl } from "@/lib/metadata";
+import { publicText } from "@/lib/public-api-response";
+import { getRobotsText } from "@/lib/robots";
+
+export function GET() {
+  return publicText(getRobotsText(new URL(getSiteUrl())), "text/plain; charset=utf-8");
+}

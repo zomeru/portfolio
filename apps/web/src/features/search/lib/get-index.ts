@@ -1,8 +1,8 @@
-import "server-only";
+import "@tanstack/react-start/server-only";
 import { getPublicPortfolioSnapshot } from "@portfolio/api/public-portfolio";
-import { getTranslations } from "next-intl/server";
 
 import { type Locale } from "@/i18n/routing";
+import { getTranslations } from "@/i18n/server";
 import { experienceTranslationKeys, projectTranslationKeys } from "@/lib/portfolio-content";
 
 import { buildSearchIndex, type SearchIndexCopy } from "./build-index";

@@ -4,7 +4,7 @@ import type {
   GithubContributionCalendar as ContributionCalendarData,
   GithubContributionLevel,
 } from "@portfolio/api/types";
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "use-intl";
 
 const LEVEL_CLASSES: Record<GithubContributionLevel, string> = {
   NONE: "bg-border/60",

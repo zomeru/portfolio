@@ -4,10 +4,10 @@ import { useChat } from "@ai-sdk/react";
 import type { AskZomerHistoryPage, AskZomerMessage, AskZomerSource } from "@portfolio/api/types";
 import { DefaultChatTransport, getToolName, isToolUIPart } from "ai";
 import { ArrowDown, ArrowUp, Globe2, LoaderCircle, RefreshCw, Square } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useLocale, useTranslations } from "use-intl";
 
 import "@/components/portfolio/markdown-content.css";
 import { client } from "@/lib/api";
@@ -413,7 +413,7 @@ function ChatSession({
           { init: { signal: controller.signal } },
         );
         if (!response.ok) throw new HttpRequestError(response.status);
-        const payload = (await (response as Response).json()) as AskZomerHistoryPage;
+        const payload = (await (response as Pick<Response, "json">).json()) as AskZomerHistoryPage;
         setMessages(payload.messages);
         setNextHistoryCursor(payload.nextCursor);
       } catch (restoreError) {
@@ -450,7 +450,7 @@ function ChatSession({
         { init: { signal: controller.signal } },
       );
       if (!response.ok) throw new HttpRequestError(response.status);
-      const payload = (await (response as Response).json()) as AskZomerHistoryPage;
+      const payload = (await (response as Pick<Response, "json">).json()) as AskZomerHistoryPage;
       setMessages((current) => {
         const existingIds = new Set(current.map((message) => message.id));
         const older = payload.messages.filter((message) => !existingIds.has(message.id));

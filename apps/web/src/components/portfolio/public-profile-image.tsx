@@ -1,5 +1,4 @@
 import type { PublicPhoto } from "@portfolio/api/public-portfolio";
-import Image from "next/image";
 
 type PublicProfileImageProps = {
   value?: PublicPhoto | null;
@@ -14,30 +13,29 @@ export function PublicProfileImage({
   priority = false,
   className,
 }: PublicProfileImageProps) {
-  if (!value) {
-    return (
-      <Image
-        src="/assets/zomer.jpg"
-        alt="Zomer Gregorio"
-        width={size}
-        height={size}
-        sizes="96px"
-        priority={priority}
-        {...(className ? { className } : {})}
-      />
-    );
+  const source = value ? new URL(value.url) : null;
+  const widths = [size, size * 2, size * 3];
+  function imageUrl(width: number) {
+    const url = new URL(source!);
+    url.searchParams.set("w", String(width));
+    url.searchParams.set("h", String(width));
+    url.searchParams.set("fit", "crop");
+    url.searchParams.set("auto", "format");
+    return url.href;
   }
 
   return (
-    <Image
-      src={value.url}
-      alt={value.alt}
-      width={value.width ?? size}
-      height={value.height ?? size}
-      sizes="96px"
-      priority={priority}
-      {...(value.lqip ? { placeholder: "blur" as const, blurDataURL: value.lqip } : {})}
-      {...(className ? { className } : {})}
+    <img
+      src={source ? imageUrl(size) : "/assets/zomer.jpg"}
+      srcSet={source ? widths.map((width) => `${imageUrl(width)} ${width}w`).join(", ") : undefined}
+      alt={value?.alt ?? "Zomer Gregorio"}
+      width={size}
+      height={size}
+      sizes={`${size}px`}
+      loading={priority ? "eager" : "lazy"}
+      fetchPriority={priority ? "high" : undefined}
+      decoding="async"
+      className={className}
     />
   );
 }

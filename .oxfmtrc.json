@@ -19,7 +19,6 @@
     "**/.opencode",
     "**/.codex",
     "**/.turbo",
-    "**/.next",
     "**/dist",
     "**/node_modules",
     "**/coverage",
@@ -29,6 +28,8 @@
     "**/drizzle",
     "**/sanity.types.ts",
     "apps/studio/data",
-    ".vercelignore"
+    "**/.wrangler",
+    "**/routeTree.gen.ts",
+    "**/worker-configuration.d.ts"
   ]
 }

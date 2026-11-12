@@ -1,11 +1,11 @@
-import "server-only";
+import "@tanstack/react-start/server-only";
 import {
   ADMIN_SESSION_MAX_AGE_SECONDS,
   type AdminCapability,
   createAdminSessionToken,
   verifyAdminSessionToken,
 } from "@portfolio/api";
-import { cookies } from "next/headers";
+import { getCookie, getRequest, setCookie } from "@tanstack/react-start/server";
 
 const ADMIN_SESSION_COOKIES: Record<AdminCapability, string> = {
   "ai-reindex": "portfolio-admin-ai-reindex-session",
@@ -13,24 +13,22 @@ const ADMIN_SESSION_COOKIES: Record<AdminCapability, string> = {
 };
 
 export async function createAdminSession(capability: AdminCapability) {
-  const cookieStore = await cookies();
-  cookieStore.set(ADMIN_SESSION_COOKIES[capability], createAdminSessionToken(capability), {
+  setCookie(ADMIN_SESSION_COOKIES[capability], createAdminSessionToken(capability), {
     httpOnly: true,
     maxAge: ADMIN_SESSION_MAX_AGE_SECONDS,
     path: "/admin",
     sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
+    secure: new URL(getRequest().url).protocol === "https:",
   });
 }
 
 export async function deleteAdminSession(capability: AdminCapability) {
-  const cookieStore = await cookies();
-  cookieStore.set(ADMIN_SESSION_COOKIES[capability], "", {
+  setCookie(ADMIN_SESSION_COOKIES[capability], "", {
     httpOnly: true,
     maxAge: 0,
     path: "/admin",
     sameSite: "strict",
-    secure: process.env.NODE_ENV === "production",
+    secure: new URL(getRequest().url).protocol === "https:",
   });
 }
 
@@ -39,7 +37,6 @@ export async function isAdminAuthenticated(capability: AdminCapability) {
 }
 
 export async function getAdminSessionToken(capability: AdminCapability) {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(ADMIN_SESSION_COOKIES[capability])?.value;
+  const token = getCookie(ADMIN_SESSION_COOKIES[capability]);
   return verifyAdminSessionToken(token, capability) ? token : undefined;
 }
