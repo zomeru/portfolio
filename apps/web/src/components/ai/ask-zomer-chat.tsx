@@ -1,5 +1,3 @@
-"use client";
-
 import { useChat } from "@ai-sdk/react";
 import type { AskZomerHistoryPage, AskZomerMessage, AskZomerSource } from "@portfolio/api/types";
 import { DefaultChatTransport, getToolName, isToolUIPart } from "ai";

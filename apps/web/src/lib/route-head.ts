@@ -76,7 +76,7 @@ export function pageHead({
 type HeadMatch = { routeId: string; loaderData?: unknown };
 
 export function getSiteMatch(matches: ReadonlyArray<HeadMatch>) {
-  return matches.find(({ routeId }) => routeId === "__root__")?.loaderData as
+  return matches.find(({ routeId }) => routeId === "/{-$locale}")?.loaderData as
     | Awaited<ReturnType<typeof import("./site.functions").getSiteData>>
     | undefined;
 }

@@ -19,6 +19,8 @@ import {
   PUBLIC_PROFILE_QUERY,
   PUBLIC_PROJECT_LIST_QUERY,
   PUBLIC_PROJECT_QUERY,
+  PUBLIC_SITE_QUERY,
+  PUBLIC_SNAPSHOT_QUERY,
   PUBLIC_TECH_STACK_QUERY,
 } from "./queries";
 import {
@@ -127,12 +129,15 @@ const rawTechStackSchema = z.object({
   name: z.string().nullable(),
 });
 
-const rawSnapshotSchema = z.object({
+const rawSiteSchema = z.object({
+  profile: rawProfileSchema,
+  techStack: z.array(rawTechStackSchema),
+});
+
+const rawSnapshotSchema = rawSiteSchema.extend({
   blogs: z.array(rawBlogSummarySchema),
   experience: z.array(rawExperienceSchema),
-  profile: rawProfileSchema,
   projects: z.array(rawProjectSchema),
-  techStack: z.array(rawTechStackSchema),
 });
 
 type RawSnapshot = z.infer<typeof rawSnapshotSchema>;
@@ -248,6 +253,16 @@ function fetchProjectList() {
 
 function fetchTechStack() {
   return fetchPublished(PUBLIC_TECH_STACK_QUERY);
+}
+
+export async function getPublicSite() {
+  const { profile, techStack } = rawSiteSchema.parse(await fetchPublished(PUBLIC_SITE_QUERY));
+  const siteUrl = getSiteEnv().siteUrl;
+  return {
+    profile: serializePublicProfile(profile, new URL(siteUrl)),
+    techStack: serializePublicTechStack(techStack),
+    siteUrl,
+  };
 }
 
 function cleanString(value: string | null | undefined) {
@@ -478,6 +493,9 @@ export function createPublicPortfolioService(
   dependencies: ServiceDependencies,
 ): PublicPortfolioService {
   async function getSnapshot() {
+    if (dependencies.fetchSnapshot) {
+      return serializePublicSnapshot(await dependencies.fetchSnapshot(), dependencies.siteUrl);
+    }
     if (
       dependencies.fetchBlogPosts &&
       dependencies.fetchExperienceList &&
@@ -504,10 +522,7 @@ export function createPublicPortfolioService(
       return { blogs, experience, profile, projects, techStack };
     }
 
-    if (!dependencies.fetchSnapshot) {
-      throw new Error("Public portfolio service requires domain fetchers or a snapshot fetcher.");
-    }
-    return serializePublicSnapshot(await dependencies.fetchSnapshot(), dependencies.siteUrl);
+    throw new Error("Public portfolio service requires domain fetchers or a snapshot fetcher.");
   }
 
   async function getResumeSource() {
@@ -635,6 +650,7 @@ export function getPublicPortfolioService() {
     fetchProfile,
     fetchProject,
     fetchProjectList,
+    fetchSnapshot: () => fetchPublished(PUBLIC_SNAPSHOT_QUERY),
     fetchTechStack,
     siteUrl: new URL(getSiteEnv().siteUrl),
   });

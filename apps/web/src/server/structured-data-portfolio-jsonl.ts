@@ -10,5 +10,7 @@ export async function GET() {
   const snapshot = await getPublicPortfolioSnapshot();
   const records = getSchemaFeedRecords(snapshot, new URL(getSiteUrl()), siteUpdatedAt);
 
-  return publicText(serializeSchemaFeed(records), "application/x-jsonlines; charset=utf-8");
+  return publicText(serializeSchemaFeed(records), "application/x-jsonlines; charset=utf-8", {
+    headers: { "Cache-Control": "no-cache" },
+  });
 }

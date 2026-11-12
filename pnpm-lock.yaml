@@ -389,9 +389,6 @@ importers:
       '@portfolio/env':
         specifier: workspace:*
         version: link:../../packages/env
-      '@sanity/webhook':
-        specifier: ^4.0.4
-        version: 4.0.4
       '@takumi-rs/helpers':
         specifier: ^2.20.0
         version: 2.20.0(react@19.3.1)
@@ -3848,10 +3845,6 @@ packages:
     peerDependenciesMeta:
       '@sanity/types':
         optional: true
-
-  '@sanity/webhook@4.0.4':
-    resolution: {integrity: sha512-c8LmzR5Wx93zJ10ohhp0XlmPrTNSFyvPcLbNY/sN45Wj5VOngz4FbBMbX9j64sSQLt+676U6OhiVfjs1yw3YCw==}
-    engines: {node: '>=20.0.0'}
 
   '@sanity/workbench-cli@2.15.2':
     resolution: {integrity: sha512-deQ5CWBWosd7y9YFSACj3LiaNZE2A+ZuKexYK6RHZdNQEk0UlhpEACVX02i4bsUo6lDaIOTGQmW5T/q67eMViA==}
@@ -11531,8 +11524,6 @@ snapshots:
       '@sanity/client': 7.26.2
     optionalDependencies:
       '@sanity/types': 6.23.0(@types/react@19.3.0)
-
-  '@sanity/webhook@4.0.4': {}
 
   '@sanity/workbench-cli@2.15.2(@noble/hashes@2.3.0)(@rolldown/plugin-babel@0.2.4(@babel/core@7.29.7(supports-color@8.1.1))(@babel/runtime@7.29.7)(rolldown@1.2.19)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.0)))(@types/node@26.6.6)(@types/react@19.3.0)(babel-plugin-react-compiler@1.0.0)(esbuild@0.28.2)(jiti@2.7.0)(react@19.3.1)(tsx@4.23.15)(typescript@7.0.2)(use-sync-external-store@1.7.0(react@19.3.1))(xstate@5.33.4)(yaml@2.9.0)':
     dependencies:

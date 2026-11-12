@@ -8,10 +8,18 @@ import { getLangfuseServerEnv } from "@portfolio/env/langfuse-server";
 import { registerTelemetry } from "ai";
 
 let provider: BasicTracerProvider | undefined;
+let initialized = false;
 
 export function initializeTelemetry() {
-  if (provider) return;
-  const environment = getLangfuseServerEnv();
+  if (initialized) return;
+  initialized = true;
+  let environment: ReturnType<typeof getLangfuseServerEnv>;
+  try {
+    environment = getLangfuseServerEnv();
+  } catch {
+    console.warn("Langfuse configuration is invalid; AI traces are disabled.");
+    return;
+  }
   if (!environment.enabled || !environment.publicKey || !environment.secretKey) return;
 
   provider = new BasicTracerProvider({

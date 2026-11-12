@@ -1,5 +1,3 @@
-"use client";
-
 import { ClientOnly } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";

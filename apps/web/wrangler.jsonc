@@ -8,6 +8,7 @@
   "preview_urls": false,
   "vars": { "PORTFOLIO_RUNTIME": "workers" },
   "observability": { "enabled": true },
+  "version_metadata": { "binding": "CF_VERSION_METADATA" },
   "assets": {
     "binding": "ASSETS",
     "html_handling": "none",
@@ -15,6 +16,7 @@
   "env": {
     "production": {
       "name": "portfolio",
+      "version_metadata": { "binding": "CF_VERSION_METADATA" },
       "routes": [{ "pattern": "zomeru.dev", "custom_domain": true }],
       "triggers": { "crons": ["0 22 * * TUE,THU,SAT"] },
       "vars": {
@@ -45,6 +47,7 @@
     },
     "staging": {
       "name": "portfolio-staging",
+      "version_metadata": { "binding": "CF_VERSION_METADATA" },
       "routes": [{ "pattern": "preview.zomeru.dev", "custom_domain": true }],
       "triggers": { "crons": [] },
       "vars": {

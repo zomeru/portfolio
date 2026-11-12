@@ -5,13 +5,10 @@ import { GoogleAnalyticsViaGtm } from "@/components/analytics/google-analytics-v
 import GlobalError from "@/components/layout/global-error";
 import { DefaultNotFound } from "@/components/layout/not-found";
 import { defaultLocale, isLocale } from "@/i18n/routing";
-import { getSiteData } from "@/lib/site.functions";
 
 import appCss from "@/globals.css?url";
 
 export const Route = createRootRoute({
-  loader: () => getSiteData(),
-  staleTime: 30_000,
   head: () => ({
     meta: [
       { charSet: "utf-8" },

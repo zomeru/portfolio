@@ -33,9 +33,9 @@ export function Link({
 }: Pick<
   ComponentProps<"a">,
   "children" | "className" | "aria-label" | "aria-current" | "title" | "onClick"
-> & { href: string }) {
+> & { href: string; preload?: false }) {
   const locale = useLocale();
-  return <RouterLink {...linkOptions(href, locale)} {...props} />;
+  return <RouterLink {...linkOptions(href, locale)} activeOptions={{ exact: true }} {...props} />;
 }
 
 export function useRouter() {

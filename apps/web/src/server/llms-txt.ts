@@ -90,7 +90,7 @@ For a complete list of all blog posts with descriptions, see: ${new URL("/llms-f
 
   return new Response(content, {
     headers: {
-      "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+      "Cache-Control": "no-cache",
       "Content-Type": "text/plain; charset=utf-8",
     },
   });

@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useRef } from "react";
 
 import { useAdminActionState } from "@/components/admin/use-admin-action";

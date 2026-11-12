@@ -117,6 +117,19 @@ export const PUBLIC_TECH_STACK_QUERY = defineQuery(/* groq */ `
     | order(order asc, _id asc) ${TECH_STACK_PROJECTION}
 `);
 
+export const PUBLIC_SITE_QUERY = defineQuery(/* groq */ `{
+  "profile": ${PUBLIC_PROFILE_QUERY},
+  "techStack": ${PUBLIC_TECH_STACK_QUERY}
+}`);
+
+export const PUBLIC_SNAPSHOT_QUERY = defineQuery(/* groq */ `{
+  "blogs": ${PUBLIC_BLOG_POST_LIST_QUERY},
+  "experience": ${PUBLIC_EXPERIENCE_LIST_QUERY},
+  "profile": ${PUBLIC_PROFILE_QUERY},
+  "projects": ${PUBLIC_PROJECT_LIST_QUERY},
+  "techStack": ${PUBLIC_TECH_STACK_QUERY}
+}`);
+
 export const PUBLIC_BLOG_POST_QUERY = defineQuery(/* groq */ `
   *[
     _type == "blogPost" &&

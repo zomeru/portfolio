@@ -1,5 +1,3 @@
-"use client";
-
 import { localeCookieName, localizedPath, type Locale } from "@/i18n/routing";
 
 export function replaceLocale(pathname: string, locale: Locale) {

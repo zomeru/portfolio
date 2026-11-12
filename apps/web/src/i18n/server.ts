@@ -1,3 +1,4 @@
+import "@tanstack/react-start/server-only";
 import { createTranslator, type NamespaceKeys, type NestedKeyOf } from "use-intl/core";
 
 import { getMessages } from "./messages";

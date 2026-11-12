@@ -16,7 +16,8 @@ export function PublicProfileImage({
   const source = value ? new URL(value.url) : null;
   const widths = [size, size * 2, size * 3];
   function imageUrl(width: number) {
-    const url = new URL(source!);
+    if (!source) return "/assets/zomer-avatar.webp";
+    const url = new URL(source);
     url.searchParams.set("w", String(width));
     url.searchParams.set("h", String(width));
     url.searchParams.set("fit", "crop");
@@ -26,7 +27,7 @@ export function PublicProfileImage({
 
   return (
     <img
-      src={source ? imageUrl(size) : "/assets/zomer.jpg"}
+      src={imageUrl(size)}
       srcSet={source ? widths.map((width) => `${imageUrl(width)} ${width}w`).join(", ") : undefined}
       alt={value?.alt ?? "Zomer Gregorio"}
       width={size}

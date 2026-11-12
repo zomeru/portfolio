@@ -39,7 +39,7 @@ void test("public REST routes return JSON, CORS, caching, and expected resources
     const response = await routes.request(path, { headers: { Origin: "https://agent.example" } });
     assert.equal(response.status, 200, path);
     assert.equal(response.headers.get("access-control-allow-origin"), "*", path);
-    assert.match(response.headers.get("cache-control") ?? "", /s-maxage=300/, path);
+    assert.equal(response.headers.get("cache-control"), "public, max-age=60", path);
     assert.match(response.headers.get("content-type") ?? "", /application\/json/, path);
     const body = await response.json();
     schema.parse(body);
@@ -56,6 +56,7 @@ void test("public REST routes return JSON, CORS, caching, and expected resources
 void test("public REST routes validate pagination and return actionable JSON 404s", async () => {
   const invalid = await routes.request("/blogs?limit=51");
   assert.equal(invalid.status, 400);
+  assert.equal(invalid.headers.get("cache-control"), "private, no-store");
   assert.equal(publicErrorSchema.parse(await invalid.json()).error.code, "INVALID_QUERY");
 
   const unknownQuery = await routes.request("/blogs?sort=title");
@@ -64,6 +65,7 @@ void test("public REST routes validate pagination and return actionable JSON 404
 
   const missingPost = await routes.request("/blogs/missing-post");
   assert.equal(missingPost.status, 404);
+  assert.equal(missingPost.headers.get("cache-control"), "private, no-store");
   assert.equal(publicErrorSchema.parse(await missingPost.json()).error.code, "RESOURCE_NOT_FOUND");
 
   const missingRoute = await routes.request("/does-not-exist");
@@ -72,6 +74,14 @@ void test("public REST routes validate pagination and return actionable JSON 404
     publicErrorSchema.parse(await missingRoute.json()).error.resolution,
     /openapi\.json/,
   );
+});
+
+void test("public REST responses to requests carrying authorization are not cacheable", async () => {
+  const response = await routes.request("/profile", {
+    headers: { Authorization: "Bearer example" },
+  });
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("cache-control"), "private, no-store");
 });
 
 void test("public REST routes answer scoped CORS preflight requests", async () => {

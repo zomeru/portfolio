@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, getRouteApi } from "@tanstack/react-router";
 import { useTranslations } from "use-intl";
 import { createTranslator } from "use-intl/core";
 
@@ -9,7 +9,7 @@ import { experienceTranslationKeys } from "@/lib/portfolio-content";
 import { getHome } from "@/lib/public.functions";
 import { getSiteMatch, pageHead } from "@/lib/route-head";
 
-import { Route as Root } from "../__root";
+const publicLayout = getRouteApi("/{-$locale}");
 
 export const Route = createFileRoute("/{-$locale}/")({
   loader: () => getHome(),
@@ -45,7 +45,7 @@ export const Route = createFileRoute("/{-$locale}/")({
 
 function AboutPage() {
   const { locale } = Route.useRouteContext();
-  const { profile } = Root.useLoaderData();
+  const { profile } = publicLayout.useLoaderData();
   const experience = Route.useLoaderData();
   const tHome = useTranslations("Home");
   const tExperience = useTranslations("Experience");
@@ -69,11 +69,7 @@ function AboutPage() {
         >
           {tExperience("heading")}
         </h2>
-        <ol className="relative mt-3">
-          <span
-            aria-hidden
-            className="absolute bottom-2 left-1 top-2 w-0.5 bg-linear-to-b from-border via-border to-transparent"
-          />
+        <ol className="relative mt-3 before:pointer-events-none before:absolute before:bottom-2 before:left-1 before:top-2 before:w-0.5 before:bg-linear-to-b before:from-border before:via-border before:to-transparent">
           {experience.items.map((job) => {
             const entryKey =
               experienceTranslationKeys[job.company as keyof typeof experienceTranslationKeys];

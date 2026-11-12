@@ -11,7 +11,7 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
 - Keep HTTP parsing, validation, status mapping, and response shaping under `src/routes`. Put
   non-HTTP behavior under `src/services` and shared security/logging helpers under `src/lib`.
 - Preserve route chaining so exported `AppType` retains Hono RPC inference.
-- Export the server implementation through `src/next.ts`, public client types through `src/types.ts`,
+- Export the server implementation through `src/index.ts`, public client types through `src/types.ts`,
   and the canonical published portfolio service through `src/public-portfolio.ts`. Keep server
   entrypoints guarded by `server-only`.
 - Do not import web components, App Router modules, cookies, or UI state into this workspace.
@@ -23,9 +23,8 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
 
 - `src/services/public-portfolio` owns published-only Sanity queries, explicit public DTO schemas,
   serialization, OpenAPI generation, and discovery metadata. REST routes and MCP registrations must
-  call this service instead of querying Sanity independently. Keep domain- and slug-scoped cache
-  tags with signed on-demand invalidation and the explicit public allowlist; never expose drafts,
-  raw Sanity fields, or RAG/indexing state.
+  call this service instead of querying Sanity independently. Keep Content Lake reads published
+  and request-scoped; never expose drafts, raw Sanity fields, or RAG/indexing state.
 - Keep public GROQ projections explicit and parse their raw results before serialization. Studio
   TypeGen does not scan this workspace, so protect query changes with API contract tests and type
   checks.

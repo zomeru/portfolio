@@ -1,5 +1,3 @@
-"use client";
-
 import { useId, useState } from "react";
 import { useLocale, useTranslations } from "use-intl";
 

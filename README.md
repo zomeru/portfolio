@@ -47,11 +47,15 @@ build-time values.
 | `pnpm cron:blog`                             | Exercise the authorized blog endpoint against a development dataset and loopback host |
 
 Public routes use unprefixed English URLs and `/ja`, `/zh-CN`, or `/de` prefixes. The Worker
-detects locale using the saved preference, then language and country. Mutable Sanity reads go
-directly to the published Content Lake and share identical queries within a request. The signed
-Sanity webhook still validates the source and reports affected content tags. The next request reads
-current content without a shared application cache to purge. Hashed frontend assets are immutable,
-and admin responses are private and uncached.
+detects locale using the saved preference, then language and country. Public pages that depend on
+Sanity use SSR. Selected anonymous responses can reuse a render for 60 seconds in the local
+Cloudflare data center; social images are cached for five minutes. Each Worker version gets fresh
+cache keys. Sanity remains authoritative, and publishing requires no cache webhook or rebuild.
+Private and request-specific responses are uncached.
+
+The build prerenders the source-owned discovery documents using the target's configured
+`SITE_URL`. Cloudflare serves these and the fingerprinted JS, CSS, and fonts as static assets
+without invoking the app Worker.
 
 ## Cloudflare deployment
 
@@ -107,7 +111,9 @@ pnpm exec wrangler secret bulk --env production /secure/path/production-secrets.
 ```
 
 For manual deployment, run `pnpm run deploy:staging` or `pnpm run deploy:production`. Verify the
-custom domain and the signed Sanity webhook at `/api/revalidate/sanity` for each environment.
+custom domain, canonical URLs, and the static `/openapi.json` for each environment. Disable any
+existing Sanity webhook pointed at `/api/revalidate/sanity` after rolling out this change; the
+endpoint and its signing secret are retired.
 Run `pnpm run versions:upload` or `pnpm run versions:upload:production` to build and upload a Worker
 version for later deployment.
 Only production runs the blog cron at `0 22 * * TUE,THU,SAT` (6:00 a.m. Wednesday, Friday, and

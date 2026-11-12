@@ -30,7 +30,7 @@ function parseRepository(value: string | undefined) {
 export const githubRoutes = new Hono<ApiEnv>()
   .get("/contributions", async (c) => {
     const contributions = await getGithubContributionCalendar(parseYear(c.req.query("year")));
-    c.header("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
+    c.header("Cache-Control", "public, max-age=300");
     return c.json(contributions);
   })
   .get("/commits", async (c) => {
@@ -40,6 +40,6 @@ export const githubRoutes = new Hono<ApiEnv>()
       pageSize: parsePageSize(c.req.query("pageSize")),
       ...(repository ? { repository } : {}),
     });
-    c.header("Cache-Control", "public, s-maxage=300, stale-while-revalidate=3600");
+    c.header("Cache-Control", "public, max-age=60");
     return c.json(commits);
   });

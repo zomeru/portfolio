@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, getRouteApi } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "use-intl";
 import { createTranslator } from "use-intl/core";
@@ -11,7 +11,7 @@ import { localizedHead } from "@/lib/localized-head";
 import { projectTranslationKeys } from "@/lib/portfolio-content";
 import { getProject } from "@/lib/public.functions";
 
-import { Route as Root } from "../__root";
+const publicLayout = getRouteApi("/{-$locale}");
 
 export const Route = createFileRoute("/{-$locale}/projects/$slug")({
   loader: ({ params }) => getProject({ data: params.slug }),
@@ -41,7 +41,7 @@ function ProjectDetailPage() {
     locale !== "en" && descriptionKey ? t(`descriptions.${descriptionKey}`) : project.description;
   const canonicalUrl = new URL(
     localizedPath(`/projects/${project.slug}`, locale),
-    Root.useLoaderData().siteUrl,
+    publicLayout.useLoaderData().siteUrl,
   ).href;
   const jsonLd = {
     "@context": "https://schema.org",

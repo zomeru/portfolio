@@ -1,5 +1,3 @@
-"use client";
-
 import { CalendarDays } from "lucide-react";
 import { useEffect } from "react";
 import { useTranslations } from "use-intl";

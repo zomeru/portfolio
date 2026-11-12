@@ -1,5 +1,3 @@
-"use client";
-
 import { getCalApi } from "@calcom/embed-react";
 
 const CAL_LINK = "zomer/30min";

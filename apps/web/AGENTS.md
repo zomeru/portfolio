@@ -11,6 +11,9 @@ transports. Preserve the existing public URLs, translated content, and portfolio
   for browser RPC. Import only `AppType` from `@portfolio/api/types` in browser code.
 - Canonical public data comes from `@portfolio/api/public-portfolio`. Keep published Sanity reads
   request-scoped. Do not add duplicate GROQ queries in the web app.
+- Prerender only deployment-owned documents. Keep the Worker Cache API allowlist restricted to
+  deterministic public responses, with short TTLs for published content and keys scoped to the
+  Worker version. Keep private, query-bearing, cookie-setting, and error responses out of it.
 - Preserve real 404s, localized canonical and alternate links, and the formats of discovery
   endpoints. Keep public MCP tools stateless and read-only.
 - Admin actions and private loaders must verify the outer gate on the server. Preserve

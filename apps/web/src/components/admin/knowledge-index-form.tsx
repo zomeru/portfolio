@@ -1,5 +1,3 @@
-"use client";
-
 import { useRouter } from "@tanstack/react-router";
 import { LoaderCircle } from "lucide-react";
 import { type FormEvent, useRef, useState } from "react";
