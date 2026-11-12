@@ -2,14 +2,24 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "outputs": ["dist/**", "!dist/**/.dev.vars*", ".wrangler/deploy/config.json"],
-      "env": ["CLOUDFLARE_ENV"]
+      "outputs": ["dist/**", "!dist/**/.dev.vars*", ".wrangler/deploy/config.json"]
+    },
+    "build:production": {
+      "outputs": ["dist/**", "!dist/**/.dev.vars*", ".wrangler/deploy/config.json"]
     },
     "deploy:production": {
       "cache": false,
       "passThroughEnv": ["CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_API_TOKEN", "WRANGLER_SEND_METRICS"]
     },
     "deploy:staging": {
+      "cache": false,
+      "passThroughEnv": ["CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_API_TOKEN", "WRANGLER_SEND_METRICS"]
+    },
+    "versions:upload": {
+      "cache": false,
+      "passThroughEnv": ["CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_API_TOKEN", "WRANGLER_SEND_METRICS"]
+    },
+    "versions:upload:production": {
       "cache": false,
       "passThroughEnv": ["CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_API_TOKEN", "WRANGLER_SEND_METRICS"]
     },
