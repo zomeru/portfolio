@@ -71,12 +71,19 @@ you connect GitHub.
 | Staging     | `portfolio-staging` | `preview.zomeru.dev` | `dev`             | `pnpm run deploy:staging`    |
 
 Set the root directory to `apps/web` for both Workers. Leave the separate build command blank since
-the deploy command builds the matching environment and uploads that bundle. Set the build variable
-`NODE_VERSION` to `26.13.1`. Workers Builds reads the pinned pnpm version from the root
-`package.json`. Disable non-production branch builds when using the two fixed domains above.
+the deploy command builds the matching environment and uploads that bundle. Disable non-production
+branch builds when using the two fixed domains above.
+
+If Workers Builds stops while installing the pinned Node release, use the build image's preinstalled
+Node as the launcher. Set the build variables `NODE_VERSION=24.22.1` and
+`SKIP_DEPENDENCY_INSTALL=1`. Set the deploy command to `bash scripts/workers-build.sh production`
+or `bash scripts/workers-build.sh staging`. The script downloads and verifies the Node version in
+`.node-version`, enables the pinned pnpm through Corepack, and runs the matching deploy command.
+
 The GitHub Actions CI workflow checks both bundles with `--dry-run`.
 The separate Sanity Studio workflow uses `SANITY_PROJECT_ID` and `SANITY_APP_ID` as optional
-GitHub variable overrides.
+GitHub variable overrides. Set the GitHub Actions secret `SANITY_AUTH_TOKEN` to a Sanity deploy
+token with schema deployment access for both Studio workspaces.
 
 ### Runtime secrets
 
