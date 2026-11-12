@@ -80,7 +80,7 @@ const mutationBodyLimit = bodyLimit({
 
 function requestFingerprint(headers: Headers) {
   return (
-    headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim() ||
+    headers.get("cf-connecting-ip") ||
     headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
     headers.get("x-real-ip") ||
     "unknown"

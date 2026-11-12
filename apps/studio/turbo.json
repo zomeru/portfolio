@@ -4,11 +4,7 @@
     "build": {
       "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env*"],
       "outputs": ["dist/**"],
-      "env": [
-        "NEXT_PUBLIC_SANITY_PROJECT_ID",
-        "NEXT_PUBLIC_SANITY_DATASET",
-        "NEXT_PUBLIC_SANITY_APP_ID"
-      ]
+      "env": ["SANITY_PROJECT_ID", "SANITY_DATASET", "SANITY_APP_ID"]
     }
   }
 }

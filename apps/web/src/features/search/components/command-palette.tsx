@@ -17,9 +17,9 @@ import {
   UserRound,
   X,
 } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { type RefObject, useEffect, useId, useMemo, useRef, useState } from "react";
+import { useLocale, useTranslations } from "use-intl";
 
 import { isLikelyQuestion } from "@/features/search/lib/question-intent";
 import { rankSearchItems } from "@/features/search/lib/rank";
@@ -336,7 +336,7 @@ export function CommandPalette({
     } else if (item.machineRoute) {
       window.location.assign(item.href);
     } else {
-      router.push(item.href);
+      void router.push(item.href);
     }
   };
 

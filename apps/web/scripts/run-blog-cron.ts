@@ -1,8 +1,8 @@
+import type { AppType } from "@portfolio/api/types";
 import { getCronEnv } from "@portfolio/env/cron";
 import { getSanityEnv } from "@portfolio/env/sanity";
 import { getSiteEnv } from "@portfolio/env/site";
-
-import { createApiClient } from "../src/lib/api";
+import { hc } from "hono/client";
 
 const LOOPBACK_HOSTNAMES = new Set(["127.0.0.1", "[::1]", "::1", "localhost"]);
 
@@ -15,7 +15,7 @@ function getCronUrl() {
   }
 
   if (sanityEnv.dataset !== "development") {
-    throw new Error("Local blog cron requires NEXT_PUBLIC_SANITY_DATASET=development.");
+    throw new Error("Local blog cron requires SANITY_DATASET=development.");
   }
 
   const url = new URL("/api/blog/generate", siteEnv.siteUrl);
@@ -27,7 +27,7 @@ function getCronUrl() {
   return url;
 }
 
-async function parseResponse(response: Response) {
+async function parseResponse(response: Pick<Response, "text">) {
   const responseBody = await response.text();
 
   if (!responseBody) {
@@ -47,7 +47,7 @@ async function run() {
 
   console.log(`Triggering local blog cron at ${url.toString()}`);
 
-  const response = await createApiClient(url.origin).api.blog.generate.$get(
+  const response = await hc<AppType>(url.origin).api.blog.generate.$get(
     {},
     {
       headers: {

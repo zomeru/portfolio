@@ -1,6 +1,6 @@
 import type { StoredBlogPublishedEvent } from "@portfolio/database";
 import { getNotificationsServerEnv } from "@portfolio/env/notifications-server";
-import nodemailer from "nodemailer";
+import nodemailer, { type Transporter } from "nodemailer";
 import { Resend } from "resend";
 
 import { NotificationDeliveryError } from "./errors";
@@ -11,7 +11,7 @@ const EMAIL_SOCKET_TIMEOUT_MS = 20_000;
 
 type GmailClient = {
   provider: "gmail";
-  client: nodemailer.Transporter;
+  client: Transporter;
   from: string;
   replyTo?: string;
 };
@@ -25,7 +25,7 @@ type ResendClient = {
 
 type EmailClient = ResendClient | GmailClient;
 
-let gmailTransporter: nodemailer.Transporter | undefined;
+let gmailTransporter: Transporter | undefined;
 
 function escapeHtml(value: string) {
   return value
@@ -109,6 +109,7 @@ function getEmailClient(): EmailClient | null {
         provider: "gmail",
         client: transporter,
         from: emailFrom,
+        ...(environment.emailReplyTo ? { replyTo: environment.emailReplyTo } : {}),
       } as GmailClient;
     }
 
@@ -121,6 +122,7 @@ function getEmailClient(): EmailClient | null {
         provider: "resend",
         client: new Resend(environment.resendApiKey),
         from: emailFrom,
+        ...(environment.emailReplyTo ? { replyTo: environment.emailReplyTo } : {}),
       } as ResendClient;
     }
 

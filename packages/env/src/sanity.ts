@@ -11,9 +11,15 @@ const sanityDatasets = z.enum(SANITY_DATASETS);
 const sanityDatasetMap = sanityDatasets.enum;
 
 const sanitySchema = z.object({
-  NEXT_PUBLIC_SANITY_PROJECT_ID: z.string().default(DEFAULT_PROJECT_ID),
-  NEXT_PUBLIC_SANITY_DATASET: sanityDatasets.default("development"),
-  NEXT_PUBLIC_SANITY_APP_ID: z.string().default(DEFAULT_APP_ID),
+  SANITY_PROJECT_ID: z
+    .string()
+    .optional()
+    .transform((value) => value || DEFAULT_PROJECT_ID),
+  SANITY_DATASET: sanityDatasets.default("development"),
+  SANITY_APP_ID: z
+    .string()
+    .optional()
+    .transform((value) => value || DEFAULT_APP_ID),
 });
 
 export type SanityEnv = z.infer<typeof sanitySchema>;
@@ -21,9 +27,9 @@ export type SanityEnv = z.infer<typeof sanitySchema>;
 export function getSanityEnv(source: NodeJS.ProcessEnv = process.env) {
   const environment = parseEnv(sanitySchema, source);
   return {
-    projectId: environment.NEXT_PUBLIC_SANITY_PROJECT_ID,
-    dataset: environment.NEXT_PUBLIC_SANITY_DATASET,
+    projectId: environment.SANITY_PROJECT_ID,
+    dataset: environment.SANITY_DATASET,
     datasetMap: sanityDatasetMap,
-    appId: environment.NEXT_PUBLIC_SANITY_APP_ID,
+    appId: environment.SANITY_APP_ID,
   } as const;
 }

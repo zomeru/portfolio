@@ -1,7 +1,8 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import dynamic from "next/dynamic";
+import { ClientOnly } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
+import { useTranslations } from "use-intl";
 import { z } from "zod";
 
 z.config({ jitless: true });
@@ -15,14 +16,16 @@ function AskZomerLoading() {
   );
 }
 
-const AskZomerChatContent = dynamic(
-  () => import("./ask-zomer-chat").then((module) => module.AskZomerChatContent),
-  {
-    ssr: false,
-    loading: AskZomerLoading,
-  },
+const AskZomerChatContent = lazy(() =>
+  import("./ask-zomer-chat").then(({ AskZomerChatContent }) => ({ default: AskZomerChatContent })),
 );
 
 export function AskZomerChat({ initialQuestion }: { initialQuestion: string | undefined }) {
-  return <AskZomerChatContent initialQuestion={initialQuestion} />;
+  return (
+    <ClientOnly fallback={<AskZomerLoading />}>
+      <Suspense fallback={<AskZomerLoading />}>
+        <AskZomerChatContent initialQuestion={initialQuestion} />
+      </Suspense>
+    </ClientOnly>
+  );
 }

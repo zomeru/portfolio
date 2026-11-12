@@ -2,8 +2,8 @@
 
 import type { GithubCommitPage, GithubContributionCalendar } from "@portfolio/api/types";
 import { ArrowUpRight } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useLocale, useTranslations } from "use-intl";
 
 import { ContributionCalendar } from "@/components/portfolio/contribution-calendar";
 import { Select, type SelectOption } from "@/components/ui/select";
@@ -34,7 +34,7 @@ type CommitFilters = {
   repo: string;
 };
 
-async function getErrorMessage(response: Response, fallback: string) {
+async function getErrorMessage(response: Pick<Response, "body">, fallback: string) {
   await response.body?.cancel();
   return fallback;
 }
@@ -121,7 +121,7 @@ export function GithubContributionCalendarSection({
           { init: { signal: controller.signal } },
         );
         if (!response.ok) {
-          const error = await getErrorMessage(response as Response, t("activityError"));
+          const error = await getErrorMessage(response, t("activityError"));
           setResult({ data: null, error });
           return;
         }
@@ -237,7 +237,7 @@ export function GithubCommitHistorySection({ initialFilters, initialResult }: Co
           { init: { signal: controller.signal } },
         );
         if (!response.ok) {
-          const error = await getErrorMessage(response as Response, t("commitsError"));
+          const error = await getErrorMessage(response, t("commitsError"));
           setResult({ data: null, error });
           return;
         }

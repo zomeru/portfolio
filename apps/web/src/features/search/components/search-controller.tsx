@@ -1,18 +1,17 @@
 "use client";
 
+import { ClientOnly } from "@tanstack/react-router";
 import { Search } from "lucide-react";
-import { useTranslations } from "next-intl";
-import dynamic from "next/dynamic";
-import { useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { useTranslations } from "use-intl";
 
 import type { SearchIndexStatus, SearchItem } from "@/features/search/types/search";
 import { reportClientError } from "@/lib/client-log";
 import { classifyRequestFailure, HttpRequestError } from "@/lib/request-failure";
 import { cn } from "@/lib/utils";
 
-const CommandPalette = dynamic(
-  () => import("./command-palette").then((module) => module.CommandPalette),
-  { ssr: false },
+const CommandPalette = lazy(() =>
+  import("./command-palette").then(({ CommandPalette }) => ({ default: CommandPalette })),
 );
 
 export function SearchController({
@@ -107,19 +106,23 @@ export function SearchController({
         </kbd>
       </button>
       {loaded ? (
-        <CommandPalette
-          indexStatus={indexStatus}
-          indexError={indexError}
-          items={items}
-          open={open}
-          onOpenChange={setOpen}
-          onRetry={() => {
-            setIndexStatus("loading");
-            setIndexError("");
-            setIndexRequest((current) => current + 1);
-          }}
-          triggerRef={triggerRef}
-        />
+        <ClientOnly>
+          <Suspense>
+            <CommandPalette
+              indexStatus={indexStatus}
+              indexError={indexError}
+              items={items}
+              open={open}
+              onOpenChange={setOpen}
+              onRetry={() => {
+                setIndexStatus("loading");
+                setIndexError("");
+                setIndexRequest((current) => current + 1);
+              }}
+              triggerRef={triggerRef}
+            />
+          </Suspense>
+        </ClientOnly>
       ) : null}
     </>
   );

@@ -1,8 +1,8 @@
 "use client";
 
 import { CalendarDays } from "lucide-react";
-import { useTranslations } from "next-intl";
 import { useEffect } from "react";
+import { useTranslations } from "use-intl";
 
 import { openBookingWidget, prepareBookingWidget } from "@/lib/booking";
 import { reportClientError } from "@/lib/client-log";

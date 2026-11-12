@@ -5,11 +5,11 @@ file wins when instructions differ.
 
 ## Workspace boundaries
 
-- `apps/web` is the only deployed Next.js process. It owns UI, App Router files, metadata, machine
+- `apps/web` is the TanStack Start Worker. It owns UI, file routes, metadata, machine
   discovery routes, MCP transports, and the thin Hono adapter.
 - `apps/api` owns HTTP routes and server-side GitHub, AI, retrieval, indexing, persistence
   orchestration, Sanity publishing logic, and the canonical public portfolio contract. It is a
-  source-exported just-in-time package, not a separate service.
+  source-exported just-in-time package. Its optional Node relay pins DNS for generic webhooks.
 - `apps/studio` owns the Sanity schema, Studio workspaces, structure, seed fixtures, and TypeGen
   workflow.
 - `packages/database` owns all Drizzle schema, client, query, repository, and migration code.
@@ -23,7 +23,7 @@ dependencies and public package exports. Browser code may import API types from
 
 ## Repository constraints
 
-- Use Node.js 24.19.x and pnpm 12.3.4. Do not use npm or Yarn for repository tasks.
+- Use Node.js 26 LTS (pinned in `.node-version`) and pnpm 12.18.0. Do not use npm or Yarn for repository tasks.
 - Run supported scripts through pnpm. Use a filtered workspace script when the root has no alias.
 - Keep changes scoped and preserve unrelated working-tree changes.
 - Preserve strict TypeScript and the repository Oxfmt rules: two spaces, double quotes, semicolons, and
@@ -39,7 +39,7 @@ dependencies and public package exports. Browser code may import API types from
 
 - Sanity is authoritative for published portfolio content. PostgreSQL holds the derived AI index, chat
   persistence, retrieval events, and ingestion state; do not turn it into a second content source.
-- The web app mounts `@portfolio/api` at `src/app/api/[[...route]]/route.ts`. Keep the adapter thin
+- The web app mounts `@portfolio/api` at `src/routes/api/$.ts`. Keep the adapter thin
   and the Hono app on its `/api` base path.
 - Server-side web callers use the in-process Hono client in
   `apps/web/src/lib/api-server.ts`; browser callers use the typed HTTP client in

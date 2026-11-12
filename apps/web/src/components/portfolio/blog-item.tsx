@@ -1,11 +1,11 @@
 import type { PublicBlogPostSummary } from "@portfolio/api/public-portfolio";
 import { ArrowUpRight } from "lucide-react";
-import { getLocale } from "next-intl/server";
+import { useLocale } from "use-intl";
 
 import { Link } from "@/i18n/navigation";
 
-export async function BlogItem({ post }: { post: PublicBlogPostSummary }) {
-  const locale = await getLocale();
+export function BlogItem({ post }: { post: PublicBlogPostSummary }) {
+  const locale = useLocale();
   const date = new Intl.DateTimeFormat(locale, {
     dateStyle: "long",
     timeZone: "UTC",

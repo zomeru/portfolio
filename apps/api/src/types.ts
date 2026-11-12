@@ -138,3 +138,5 @@ export const INITIAL_ASK_ZOMER_SUGGESTIONS = [
   "What technologies does he use?",
   "What has he written about?",
 ] as const;
+
+export type { AdminCapability } from "./lib/admin-session";

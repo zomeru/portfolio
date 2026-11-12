@@ -30,10 +30,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7.0.1
 
       - name: Setup pnpm (includes Node.js + cache)
-        uses: pnpm/setup@v1
+        uses: pnpm/setup@v3.1.2
         with:
           cache: true
           cache-dependency-path: pnpm-lock.yaml

@@ -1,23 +1,8 @@
-import { defineRouting } from "next-intl/routing";
-
 export const locales = ["en", "ja", "zh-CN", "de"] as const;
 export const defaultLocale = "en";
 export const localeCookieName = "PORTFOLIO_LOCALE";
 
 export type Locale = (typeof locales)[number];
-
-export const routing = defineRouting({
-  locales,
-  defaultLocale,
-  localePrefix: "as-needed",
-  localeCookie: {
-    name: localeCookieName,
-    maxAge: 365 * 24 * 60 * 60,
-    path: "/",
-    sameSite: "lax",
-  },
-  alternateLinks: true,
-});
 
 export const localeCodes: Record<Locale, string> = {
   en: "EN",

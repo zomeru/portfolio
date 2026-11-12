@@ -3,8 +3,17 @@ packages:
   - "packages/*"
 
 overrides:
-  "js-yaml@<3.15.1": "3.15.1"
-  "smol-toml@<1.6.1": "1.6.1"
+  "brace-expansion@>=4 <5.0.12": "5.0.13"
+  "dompurify@<3.4.17": "3.4.17"
+  "fast-uri@>=3 <3.1.9": "3.1.9"
+  "js-yaml@>=3 <3.15.2": "3.15.2"
+  "js-yaml@>=4 <4.3.2": "4.3.2"
+  "launch-editor@<2.14.2": "2.14.2"
+  "@oclif/core>minimatch@>=7 <11.0.1": "11.0.8"
+  "shell-quote@>=1.8.4 <1.11.0": "1.12.0"
+  "smol-toml@<1.9.0": "1.9.1"
+  "source-map-js@<1.2.2": "1.2.2"
+  "undici@>=7 <7.30.1": "7.30.2"
   "uuid@<11.1.1": "11.1.1"
 
 allowBuilds:
@@ -12,8 +21,8 @@ allowBuilds:
   "@swc/core": false
   esbuild: true
   protobufjs: false
-  sharp: true
   unrs-resolver: true
+  workerd: true
 
 minimumReleaseAgeExclude:
   - get-it@9.5.0
@@ -46,3 +55,6 @@ minimumReleaseAgeExclude:
   - "@sanity/util@6.11.0"
   - "@sanity/vision@6.11.0"
   - sanity@6.11.0
+  - "@cloudflare/vite-plugin@1.69.1"
+  - miniflare@5.20261110.1-beta
+  - wrangler@4.160.1

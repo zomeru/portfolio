@@ -24,7 +24,7 @@ import {
 const originalTokenSecret = process.env.NOTIFICATION_TOKEN_SECRET;
 const originalCronSecret = process.env.CRON_SECRET;
 const originalNodeEnv = process.env.NODE_ENV;
-const originalSiteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+const originalSiteUrl = process.env.SITE_URL;
 
 function testCredential(label: string, minimumLength = 40) {
   return `${label}-${"x".repeat(minimumLength)}`;
@@ -40,8 +40,8 @@ test.after(() => {
   else process.env.CRON_SECRET = originalCronSecret;
   if (originalNodeEnv === undefined) delete process.env.NODE_ENV;
   else process.env.NODE_ENV = originalNodeEnv;
-  if (originalSiteUrl === undefined) delete process.env.NEXT_PUBLIC_SITE_URL;
-  else process.env.NEXT_PUBLIC_SITE_URL = originalSiteUrl;
+  if (originalSiteUrl === undefined) delete process.env.SITE_URL;
+  else process.env.SITE_URL = originalSiteUrl;
 });
 
 void test("unsubscribe tokens are signed, versioned, and tamper-resistant", () => {
@@ -56,7 +56,7 @@ void test("unsubscribe tokens are signed, versioned, and tamper-resistant", () =
 void test("notification environment keeps Gmail, Resend, and Web Push feature groups independent", () => {
   const tokenSecret = testCredential("notification-token");
   const pushOnly = getNotificationsServerEnv({
-    NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY: testCredential("vapid-public"),
+    WEB_PUSH_VAPID_PUBLIC_KEY: testCredential("vapid-public"),
     WEB_PUSH_VAPID_PRIVATE_KEY: testCredential("vapid-private"),
     WEB_PUSH_SUBJECT: "mailto:owner@example.com",
     NOTIFICATION_TOKEN_SECRET: tokenSecret,
@@ -265,7 +265,7 @@ void test("notification administration and test delivery require authorization",
 
 void test("browser push testing requires authorization outside development", async () => {
   process.env.NODE_ENV = "production";
-  process.env.NEXT_PUBLIC_SITE_URL = "https://example.com";
+  process.env.SITE_URL = "https://example.com";
   try {
     const response = await apiApp.request(
       new Request("http://localhost/api/notifications/push/test", {
@@ -278,7 +278,7 @@ void test("browser push testing requires authorization outside development", asy
   } finally {
     if (originalNodeEnv === undefined) delete process.env.NODE_ENV;
     else process.env.NODE_ENV = originalNodeEnv;
-    if (originalSiteUrl === undefined) delete process.env.NEXT_PUBLIC_SITE_URL;
-    else process.env.NEXT_PUBLIC_SITE_URL = originalSiteUrl;
+    if (originalSiteUrl === undefined) delete process.env.SITE_URL;
+    else process.env.SITE_URL = originalSiteUrl;
   }
 });

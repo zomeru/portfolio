@@ -1,3 +1,5 @@
+import "@tanstack/react-start/server-only";
+import { createMcpHandler, McpServer } from "@modelcontextprotocol/server";
 import {
   DOCS_MCP_SERVER_NAME,
   DOCS_MCP_TOOLS,
@@ -6,7 +8,6 @@ import {
   READ_ONLY_TOOL_ANNOTATIONS,
 } from "@portfolio/api/public-portfolio";
 import { getSiteEnv } from "@portfolio/env/site";
-import { createMcpHandler } from "mcp-handler";
 import { z } from "zod";
 
 import { getAuthenticationGuideMarkdown, getDeveloperGuideMarkdown } from "@/lib/developer-docs";
@@ -29,51 +30,52 @@ function success(value: Record<string, unknown>) {
 }
 
 export function createDocsMcpHandler(siteUrl = new URL(getSiteEnv().siteUrl)) {
-  return createMcpHandler(
-    (server) => {
-      const overview = metadata("get_api_overview");
-      server.registerTool(
-        overview.name,
-        {
-          annotations: READ_ONLY_TOOL_ANNOTATIONS,
-          description: overview.description,
-          inputSchema: emptyInputSchema,
-          outputSchema: markdownOutputSchema,
-          title: overview.title,
-        },
-        async () => success({ markdown: getDeveloperGuideMarkdown(siteUrl) }),
-      );
+  return createMcpHandler(() => {
+    const server = new McpServer(
+      { name: DOCS_MCP_SERVER_NAME, version: PUBLIC_API_VERSION },
+      {
+        instructions:
+          "Use this server to discover and understand the public portfolio REST and MCP contracts. It never requires credentials.",
+      },
+    );
+    const overview = metadata("get_api_overview");
+    server.registerTool(
+      overview.name,
+      {
+        annotations: READ_ONLY_TOOL_ANNOTATIONS,
+        description: overview.description,
+        inputSchema: emptyInputSchema,
+        outputSchema: markdownOutputSchema,
+        title: overview.title,
+      },
+      async () => success({ markdown: getDeveloperGuideMarkdown(siteUrl) }),
+    );
 
-      const auth = metadata("get_authentication_guide");
-      server.registerTool(
-        auth.name,
-        {
-          annotations: READ_ONLY_TOOL_ANNOTATIONS,
-          description: auth.description,
-          inputSchema: emptyInputSchema,
-          outputSchema: markdownOutputSchema,
-          title: auth.title,
-        },
-        async () => success({ markdown: getAuthenticationGuideMarkdown(siteUrl) }),
-      );
+    const auth = metadata("get_authentication_guide");
+    server.registerTool(
+      auth.name,
+      {
+        annotations: READ_ONLY_TOOL_ANNOTATIONS,
+        description: auth.description,
+        inputSchema: emptyInputSchema,
+        outputSchema: markdownOutputSchema,
+        title: auth.title,
+      },
+      async () => success({ markdown: getAuthenticationGuideMarkdown(siteUrl) }),
+    );
 
-      const openApi = metadata("get_openapi_spec");
-      server.registerTool(
-        openApi.name,
-        {
-          annotations: READ_ONLY_TOOL_ANNOTATIONS,
-          description: openApi.description,
-          inputSchema: emptyInputSchema,
-          outputSchema: openApiOutputSchema,
-          title: openApi.title,
-        },
-        async () => success({ document: getOpenApiDocument(siteUrl) }),
-      );
-    },
-    {
-      instructions:
-        "Use this server to discover and understand the public portfolio REST and MCP contracts. It never requires credentials.",
-      serverInfo: { name: DOCS_MCP_SERVER_NAME, version: PUBLIC_API_VERSION },
-    },
-  );
+    const openApi = metadata("get_openapi_spec");
+    server.registerTool(
+      openApi.name,
+      {
+        annotations: READ_ONLY_TOOL_ANNOTATIONS,
+        description: openApi.description,
+        inputSchema: emptyInputSchema,
+        outputSchema: openApiOutputSchema,
+        title: openApi.title,
+      },
+      async () => success({ document: getOpenApiDocument(siteUrl) }),
+    );
+    return server;
+  }).fetch;
 }

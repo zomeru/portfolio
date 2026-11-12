@@ -1,4 +1,4 @@
-import "server-only";
+import "@tanstack/react-start/server-only";
 import type { PublicPortfolioSnapshot } from "@portfolio/api/public-portfolio";
 
 import type { SearchItem } from "@/features/search/types/search";
