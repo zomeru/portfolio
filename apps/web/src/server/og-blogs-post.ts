@@ -8,13 +8,14 @@ import { createPortfolioOgImage } from "@/lib/og-image";
 export async function image(locale: Locale, slug: string) {
   const postTranslations = await getTranslations({ locale, namespace: "Metadata.og" });
   const post = await getPublicBlogPost(slug);
+  if (!post) return new Response(null, { status: 404 });
 
   return createPortfolioOgImage(locale, {
     index: "03",
     eyebrow: postTranslations("blogArticle"),
-    title: post?.title ?? postTranslations("blogFallbackTitle"),
-    description: post?.description ?? postTranslations("blogFallbackDescription"),
-    ...(post?.date
+    title: post.title,
+    description: post.description,
+    ...(post.date
       ? {
           footer: new Intl.DateTimeFormat(locale, {
             dateStyle: "long",

@@ -29,8 +29,12 @@ export const Route = createFileRoute("/{-$locale}/blogs/")({
   },
   loaderDeps: ({ search }) => ({ page: search.page ?? 1 }),
   loader: ({ deps }) => getBlogList({ data: deps.page }),
-  head: (input) =>
-    translatedHead(input, "blogs", "/blogs", { imagePath: "/blogs/opengraph-image" }),
+  head: (input) => {
+    const page = input.loaderData?.currentPage ?? 1;
+    return translatedHead(input, "blogs", page > 1 ? pageHref(page) : "/blogs", {
+      imagePath: "/blogs/opengraph-image",
+    });
+  },
   component: BlogsPage,
 });
 

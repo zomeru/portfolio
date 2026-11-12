@@ -10,7 +10,7 @@ import {
 } from "../services/public-portfolio/service";
 import type { ApiEnv } from "../types/hono";
 
-const PUBLIC_CACHE_CONTROL = "public, max-age=60, s-maxage=300, stale-while-revalidate=3600";
+const PUBLIC_CACHE_CONTROL = "public, max-age=60";
 const blogQuerySchema = z
   .object({
     limit: z.coerce.number().int().min(1).max(50).default(10),
@@ -46,7 +46,12 @@ export function createPublicApiRoutes(dependencies: PublicApiDependencies) {
     )
     .use("*", async (c, next) => {
       await next();
-      c.header("Cache-Control", PUBLIC_CACHE_CONTROL);
+      c.header(
+        "Cache-Control",
+        c.res.status === 200 && !c.req.header("Authorization")
+          ? PUBLIC_CACHE_CONTROL
+          : "private, no-store",
+      );
     })
     .get("/", (c) => c.json(getPublicApiIndex(dependencies.siteUrl)))
     .get("/profile", async (c) => {

@@ -143,8 +143,7 @@ function errorOrigin(stack: string | undefined) {
       !frame.includes("node:internal") &&
       !frame.includes("node_modules") &&
       !frame.includes("processTicksAndRejections") &&
-      !frame.includes("Promise.all") &&
-      !frame.includes(".next/"),
+      !frame.includes("Promise.all"),
   );
 }
 

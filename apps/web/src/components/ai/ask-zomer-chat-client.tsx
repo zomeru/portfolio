@@ -1,5 +1,3 @@
-"use client";
-
 import { ClientOnly } from "@tanstack/react-router";
 import { lazy, Suspense } from "react";
 import { useTranslations } from "use-intl";

@@ -1,5 +1,3 @@
-"use client";
-
 import type { GithubCommitPage, GithubContributionCalendar } from "@portfolio/api/types";
 import { ArrowUpRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";

@@ -27,7 +27,14 @@ const discoveryLinks = [
   ["/llms.txt", "alternate", "text/plain"],
 ] as const;
 
-export function applyResponseHeaders(headers: Headers, path: string) {
+export function applyResponseHeaders(
+  headers: Headers,
+  url: URL,
+  request: Request,
+  status: number,
+  siteUrl: string | undefined,
+) {
+  const path = url.pathname;
   headers.set("Content-Security-Policy", policy);
   headers.set("Cross-Origin-Opener-Policy", "same-origin");
   headers.set("Permissions-Policy", "camera=(), geolocation=(), microphone=()");
@@ -35,14 +42,30 @@ export function applyResponseHeaders(headers: Headers, path: string) {
   headers.set("X-Content-Type-Options", "nosniff");
   headers.set("X-Frame-Options", "DENY");
 
-  if (path === "/admin" || path.startsWith("/admin/")) {
-    headers.set("Cache-Control", "private, no-store, max-age=0");
-    headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
-  } else if (headers.get("Content-Type")?.includes("text/html")) {
+  const privateRoute =
+    /^\/admin(?:\/|$)/.test(path) ||
+    /^\/api\/(?:admin|ai|blog|notifications|mcp)(?:\/|$)/.test(path) ||
+    /\/blogs\/unsubscribe\/?$/.test(path) ||
+    (/\/ask\/?$/.test(path) && url.searchParams.has("q"));
+  const html = headers.get("Content-Type")?.includes("text/html");
+  if (
+    privateRoute ||
+    (request.method !== "GET" && request.method !== "HEAD") ||
+    request.headers.has("Authorization") ||
+    headers.has("Set-Cookie") ||
+    status >= 400
+  ) {
+    headers.set("Cache-Control", "private, no-store");
+  } else if (html && !headers.has("Cache-Control")) {
     headers.set("Cache-Control", "private, no-cache");
+  }
+  if (privateRoute || siteUrl !== "https://zomeru.dev") {
+    headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+  }
+  if (html) {
     headers.append("Vary", "Cookie, Accept-Language, CF-IPCountry");
   }
-  if (path === "/" && headers.get("Content-Type")?.includes("text/html")) {
+  if (path === "/" && html) {
     const siteUrl = getSiteUrl();
     headers.append(
       "Link",

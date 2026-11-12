@@ -1,0 +1,11 @@
+export { default as Assistant } from "./assistant.json";
+export { default as Blogs } from "./blogs.json";
+export { default as Common } from "./common.json";
+export { default as Contact } from "./contact.json";
+export { default as Developers } from "./developers.json";
+export { default as Errors } from "./errors.json";
+export { default as Experience } from "./experience.json";
+export { default as Github } from "./github.json";
+export { default as Home } from "./home.json";
+export { default as Metadata } from "./metadata.json";
+export { default as Projects } from "./projects.json";

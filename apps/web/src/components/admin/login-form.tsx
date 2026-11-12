@@ -1,5 +1,3 @@
-"use client";
-
 import type { AdminCapability } from "@portfolio/api/types";
 
 import { useAdminActionState } from "@/components/admin/use-admin-action";

@@ -2,18 +2,25 @@ import { createFileRoute, Outlet } from "@tanstack/react-router";
 
 import { SiteShell } from "@/components/layout/site-shell";
 import { getMessages } from "@/i18n/messages";
-
-import { Route as Root } from "../__root";
+import { getSiteData } from "@/lib/site.functions";
 
 export const Route = createFileRoute("/admin")({
-  loader: () => getMessages("en"),
+  loader: async () => {
+    const [messages, site] = await Promise.all([
+      getMessages("en"),
+      getSiteData().catch(() => ({ profile: null, techStack: [] })),
+    ]);
+    return { messages, site };
+  },
+  staleTime: 60_000,
   head: () => ({ meta: [{ name: "robots", content: "noindex, nofollow, noarchive" }] }),
   component: AdminLayout,
 });
 
 function AdminLayout() {
+  const { messages, site } = Route.useLoaderData();
   return (
-    <SiteShell admin {...Root.useLoaderData()} locale="en" messages={Route.useLoaderData()}>
+    <SiteShell admin {...site} locale="en" messages={messages}>
       <Outlet />
     </SiteShell>
   );

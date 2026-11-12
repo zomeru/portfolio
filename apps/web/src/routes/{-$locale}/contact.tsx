@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, getRouteApi } from "@tanstack/react-router";
 import { ArrowUpRight } from "lucide-react";
 import { useTranslations } from "use-intl";
 
@@ -8,7 +8,7 @@ import { PageHeader } from "@/components/portfolio/page-header";
 import { translatedHead } from "@/lib/localized-head";
 import { getProfileSocials } from "@/lib/sanity/profile";
 
-import { Route as Root } from "../__root";
+const publicLayout = getRouteApi("/{-$locale}");
 
 export const Route = createFileRoute("/{-$locale}/contact")({
   head: (input) =>
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/{-$locale}/contact")({
 });
 
 function ContactPage() {
-  const { profile } = Root.useLoaderData();
+  const { profile } = publicLayout.useLoaderData();
   const t = useTranslations("Contact");
   const tCommon = useTranslations("Common");
   const elsewhere = (profile ? getProfileSocials(profile) : []).filter((p) => p.name !== "GitHub");

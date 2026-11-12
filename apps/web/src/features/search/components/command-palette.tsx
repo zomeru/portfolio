@@ -1,5 +1,3 @@
-"use client";
-
 import "./command-palette.css";
 import {
   Bot,

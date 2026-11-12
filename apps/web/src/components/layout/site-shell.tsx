@@ -10,7 +10,7 @@ import type { getMessages } from "@/i18n/messages";
 import { localizedPath, type Locale } from "@/i18n/routing";
 import type { getSiteData } from "@/lib/site.functions";
 
-type SiteShellProps = Awaited<ReturnType<typeof getSiteData>> & {
+type SiteShellProps = Pick<Awaited<ReturnType<typeof getSiteData>>, "profile" | "techStack"> & {
   children: ReactNode;
   admin?: boolean;
   locale: Locale;

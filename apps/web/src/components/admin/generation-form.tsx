@@ -1,5 +1,3 @@
-"use client";
-
 import { useAdminActionState } from "@/components/admin/use-admin-action";
 import { Link } from "@/i18n/navigation";
 

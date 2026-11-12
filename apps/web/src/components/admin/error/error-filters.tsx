@@ -1,5 +1,3 @@
-"use client";
-
 import type { AdminErrorSeverity, AdminErrorStatus } from "@portfolio/api/types";
 import { useState } from "react";
 

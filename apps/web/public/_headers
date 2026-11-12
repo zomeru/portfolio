@@ -1,14 +1,43 @@
+/*
+  X-Content-Type-Options: nosniff
+
 /_build/*
   Cache-Control: public, max-age=31536000, immutable
-  X-Content-Type-Options: nosniff
 
 /sw.js
   Content-Type: application/javascript; charset=utf-8
   Cache-Control: no-cache, no-store, must-revalidate
   Content-Security-Policy: default-src 'self'; script-src 'self'
-  X-Content-Type-Options: nosniff
 
 /manifest.json
   Content-Type: application/manifest+json; charset=utf-8
   Cache-Control: no-cache
-  X-Content-Type-Options: nosniff
+
+/auth.md
+  Content-Type: text/markdown; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/developers.md
+  Content-Type: text/markdown; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/developers/llms.txt
+  Content-Type: text/plain; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
+  Access-Control-Allow-Origin: *
+
+/openapi.json
+  Content-Type: application/vnd.oai.openapi+json;version=3.2
+  Access-Control-Allow-Origin: *
+
+/.well-known/agent-skills/index.json
+  Access-Control-Allow-Origin: *
+
+/.well-known/mcp/*.json
+  Access-Control-Allow-Origin: *
+
+https://preview.zomeru.dev/*
+  X-Robots-Tag: noindex, nofollow, noarchive

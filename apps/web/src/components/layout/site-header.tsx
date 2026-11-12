@@ -8,7 +8,7 @@ import { SocialLinks } from "@/components/portfolio/social-links";
 import { TechStack } from "@/components/portfolio/tech-stack";
 import { getProfileSocials } from "@/lib/sanity/profile";
 
-const AVATAR_SIZE = 512;
+const AVATAR_SIZE = 96;
 
 type SiteHeaderProps = {
   profile: PublicProfile | null;
