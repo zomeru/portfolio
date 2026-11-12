@@ -1,11 +1,16 @@
-import { notFound } from "next/navigation";
+import { createTranslator, type NamespaceKeys, type NestedKeyOf } from "use-intl/core";
 
-import { isLocale, type Locale } from "./routing";
+import { getMessages } from "./messages";
+import type { Locale } from "./routing";
 
-export type LocaleParams = Promise<{ locale: string }>;
+type Messages = Awaited<ReturnType<typeof getMessages>>;
 
-export async function resolveLocale(params: LocaleParams): Promise<Locale> {
-  const { locale } = await params;
-  if (!isLocale(locale)) notFound();
-  return locale;
+export async function getTranslations<N extends NamespaceKeys<Messages, NestedKeyOf<Messages>>>({
+  locale,
+  namespace,
+}: {
+  locale: Locale;
+  namespace: N;
+}) {
+  return createTranslator({ locale, messages: await getMessages(locale), namespace });
 }

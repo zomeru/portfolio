@@ -18,11 +18,11 @@ coverage
 # Turbo
 .turbo
 
-# Vercel
-.vercel
+# Cloudflare local files
+.dev.vars*
+.wrangler/
 
 # Build Outputs
-.next/
 out/
 build
 dist
@@ -44,7 +44,6 @@ generated/
 .serena
 prompts/
 ignored-docs
-apps/web/public/offline-ai-worker.js
 
 graphify-out/cost.json 
 graphify-out/cache/

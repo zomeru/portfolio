@@ -1,5 +1,3 @@
-import "server-only";
-
 export {
   captureError,
   errorLogMetadata,
@@ -7,4 +5,5 @@ export {
   logError,
   logWarning,
   serializeError,
+  withLogBackgroundTasks,
 } from "./lib/log";

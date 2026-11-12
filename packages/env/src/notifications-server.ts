@@ -33,7 +33,7 @@ const notificationsServerSchema = z
       z.email().optional(),
     ),
     EMAIL_CONFIRMATION_TTL_HOURS: z.coerce.number().int().min(1).max(168).default(24),
-    NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY: optionalSecret,
+    WEB_PUSH_VAPID_PUBLIC_KEY: optionalSecret,
     WEB_PUSH_VAPID_PRIVATE_KEY: optionalSecret,
     WEB_PUSH_SUBJECT: z.preprocess(
       (value) => (typeof value === "string" && value.trim() === "" ? undefined : value),
@@ -89,7 +89,7 @@ const notificationsServerSchema = z
     }
 
     const pushValues = [
-      environment.NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY,
+      environment.WEB_PUSH_VAPID_PUBLIC_KEY,
       environment.WEB_PUSH_VAPID_PRIVATE_KEY,
       environment.WEB_PUSH_SUBJECT,
     ];
@@ -97,8 +97,8 @@ const notificationsServerSchema = z
       context.addIssue({
         code: "custom",
         message:
-          "NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY, WEB_PUSH_VAPID_PRIVATE_KEY, and WEB_PUSH_SUBJECT must be configured together.",
-        path: ["NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY"],
+          "WEB_PUSH_VAPID_PUBLIC_KEY, WEB_PUSH_VAPID_PRIVATE_KEY, and WEB_PUSH_SUBJECT must be configured together.",
+        path: ["WEB_PUSH_VAPID_PUBLIC_KEY"],
       });
     }
 
@@ -122,7 +122,7 @@ export function getNotificationsServerEnv(source: NodeJS.ProcessEnv = process.en
     emailFromName: environment.EMAIL_FROM_NAME,
     emailReplyTo: environment.EMAIL_REPLY_TO,
     emailConfirmationTtlHours: environment.EMAIL_CONFIRMATION_TTL_HOURS,
-    webPushVapidPublicKey: environment.NEXT_PUBLIC_WEB_PUSH_VAPID_PUBLIC_KEY,
+    webPushVapidPublicKey: environment.WEB_PUSH_VAPID_PUBLIC_KEY,
     webPushVapidPrivateKey: environment.WEB_PUSH_VAPID_PRIVATE_KEY,
     webPushSubject: environment.WEB_PUSH_SUBJECT,
     notificationTokenSecret: environment.NOTIFICATION_TOKEN_SECRET,
@@ -132,3 +132,23 @@ export function getNotificationsServerEnv(source: NodeJS.ProcessEnv = process.en
 }
 
 export type NotificationsServerEnv = ReturnType<typeof getNotificationsServerEnv>;
+
+const webhookRelaySecret = z.string().min(32);
+
+export function getWebhookRelayEnv(source: NodeJS.ProcessEnv = process.env) {
+  return parseEnv(
+    z.object({
+      WEBHOOK_RELAY_URL: z.url({ protocol: /^https$/ }).refine((value) => {
+        const url = new URL(value);
+        return !url.username && !url.password && !url.search && !url.hash;
+      }),
+      WEBHOOK_RELAY_SECRET: webhookRelaySecret,
+    }),
+    source,
+  );
+}
+
+export function getWebhookRelaySecret(source: NodeJS.ProcessEnv = process.env) {
+  return parseEnv(z.object({ WEBHOOK_RELAY_SECRET: webhookRelaySecret }), source)
+    .WEBHOOK_RELAY_SECRET;
+}

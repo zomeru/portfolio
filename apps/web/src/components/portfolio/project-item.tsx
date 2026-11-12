@@ -1,6 +1,6 @@
 import type { PublicProject } from "@portfolio/api/public-portfolio";
 import { ArrowUpRight } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "use-intl";
 
 import { Link } from "@/i18n/navigation";
 
@@ -9,8 +9,8 @@ type ProjectItemProps = {
   index: number;
 };
 
-export async function ProjectItem({ project, index }: ProjectItemProps) {
-  const t = await getTranslations("Projects");
+export function ProjectItem({ project, index }: ProjectItemProps) {
+  const t = useTranslations("Projects");
   const number = String(index).padStart(2, "0");
 
   return (

@@ -1,6 +1,6 @@
 import type { StoredBlogPublishedEvent } from "@portfolio/database";
 import { getNotificationsServerEnv } from "@portfolio/env/notifications-server";
-import webPush, { WebPushError } from "web-push";
+import { generateRequestDetails } from "web-push";
 
 import { NotificationDeliveryError } from "./errors";
 
@@ -74,8 +74,9 @@ async function sendPushNotification(options: {
       retryable: false,
     });
   }
+  let response: Response;
   try {
-    const response = await webPush.sendNotification(
+    const request = generateRequestDetails(
       {
         endpoint: options.subscription.endpoint,
         keys: { p256dh: options.subscription.p256dh, auth: options.subscription.auth },
@@ -85,29 +86,34 @@ async function sendPushNotification(options: {
         TTL: 86_400,
         urgency: "normal",
         topic: options.topic,
-        timeout: 10_000,
         vapidDetails: { subject, publicKey, privateKey },
       },
     );
-    return response.statusCode;
+    response = await fetch(request.endpoint, {
+      method: request.method,
+      headers: request.headers,
+      body: new Uint8Array(request.body),
+      redirect: "manual",
+      signal: AbortSignal.timeout(10_000),
+    });
   } catch (error) {
-    if (error instanceof WebPushError) {
-      const stale = error.statusCode === 404 || error.statusCode === 410;
-      throw new NotificationDeliveryError("The push service rejected the subscription.", {
-        cause: error,
-        code: stale ? "PUSH_SUBSCRIPTION_STALE" : "PUSH_REJECTED",
-        httpStatus: error.statusCode,
-        retryable:
-          !stale &&
-          (error.statusCode === 408 || error.statusCode === 429 || error.statusCode >= 500),
-        staleDestination: stale,
-      });
-    }
     throw new NotificationDeliveryError("The push service request failed.", {
       cause: error,
       code: "PUSH_NETWORK_ERROR",
     });
   }
+  await response.body?.cancel();
+  if (!response.ok) {
+    const status = response.status;
+    const stale = status === 404 || status === 410;
+    throw new NotificationDeliveryError("The push service rejected the subscription.", {
+      code: stale ? "PUSH_SUBSCRIPTION_STALE" : "PUSH_REJECTED",
+      httpStatus: status,
+      retryable: !stale && (status === 408 || status === 429 || status >= 500),
+      staleDestination: stale,
+    });
+  }
+  return response.status;
 }
 
 export function sendBlogPublishedPush(options: {

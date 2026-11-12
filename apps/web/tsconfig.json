@@ -1,16 +1,12 @@
 {
-  "extends": "@portfolio/typescript-config/nextjs.json",
+  "extends": "@portfolio/typescript-config/web.json",
   "compilerOptions": {
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
     "strictNullChecks": true,
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "types": ["vite/client", "node"]
   },
-  "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", "next.config.js", ".next/types/**/*.ts"],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }

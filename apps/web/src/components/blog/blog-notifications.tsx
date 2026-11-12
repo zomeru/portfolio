@@ -1,7 +1,7 @@
 "use client";
 
-import { useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
+import { useTranslations } from "use-intl";
 
 import { client } from "@/lib/api";
 import { reportClientError } from "@/lib/client-log";

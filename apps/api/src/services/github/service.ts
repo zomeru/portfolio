@@ -151,12 +151,13 @@ async function githubFetch(url: string, init?: RequestInit) {
   headers.set("User-Agent", "portfolio-github-contributions");
   headers.set("X-GitHub-Api-Version", GITHUB_API_VERSION);
 
+  const signal = AbortSignal.timeout(15_000);
+  const request = { ...init, headers, signal };
   let response: Response;
   try {
-    response = await fetch(url, {
-      ...init,
-      headers,
-      signal: AbortSignal.timeout(15_000),
+    response = await fetch(url, request).catch((cause: unknown) => {
+      if (signal.aborted) throw cause;
+      return fetch(url, request);
     });
   } catch (cause) {
     throw new ApiError("GitHub is temporarily unavailable.", {
@@ -168,6 +169,8 @@ async function githubFetch(url: string, init?: RequestInit) {
 
   if (response.ok) return response;
 
+  const cause = githubHttpCause(response);
+  await response.body?.cancel().catch(() => {});
   const isRateLimited =
     response.status === 429 ||
     (response.status === 403 &&
@@ -176,7 +179,7 @@ async function githubFetch(url: string, init?: RequestInit) {
 
   if (isRateLimited) {
     throw new ApiError("GitHub's rate limit was reached. Please try again later.", {
-      cause: githubHttpCause(response),
+      cause,
       code: "GITHUB_RATE_LIMITED",
       status: 429,
     });
@@ -188,7 +191,7 @@ async function githubFetch(url: string, init?: RequestInit) {
       ? "GitHub activity is not configured correctly."
       : "GitHub is temporarily unavailable.",
     {
-      cause: githubHttpCause(response),
+      cause,
       code: isConfigurationError ? "GITHUB_CONFIGURATION_ERROR" : "GITHUB_REQUEST_FAILED",
       status: isConfigurationError ? 503 : 502,
     },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations } from "use-intl";
 
 import { LanguagePicker } from "@/components/layout/language-picker";
 import { ThemeToggle } from "@/components/theme/theme-toggle";

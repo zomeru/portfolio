@@ -1,0 +1,14 @@
+/_build/*
+  Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
+
+/sw.js
+  Content-Type: application/javascript; charset=utf-8
+  Cache-Control: no-cache, no-store, must-revalidate
+  Content-Security-Policy: default-src 'self'; script-src 'self'
+  X-Content-Type-Options: nosniff
+
+/manifest.json
+  Content-Type: application/manifest+json; charset=utf-8
+  Cache-Control: no-cache
+  X-Content-Type-Options: nosniff

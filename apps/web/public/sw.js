@@ -1,4 +1,4 @@
-const CACHE_VERSION = "zomer-pwa-v3";
+const CACHE_VERSION = "zomer-pwa-v4";
 const OFFLINE_URL = "/offline.html";
 const CORE_ASSETS = [
   OFFLINE_URL,
@@ -32,7 +32,6 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (
     url.origin !== self.location.origin ||
-    url.pathname.startsWith("/_next/") ||
     url.pathname.startsWith("/api/") ||
     url.pathname.startsWith("/admin")
   ) {

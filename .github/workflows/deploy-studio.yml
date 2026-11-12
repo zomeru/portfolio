@@ -22,17 +22,15 @@ jobs:
     runs-on: ubuntu-latest
     environment: ${{ github.ref_name == 'main' && 'Production' || 'Preview' }}
     env:
-      SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
-      SANITY_AUTH_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
-      NEXT_PUBLIC_SANITY_APP_ID: ${{ vars.NEXT_PUBLIC_SANITY_APP_ID }}
-      NEXT_PUBLIC_SANITY_DATASET: ${{ github.ref_name == 'main' && 'production' || 'development' }}
-      NEXT_PUBLIC_SANITY_PROJECT_ID: ${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID }}
+      SANITY_APP_ID: ${{ vars.SANITY_APP_ID }}
+      SANITY_DATASET: ${{ github.ref_name == 'main' && 'production' || 'development' }}
+      SANITY_PROJECT_ID: ${{ vars.SANITY_PROJECT_ID }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7.0.1
 
       - name: Setup pnpm (includes Node.js + cache)
-        uses: pnpm/setup@v1
+        uses: pnpm/setup@v3.1.2
         with:
           cache: true
           cache-dependency-path: pnpm-lock.yaml
@@ -48,4 +46,8 @@ jobs:
         run: pnpm --filter @portfolio/studio build
 
       - name: Deploy
-        run: pnpm --filter @portfolio/studio run deploy
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        run: |
+          : "${SANITY_AUTH_TOKEN:?Set the SANITY_AUTH_TOKEN GitHub Actions secret to a Sanity deploy token.}"
+          pnpm --filter @portfolio/studio run deploy

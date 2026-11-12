@@ -3,9 +3,6 @@
   "ui": "tui",
   "globalDependencies": ["pnpm-workspace.yaml"],
   "tasks": {
-    "analyze": {
-      "cache": false
-    },
     "ai:eval": {
       "cache": false,
       "env": [
@@ -35,7 +32,9 @@
         "AI_GROQ_CHAT_MODEL",
         "AI_EMBEDDING_MODEL",
         "SANITY_API_TOKEN",
-        "NEXT_PUBLIC_SANITY_DATASET"
+        "SANITY_DATASET",
+        "SANITY_PROJECT_ID",
+        "SITE_URL"
       ]
     },
     "ai:index:prod": {
@@ -52,7 +51,9 @@
         "AI_GROQ_CHAT_MODEL",
         "AI_EMBEDDING_MODEL",
         "SANITY_API_TOKEN",
-        "NEXT_PUBLIC_SANITY_DATASET"
+        "SANITY_DATASET",
+        "SANITY_PROJECT_ID",
+        "SITE_URL"
       ]
     },
     "build": {
@@ -71,14 +72,7 @@
     },
     "dev": {
       "cache": false,
-      "env": [
-        "PORTLESS",
-        "PORTLESS_APP_PORT",
-        "PORTLESS_HTTPS",
-        "PORTLESS_LAN",
-        "PORTLESS_PORT",
-        "PORTLESS_SYNC_HOSTS"
-      ],
+      "env": ["CLOUDFLARE_ENV"],
       "persistent": true
     },
     "db:generate": {
@@ -115,11 +109,18 @@
     },
     "seed": {
       "cache": false,
-      "env": ["SANITY_API_TOKEN", "NEXT_PUBLIC_SANITY_DATASET"]
+      "env": ["SANITY_API_TOKEN", "SANITY_DATASET", "SANITY_PROJECT_ID", "SITE_URL"]
     },
     "deploy": {
       "cache": false,
-      "env": ["SANITY_API_TOKEN", "NEXT_PUBLIC_SANITY_DATASET"]
+      "env": [
+        "SANITY_API_TOKEN",
+        "SANITY_AUTH_TOKEN",
+        "SANITY_APP_ID",
+        "SANITY_DATASET",
+        "SANITY_PROJECT_ID",
+        "SITE_URL"
+      ]
     }
   }
 }

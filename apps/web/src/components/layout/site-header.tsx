@@ -1,6 +1,6 @@
 import type { PublicProfile, PublicTechStackGroup } from "@portfolio/api/public-portfolio";
 import { ArrowUpRight } from "lucide-react";
-import { getLocale, getTranslations } from "next-intl/server";
+import { useLocale, useTranslations } from "use-intl";
 
 import { MobileHeaderControls } from "@/components/layout/mobile-header-controls";
 import { PublicProfileImage } from "@/components/portfolio/public-profile-image";
@@ -17,13 +17,14 @@ type SiteHeaderProps = {
   techStack: readonly PublicTechStackGroup[];
 };
 
-export async function SiteHeader({
+export function SiteHeader({
   profile,
   searchEndpoint,
   showLanguagePicker = true,
   techStack,
 }: SiteHeaderProps) {
-  const [locale, t] = await Promise.all([getLocale(), getTranslations("Common")]);
+  const locale = useLocale();
+  const t = useTranslations("Common");
   const socials = profile ? getProfileSocials(profile) : [];
   const resumeUrl = profile?.resumePdfUrl ?? "/assets/Zomer_Gregorio_Resume.pdf";
 

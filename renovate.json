@@ -8,20 +8,19 @@
       "groupName": "typescript toolchain"
     },
     {
-      "matchPackageNames": ["@typescript/typescript6"],
-      "allowedVersions": ">=6 <7",
-      "groupName": "typescript toolchain"
-    },
-    {
       "matchPackageNames": [
-        "next",
+        "@tanstack/react-start",
+        "@tanstack/react-router",
+        "@tanstack/router-cli",
+        "@cloudflare/vite-plugin",
+        "vite",
+        "wrangler",
         "react",
         "react-dom",
         "@types/react",
-        "@types/react-dom",
-        "babel-plugin-react-compiler"
+        "@types/react-dom"
       ],
-      "groupName": "nextjs"
+      "groupName": "tanstack start and workers"
     },
     {
       "matchPackageNames": ["sanity", "@sanity/vision", "styled-components"],

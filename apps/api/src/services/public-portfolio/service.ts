@@ -1,18 +1,11 @@
+import { AsyncLocalStorage } from "node:async_hooks";
+
 import { getSanityEnv } from "@portfolio/env/sanity";
 import { getSanityServerEnv } from "@portfolio/env/sanity-server";
 import { getSiteEnv } from "@portfolio/env/site";
 import { createClient, type SanityClient } from "@sanity/client";
 import { z } from "zod";
 
-import {
-  BLOG_POST_CACHE_TAG,
-  EXPERIENCE_CACHE_TAG,
-  PROFILE_CACHE_TAG,
-  PROJECT_CACHE_TAG,
-  TECH_STACK_CACHE_TAG,
-  blogPostCacheTag,
-  sanitySlugTag,
-} from "./cache-tags";
 import {
   portableTextToDetailSections,
   portableTextToParagraphs,
@@ -200,78 +193,61 @@ function getReadClient() {
     token: server.token,
     timeout: SANITY_REQUEST_TIMEOUT_MS,
     maxRetries: 2,
-    // Next.js owns the durable cache. Reading from the Content Lake API after invalidation avoids
-    // repopulating it with a briefly stale CDN response immediately after a publish webhook.
+    // Read directly from the Content Lake so the next request sees published changes.
     useCdn: false,
   });
 
   return sanityClient;
 }
 
-type NextSanityFetchOptions = {
-  cache: "force-cache";
-  next: {
-    revalidate: false;
-    tags: string[];
-  };
-};
+const publishedReads = new AsyncLocalStorage<Map<string, Promise<unknown>>>();
 
-function fetchWithNextCache(query: string, params: Record<string, unknown>, tags: string[]) {
-  // @sanity/client supports Next.js fetch options at runtime. This package deliberately omits DOM
-  // types, so keep the framework-specific RequestInit extension isolated at this boundary.
-  const fetch = getReadClient().fetch.bind(getReadClient()) as (
-    query: string,
-    params: Record<string, unknown>,
-    options: NextSanityFetchOptions,
-  ) => Promise<unknown>;
+export function withPublicPortfolioRequest<T>(handle: () => T): T {
+  return publishedReads.run(new Map(), handle);
+}
 
-  return fetch(query, params, {
-    // Next.js 16 does not cache fetches by default. Make the Data Cache opt-in explicit rather
-    // than relying only on the equivalent indefinite revalidation setting.
-    cache: "force-cache",
-    next: {
-      // Published CMS content is invalidated by the signed Sanity webhook. Avoid tying every
-      // static route to a timer when the underlying content has not changed.
-      revalidate: false,
-      tags,
-    },
-  });
+function fetchPublished(query: string, params: Record<string, unknown> = {}) {
+  const reads = publishedReads.getStore();
+  if (!reads) return getReadClient().fetch<unknown>(query, params);
+
+  const key = JSON.stringify([query, params]);
+  const previous = reads.get(key);
+  if (previous) return previous;
+  const pending = getReadClient().fetch<unknown>(query, params);
+  reads.set(key, pending);
+  return pending;
 }
 
 function fetchBlogPost(slug: string) {
-  return fetchWithNextCache(PUBLIC_BLOG_POST_QUERY, { slug }, [blogPostCacheTag(slug)]);
+  return fetchPublished(PUBLIC_BLOG_POST_QUERY, { slug });
 }
 
 function fetchBlogPosts() {
-  return fetchWithNextCache(PUBLIC_BLOG_POST_LIST_QUERY, {}, [BLOG_POST_CACHE_TAG]);
+  return fetchPublished(PUBLIC_BLOG_POST_LIST_QUERY);
 }
 
 function fetchExperience(slug: string) {
-  return fetchWithNextCache(PUBLIC_EXPERIENCE_QUERY, { slug }, [
-    sanitySlugTag(EXPERIENCE_CACHE_TAG, slug),
-  ]);
+  return fetchPublished(PUBLIC_EXPERIENCE_QUERY, { slug });
 }
 
 function fetchExperienceList() {
-  return fetchWithNextCache(PUBLIC_EXPERIENCE_LIST_QUERY, {}, [EXPERIENCE_CACHE_TAG]);
+  return fetchPublished(PUBLIC_EXPERIENCE_LIST_QUERY);
 }
 
 function fetchProfile() {
-  return fetchWithNextCache(PUBLIC_PROFILE_QUERY, {}, [PROFILE_CACHE_TAG]);
+  return fetchPublished(PUBLIC_PROFILE_QUERY);
 }
 
 function fetchProject(slug: string) {
-  return fetchWithNextCache(PUBLIC_PROJECT_QUERY, { slug }, [
-    sanitySlugTag(PROJECT_CACHE_TAG, slug),
-  ]);
+  return fetchPublished(PUBLIC_PROJECT_QUERY, { slug });
 }
 
 function fetchProjectList() {
-  return fetchWithNextCache(PUBLIC_PROJECT_LIST_QUERY, {}, [PROJECT_CACHE_TAG]);
+  return fetchPublished(PUBLIC_PROJECT_LIST_QUERY);
 }
 
 function fetchTechStack() {
-  return fetchWithNextCache(PUBLIC_TECH_STACK_QUERY, {}, [TECH_STACK_CACHE_TAG]);
+  return fetchPublished(PUBLIC_TECH_STACK_QUERY);
 }
 
 function cleanString(value: string | null | undefined) {

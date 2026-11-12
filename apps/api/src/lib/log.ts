@@ -21,6 +21,14 @@ type SerializedError = {
 };
 
 const logContext = new AsyncLocalStorage<LogMetadata>();
+const logBackgroundTasks = new AsyncLocalStorage<(task: Promise<void>) => void>();
+
+export function withLogBackgroundTasks<T>(
+  waitUntil: (task: Promise<void>) => void,
+  callback: () => T,
+) {
+  return logBackgroundTasks.run(waitUntil, callback);
+}
 const MAX_ERROR_MESSAGE_LENGTH = 1_000;
 const MAX_PROVIDER_MESSAGE_LENGTH = 1_000;
 const MAX_ERROR_CAUSE_DEPTH = 3;
@@ -238,7 +246,8 @@ export function logError(
 ) {
   const { operation, ...context } = metadata;
   log("error", message, { ...context, ...errorLogMetadata(error, operation) });
-  void persistError(error, { ...context, operation, event: message });
+  const persistence = persistError(error, { ...context, operation, event: message });
+  logBackgroundTasks.getStore()?.(persistence);
 }
 
 export async function captureError(

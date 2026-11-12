@@ -1,5 +1,5 @@
 import type { PublicTechStackGroup } from "@portfolio/api/public-portfolio";
-import { getTranslations } from "next-intl/server";
+import { useTranslations } from "use-intl";
 
 const categoryKeys = {
   Frontend: "frontend",
@@ -8,8 +8,8 @@ const categoryKeys = {
   "Infrastructure / Tools": "infrastructure",
 } as const;
 
-export async function TechStack({ groups }: { groups: readonly PublicTechStackGroup[] }) {
-  const t = await getTranslations("Common.techGroups");
+export function TechStack({ groups }: { groups: readonly PublicTechStackGroup[] }) {
+  const t = useTranslations("Common.techGroups");
 
   return (
     <dl className="grid grid-cols-2 gap-x-6 gap-y-5">
