@@ -37,7 +37,7 @@
         // Fill in each optional integration's values alongside its matching secrets.
         "EMAIL_FROM": "Zomer Gregorio",
         "EMAIL_REPLY_TO": "hello@zomeru.dev",
-        "WEB_PUSH_VAPID_PUBLIC_KEY": "your-vapid-public-key",
+        "WEB_PUSH_VAPID_PUBLIC_KEY": "BNs9md7LmGcRqNoTegY8Ef_5zKxSvqeC3R04OoT79mOfwejV1bWBOhdVmrR6xiJU2N8g1-am55DrbPVoOf3aENE",
         "WEB_PUSH_SUBJECT": "mailto:hello@zomeru.dev",
         "WEBHOOK_RELAY_URL": "",
         "LANGFUSE_PUBLIC_KEY": "pk-lf-cef3d33a-eb8d-4e76-9695-194a1a83f330",
