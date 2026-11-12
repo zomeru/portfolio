@@ -36,7 +36,8 @@ build-time values.
 | -------------------------------------------- | ------------------------------------------------------------------------------------- |
 | `pnpm dev`                                   | Run the Worker at http://localhost:3000 with HMR                                      |
 | `pnpm dev:all`                               | Run the Worker and Sanity Studio                                                      |
-| `pnpm build`                                 | Build the Worker and static assets                                                    |
+| `pnpm build`                                 | Build and type-check the staging Worker                                               |
+| `pnpm run build:production`                  | Build and type-check the production Worker                                            |
 | `pnpm preview`                               | Serve the last Worker build locally with workerd                                      |
 | `pnpm cf:typegen`                            | Generate local Worker binding and runtime types                                       |
 | `pnpm check:all:build`                       | Run formatting, lint, boundaries, dependency checks, types, tests, and builds         |
@@ -100,6 +101,8 @@ pnpm exec wrangler secret bulk --env production /secure/path/production-secrets.
 
 For manual deployment, run `pnpm run deploy:staging` or `pnpm run deploy:production`. Verify the
 custom domain and the signed Sanity webhook at `/api/revalidate/sanity` for each environment.
+Run `pnpm run versions:upload` or `pnpm run versions:upload:production` to build and upload a Worker
+version for later deployment.
 Only production runs the blog cron at `0 22 * * TUE,THU,SAT` (6:00 a.m. Wednesday, Friday, and
 Sunday in Manila). Disable the old scheduler at cutover to avoid duplicate invocations.
 
