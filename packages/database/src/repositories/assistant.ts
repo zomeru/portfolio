@@ -18,6 +18,7 @@ import {
 export type QueryIntentValue = (typeof chatMessages.$inferInsert)["intent"];
 export type KnowledgeSourceTypeValue = (typeof knowledgeDocuments.$inferSelect)["sourceType"];
 export type IngestionTriggerValue = (typeof ingestionRuns.$inferInsert)["trigger"];
+export type IngestionRun = typeof ingestionRuns.$inferSelect;
 
 const EMBEDDING_DIMENSION = 2048;
 const EMBEDDING_DIMENSION_SQL = sql.raw(String(EMBEDDING_DIMENSION));
@@ -648,6 +649,6 @@ export async function readKnowledgeIndexStatus() {
   };
 }
 
-export function listRecentIngestionRuns(limit = 20) {
-  return db.select().from(ingestionRuns).orderBy(desc(ingestionRuns.startedAt)).limit(limit);
+export async function listRecentIngestionRuns(limit = 20): Promise<IngestionRun[]> {
+  return await db.select().from(ingestionRuns).orderBy(desc(ingestionRuns.startedAt)).limit(limit);
 }
