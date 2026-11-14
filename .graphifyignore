@@ -1,7 +1,5 @@
 node_modules
 .turbo
-.vercel
-.next/
 .output/
 out/
 build
