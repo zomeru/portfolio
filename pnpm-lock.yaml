@@ -162,6 +162,42 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@opentelemetry/api':
+      specifier: ~1.9.1
+      version: 1.9.1
+    '@types/node':
+      specifier: ^26.6.6
+      version: 26.6.6
+    '@types/react':
+      specifier: ^19.3.0
+      version: 19.3.0
+    '@types/react-dom':
+      specifier: ^19.3.0
+      version: 19.3.0
+    ai:
+      specifier: ^7.0.172
+      version: 7.0.172
+    hono:
+      specifier: ^4.13.18
+      version: 4.13.18
+    react:
+      specifier: 19.3.1
+      version: 19.3.1
+    react-dom:
+      specifier: 19.3.1
+      version: 19.3.1
+    tsx:
+      specifier: ^4.23.15
+      version: 4.23.15
+    typescript:
+      specifier: ^7.0.2
+      version: 7.0.2
+    zod:
+      specifier: ^4.6.7
+      version: 4.6.7
+
 overrides:
   brace-expansion@>=4 <5.0.12: 5.0.13
   dompurify@<3.4.17: 3.4.17
@@ -193,7 +229,7 @@ importers:
         specifier: ^21.2.4
         version: 21.2.4
       '@types/node':
-        specifier: ^26.6.6
+        specifier: 'catalog:'
         version: 26.6.6
       dotenv-cli:
         specifier: ^11.1.0
@@ -223,13 +259,13 @@ importers:
         specifier: ^15.3.3
         version: 15.3.3
       tsx:
-        specifier: ^4.23.15
+        specifier: 'catalog:'
         version: 4.23.15
       turbo:
         specifier: 2.11.11
         version: 2.11.11
       typescript:
-        specifier: ^7.0.2
+        specifier: 'catalog:'
         version: 7.0.2
 
   apps/api:
@@ -253,7 +289,7 @@ importers:
         specifier: ^3.1.0
         version: 3.1.0(ai@7.0.172(zod@4.6.7))(zod@4.6.7)
       '@opentelemetry/api':
-        specifier: ^1.9.1
+        specifier: 'catalog:'
         version: 1.9.1
       '@portabletext/toolkit':
         specifier: ^6.0.0
@@ -271,7 +307,7 @@ importers:
         specifier: ^8.16.0
         version: 8.16.0
       ai:
-        specifier: ^7.0.172
+        specifier: 'catalog:'
         version: 7.0.172(zod@4.6.7)
       disposable-email-domains-js:
         specifier: ^1.26.0
@@ -280,7 +316,7 @@ importers:
         specifier: ^6.23.0
         version: 6.23.0
       hono:
-        specifier: ^4.13.18
+        specifier: 'catalog:'
         version: 4.13.18
       nodemailer:
         specifier: ^10.5.0
@@ -289,26 +325,26 @@ importers:
         specifier: ^6.38.0
         version: 6.38.0
       tsx:
-        specifier: ^4.23.15
+        specifier: 'catalog:'
         version: 4.23.15
       web-push:
         specifier: ^4.0.0
         version: 4.0.0(supports-color@8.1.1)
       zod:
-        specifier: ^4.6.7
+        specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
       '@portfolio/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/node':
-        specifier: ^26.6.6
+        specifier: 'catalog:'
         version: 26.6.6
       '@types/web-push':
         specifier: ^3.6.4
         version: 3.6.4
       typescript:
-        specifier: ^7.0.2
+        specifier: 'catalog:'
         version: 7.0.2
 
   apps/studio:
@@ -326,10 +362,10 @@ importers:
         specifier: ^6.23.0
         version: 6.23.0(f5961f1f02371d54c3eeddef27e1f2c8)
       react:
-        specifier: 19.3.1
+        specifier: 'catalog:'
         version: 19.3.1
       react-dom:
-        specifier: 19.3.1
+        specifier: 'catalog:'
         version: 19.3.1(react@19.3.1)
       sanity:
         specifier: ^6.23.0
@@ -342,13 +378,13 @@ importers:
         specifier: workspace:*
         version: link:../../packages/typescript-config
       '@types/react':
-        specifier: ^19.3.0
+        specifier: 'catalog:'
         version: 19.3.0
       '@types/react-dom':
-        specifier: ^19.3.0
+        specifier: 'catalog:'
         version: 19.3.0(@types/react@19.3.0)
       typescript:
-        specifier: ^7.0.2
+        specifier: 'catalog:'
         version: 7.0.2
 
   apps/web:
@@ -375,7 +411,7 @@ importers:
         specifier: ^2.4.0
         version: 2.4.0
       '@opentelemetry/api':
-        specifier: ^1.9.1
+        specifier: 'catalog:'
         version: 1.9.1
       '@opentelemetry/context-async-hooks':
         specifier: ^3.1.1
@@ -402,13 +438,13 @@ importers:
         specifier: ^1.169.5
         version: 1.169.5(esbuild@0.28.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(rolldown@1.2.19)(supports-color@8.1.1)(vite@8.3.8(@types/node@26.6.6)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
       ai:
-        specifier: ^7.0.172
+        specifier: 'catalog:'
         version: 7.0.172(zod@4.6.7)
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
       hono:
-        specifier: ^4.13.18
+        specifier: 'catalog:'
         version: 4.13.18
       lucide-react:
         specifier: ^1.72.0
@@ -417,10 +453,10 @@ importers:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       react:
-        specifier: 19.3.1
+        specifier: 'catalog:'
         version: 19.3.1
       react-dom:
-        specifier: 19.3.1
+        specifier: 'catalog:'
         version: 19.3.1(react@19.3.1)
       react-markdown:
         specifier: ^10.1.0
@@ -456,7 +492,7 @@ importers:
         specifier: ^4.15.1
         version: 4.15.1(@types/react@19.3.0)(react@19.3.1)
       zod:
-        specifier: ^4.6.7
+        specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
       '@cloudflare/vite-plugin':
@@ -475,13 +511,13 @@ importers:
         specifier: ^3.0.5
         version: 3.0.5
       '@types/node':
-        specifier: ^26.6.6
+        specifier: 'catalog:'
         version: 26.6.6
       '@types/react':
-        specifier: ^19.3.0
+        specifier: 'catalog:'
         version: 19.3.0
       '@types/react-dom':
-        specifier: ^19.3.0
+        specifier: 'catalog:'
         version: 19.3.0(@types/react@19.3.0)
       '@vitejs/plugin-react':
         specifier: ^6.3.0
@@ -490,10 +526,10 @@ importers:
         specifier: ^4.3.5
         version: 4.3.5
       tsx:
-        specifier: ^4.23.15
+        specifier: 'catalog:'
         version: 4.23.15
       typescript:
-        specifier: ^7.0.2
+        specifier: 'catalog:'
         version: 7.0.2
       vite:
         specifier: ^8.3.8
@@ -508,7 +544,7 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       typescript:
-        specifier: ^7.0.2
+        specifier: 'catalog:'
         version: 7.0.2
 
   packages/database:
@@ -527,32 +563,32 @@ importers:
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
-        specifier: ^26.6.6
+        specifier: 'catalog:'
         version: 26.6.6
       drizzle-kit:
         specifier: 1.0.0-rc.4
         version: 1.0.0-rc.4
       tsx:
-        specifier: ^4.23.15
+        specifier: 'catalog:'
         version: 4.23.15
       typescript:
-        specifier: ^7.0.2
+        specifier: 'catalog:'
         version: 7.0.2
 
   packages/env:
     dependencies:
       zod:
-        specifier: ^4.6.7
+        specifier: 'catalog:'
         version: 4.6.7
     devDependencies:
       '@portfolio/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
       '@types/node':
-        specifier: ^26.6.6
+        specifier: 'catalog:'
         version: 26.6.6
       typescript:
-        specifier: ^7.0.2
+        specifier: 'catalog:'
         version: 7.0.2
 
   packages/typescript-config: {}

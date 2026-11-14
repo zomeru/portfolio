@@ -56,7 +56,7 @@
     "@changesets/cli": "^3.0.3",
     "@commitlint/cli": "^21.2.4",
     "@commitlint/config-conventional": "^21.2.4",
-    "@types/node": "^26.6.6",
+    "@types/node": "catalog:",
     "dotenv-cli": "^11.1.0",
     "husky": "^9.1.7",
     "knip": "^6.45.1",
@@ -66,9 +66,9 @@
     "oxlint-tsgolint": "7.0.2007",
     "rimraf": "^6.1.4",
     "syncpack": "^15.3.3",
-    "tsx": "^4.23.15",
+    "tsx": "catalog:",
     "turbo": "2.11.11",
-    "typescript": "^7.0.2"
+    "typescript": "catalog:"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}": [
