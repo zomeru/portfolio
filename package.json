@@ -63,11 +63,11 @@
     "lint-staged": "^17.6.0",
     "oxfmt": "0.78.0",
     "oxlint": "1.93.0",
-    "oxlint-tsgolint": "7.0.2006",
+    "oxlint-tsgolint": "7.0.2007",
     "rimraf": "^6.1.4",
     "syncpack": "^15.3.3",
     "tsx": "^4.23.15",
-    "turbo": "2.11.10",
+    "turbo": "2.11.11",
     "typescript": "^7.0.2"
   },
   "lint-staged": {
