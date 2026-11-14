@@ -21,6 +21,7 @@
       "triggers": { "crons": ["0 22 * * TUE,THU,SAT"] },
       "vars": {
         "PORTFOLIO_RUNTIME": "workers",
+        "PORTFOLIO_ENVIRONMENT": "production",
         "NODE_ENV": "production",
         "SITE_URL": "https://zomeru.dev",
         "SANITY_PROJECT_ID": "fvmu1iv8",
@@ -52,6 +53,7 @@
       "triggers": { "crons": [] },
       "vars": {
         "PORTFOLIO_RUNTIME": "workers",
+        "PORTFOLIO_ENVIRONMENT": "staging",
         "NODE_ENV": "production",
         "SITE_URL": "https://preview.zomeru.dev",
         "SANITY_PROJECT_ID": "fvmu1iv8",
