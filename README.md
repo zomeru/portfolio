@@ -57,7 +57,7 @@ Cloudflare data center; social images are cached for five minutes. Locale-prefix
 these entries, and the preference cookie is added per response. Client navigation reuses loader
 data for the same 60 seconds. Each Worker version gets fresh cache keys. Sanity remains
 authoritative, and publishing requires no cache webhook or rebuild. Private and request-specific
-responses are uncached. See [`docs/audit`](docs/audit/changes.md) for the freshness model.
+responses are uncached.
 
 The build prerenders the source-owned discovery documents using the target's configured
 `SITE_URL`. Cloudflare serves these and the fingerprinted JS, CSS, and fonts as static assets
