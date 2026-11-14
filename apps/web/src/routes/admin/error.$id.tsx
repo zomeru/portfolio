@@ -25,6 +25,7 @@ function JsonBlock({ value }: { value: string }) {
 
 export const Route = createFileRoute("/admin/error/$id")({
   loader: ({ params }) => loadErrorDetail({ data: params.id }),
+  staleTime: 0,
   head: () => ({ meta: [{ title: "Error detail | Admin" }] }),
   component: AdminErrorDetailPage,
 });

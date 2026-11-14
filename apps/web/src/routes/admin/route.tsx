@@ -12,7 +12,6 @@ export const Route = createFileRoute("/admin")({
     ]);
     return { messages, site };
   },
-  staleTime: 60_000,
   head: () => ({ meta: [{ name: "robots", content: "noindex, nofollow, noarchive" }] }),
   component: AdminLayout,
 });

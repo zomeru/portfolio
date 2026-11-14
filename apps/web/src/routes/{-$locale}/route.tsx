@@ -16,7 +16,6 @@ export const Route = createFileRoute("/{-$locale}")({
     return { locale, messages: await getMessages(locale) };
   },
   loader: () => getSiteData(),
-  staleTime: 60_000,
   notFoundComponent: () => (
     <PublicBoundary fallback={<DefaultNotFound />}>
       <LocalizedNotFound />

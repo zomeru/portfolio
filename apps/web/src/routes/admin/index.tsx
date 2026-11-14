@@ -38,6 +38,7 @@ function formatIndexDate(value: string | null | undefined) {
 
 export const Route = createFileRoute("/admin/")({
   loader: () => loadDashboard(),
+  staleTime: 0,
   head: () => ({
     meta: [
       { title: "Admin" },
