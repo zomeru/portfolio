@@ -2,13 +2,9 @@
   "extends": "@portfolio/typescript-config/base.json",
   "compilerOptions": {
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "verbatimModuleSyntax": true,
     "types": ["node"],
     "jsx": "react-jsx",
-    "jsxImportSource": "hono/jsx",
-    "noEmit": true
+    "jsxImportSource": "hono/jsx"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
