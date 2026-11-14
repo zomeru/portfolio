@@ -1,7 +1,6 @@
 {
   "extends": "@portfolio/typescript-config/web.json",
   "compilerOptions": {
-    "strictNullChecks": true,
     "paths": {
       "@/*": ["./src/*"]
     },

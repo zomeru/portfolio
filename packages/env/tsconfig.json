@@ -2,8 +2,6 @@
   "extends": "@portfolio/typescript-config/base.json",
   "compilerOptions": {
     "lib": ["ESNext"],
-    "module": "ESNext",
-    "moduleResolution": "bundler",
     "types": ["node"]
   },
   "include": ["**/*.ts"],

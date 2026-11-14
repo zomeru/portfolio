@@ -43,11 +43,6 @@ export default {
             });
           const headers = new Headers(response.headers);
           applyResponseHeaders(headers, url, request, response.status, env.SITE_URL);
-          locale?.forEach((value, key) =>
-            key === "vary" || key === "set-cookie"
-              ? headers.append(key, value)
-              : headers.set(key, value),
-          );
           telemetry?.flushTelemetry(ctx);
           return new Response(
             telemetry ? telemetry.flushTelemetryAtStreamEnd(response, ctx) : response.body,
@@ -59,9 +54,25 @@ export default {
           );
         }),
       );
-    return locale
-      ? render()
-      : servePublicCache(request, url, env.CF_VERSION_METADATA?.id, ctx, render);
+    const response = servePublicCache(request, url, env.CF_VERSION_METADATA?.id, ctx, render);
+    if (!locale) return response;
+    // A locale-prefixed page renders from its URL alone. Record the explicit preference after the
+    // cache lookup so the shared entry never stores this visitor's Set-Cookie.
+    return response.then((localized) => {
+      const vary = new Set(
+        (localized.headers.get("Vary") ?? "")
+          .split(",")
+          .map((name) => name.trim())
+          .filter(Boolean),
+      );
+      locale.forEach((value, key) => {
+        if (key === "set-cookie") localized.headers.append(key, value);
+        else if (key === "vary") for (const name of value.split(",")) vary.add(name.trim());
+        else localized.headers.set(key, value);
+      });
+      localized.headers.set("Vary", [...vary].join(", "));
+      return localized;
+    });
   },
   async scheduled(_event, env, ctx) {
     await runWithWorkerContext(env, ctx, async () => {

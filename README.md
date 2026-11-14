@@ -46,12 +46,18 @@ build-time values.
 | `pnpm run deploy:production --dry-run`       | Build and check the production Worker bundle                                          |
 | `pnpm cron:blog`                             | Exercise the authorized blog endpoint against a development dataset and loopback host |
 
+Dependencies used by more than one workspace take their version from the `catalog:` in
+`pnpm-workspace.yaml`; reference them as `"catalog:"` in manifests. The catalog pins TypeScript
+7.1 Beta. Its remaining `overrides` are security floors for Sanity CLI transitive dependencies.
+
 Public routes use unprefixed English URLs and `/ja`, `/zh-CN`, or `/de` prefixes. The Worker
 detects locale using the saved preference, then language and country. Public pages that depend on
 Sanity use SSR. Selected anonymous responses can reuse a render for 60 seconds in the local
-Cloudflare data center; social images are cached for five minutes. Each Worker version gets fresh
-cache keys. Sanity remains authoritative, and publishing requires no cache webhook or rebuild.
-Private and request-specific responses are uncached.
+Cloudflare data center; social images are cached for five minutes. Locale-prefixed pages share
+these entries, and the preference cookie is added per response. Client navigation reuses loader
+data for the same 60 seconds. Each Worker version gets fresh cache keys. Sanity remains
+authoritative, and publishing requires no cache webhook or rebuild. Private and request-specific
+responses are uncached.
 
 The build prerenders the source-owned discovery documents using the target's configured
 `SITE_URL`. Cloudflare serves these and the fingerprinted JS, CSS, and fonts as static assets

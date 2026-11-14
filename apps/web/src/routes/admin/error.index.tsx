@@ -36,6 +36,7 @@ export const Route = createFileRoute("/admin/error/")({
   validateSearch: (search: Record<string, unknown>) => parseErrorSearch(search),
   loaderDeps: ({ search }) => search,
   loader: ({ deps }) => loadErrors({ data: deps }),
+  staleTime: 0,
   head: () => ({
     meta: [
       { title: "Error monitoring | Admin" },

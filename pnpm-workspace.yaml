@@ -2,19 +2,28 @@ packages:
   - "apps/*"
   - "packages/*"
 
+# Versions shared by more than one workspace manifest. Single-use dependencies stay in their
+# owning package.json. Reference these with "catalog:".
+catalog:
+  "@types/node": ^26.6.6
+  "@types/react": ^19.3.0
+  "@types/react-dom": ^19.3.0
+  # @opentelemetry/sdk-trace-base 2.x declares a peer range of <1.10.0.
+  "@opentelemetry/api": ~1.9.1
+  ai: ^7.0.172
+  hono: ^4.13.18
+  react: 19.3.1
+  react-dom: 19.3.1
+  tsx: ^4.23.15
+  typescript: 7.1.0-beta
+  zod: ^4.6.7
+
+# Security floors for transitive dependencies whose parents have not shipped patched ranges yet.
+# Remove an entry once `pnpm audit` stays clean without it.
 overrides:
-  "brace-expansion@>=4 <5.0.12": "5.0.13"
-  "dompurify@<3.4.17": "3.4.17"
-  "fast-uri@>=3 <3.1.9": "3.1.9"
   "js-yaml@>=3 <3.15.2": "3.15.2"
-  "js-yaml@>=4 <4.3.2": "4.3.2"
-  "launch-editor@<2.14.2": "2.14.2"
   "@oclif/core>minimatch@>=7 <11.0.1": "11.0.8"
-  "shell-quote@>=1.8.4 <1.11.0": "1.12.0"
   "smol-toml@<1.9.0": "1.9.1"
-  "source-map-js@<1.2.2": "1.2.2"
-  "undici@>=7 <7.30.1": "7.30.2"
-  "uuid@<11.1.1": "11.1.1"
 
 allowBuilds:
   "@parcel/watcher": false
@@ -23,38 +32,3 @@ allowBuilds:
   protobufjs: false
   unrs-resolver: true
   workerd: true
-
-minimumReleaseAgeExclude:
-  - get-it@9.5.0
-  - "@ai-sdk/gateway@4.0.60 || 4.0.62"
-  - ai@7.0.74 || 7.0.77
-  - "@ai-sdk/google@4.0.50"
-  - "@ai-sdk/provider-utils@5.0.29"
-  - "@ai-sdk/mcp@2.0.36"
-  - "@ai-sdk/react@4.0.80"
-  - "@portabletext/editor@8.0.2"
-  - "@portabletext/html@2.0.0"
-  - "@portabletext/keyboard-shortcuts@3.0.0"
-  - "@portabletext/patches@3.0.0"
-  - "@portabletext/plugin-character-pair-decorator@9.0.2"
-  - "@portabletext/plugin-dnd@2.0.2"
-  - "@portabletext/plugin-input-rule@7.0.2"
-  - "@portabletext/plugin-list-index@2.0.2"
-  - "@portabletext/plugin-markdown-shortcuts@9.0.2"
-  - "@portabletext/plugin-one-line@8.0.2"
-  - "@portabletext/plugin-paste-link@5.0.2"
-  - "@portabletext/plugin-table@2.0.2"
-  - "@portabletext/plugin-typography@9.0.2"
-  - "@portabletext/sanity-bridge@4.0.0"
-  - "@portabletext/schema@3.0.0"
-  - "@sanity/access-ui@6.11.0"
-  - "@sanity/diff@6.11.0"
-  - "@sanity/mutator@6.11.0"
-  - "@sanity/schema@6.11.0"
-  - "@sanity/types@6.11.0"
-  - "@sanity/util@6.11.0"
-  - "@sanity/vision@6.11.0"
-  - sanity@6.11.0
-  - "@cloudflare/vite-plugin@1.69.1"
-  - miniflare@5.20261110.1-beta
-  - wrangler@4.160.1

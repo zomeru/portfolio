@@ -388,7 +388,11 @@ async function persistErrorRecord(error: unknown, metadata: LogMetadata) {
       ...(method ? { method: truncate(method, 16) } : {}),
       ...(requestId ? { requestId: truncate(requestId, 255) } : {}),
       ...(userAgent ? { userAgent: truncate(userAgent, 1_024) } : {}),
-      environment: truncate(process.env.VERCEL_ENV ?? process.env.NODE_ENV ?? "development", 64),
+      // Deployed Workers set PORTFOLIO_ENVIRONMENT; both use NODE_ENV=production.
+      environment: truncate(
+        process.env.PORTFOLIO_ENVIRONMENT ?? process.env.NODE_ENV ?? "development",
+        64,
+      ),
       service: truncate(service, 100),
       ...(errorCode ? { errorCode: truncate(errorCode, 255) } : {}),
       metadata: boundedRecord(storedMetadata),

@@ -27,7 +27,7 @@
       "groupName": "sanity"
     },
     {
-      "matchPackageNames": ["drizzle-orm", "drizzle-kit", "pg", "@types/pg"],
+      "matchPackageNames": ["drizzle-orm", "drizzle-kit", "@neondatabase/serverless"],
       "groupName": "database"
     },
     {
