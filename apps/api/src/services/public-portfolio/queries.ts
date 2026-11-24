@@ -108,7 +108,8 @@ export const PUBLIC_BLOG_POST_LIST_QUERY = defineQuery(/* groq */ `
     _type == "blogPost" &&
     ${PUBLISHED_FILTER} &&
     defined(slug.current) &&
-    defined(publishedAt)
+    defined(publishedAt) &&
+    defined(body) && body != ""
   ] | order(publishedAt desc, _id asc) ${BLOG_SUMMARY_PROJECTION}
 `);
 
@@ -135,8 +136,9 @@ export const PUBLIC_BLOG_POST_QUERY = defineQuery(/* groq */ `
     _type == "blogPost" &&
     ${PUBLISHED_FILTER} &&
     slug.current == $slug &&
-    defined(publishedAt)
-  ][0] {
+    defined(publishedAt) &&
+    defined(body) && body != ""
+  ] | order(publishedAt desc, _id asc)[0] {
     title,
     "slug": slug.current,
     "date": publishedAt,

@@ -56,9 +56,12 @@ export const getBlogList = createServerFn({ method: "GET" })
 export const getBlog = createServerFn({ method: "GET" })
   .validator(slug)
   .handler(async ({ data }) => {
-    const { getPublicBlogPost } = await import("@portfolio/api/public-portfolio");
-    const { renderMarkdown } = await import("@/lib/markdown.server");
-    const post = await getPublicBlogPost(data);
+    const [post, { renderMarkdown }] = await Promise.all([
+      import("@portfolio/api/public-portfolio").then(({ getPublicBlogPost }) =>
+        getPublicBlogPost(data),
+      ),
+      import("@/lib/markdown.server"),
+    ]);
     if (!post) throw notFound();
     const { body, ...summary } = post;
     return { ...summary, html: await renderMarkdown(body) };
@@ -67,11 +70,15 @@ export const getBlog = createServerFn({ method: "GET" })
 export const getDevelopers = createServerFn({ method: "GET" })
   .validator(z.enum(["en", "ja", "zh-CN", "de"]))
   .handler(async ({ data: locale }) => {
-    const { getSiteEnv } = await import("@portfolio/env/site");
-    const { getDeveloperGuideMarkdown } = await import("@/lib/developer-docs");
-    const { renderMarkdown } = await import("@/lib/markdown.server");
-    const { getTranslations } = await import("@/i18n/server");
-    const t = await getTranslations({ locale, namespace: "Common" });
+    const [{ getSiteEnv }, { getDeveloperGuideMarkdown }, { renderMarkdown }, t] =
+      await Promise.all([
+        import("@portfolio/env/site"),
+        import("@/lib/developer-docs"),
+        import("@/lib/markdown.server"),
+        import("@/i18n/server").then(({ getTranslations }) =>
+          getTranslations({ locale, namespace: "Common" }),
+        ),
+      ]);
     return renderMarkdown(
       getDeveloperGuideMarkdown(new URL(getSiteEnv().siteUrl)),
       t("opensNewTab"),

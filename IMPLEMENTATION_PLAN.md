@@ -5,7 +5,7 @@
 - [x] Confirm the clean `main` checkout, configured Git identity, pinned toolchain, and local PostgreSQL target.
 - [x] Map workspace ownership, publication and retrieval flows, migration history, and deployment paths.
 - [x] Record baseline checks and inventory 81 direct packages, peer constraints, overrides, and release documentation for the upgraded stack.
-- [ ] Update compatible releases and catalogs, adapt changed APIs, and verify the frozen lockfile.
+- [x] Update compatible releases and catalogs, adapt changed APIs, and verify the frozen lockfile.
 - [x] Review TypeScript 7.1 options against Node, Vite, and the Workers runtime.
 
 ## 2. Embeddings and local PostgreSQL
@@ -26,16 +26,18 @@
 
 ## 4. Application, security, and deployment audit
 
-- [ ] Audit React, TanStack Start, and Worker request paths, bundles, caching, and accessibility.
-- [ ] Review API trust boundaries, abuse controls, observability, SQL patterns, and Cloudflare configuration.
-- [ ] Implement and verify concrete fixes that preserve public behavior and visual identity.
+- [x] Audit React, TanStack Start, and Worker request paths, bundles, caching, and accessibility.
+- [x] Review API trust boundaries, abuse controls, observability, SQL patterns, and Cloudflare configuration.
+- [x] Implement and verify concrete fixes that preserve public behavior and visual identity.
 
 ## 5. Validation and handoff
 
-- [ ] Run repository checks, builds, dependency audits, Worker dry-runs, and local HTTP smoke tests.
-- [ ] Exercise embeddings, retrieval, and duplicate prevention. Record checked scenarios and blockers.
+- [x] Run repository checks, builds, dependency audits, Worker dry-runs, and local HTTP smoke tests.
+- [x] Exercise embeddings, retrieval, and duplicate prevention. Record checked scenarios and blockers.
 - [x] Update repository guidance and deployment documentation.
-- [ ] Commit verified groups locally on `main` under Zomer Gregorio's configured identity.
+- [x] Commit verified groups locally on `main` under Zomer Gregorio's configured identity.
+- [ ] Complete the provider-backed development backfill and full live retrieval evaluation after the
+      OpenRouter daily quota resets.
 
 ## Production blog audit
 
@@ -54,7 +56,35 @@ editorial review.
 | React Native Expo Fingerprint and static Hermes | `optimizing-react-native-expo-fingerprint-static-hermes` and its `-1` variant scored 0.841 for title and excerpt                                                              | Retain any distinct benchmark methodology or setup details after verification.        |
 
 The public list, feeds, and search index now return one entry per slug. The detail query uses
-the same published date and document ID tie-breaker. All production documents were read-only.
+the same published date and document ID tie-breaker. The audit used public published reads.
+
+## Verification and open items
+
+- Frozen install, formatting, lint, boundaries, type checks, unused-dependency checks, 32 API tests,
+  staging and production builds, both Worker dry-runs, and deterministic AI evaluation passed.
+  The two registry audits reported zero advisories with the retained overrides.
+- Both an existing development database and a fresh disposable PostgreSQL 18 database passed
+  migration. The two PostgreSQL integration tests verified lease serialization, fingerprint
+  matching, exact cosine retrieval, model filtering, and full-text fallback.
+- Local workerd passed SSR, localized blog, OpenAPI, blog 401, blog 404, and database-backed
+  chat history checks. Its rate-limit binding returned a 429 with `Retry-After` on request 31.
+  Chromium showed titled blog links in the accessibility tree at a 390-pixel viewport, with no
+  horizontal overflow or page errors. A scan of 58 frontend assets found zero matches for 12
+  configured private values.
+- OpenRouter returned 4,096 dimensions for live passage and query calls. The local backfill
+  committed 74 of 170 documents, including 15 retained through keyword and structured retrieval
+  after embedding rejection. The daily quota interrupted the run. Gemini 4 Hydrogen produced a
+  validated draft in 15 seconds after the initial provider and Markdown-validation checks.
+- An exact cosine top-16 query took 2.28 ms over the 188 available local vectors with warm buffers.
+  The prior database contained zero legacy documents, so it offered no matched timing baseline.
+  The staging build reported 317.36 KB before and 319.04 KB after for the sum of gzip sizes
+  across all client JavaScript chunks. This measures bundle footprint. Field LCP, INP, and CLS
+  require real traffic.
+- The security review covered capability checks, input limits, webhook URL validation, SQL
+  construction, Markdown sanitization, cache boundaries, secret exposure, dependency policy,
+  and AI payload logging. The existing inline-script CSP allowance remains necessary for the
+  current SSR and theme setup. Managed Neon and Cloudflare account configuration require
+  deployment-time verification.
 
 ## Compatibility references
 

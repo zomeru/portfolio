@@ -54,8 +54,8 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
 - Retrieval uses deterministic structured chronology, aggregate, and named-term list strategies when
   applicable, otherwise semantic and PostgreSQL full-text candidates with reciprocal-rank fusion. Exact
   structured lists are document operations and do not use the generative context-token budget. Only
-  retrieve documents matching the active index version and embedding model. Keep the stored embedding
-  dimension and model assertion at 2,048.
+  retrieve documents matching the active index version and embedding model. Provider-rejected
+  documents remain searchable through full-text and structured retrieval.
 - Conversation persistence is anonymous but not stateless: validate the UUID session key, keep message
   IDs idempotent, preserve the bounded history/token window, and enforce both per-minute and per-day
   limits before generation.
@@ -74,10 +74,9 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
   the other.
 - `/admin/ai/*` accepts only the signed reindex bearer token. Do not expose raw capability secrets in
   API responses or client code.
-- Deployed AI calls run inside the Worker telemetry registration when Langfuse is enabled;
-  standalone CLI and evaluation scripts do not initialize it themselves. Ask Zomer chat and evaluation
-  disable raw model input and output recording; blog generation records both. Make recording an explicit
-  privacy decision for every new AI call.
+- Deployed AI calls run inside the Worker telemetry registration when Langfuse is enabled.
+  Standalone CLI and evaluation scripts do not initialize it themselves. Disable raw model input
+  and output recording for chat, evaluation, embeddings, and generated articles.
 - Read configuration only from the appropriate `@portfolio/env` subpath and shared blog limits only
   from `@portfolio/content/blog`.
 

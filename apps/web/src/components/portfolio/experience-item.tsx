@@ -6,6 +6,7 @@ export function ExperienceItem({ job }: { job: PublicExperience }) {
   return (
     <Link
       href={`/work/${job.slug}`}
+      aria-label={`${job.role} — ${job.company}`}
       className="group relative block rounded-sm pl-7 outline-offset-4 focus-visible:outline-2 focus-visible:outline-foreground"
     >
       <article>

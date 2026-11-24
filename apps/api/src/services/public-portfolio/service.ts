@@ -427,9 +427,7 @@ export function serializePublicSnapshot(value: unknown, siteUrl: URL): PublicPor
   const raw = rawSnapshotSchema.parse(value);
 
   return {
-    blogs: raw.blogs
-      .map((post) => toPublicBlogSummary(post, siteUrl))
-      .filter((post): post is PublicBlogPostSummary => Boolean(post)),
+    blogs: toUniqueBlogSummaries(raw.blogs, siteUrl),
     experience: raw.experience
       .map((experience) => toPublicExperience(experience, siteUrl))
       .filter((item): item is PublicExperience => Boolean(item)),
@@ -474,11 +472,16 @@ function serializePublicProjectList(value: unknown, siteUrl: URL) {
 }
 
 function serializePublicBlogPostList(value: unknown, siteUrl: URL) {
-  return z
-    .array(rawBlogSummarySchema)
-    .parse(value)
-    .map((item) => toPublicBlogSummary(item, siteUrl))
-    .filter((item): item is PublicBlogPostSummary => Boolean(item));
+  return toUniqueBlogSummaries(rawBlogSummarySchema.array().parse(value), siteUrl);
+}
+
+function toUniqueBlogSummaries(posts: RawSnapshot["blogs"], siteUrl: URL) {
+  const bySlug = new Map<string, PublicBlogPostSummary>();
+  for (const raw of posts) {
+    const post = toPublicBlogSummary(raw, siteUrl);
+    if (post && !bySlug.has(post.slug)) bySlug.set(post.slug, post);
+  }
+  return [...bySlug.values()];
 }
 
 function serializePublicTechStack(value: unknown) {

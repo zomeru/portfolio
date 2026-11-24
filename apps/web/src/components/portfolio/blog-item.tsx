@@ -1,26 +1,32 @@
 import type { PublicBlogPostSummary } from "@portfolio/api/public-portfolio";
 import { ArrowUpRight } from "lucide-react";
-import { useLocale } from "use-intl";
+import { useId } from "react";
+import { useFormatter } from "use-intl";
 
 import { Link } from "@/i18n/navigation";
 
 export function BlogItem({ post }: { post: PublicBlogPostSummary }) {
-  const locale = useLocale();
-  const date = new Intl.DateTimeFormat(locale, {
+  const titleId = useId();
+  const format = useFormatter();
+  const date = format.dateTime(new Date(post.date), {
     dateStyle: "long",
     timeZone: "UTC",
-  }).format(new Date(post.date));
+  });
 
   return (
     <Link
       href={`/blogs/${post.slug}`}
+      aria-labelledby={titleId}
       className="group grid gap-3 rounded-md py-5 outline-offset-2 focus-visible:outline-2 focus-visible:outline-foreground sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-6"
     >
       <time dateTime={post.date} className="font-mono text-xs text-muted sm:pt-0.5">
         {date}
       </time>
       <article>
-        <h2 className="flex items-baseline justify-between gap-4 font-medium tracking-tight">
+        <h2
+          id={titleId}
+          className="flex items-baseline justify-between gap-4 font-medium tracking-tight"
+        >
           <span className="transition-colors duration-200 group-hover:text-muted motion-reduce:transition-none">
             {post.title}
           </span>
