@@ -3,6 +3,7 @@ import {
   IngestionAlreadyRunningError,
   synchronizePortfolioKnowledge,
 } from "../services/assistant/ingestion";
+import { createBackfillEmbedder } from "./backfill-embeddings";
 
 const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"] as const;
 
@@ -55,7 +56,7 @@ function createProgressReporter() {
   };
 }
 
-const supportedArguments = new Set(["--force"]);
+const supportedArguments = new Set(["--force", "--require-documents"]);
 const argumentsList = process.argv.slice(2);
 const unsupported = argumentsList.find((argument) => !supportedArguments.has(argument));
 
@@ -67,7 +68,9 @@ if (unsupported) {
   try {
     const summary = await synchronizePortfolioKnowledge({
       trigger: "cli",
+      embedChunks: createBackfillEmbedder(),
       force: argumentsList.includes("--force"),
+      requireDocuments: argumentsList.includes("--require-documents"),
       onProgress: (message) => progress.update(message),
     });
     progress.stop("Portfolio indexing complete.");
@@ -76,7 +79,8 @@ if (unsupported) {
     console.log(`Updated: ${summary.documentsUpdated}`);
     console.log(`Unchanged: ${summary.documentsUnchanged}`);
     console.log(`Deleted: ${summary.documentsDeleted}`);
-    console.log(`Chunks embedded: ${summary.chunksCreated}`);
+    console.log(`Chunks written: ${summary.chunksCreated}`);
+    console.log(`Keyword-only documents: ${summary.documentsWithoutEmbeddings}`);
   } catch (error) {
     progress.stop("Portfolio indexing stopped.", true);
     logError("portfolio indexing CLI failed", error, {

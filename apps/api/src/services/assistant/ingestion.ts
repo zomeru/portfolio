@@ -13,12 +13,11 @@ import {
   replaceIndexedKnowledgeDocument,
   touchIndexedKnowledgeDocument,
 } from "@portfolio/database";
+import { ASSISTANT_EMBEDDING } from "@portfolio/env/embedding";
 
 import { logError } from "../../lib/log";
-import { getAssistantModels } from "../ai/models";
 import { chunkKnowledgeDocument } from "./chunking";
-import { ASSISTANT_INDEX_VERSION } from "./config";
-import { embedKnowledgeChunks } from "./embeddings";
+import { EmbeddingContentRejectedError, embedKnowledgeChunks } from "./embeddings";
 import { normalizeSanityKnowledge } from "./normalization";
 import { fetchSanityKnowledgeSource, fetchSanityKnowledgeSources } from "./sanity";
 import { withAssistantSpan } from "./telemetry";
@@ -26,6 +25,7 @@ import type { NormalizedKnowledgeDocument } from "./types";
 
 const INGESTION_LOCK_KEY = "portfolio";
 const STALE_RUN_AFTER_MS = 30 * 60 * 1_000;
+const RUN_BUDGET_MS = 20 * 60 * 1_000;
 
 export type IngestionSummary = {
   runId: string;
@@ -35,6 +35,7 @@ export type IngestionSummary = {
   documentsUnchanged: number;
   documentsDeleted: number;
   chunksCreated: number;
+  documentsWithoutEmbeddings: number;
 };
 
 export class IngestionAlreadyRunningError extends Error {
@@ -54,13 +55,13 @@ function databaseErrorCode(error: unknown): string | undefined {
   return undefined;
 }
 
-function contentHash(document: NormalizedKnowledgeDocument, embeddingModelId: string) {
+function contentHash(document: NormalizedKnowledgeDocument) {
   return createHash("sha256")
     .update(
       JSON.stringify({
         canonicalUrl: document.canonicalUrl,
-        embeddingModelId,
-        indexVersion: ASSISTANT_INDEX_VERSION,
+        embeddingModel: ASSISTANT_EMBEDDING.model,
+        indexVersion: ASSISTANT_EMBEDDING.indexVersion,
         metadata: document.metadata,
         sections: document.sections,
         slug: document.slug,
@@ -90,7 +91,8 @@ async function beginIngestionRun(
 
 async function replaceDocument(options: {
   document: NormalizedKnowledgeDocument;
-  embeddingModelId: string;
+  embedChunks: typeof embedKnowledgeChunks;
+  signal: AbortSignal;
   hash: string;
   existingId?: string;
   documentIndex: number;
@@ -99,19 +101,26 @@ async function replaceDocument(options: {
   onProgress?: (message: string) => void;
 }) {
   const chunks = chunkKnowledgeDocument(options.document);
-  const embeddings = await embedKnowledgeChunks(
-    chunks.map((chunk) => chunk.embeddingText),
-    {
-      onBatchStart: ({ batch, batches, chunksProcessed, chunksTotal }) => {
-        options.onProgress?.(
-          `Embedding ${options.documentIndex}/${options.documentCount}: ${options.document.title} (${options.state}) — batch ${batch}/${batches}, ${chunksProcessed}/${chunksTotal} chunks complete`,
-        );
+  const embeddings = await options
+    .embedChunks(
+      chunks.map((chunk) => chunk.embeddingText),
+      {
+        signal: options.signal,
+        onBatchStart: ({ batch, batches, chunksProcessed, chunksTotal }) => {
+          options.onProgress?.(
+            `Embedding ${options.documentIndex}/${options.documentCount}: ${options.document.title} (${options.state}) — batch ${batch}/${batches}, ${chunksProcessed}/${chunksTotal} chunks complete`,
+          );
+        },
       },
-    },
-  );
-  if (embeddings.length !== chunks.length) {
-    throw new Error("The embedding provider returned an incomplete chunk batch.");
-  }
+    )
+    .catch((error: unknown) => {
+      if (!(error instanceof EmbeddingContentRejectedError)) throw error;
+      options.onProgress?.(
+        `Indexing ${options.documentIndex}/${options.documentCount} for keyword search after the embedding provider rejected it.`,
+      );
+      return null;
+    });
+  options.signal.throwIfAborted();
 
   await replaceIndexedKnowledgeDocument({
     ...(options.existingId ? { existingId: options.existingId } : {}),
@@ -124,25 +133,30 @@ async function replaceDocument(options: {
       contentHash: options.hash,
       metadata: {
         ...options.document.metadata,
-        embeddingModel: options.embeddingModelId,
-        indexVersion: ASSISTANT_INDEX_VERSION,
+        embeddingModel: ASSISTANT_EMBEDDING.model,
+        indexVersion: ASSISTANT_EMBEDDING.indexVersion,
+        ...(embeddings === null ? { embeddingRejected: true } : {}),
       },
       sanityUpdatedAt: options.document.sanityUpdatedAt,
     },
-    chunks: chunks.map((chunk, index) => ({
-      chunkIndex: chunk.chunkIndex,
-      content: chunk.content,
-      embedding: embeddings[index] as number[],
-      metadata: {
-        ...chunk.metadata,
-        embeddingModel: options.embeddingModelId,
-        indexVersion: ASSISTANT_INDEX_VERSION,
-      },
-      tokenCount: chunk.tokenCount,
-    })),
+    chunks: chunks.map((chunk, index) => {
+      const embedding = embeddings === null ? null : embeddings[index];
+      if (embedding === undefined) throw new Error("Missing embedding for knowledge chunk.");
+      return {
+        chunkIndex: chunk.chunkIndex,
+        content: chunk.content,
+        embedding,
+        metadata: {
+          ...chunk.metadata,
+          embeddingModel: ASSISTANT_EMBEDDING.model,
+          indexVersion: ASSISTANT_EMBEDDING.indexVersion,
+        },
+        tokenCount: chunk.tokenCount,
+      };
+    }),
   });
 
-  return chunks.length;
+  return { chunksCreated: chunks.length, embeddingRejected: embeddings === null };
 }
 
 async function markRunFailed(runId: string, error: unknown) {
@@ -176,45 +190,54 @@ function createIngestionSummary(runId: string): IngestionSummary {
     documentsUnchanged: 0,
     documentsDeleted: 0,
     chunksCreated: 0,
+    documentsWithoutEmbeddings: 0,
   };
 }
 
 async function completeRun(runId: string, summary: IngestionSummary, force: boolean) {
-  const models = getAssistantModels();
   await completeIngestionRun(runId, {
     ...summary,
     force,
-    embeddingModel: models.embeddingModelId,
+    embeddingModel: ASSISTANT_EMBEDDING.model,
   });
 }
 
 async function indexDocument(options: {
   document: NormalizedKnowledgeDocument;
+  embedChunks: typeof embedKnowledgeChunks;
   documentCount: number;
   documentIndex: number;
-  embeddingModelId: string;
+  signal: AbortSignal;
   force: boolean;
   onProgress?: (message: string) => void;
   summary: IngestionSummary;
-  existingBySanityId: Map<string, { contentHash: string; id: string }>;
+  existingBySanityId: Map<
+    string,
+    { contentHash: string; embeddingRejected: boolean; id: string; sanityUpdatedAt: Date }
+  >;
 }) {
+  options.signal.throwIfAborted();
   const previous = options.existingBySanityId.get(options.document.sanityDocumentId);
-  const hash = contentHash(options.document, options.embeddingModelId);
-  if (!options.force && previous?.contentHash === hash) {
+  const hash = contentHash(options.document);
+  if (previous?.contentHash === hash && (!options.force || previous.embeddingRejected)) {
     options.onProgress?.(
       `Checking ${options.documentIndex}/${options.documentCount}: ${options.document.title} (unchanged)`,
     );
     options.summary.documentsUnchanged += 1;
-    await touchIndexedKnowledgeDocument(previous.id, options.document.sanityUpdatedAt);
+    if (previous.embeddingRejected) options.summary.documentsWithoutEmbeddings += 1;
+    if (previous.sanityUpdatedAt.getTime() !== options.document.sanityUpdatedAt.getTime()) {
+      await touchIndexedKnowledgeDocument(previous.id, options.document.sanityUpdatedAt);
+    }
     return;
   }
 
   options.onProgress?.(
     `Embedding ${options.documentIndex}/${options.documentCount}: ${options.document.title} (${previous ? "changed" : "new"})`,
   );
-  options.summary.chunksCreated += await replaceDocument({
+  const indexed = await replaceDocument({
     document: options.document,
-    embeddingModelId: options.embeddingModelId,
+    embedChunks: options.embedChunks,
+    signal: options.signal,
     hash,
     documentIndex: options.documentIndex,
     documentCount: options.documentCount,
@@ -222,17 +245,22 @@ async function indexDocument(options: {
     ...(options.onProgress ? { onProgress: options.onProgress } : {}),
     ...(previous ? { existingId: previous.id } : {}),
   });
+  options.summary.chunksCreated += indexed.chunksCreated;
+  if (indexed.embeddingRejected) options.summary.documentsWithoutEmbeddings += 1;
   if (previous) options.summary.documentsUpdated += 1;
   else options.summary.documentsCreated += 1;
 }
 
 export async function synchronizePortfolioKnowledge(options: {
   trigger: "cli" | "admin" | "scheduled" | "webhook";
+  embedChunks?: typeof embedKnowledgeChunks;
   force?: boolean;
+  requireDocuments?: boolean;
   onProgress?: (message: string) => void;
 }): Promise<IngestionSummary> {
   const force = options.force ?? false;
   options.onProgress?.(force ? "Preparing a forced reindex…" : "Preparing an incremental index…");
+  const signal = AbortSignal.timeout(RUN_BUDGET_MS);
   const run = await beginIngestionRun(options.trigger, force);
   const summary = createIngestionSummary(run.id);
 
@@ -244,22 +272,22 @@ export async function synchronizePortfolioKnowledge(options: {
         options.onProgress?.("Fetching published portfolio content from Sanity…");
         const sources = await fetchSanityKnowledgeSources();
         const documents = normalizeSanityKnowledge(sources);
-        const embeddingModelId = getAssistantModels().embeddingModelId;
         summary.documentsSeen = documents.length;
 
         options.onProgress?.(`Comparing ${documents.length} documents with the current index…`);
         const existing = await listIndexedKnowledgeDocuments();
-        if (existing.length > 0 && documents.length === 0) {
-          throw new Error("Sanity returned no indexable documents; stale deletion was refused.");
+        if (documents.length === 0 && (options.requireDocuments || existing.length > 0)) {
+          throw new Error("Sanity returned no indexable documents. The index was left intact.");
         }
 
         const existingBySanityId = new Map(existing.map((item) => [item.sanityDocumentId, item]));
         for (const [index, document] of documents.entries()) {
           await indexDocument({
             document,
+            embedChunks: options.embedChunks ?? embedKnowledgeChunks,
             documentIndex: index + 1,
             documentCount: documents.length,
-            embeddingModelId,
+            signal,
             existingBySanityId,
             force,
             summary,
@@ -267,6 +295,7 @@ export async function synchronizePortfolioKnowledge(options: {
           });
         }
 
+        signal.throwIfAborted();
         const sourceIds = documents.map((document) => document.sanityDocumentId);
         if (sourceIds.length > 0) {
           options.onProgress?.("Removing documents that are no longer published…");
@@ -297,6 +326,7 @@ export async function synchronizePublishedKnowledgeDocument(options: {
   onProgress?: (message: string) => void;
 }): Promise<IngestionSummary> {
   options.onProgress?.("Preparing a single-document index…");
+  const signal = AbortSignal.timeout(RUN_BUDGET_MS);
   const run = await beginIngestionRun(options.trigger, false);
   const summary = createIngestionSummary(run.id);
 
@@ -316,15 +346,15 @@ export async function synchronizePublishedKnowledgeDocument(options: {
           throw new Error("The published Sanity document is not available for indexing.");
         }
         summary.documentsSeen = 1;
-        const embeddingModelId = getAssistantModels().embeddingModelId;
 
         const existing = await findIndexedKnowledgeDocumentBySanityId(document.sanityDocumentId);
         const existingBySanityId = new Map(existing ? [[existing.sanityDocumentId, existing]] : []);
         await indexDocument({
           document,
+          embedChunks: embedKnowledgeChunks,
           documentCount: 1,
           documentIndex: 1,
-          embeddingModelId,
+          signal,
           existingBySanityId,
           force: false,
           summary,
@@ -352,8 +382,8 @@ export async function getKnowledgeIndexStatus() {
   const status = await readKnowledgeIndexStatus();
   return {
     ...status,
-    embeddingModel: getAssistantModels().embeddingModelId,
-    indexVersion: ASSISTANT_INDEX_VERSION,
+    embeddingModel: ASSISTANT_EMBEDDING.model,
+    indexVersion: ASSISTANT_EMBEDDING.indexVersion,
   };
 }
 

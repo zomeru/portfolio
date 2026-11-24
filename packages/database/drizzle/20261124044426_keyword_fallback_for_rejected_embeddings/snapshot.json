@@ -1,0 +1,88 @@
+{
+  "type": "diff",
+  "version": "10",
+  "dialect": "postgres",
+  "id": "e5a79b41-a3e1-41ea-8dbb-5c493e5fe29f",
+  "prevIds": [
+    "047912cd-3f03-4eac-a9e5-3aa4a6592d04"
+  ],
+  "footprints": [
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "knowledge_chunks_v2",
+        "embedding"
+      ],
+      "writes": [
+        "s|colprop|public.knowledge_chunks_v2.embedding.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.knowledge_chunks_v2",
+        "n|sch|public",
+        "n|col|public.knowledge_chunks_v2.embedding"
+      ],
+      "sqlHash": "7b3bdc50a1d1abcb"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "blog_fingerprints",
+        "topic"
+      ],
+      "writes": [
+        "s|colprop|public.blog_fingerprints.topic.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.blog_fingerprints",
+        "n|sch|public",
+        "n|col|public.blog_fingerprints.topic"
+      ],
+      "sqlHash": "faa9e07b3d98ff1b"
+    },
+    {
+      "statementType": "alter_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "blog_fingerprints",
+        "body"
+      ],
+      "writes": [
+        "s|colprop|public.blog_fingerprints.body.notNull"
+      ],
+      "reads": [
+        "n|tbl|public.blog_fingerprints",
+        "n|sch|public",
+        "n|col|public.blog_fingerprints.body"
+      ],
+      "sqlHash": "2cb0c75a4887824d"
+    }
+  ],
+  "deltas": [
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"knowledge_chunks_v2\",\"embedding\"]",
+      "set": {
+        "notNull": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"blog_fingerprints\",\"topic\"]",
+      "set": {
+        "notNull": false
+      }
+    },
+    {
+      "op": "alter",
+      "key": "columns\u0000[\"public\",\"blog_fingerprints\",\"body\"]",
+      "set": {
+        "notNull": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,674 @@
+{
+  "type": "diff",
+  "version": "10",
+  "dialect": "postgres",
+  "id": "7a7c1165-3c52-44c2-ab09-83c27581125f",
+  "prevIds": [
+    "1663e166-0ee2-4308-bc55-24c607c0e082"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "knowledge_chunks_v2"
+      ],
+      "writes": [
+        "s|tbl|public.knowledge_chunks_v2",
+        "n|tbl|public.knowledge_chunks_v2",
+        "e|tbl|public.knowledge_chunks_v2",
+        "n|rel|public.knowledge_chunks_v2",
+        "n|type|public.knowledge_chunks_v2",
+        "n|rel|public.knowledge_chunks_v2_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "knowledge_documents_v2"
+      ],
+      "writes": [
+        "s|tbl|public.knowledge_documents_v2",
+        "n|tbl|public.knowledge_documents_v2",
+        "e|tbl|public.knowledge_documents_v2",
+        "n|rel|public.knowledge_documents_v2",
+        "n|type|public.knowledge_documents_v2",
+        "n|rel|public.knowledge_documents_v2_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.knowledge_source_type"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "knowledge_chunks_v2",
+        "knowledge_chunks_v2_document_chunk_idx"
+      ],
+      "writes": [
+        "s|idx|public.knowledge_chunks_v2_document_chunk_idx",
+        "n|idx|public.knowledge_chunks_v2_document_chunk_idx",
+        "e|idx|public.knowledge_chunks_v2_document_chunk_idx",
+        "n|rel|public.knowledge_chunks_v2_document_chunk_idx"
+      ],
+      "reads": [
+        "n|tbl|public.knowledge_chunks_v2",
+        "n|sch|public",
+        "n|col|public.knowledge_chunks_v2.document_id",
+        "n|col|public.knowledge_chunks_v2.chunk_index"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "knowledge_chunks_v2",
+        "knowledge_chunks_v2_search_idx"
+      ],
+      "writes": [
+        "s|idx|public.knowledge_chunks_v2_search_idx",
+        "n|idx|public.knowledge_chunks_v2_search_idx",
+        "e|idx|public.knowledge_chunks_v2_search_idx",
+        "n|rel|public.knowledge_chunks_v2_search_idx"
+      ],
+      "reads": [
+        "n|tbl|public.knowledge_chunks_v2",
+        "n|sch|public",
+        "n|col|public.knowledge_chunks_v2.search"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "knowledge_documents_v2",
+        "knowledge_documents_v2_sanity_document_id_idx"
+      ],
+      "writes": [
+        "s|idx|public.knowledge_documents_v2_sanity_document_id_idx",
+        "n|idx|public.knowledge_documents_v2_sanity_document_id_idx",
+        "e|idx|public.knowledge_documents_v2_sanity_document_id_idx",
+        "n|rel|public.knowledge_documents_v2_sanity_document_id_idx"
+      ],
+      "reads": [
+        "n|tbl|public.knowledge_documents_v2",
+        "n|sch|public",
+        "n|col|public.knowledge_documents_v2.sanity_document_id"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "knowledge_documents_v2",
+        "knowledge_documents_v2_source_type_idx"
+      ],
+      "writes": [
+        "s|idx|public.knowledge_documents_v2_source_type_idx",
+        "n|idx|public.knowledge_documents_v2_source_type_idx",
+        "e|idx|public.knowledge_documents_v2_source_type_idx",
+        "n|rel|public.knowledge_documents_v2_source_type_idx"
+      ],
+      "reads": [
+        "n|tbl|public.knowledge_documents_v2",
+        "n|sch|public",
+        "n|col|public.knowledge_documents_v2.source_type"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "knowledge_chunks_v2"
+      ],
+      "writes": [
+        "s|fk|public.knowledge_chunks_v2.knowledge_chunks_v2_document_id_knowledge_documents_v2_id_fkey",
+        "n|fk|public.knowledge_chunks_v2.knowledge_chunks_v2_document_id_knowledge_documents_v2_id_fkey",
+        "e|fk|public.knowledge_chunks_v2.knowledge_chunks_v2_document_id_knowledge_documents_v2_id_fkey",
+        "n|con|public.knowledge_chunks_v2.knowledge_chunks_v2_document_id_knowledge_documents_v2_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.knowledge_chunks_v2",
+        "n|sch|public",
+        "n|tbl|public.knowledge_documents_v2",
+        "n|sch|public",
+        "n|col|public.knowledge_chunks_v2.document_id",
+        "n|col|public.knowledge_documents_v2.id",
+        "e|uniqueness|public.knowledge_documents_v2.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "knowledge_chunks_v2",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "knowledge_documents_v2",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks_v2",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks_v2",
+        "name": "document_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks_v2",
+        "name": "chunk_index",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks_v2",
+        "name": "content",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks_v2",
+        "name": "embedding",
+        "type": "vector(4096)",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks_v2",
+        "name": "search",
+        "type": "tsvector",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": {
+          "as": "to_tsvector('english', coalesce(\"knowledge_chunks_v2\".\"content\", ''))",
+          "type": "stored"
+        },
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks_v2",
+        "name": "metadata",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'{}'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks_v2",
+        "name": "token_count",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks_v2",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks_v2",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents_v2",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents_v2",
+        "name": "sanity_document_id",
+        "type": "varchar(255)",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents_v2",
+        "name": "source_type",
+        "type": "knowledge_source_type",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents_v2",
+        "name": "slug",
+        "type": "varchar(255)",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents_v2",
+        "name": "title",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents_v2",
+        "name": "canonical_url",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents_v2",
+        "name": "content_hash",
+        "type": "varchar(64)",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents_v2",
+        "name": "metadata",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'{}'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents_v2",
+        "name": "sanity_updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents_v2",
+        "name": "indexed_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents_v2",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents_v2",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks_v2",
+        "name": "knowledge_chunks_v2_document_chunk_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "document_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "chunk_index",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks_v2",
+        "name": "knowledge_chunks_v2_search_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "search",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "gin",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents_v2",
+        "name": "knowledge_documents_v2_sanity_document_id_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "sanity_document_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents_v2",
+        "name": "knowledge_documents_v2_source_type_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "source_type",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks_v2",
+        "name": "knowledge_chunks_v2_document_id_knowledge_documents_v2_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "document_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "knowledge_documents_v2",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks_v2",
+        "name": "knowledge_chunks_v2_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents_v2",
+        "name": "knowledge_documents_v2_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    }
+  ]
+}

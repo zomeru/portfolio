@@ -71,6 +71,7 @@ void test("blog listing searches titles case-insensitively before pagination", a
             title: "Unrelated Article",
           },
           rawPublicSnapshotFixture.blogs[0],
+          { ...rawPublicSnapshotFixture.blogs[0], title: "Published Article (older revision)" },
         ],
       };
     },
@@ -81,6 +82,7 @@ void test("blog listing searches titles case-insensitively before pagination", a
 
   assert.equal(result.total, 1);
   assert.equal(result.items[0]?.title, "Published Article");
+  assert.equal((await service.listBlogPosts()).total, 2);
 });
 
 void test("resume fetches only the profile, experience, and tech-stack domains", async () => {

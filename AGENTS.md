@@ -50,8 +50,9 @@ dependencies and public package exports. Browser code may import API types from
 - Portfolio intents in Ask Zomer stay grounded in the derived index. General intent may use native web
   search only when the selected provider supports it; keep web citations distinct from indexed
   portfolio sources.
-- Ask Zomer embeddings are fixed at 2,048 dimensions. A model dimension change requires a schema
-  migration, HNSW review, and forced reindex.
+- Use the model identity, 4,096 dimensions, and index version in `@portfolio/env/embedding` for
+  Ask Zomer and generated-blog similarity. Backfill a model change into an isolated index before
+  switching the Worker.
 - Generated blog publication performs a best-effort single-document AI index update. Keep publication
   success distinct from indexing success.
 - Every successful generated-blog publication enters the durable notification event pipeline after

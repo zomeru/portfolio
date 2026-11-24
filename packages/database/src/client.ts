@@ -1,13 +1,18 @@
-import { neon } from "@neondatabase/serverless";
 import { getDatabaseEnv } from "@portfolio/env/database";
-import { drizzle, type NeonHttpDatabase } from "drizzle-orm/neon-http";
+import type { BatchItem } from "drizzle-orm/batch";
+import { drizzle as postgres } from "drizzle-orm/postgres";
+import { drizzle as neonHttp } from "drizzle-orm/postgres/neon-http";
 
-function createDatabase(): NeonHttpDatabase {
-  const sql = neon(getDatabaseEnv().url);
-  return drizzle({ client: sql });
+function createDatabase() {
+  const { url } = getDatabaseEnv();
+  const host = new URL(url).hostname;
+  if (host === "localhost" || host === "127.0.0.1" || host === "[::1]") {
+    return postgres({ connection: { url, max: 4, idleTimeoutMillis: 1_000 } });
+  }
+  return neonHttp(url);
 }
 
-type Database = NeonHttpDatabase;
+type Database = ReturnType<typeof createDatabase>;
 
 let database: Database | undefined;
 
@@ -22,3 +27,10 @@ export const db: Database = new Proxy({} as Database, {
     return getDatabase()[property];
   },
 });
+
+export function batch<Queries extends Readonly<[BatchItem<"pg">, ...BatchItem<"pg">[]]>>(
+  queries: Queries,
+) {
+  const connection = getDatabase();
+  return "bulkInsert" in connection ? connection.batch(queries) : connection.batch(queries);
+}

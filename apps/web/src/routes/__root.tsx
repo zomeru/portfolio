@@ -43,7 +43,7 @@ function RootDocument({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
-        <GoogleAnalyticsViaGtm />
+        {import.meta.env.PROD && import.meta.env.MODE === "production" && <GoogleAnalyticsViaGtm />}
         <Scripts />
       </body>
     </html>

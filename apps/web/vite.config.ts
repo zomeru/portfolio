@@ -76,6 +76,12 @@ export default defineConfig(({ command, isPreview, mode }) => ({
     ],
   },
   build: { assetsDir: "_build" },
+  environments: {
+    client: {
+      // The wire driver only exports Node and Worker entry points.
+      optimizeDeps: { exclude: ["drizzle-orm/postgres"] },
+    },
+  },
   server: { port: 3000, strictPort: true },
   preview: { port: 3000, strictPort: true },
 }));

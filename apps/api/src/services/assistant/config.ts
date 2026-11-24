@@ -1,6 +1,3 @@
-// Bump when the embedding mode, chunking, or canonical embedding text changes.
-export const ASSISTANT_INDEX_VERSION = "nemotron3-asymmetric-structural-v2";
-
 export const RETRIEVAL_CANDIDATE_LIMIT = 16;
 export const RETRIEVAL_RESULT_LIMIT = 6;
 export const RETRIEVAL_CONTEXT_TOKEN_BUDGET = 4_000;

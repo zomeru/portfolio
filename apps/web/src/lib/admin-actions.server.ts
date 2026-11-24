@@ -143,7 +143,8 @@ export async function triggerBlogGeneration(_formData: FormData): Promise<Genera
     if (!response.ok || !payload.success || !payload.post?.slug || !payload.post.title) {
       return {
         status: "error",
-        message: "Blog generation failed. Try again or inspect server logs.",
+        message:
+          payload.error?.message ?? "Blog generation failed. Try again or inspect server logs.",
       };
     }
 

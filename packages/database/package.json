@@ -9,6 +9,7 @@
   "scripts": {
     "check-types": "tsc --noEmit",
     "check-types:watch": "tsc --noEmit --watch",
+    "test:integration": "node --import tsx --test src/repositories/modernization.integration.ts",
     "db:generate": "pnpm run with-env drizzle-kit generate",
     "db:migrate": "pnpm run with-env drizzle-kit migrate",
     "db:push": "pnpm run with-env drizzle-kit push",
@@ -23,14 +24,13 @@
   },
   "type": "module",
   "dependencies": {
-    "@neondatabase/serverless": "^1.2.0",
     "@portfolio/env": "workspace:*",
-    "drizzle-orm": "1.0.0-rc.4"
+    "drizzle-orm": "1.0.0-rc.6"
   },
   "devDependencies": {
     "@portfolio/typescript-config": "workspace:*",
     "@types/node": "catalog:",
-    "drizzle-kit": "1.0.0-rc.4",
+    "drizzle-kit": "1.0.0-rc.6",
     "tsx": "catalog:",
     "typescript": "catalog:"
   }

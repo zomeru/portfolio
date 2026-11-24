@@ -1,3 +1,4 @@
+import { ASSISTANT_EMBEDDING } from "@portfolio/env/embedding";
 import { type SQL, sql } from "drizzle-orm";
 import {
   customType,
@@ -50,53 +51,75 @@ const tsvector = customType<{ data: string }>({
 
 export type KnowledgeMetadata = Record<string, unknown>;
 
-export const knowledgeDocuments = pgTable(
-  "knowledge_documents",
-  {
-    id: uuid().defaultRandom().primaryKey(),
-    sanityDocumentId: varchar("sanity_document_id", { length: 255 }).notNull(),
-    sourceType: knowledgeSourceType("source_type").notNull(),
-    slug: varchar({ length: 255 }),
-    title: text().notNull(),
-    canonicalUrl: text("canonical_url").notNull(),
-    contentHash: varchar("content_hash", { length: 64 }).notNull(),
-    metadata: jsonb().$type<KnowledgeMetadata>().notNull().default({}),
-    sanityUpdatedAt: timestamp("sanity_updated_at", { withTimezone: true }).notNull(),
-    indexedAt: timestamp("indexed_at", { withTimezone: true }).defaultNow().notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
-  },
-  (table) => [
-    uniqueIndex("knowledge_documents_sanity_document_id_idx").on(table.sanityDocumentId),
-    index("knowledge_documents_source_type_idx").on(table.sourceType),
-  ],
-);
+const defineKnowledgeDocuments = (name: string) =>
+  pgTable(
+    name,
+    {
+      id: uuid().defaultRandom().primaryKey(),
+      sanityDocumentId: varchar("sanity_document_id", { length: 255 }).notNull(),
+      sourceType: knowledgeSourceType("source_type").notNull(),
+      slug: varchar({ length: 255 }),
+      title: text().notNull(),
+      canonicalUrl: text("canonical_url").notNull(),
+      contentHash: varchar("content_hash", { length: 64 }).notNull(),
+      metadata: jsonb().$type<KnowledgeMetadata>().notNull().default({}),
+      sanityUpdatedAt: timestamp("sanity_updated_at", { withTimezone: true }).notNull(),
+      indexedAt: timestamp("indexed_at", { withTimezone: true }).defaultNow().notNull(),
+      createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+      updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+    },
+    (table) => [
+      uniqueIndex(`${name}_sanity_document_id_idx`).on(table.sanityDocumentId),
+      index(`${name}_source_type_idx`).on(table.sourceType),
+    ],
+  );
 
-export const knowledgeChunks = pgTable(
+const defineKnowledgeChunks = (
+  name: string,
+  documents: ReturnType<typeof defineKnowledgeDocuments>,
+  dimensions: number,
+  legacy = false,
+) =>
+  pgTable(
+    name,
+    {
+      id: uuid().defaultRandom().primaryKey(),
+      documentId: uuid("document_id")
+        .notNull()
+        .references(() => documents.id, { onDelete: "cascade" }),
+      chunkIndex: integer("chunk_index").notNull(),
+      content: text().notNull(),
+      embedding: legacy ? vector({ dimensions }).notNull() : vector({ dimensions }),
+      search: tsvector("search")
+        .notNull()
+        .generatedAlwaysAs(
+          (): SQL => sql`to_tsvector('english', coalesce(${sql.identifier(name)}."content", ''))`,
+        ),
+      metadata: jsonb().$type<KnowledgeMetadata>().notNull().default({}),
+      tokenCount: integer("token_count").notNull(),
+      createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+      updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+    },
+    (table) => [
+      uniqueIndex(`${name}_document_chunk_idx`).on(table.documentId, table.chunkIndex),
+      ...(legacy ? [index(`${name}_document_id_idx`).on(table.documentId)] : []),
+      index(`${name}_search_idx`).using("gin", table.search),
+    ],
+  );
+
+// Preserve the previous Worker's index during backfill and for rollback.
+export const legacyKnowledgeDocuments = defineKnowledgeDocuments("knowledge_documents");
+export const legacyKnowledgeChunks = defineKnowledgeChunks(
   "knowledge_chunks",
-  {
-    id: uuid().defaultRandom().primaryKey(),
-    documentId: uuid("document_id")
-      .notNull()
-      .references(() => knowledgeDocuments.id, { onDelete: "cascade" }),
-    chunkIndex: integer("chunk_index").notNull(),
-    content: text().notNull(),
-    embedding: vector({ dimensions: 2048 }).notNull(),
-    search: tsvector("search")
-      .notNull()
-      .generatedAlwaysAs(
-        (): SQL => sql`to_tsvector('english', coalesce(${knowledgeChunks.content}, ''))`,
-      ),
-    metadata: jsonb().$type<KnowledgeMetadata>().notNull().default({}),
-    tokenCount: integer("token_count").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
-  },
-  (table) => [
-    uniqueIndex("knowledge_chunks_document_chunk_idx").on(table.documentId, table.chunkIndex),
-    index("knowledge_chunks_document_id_idx").on(table.documentId),
-    index("knowledge_chunks_search_idx").using("gin", table.search),
-  ],
+  legacyKnowledgeDocuments,
+  2048,
+  true,
+);
+export const knowledgeDocuments = defineKnowledgeDocuments("knowledge_documents_v2");
+export const knowledgeChunks = defineKnowledgeChunks(
+  "knowledge_chunks_v2",
+  knowledgeDocuments,
+  ASSISTANT_EMBEDDING.dimensions,
 );
 
 export const ingestionRuns = pgTable(

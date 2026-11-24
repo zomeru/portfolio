@@ -13,8 +13,8 @@ is a source-exported internal package; consumers import explicit subpaths.
 - `./sanity-server`: required server-only `SANITY_API_TOKEN`.
 - `./github-server`: required server-only `GH_PAT_TOKEN`.
 - `./ai-server`: required Google API key and Gemini model identifier for blog generation.
-- `./assistant-server`: Ask Zomer provider keys, selected chat provider and model IDs, the OpenRouter
-  embedding model ID, and the AI-index capability secret.
+- `./assistant-server`: Ask Zomer chat provider keys, model IDs, and the AI-index capability secret.
+- `./embedding`: Fixed embedding identity, dimensions, index version, and OpenRouter key validation.
 - `./cron`: `CRON_SECRET` with a minimum length of 32.
 - `./database`: required `DATABASE_URL` and optional `DATABASE_DIRECT_URL`.
 - `./langfuse-server`: optional public/secret key pair and defaultable base URL; one key without the

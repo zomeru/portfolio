@@ -9,6 +9,7 @@ type ReindexSummary = {
   chunksCreated: number;
   documentsSeen: number;
   documentsUnchanged: number;
+  documentsWithoutEmbeddings: number;
 };
 
 type ReindexEvent =
@@ -68,7 +69,15 @@ export function KnowledgeIndexForm() {
         completed = true;
         setState({
           status: "success",
-          message: `Indexed ${update.summary.documentsSeen} documents and created ${update.summary.chunksCreated} chunks. ${update.summary.documentsUnchanged} documents were unchanged.`,
+          message: [
+            `Indexed ${update.summary.documentsSeen} documents and wrote ${update.summary.chunksCreated} chunks.`,
+            `${update.summary.documentsUnchanged} documents were unchanged.`,
+            update.summary.documentsWithoutEmbeddings > 0
+              ? `${update.summary.documentsWithoutEmbeddings} documents lack semantic embeddings.`
+              : "",
+          ]
+            .filter(Boolean)
+            .join(" "),
         });
       };
 

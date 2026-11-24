@@ -54,3 +54,5 @@ graphify-out/????-??-??/
 
 # Local-only audit and migration notes
 /docs/
+/DEPLOYMENT.md
+/IMPLEMENTATION_PLAN.md

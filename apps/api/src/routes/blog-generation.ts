@@ -47,6 +47,7 @@ async function respondWithGeneration(
       success: true,
       created: result.created,
       indexing: result.indexing,
+      notifications: result.notifications,
       post: {
         id: result.post._id,
         title: result.post.title,
