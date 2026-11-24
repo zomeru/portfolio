@@ -42,19 +42,21 @@ export async function embedQuery(value: string): Promise<number[]> {
   return result.embedding;
 }
 
-export async function embedKnowledgeChunks(
+type PassageEmbeddingOptions = {
+  signal?: AbortSignal;
+  onBatchStart?: (progress: {
+    batch: number;
+    batches: number;
+    chunksProcessed: number;
+    chunksTotal: number;
+  }) => void;
+};
+
+export async function embedPassageBatches(
   values: readonly string[],
-  options: {
-    signal?: AbortSignal;
-    onBatchStart?: (progress: {
-      batch: number;
-      batches: number;
-      chunksProcessed: number;
-      chunksTotal: number;
-    }) => void;
-  } = {},
+  options: PassageEmbeddingOptions,
+  embedBatch: (batch: string[], signal: AbortSignal) => Promise<number[][]>,
 ): Promise<number[][]> {
-  const model = getEmbeddingModel("passage");
   const embeddings: number[][] = [];
   const batches = Math.ceil(values.length / EMBEDDING_BATCH_SIZE);
 
@@ -67,12 +69,30 @@ export async function embedKnowledgeChunks(
       chunksTotal: values.length,
     });
     const timeout = AbortSignal.timeout(45_000);
+    const signal = options.signal ? AbortSignal.any([timeout, options.signal]) : timeout;
+    const batchEmbeddings = await embedBatch(batch, signal);
+    if (batchEmbeddings.length !== batch.length) {
+      throw new Error("The embedding provider returned an incomplete batch.");
+    }
+    for (const embedding of batchEmbeddings) assertEmbeddingDimensions(embedding);
+    embeddings.push(...batchEmbeddings);
+  }
+
+  return embeddings;
+}
+
+export function embedKnowledgeChunks(
+  values: readonly string[],
+  options: PassageEmbeddingOptions = {},
+) {
+  const model = getEmbeddingModel("passage");
+  return embedPassageBatches(values, options, async (batch, signal) => {
     const result = await embedMany({
       model,
       values: batch,
       maxRetries: 2,
       maxParallelCalls: 2,
-      abortSignal: options.signal ? AbortSignal.any([timeout, options.signal]) : timeout,
+      abortSignal: signal,
       telemetry: {
         functionId: "portfolio.passage-embedding",
         recordInputs: false,
@@ -88,12 +108,6 @@ export async function embedKnowledgeChunks(
       }
       throw error;
     });
-    if (result.embeddings.length !== batch.length) {
-      throw new Error("The embedding provider returned an incomplete batch.");
-    }
-    for (const embedding of result.embeddings) assertEmbeddingDimensions(embedding);
-    embeddings.push(...result.embeddings);
-  }
-
-  return embeddings;
+    return result.embeddings;
+  });
 }

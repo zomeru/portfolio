@@ -91,6 +91,7 @@ async function beginIngestionRun(
 
 async function replaceDocument(options: {
   document: NormalizedKnowledgeDocument;
+  embedChunks: typeof embedKnowledgeChunks;
   signal: AbortSignal;
   hash: string;
   existingId?: string;
@@ -100,23 +101,25 @@ async function replaceDocument(options: {
   onProgress?: (message: string) => void;
 }) {
   const chunks = chunkKnowledgeDocument(options.document);
-  const embeddings = await embedKnowledgeChunks(
-    chunks.map((chunk) => chunk.embeddingText),
-    {
-      signal: options.signal,
-      onBatchStart: ({ batch, batches, chunksProcessed, chunksTotal }) => {
-        options.onProgress?.(
-          `Embedding ${options.documentIndex}/${options.documentCount}: ${options.document.title} (${options.state}) — batch ${batch}/${batches}, ${chunksProcessed}/${chunksTotal} chunks complete`,
-        );
+  const embeddings = await options
+    .embedChunks(
+      chunks.map((chunk) => chunk.embeddingText),
+      {
+        signal: options.signal,
+        onBatchStart: ({ batch, batches, chunksProcessed, chunksTotal }) => {
+          options.onProgress?.(
+            `Embedding ${options.documentIndex}/${options.documentCount}: ${options.document.title} (${options.state}) — batch ${batch}/${batches}, ${chunksProcessed}/${chunksTotal} chunks complete`,
+          );
+        },
       },
-    },
-  ).catch((error: unknown) => {
-    if (!(error instanceof EmbeddingContentRejectedError)) throw error;
-    options.onProgress?.(
-      `Indexing ${options.documentIndex}/${options.documentCount} for keyword search after the embedding provider rejected it.`,
-    );
-    return null;
-  });
+    )
+    .catch((error: unknown) => {
+      if (!(error instanceof EmbeddingContentRejectedError)) throw error;
+      options.onProgress?.(
+        `Indexing ${options.documentIndex}/${options.documentCount} for keyword search after the embedding provider rejected it.`,
+      );
+      return null;
+    });
   options.signal.throwIfAborted();
 
   await replaceIndexedKnowledgeDocument({
@@ -201,6 +204,7 @@ async function completeRun(runId: string, summary: IngestionSummary, force: bool
 
 async function indexDocument(options: {
   document: NormalizedKnowledgeDocument;
+  embedChunks: typeof embedKnowledgeChunks;
   documentCount: number;
   documentIndex: number;
   signal: AbortSignal;
@@ -232,6 +236,7 @@ async function indexDocument(options: {
   );
   const indexed = await replaceDocument({
     document: options.document,
+    embedChunks: options.embedChunks,
     signal: options.signal,
     hash,
     documentIndex: options.documentIndex,
@@ -248,6 +253,7 @@ async function indexDocument(options: {
 
 export async function synchronizePortfolioKnowledge(options: {
   trigger: "cli" | "admin" | "scheduled" | "webhook";
+  embedChunks?: typeof embedKnowledgeChunks;
   force?: boolean;
   onProgress?: (message: string) => void;
 }): Promise<IngestionSummary> {
@@ -277,6 +283,7 @@ export async function synchronizePortfolioKnowledge(options: {
         for (const [index, document] of documents.entries()) {
           await indexDocument({
             document,
+            embedChunks: options.embedChunks ?? embedKnowledgeChunks,
             documentIndex: index + 1,
             documentCount: documents.length,
             signal,
@@ -343,6 +350,7 @@ export async function synchronizePublishedKnowledgeDocument(options: {
         const existingBySanityId = new Map(existing ? [[existing.sanityDocumentId, existing]] : []);
         await indexDocument({
           document,
+          embedChunks: embedKnowledgeChunks,
           documentCount: 1,
           documentIndex: 1,
           signal,

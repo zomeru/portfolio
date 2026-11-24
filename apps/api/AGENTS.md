@@ -31,10 +31,9 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
 - `src/services/github` owns GitHub GraphQL/REST access and in-memory caches. Only return the public
   response contract: private repository names, commit messages, filter values, and URLs must remain
   anonymized or omitted as implemented.
-- `src/services/ai/models.ts` is the provider boundary. Blog generation uses `@ai-sdk/google`
-  directly; Ask Zomer chat selects Groq, NVIDIA NIM, or OpenRouter from configuration, while
-  embeddings always use OpenRouter. Do not replace one provider path as a side effect of work on the
-  other.
+- `src/services/ai` owns provider access. Blog generation uses `@ai-sdk/google` directly and Ask
+  Zomer chat selects Groq, NVIDIA NIM, or OpenRouter. OpenRouter handles runtime embeddings.
+  The indexing CLI can use NVIDIA NIM for passage embeddings with the same model and dimensions.
 - General Ask Zomer intent may expose native web-search tools for Groq or OpenRouter. NVIDIA NIM has
   no web-search tool. Portfolio intents must not use those tools and remain grounded in the indexed
   portfolio.

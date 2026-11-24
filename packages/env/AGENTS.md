@@ -14,7 +14,8 @@ is a source-exported internal package; consumers import explicit subpaths.
 - `./github-server`: required server-only `GH_PAT_TOKEN`.
 - `./ai-server`: required Google API key and Gemini model identifier for blog generation.
 - `./assistant-server`: Ask Zomer chat provider keys, model IDs, and the AI-index capability secret.
-- `./embedding`: Fixed embedding identity, dimensions, and index version with OpenRouter key validation.
+- `./embedding`: Fixed embedding identity, dimensions, index version, and separate OpenRouter and
+  NVIDIA NIM key validation.
 - `./cron`: `CRON_SECRET` with a minimum length of 32.
 - `./database`: required `DATABASE_URL` and optional `DATABASE_DIRECT_URL`.
 - `./langfuse-server`: optional public/secret key pair and defaultable base URL; one key without the

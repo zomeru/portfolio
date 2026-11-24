@@ -1,4 +1,5 @@
 import { logError } from "../lib/log";
+import { createNvidiaBackfillEmbedder } from "../services/ai/nvidia-backfill";
 import {
   IngestionAlreadyRunningError,
   synchronizePortfolioKnowledge,
@@ -55,7 +56,7 @@ function createProgressReporter() {
   };
 }
 
-const supportedArguments = new Set(["--force"]);
+const supportedArguments = new Set(["--force", "--nvidia"]);
 const argumentsList = process.argv.slice(2);
 const unsupported = argumentsList.find((argument) => !supportedArguments.has(argument));
 
@@ -65,9 +66,12 @@ if (unsupported) {
 } else {
   const progress = createProgressReporter();
   try {
+    const useNvidia = argumentsList.includes("--nvidia");
+    if (useNvidia) progress.update("Using NVIDIA NIM for document embeddings…");
     const summary = await synchronizePortfolioKnowledge({
       trigger: "cli",
       force: argumentsList.includes("--force"),
+      ...(useNvidia ? { embedChunks: createNvidiaBackfillEmbedder() } : {}),
       onProgress: (message) => progress.update(message),
     });
     progress.stop("Portfolio indexing complete.");

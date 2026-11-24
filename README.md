@@ -175,6 +175,21 @@ Use `--force` when intentionally rebuilding the entire active index. For a provi
 document, an editorial change to published content is picked up on the next incremental run.
 Use the corpus summary and retrieval tests to assess coverage before promoting a Worker.
 
+### Backfill through NVIDIA NIM
+
+Set `NVIDIA_NIM_API_KEY` in `.env.local` and run `pnpm ai:index --nvidia` for a development
+backfill. The CLI batches up to 16 passages and spaces HTTP request starts by at least two
+seconds. This caps one backfill at about 30 requests per minute. A quota or request failure stops
+the run, and the same command resumes from completed documents.
+
+For a production backfill, use a production-authorized NIM serving
+`nvidia/Nemotron-3.5-Embed-8B-BF16`. Set its `NVIDIA_NIM_EMBEDDING_URL` to the full HTTPS
+`/v1/embeddings` endpoint and set `NVIDIA_NIM_API_KEY` in `.env.production.local`. After
+the migration, run `pnpm ai:index:prod --nvidia` before deploying the Worker. The Worker keeps
+using OpenRouter for query and runtime embeddings. NVIDIA's hosted free endpoint and its
+generated output are restricted to testing and evaluation.
+[NVIDIA API trial terms](https://assets.ngc.nvidia.com/products/api-catalog/legal/NVIDIA%20API%20Trial%20Terms%20of%20Service.pdf)
+
 ## Generated articles
 
 Blog generation uses Google Gemini 4 Hydrogen with low reasoning and structured output. Published
