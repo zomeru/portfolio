@@ -133,27 +133,15 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
-          NVIDIA_NIM_API_KEY: ${{ secrets.NVIDIA_NIM_API_KEY }}
-          NVIDIA_NIM_EMBEDDING_URL: ${{ vars.NVIDIA_NIM_EMBEDDING_URL }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
         run: |
           : "${DATABASE_URL:?Set the Production database URL.}"
           : "${SANITY_API_TOKEN:?Set a token with read access to production Sanity.}"
-          : "${NVIDIA_NIM_API_KEY:?Set the key for the production NIM endpoint.}"
+          : "${OPENROUTER_API_KEY:?Set the Production OpenRouter embedding API key.}"
           : "${CLOUDFLARE_ACCOUNT_ID:?Set the Production Cloudflare account ID.}"
           : "${CLOUDFLARE_API_TOKEN:?Set the Production Cloudflare deploy token.}"
-          node --input-type=module <<'JS'
-          try {
-            const endpoint = new URL(process.env.NVIDIA_NIM_EMBEDDING_URL);
-            if (endpoint.protocol !== "https:" || endpoint.hostname === "integrate.api.nvidia.com") {
-              throw new Error();
-            }
-          } catch {
-            console.error("Set NVIDIA_NIM_EMBEDDING_URL to a production-authorized HTTPS NIM endpoint.");
-            process.exitCode = 1;
-          }
-          JS
           if [ "$GITHUB_RUN_ATTEMPT" -gt 1 ]; then
             latest_main=$(git ls-remote --exit-code origin refs/heads/main)
             if [ "${latest_main%%[[:space:]]*}" != "$GITHUB_SHA" ]; then
@@ -175,16 +163,15 @@ jobs:
           pnpm run db:check:ci
           pnpm run db:migrate:ci
 
-      - name: Backfill production embeddings through NVIDIA NIM
+      - name: Backfill production embeddings through OpenRouter
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           NODE_ENV: production
           SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
           SANITY_DATASET: production
           SITE_URL: https://zomeru.dev
-          NVIDIA_NIM_API_KEY: ${{ secrets.NVIDIA_NIM_API_KEY }}
-          NVIDIA_NIM_EMBEDDING_URL: ${{ vars.NVIDIA_NIM_EMBEDDING_URL }}
-        run: pnpm ai:index:prod --nvidia --require-documents
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: pnpm ai:index:prod --require-documents
 
       - name: Deploy production Worker
         env:

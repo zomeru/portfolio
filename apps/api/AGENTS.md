@@ -32,8 +32,8 @@ compiles its TypeScript source and mounts `apiApp`; there is no standalone liste
   response contract: private repository names, commit messages, filter values, and URLs must remain
   anonymized or omitted as implemented.
 - `src/services/ai` owns provider access. Blog generation uses `@ai-sdk/google` directly and Ask
-  Zomer chat selects Groq, NVIDIA NIM, or OpenRouter. OpenRouter handles runtime embeddings.
-  The indexing CLI can use NVIDIA NIM for passage embeddings with the same model and dimensions.
+  Zomer chat selects Groq, NVIDIA NIM, or OpenRouter. OpenRouter handles all embeddings, including CLI
+  indexing, search, and generated-blog similarity.
 - General Ask Zomer intent may expose native web-search tools for Groq or OpenRouter. NVIDIA NIM has
   no web-search tool. Portfolio intents must not use those tools and remain grounded in the indexed
   portfolio.

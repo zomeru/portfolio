@@ -6,31 +6,26 @@ GitHub Actions releases the production Worker on [zomeru.dev](https://zomeru.dev
 
 Disconnect the production `portfolio` Worker’s Git integration under **Settings → Build** before enabling the GitHub release. In GitHub, configure the **Production** environment. [Cloudflare build settings](https://developers.cloudflare.com/workers/ci-cd/builds/configuration/) · [GitHub environments](https://github.com/zomeru/portfolio/settings/environments)
 
-| Setting                    | Kind            | Value                                                                                        |
-| -------------------------- | --------------- | -------------------------------------------------------------------------------------------- |
-| `DATABASE_URL`             | Secret          | Production Neon connection for the backfill                                                  |
-| `DATABASE_DIRECT_URL`      | Optional secret | Direct connection to the same database for migrations                                        |
-| `SANITY_API_TOKEN`         | Secret          | Read access to the published production Sanity dataset. An existing repository secret works. |
-| `NVIDIA_NIM_API_KEY`       | Secret          | Bearer credential for the production embedding endpoint                                      |
-| `NVIDIA_NIM_EMBEDDING_URL` | Variable        | Full HTTPS embedding endpoint reachable from GitHub Actions                                  |
-| `CLOUDFLARE_API_TOKEN`     | Secret          | **Edit Cloudflare Workers** token scoped to the production account and `zomeru.dev` zone     |
-| `CLOUDFLARE_ACCOUNT_ID`    | Variable        | ID of the account that owns the Worker                                                       |
+| Setting                 | Kind            | Value                                                                                        |
+| ----------------------- | --------------- | -------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`          | Secret          | Production Neon connection for the backfill                                                  |
+| `DATABASE_DIRECT_URL`   | Optional secret | Direct connection to the same database for migrations                                        |
+| `SANITY_API_TOKEN`      | Secret          | Read access to the published production Sanity dataset. An existing repository secret works. |
+| `OPENROUTER_API_KEY`    | Secret          | OpenRouter key for the embedding backfill                                                    |
+| `CLOUDFLARE_API_TOKEN`  | Secret          | **Edit Cloudflare Workers** token scoped to the production account and `zomeru.dev` zone     |
+| `CLOUDFLARE_ACCOUNT_ID` | Variable        | ID of the account that owns the Worker                                                       |
 
 Create the Cloudflare token under **Manage Account → API Tokens**. Copy the account ID under **Workers & Pages → Account Details**. [Token setup](https://developers.cloudflare.com/workers/ci-cd/external-cicd/github-actions/#api-token) · [Find your account ID](https://developers.cloudflare.com/fundamentals/account/find-account-and-zone-ids/#find-account-id-in-workers-pages)
 
-On a qualifying push to `main`, CI verifies the build, applies migrations, completes the NIM backfill, and deploys the Worker. A migration or backfill failure stops deployment. To retry the current revision, select **Re-run failed jobs**. To release the latest revision, choose **Run workflow** on `main`. [Release workflow](.github/workflows/ci.yml)
+On a qualifying push to `main`, CI verifies the build, applies migrations, backfills embeddings through OpenRouter, and deploys the Worker. A migration or backfill failure stops deployment. To retry the current revision, select **Re-run failed jobs**. To release the latest revision, choose **Run workflow** on `main`. [Release workflow](.github/workflows/ci.yml)
 
 After deployment, verify the custom domain, canonical URLs, `/openapi.json`, and Ask Zomer search. If needed, roll back to the previous Worker version, which can still use the previous index.
 
-## Get a production NIM endpoint
+## Backfill embeddings
 
-The endpoint URL comes from a deployed NIM service. To self-host, use NVIDIA AI Enterprise production licensing and select **Get Container** on the Nemotron Embed catalog page. Deploy it on a supported GPU and serve `nvidia/Nemotron-3.5-Embed-8B-BF16` behind HTTPS with bearer-token authentication. For managed hosting, get the URL and token from the provider after it provisions that model with production access. [NVIDIA deployment options](https://docs.api.nvidia.com/nim/docs/run-anywhere) · [Nemotron Embed container](https://catalog.ngc.nvidia.com/orgs/nim/nvidia/containers/nemotron-embed/2.4)
+The Worker and indexing CLI use OpenRouter’s `nvidia/nemotron-3.5-embed-8b:free` model with 4,096 dimensions. OpenRouter lists this endpoint under NVIDIA’s trial terms, which restrict production use of the free service and its outputs. [Model and terms](https://openrouter.ai/nvidia/nemotron-3.5-embed-8b:free)
 
-Set `NVIDIA_NIM_EMBEDDING_URL` to the service’s full URL, such as `https://nim.example.com/v1/embeddings`, and `NVIDIA_NIM_API_KEY` to the corresponding bearer credential. Verify the endpoint returns 4,096 floats per input with `dimensions: 4096`. [NVIDIA model card](https://build.nvidia.com/nvidia/nemotron-3_5-embed-8b/modelcard)
-
-NVIDIA Build’s `https://integrate.api.nvidia.com/v1/embeddings` and its outputs are for testing and evaluation. The local `pnpm ai:index --nvidia` command defaults to that URL and reads the key from `.env.local`. The production workflow rejects the preview host. [NVIDIA API trial terms](https://assets.ngc.nvidia.com/products/api-catalog/legal/NVIDIA%20API%20Trial%20Terms%20of%20Service.pdf)
-
-Production CI runs `pnpm ai:index:prod --nvidia --require-documents` after applying migrations. The CLI batches up to 16 passages and spaces request starts by at least two seconds. Retrying the same command reuses completed documents. For an authorized manual run, use the production database, Sanity dataset, and production NIM credentials in `.env.production.local`. The Worker uses OpenRouter for runtime embeddings.
+Run `pnpm ai:index` locally. Production CI runs `pnpm ai:index:prod --require-documents` after migrations and reuses completed documents on retry. Every backfill spaces requests and retries at least four seconds apart, leaving room under OpenRouter’s 20 requests per minute. OpenRouter’s daily cap is normally 50 free-model requests, or 1,000 in the higher credit tier. Retry after the quota resets if you hit it. For an authorized manual run, put the production database, Sanity dataset, and OpenRouter credentials in `.env.production.local`. [OpenRouter limits](https://openrouter.ai/docs/api_reference/limits)
 
 ## Release staging and Studio
 

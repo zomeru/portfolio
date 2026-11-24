@@ -41,9 +41,9 @@
 
 ## 6. Production release automation
 
-- [x] Put production migrations, the paced NIM backfill, and Worker deployment behind the CI checks.
+- [x] Put production migrations, the OpenRouter backfill, and Worker deployment behind the CI checks.
 - [x] Validate workflow syntax and release settings, rerun migrations on fresh pgvector, and verify both Worker dry runs.
-- [ ] Configure the production NIM and Cloudflare credentials, disconnect the production Workers Builds Git integration, and verify the first GitHub Actions release.
+- [ ] Configure the production OpenRouter and Cloudflare credentials, disconnect the production Workers Builds Git integration, and verify the first GitHub Actions release.
 
 ## Production blog audit
 

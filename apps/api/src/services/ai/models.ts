@@ -36,9 +36,15 @@ export function getBlogLanguageModel(): BlogLanguageModel {
   };
 }
 
-export function getEmbeddingModel(inputType: "passage" | "query"): EmbeddingModel {
+export function getEmbeddingModel(
+  inputType: "passage" | "query",
+  fetchOverride?: typeof fetch,
+): EmbeddingModel {
   const { apiKey, model } = getEmbeddingEnv();
-  return createOpenRouter({ apiKey }).textEmbeddingModel(model, {
+  return createOpenRouter({
+    apiKey,
+    ...(fetchOverride ? { fetch: fetchOverride } : {}),
+  }).textEmbeddingModel(model, {
     extraBody: { input_type: inputType },
     provider: { require_parameters: true },
   });
