@@ -1,6 +1,13 @@
 import { propagateAttributes, startActiveObservation } from "@langfuse/tracing";
+import {
+  acquireBlogGenerationLock,
+  refreshBlogGenerationLock,
+  releaseBlogGenerationLock,
+} from "@portfolio/database";
 
+import { ApiError } from "../../errors";
 import { errorLogMetadata, log } from "../../lib/log";
+import { EmbeddingContentRejectedError } from "../assistant/embeddings";
 import {
   IngestionAlreadyRunningError,
   synchronizePublishedKnowledgeDocument,
@@ -11,8 +18,11 @@ import {
   type BlogGenerationTrigger,
   createGeneratedBlogPost,
   findGeneratedBlogPost,
+  getBlogGenerationScope,
+  listPublishedBlogCorpus,
   type PublishedBlogPost,
 } from "./repository";
+import { findDuplicateBlogPosts, prepareBlogFingerprints } from "./similarity";
 
 type GenerationResult = {
   created: boolean;
@@ -28,6 +38,85 @@ type GenerationResult = {
 };
 
 const inFlightGenerations = new Map<string, Promise<GenerationResult>>();
+const MAX_DRAFT_ATTEMPTS = 2;
+const GENERATION_BUDGET_MS = 4 * 60 * 1_000;
+
+type GenerationRequest = { generationKey: string; trigger: BlogGenerationTrigger };
+
+function generationBusy() {
+  return new ApiError("A blog generation is already in progress. Retry in a few minutes.", {
+    code: "BLOG_GENERATION_BUSY",
+    status: 409,
+  });
+}
+
+async function publishUniqueDraft(input: GenerationRequest) {
+  const scope = getBlogGenerationScope();
+  const token = await acquireBlogGenerationLock(scope);
+  if (!token) throw generationBusy();
+
+  const signal = AbortSignal.timeout(GENERATION_BUDGET_MS);
+  const renewLease = async () => {
+    signal.throwIfAborted();
+    if (!(await refreshBlogGenerationLock(scope, token))) throw generationBusy();
+  };
+
+  try {
+    const existing = await findGeneratedBlogPost(input.generationKey);
+    if (existing) return { post: existing, created: false };
+
+    const posts = await listPublishedBlogCorpus(signal);
+    await prepareBlogFingerprints(scope, posts, signal, renewLease);
+
+    const rejectedTitles: string[] = [];
+    for (let attempt = 0; attempt < MAX_DRAFT_ATTEMPTS; attempt++) {
+      await renewLease();
+      const draft = await generateBlogDraft({
+        ...input,
+        attempt,
+        topics: posts,
+        rejectedTitles,
+        signal,
+      });
+      let matches;
+      try {
+        matches = await findDuplicateBlogPosts(scope, posts, draft, signal);
+      } catch (error) {
+        if (!(error instanceof EmbeddingContentRejectedError)) throw error;
+        rejectedTitles.push(draft.title);
+        log("info", "blog draft rejected by the embedding provider", {
+          attempt: attempt + 1,
+          trigger: input.trigger,
+        });
+        continue;
+      }
+      if (matches.length === 0) {
+        await renewLease();
+        const post = await createGeneratedBlogPost({ ...input, draft });
+        return { post, created: true };
+      }
+
+      rejectedTitles.push(draft.title, ...matches.map((post) => post.title));
+      log("info", "blog draft rejected as duplicate", {
+        attempt: attempt + 1,
+        matches: matches.map((post) => post.id),
+        trigger: input.trigger,
+      });
+    }
+    throw new ApiError("The generated drafts overlap with published articles.", {
+      code: "BLOG_GENERATION_DUPLICATE",
+      status: 422,
+    });
+  } finally {
+    try {
+      await releaseBlogGenerationLock(scope, token);
+    } catch (error) {
+      log("error", "blog generation lock release failed", {
+        ...errorLogMetadata(error, "blogGeneration.releaseLock"),
+      });
+    }
+  }
+}
 
 async function dispatchNotifications(
   post: PublishedBlogPost,
@@ -97,13 +186,11 @@ async function generateAndPublish(input: {
         workflow.update({ input: { trigger: input.trigger } });
 
         try {
-          let created = false;
-          let post = await findGeneratedBlogPost(input.generationKey);
-
-          if (!post) {
-            const draft = await generateBlogDraft(input.trigger);
-            post = await createGeneratedBlogPost({ ...input, draft });
-            created = true;
+          const previous = await findGeneratedBlogPost(input.generationKey);
+          const { created, post } = previous
+            ? { created: false, post: previous }
+            : await publishUniqueDraft(input);
+          if (created) {
             log("info", "generated blog post published", {
               postId: post._id,
               slug: post.slug.current,
@@ -155,4 +242,9 @@ export function generateAndPublishBlog(input: {
   });
   inFlightGenerations.set(input.generationKey, generation);
   return generation;
+}
+
+export function generateScheduledBlog(scheduledTime: number) {
+  const date = new Date(scheduledTime).toISOString().slice(0, 10);
+  return generateAndPublishBlog({ generationKey: `scheduled:${date}`, trigger: "scheduled" });
 }

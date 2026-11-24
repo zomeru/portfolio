@@ -11,7 +11,6 @@
       "entry": ["src/routes/**/*.{ts,tsx}", "src/{router.tsx,server.ts,start.ts}"]
     },
     "packages/database": {
-      "ignoreDependencies": ["tsx"],
       "drizzle": false,
       "ignoreFiles": ["drizzle.config.ts"],
       "ignoreIssues": {

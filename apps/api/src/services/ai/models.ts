@@ -1,9 +1,10 @@
-import { google } from "@ai-sdk/google";
+import { createGoogle } from "@ai-sdk/google";
 import { createGroq } from "@ai-sdk/groq";
 import { createOpenAICompatible } from "@ai-sdk/openai-compatible";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { getAiServerEnv } from "@portfolio/env/ai-server";
 import { getAssistantServerEnv } from "@portfolio/env/assistant-server";
+import { getEmbeddingEnv } from "@portfolio/env/embedding";
 import type { EmbeddingModel, LanguageModel, ToolSet } from "ai";
 
 type AssistantProviderOptions = Record<string, Record<string, boolean | number | string>>;
@@ -21,10 +22,7 @@ type AssistantModels = {
     temperature: number;
   };
   chatModelId: string;
-  documentEmbedding: EmbeddingModel;
-  embeddingModelId: string;
   provider: "openrouter" | "nvidia" | "groq";
-  queryEmbedding: EmbeddingModel;
   webSearchTools: ToolSet | undefined;
 };
 
@@ -32,13 +30,19 @@ export function getBlogLanguageModel(): BlogLanguageModel {
   const environment = getAiServerEnv();
 
   return {
-    model: google(environment.blogModel),
+    model: createGoogle({ apiKey: environment.apiKey })(environment.blogModel),
     modelId: environment.blogModel,
     provider: "google",
   };
 }
 
-export const ASSISTANT_EMBEDDING_DIMENSIONS = 2048;
+export function getEmbeddingModel(inputType: "passage" | "query"): EmbeddingModel {
+  const { apiKey, model } = getEmbeddingEnv();
+  return createOpenRouter({ apiKey }).textEmbeddingModel(model, {
+    extraBody: { input_type: inputType },
+    provider: { require_parameters: true },
+  });
+}
 
 function requireProviderKey(value: string | undefined, provider: string) {
   if (!value) throw new Error(`${provider} API key is required for the selected chat provider.`);
@@ -47,11 +51,10 @@ function requireProviderKey(value: string | undefined, provider: string) {
 
 export function getAssistantModels(): AssistantModels {
   const environment = getAssistantServerEnv();
-  const openrouter = createOpenRouter({ apiKey: environment.openrouterApiKey });
-  const groq = createGroq({ apiKey: requireProviderKey(environment.groqApiKey, "Groq") });
 
   const chatModels = {
     groq: () => {
+      const groq = createGroq({ apiKey: requireProviderKey(environment.groqApiKey, "Groq") });
       return {
         generationOptions: {
           providerOptions: {
@@ -77,14 +80,19 @@ export function getAssistantModels(): AssistantModels {
       modelId: environment.nvidiaChatModel,
       webSearchTools: undefined,
     }),
-    openrouter: () => ({
-      generationOptions: { temperature: 0.2 },
-      model: openrouter.chat(environment.openrouterChatModel),
-      modelId: environment.openrouterChatModel,
-      webSearchTools: {
-        web_search: openrouter.tools.webSearch({ engine: "auto", maxResults: 5 }),
-      },
-    }),
+    openrouter: () => {
+      const openrouter = createOpenRouter({
+        apiKey: requireProviderKey(environment.openrouterApiKey, "OpenRouter"),
+      });
+      return {
+        generationOptions: { temperature: 0.2 },
+        model: openrouter.chat(environment.openrouterChatModel),
+        modelId: environment.openrouterChatModel,
+        webSearchTools: {
+          web_search: openrouter.tools.webSearch({ engine: "auto", maxResults: 5 }),
+        },
+      };
+    },
   } satisfies Record<
     typeof environment.chatProvider,
     () => {
@@ -95,25 +103,12 @@ export function getAssistantModels(): AssistantModels {
     }
   >;
   const chatModel = chatModels[environment.chatProvider]();
-  const embeddingSettings = (inputType: "passage" | "query") => ({
-    extraBody: { input_type: inputType },
-    provider: { require_parameters: true },
-  });
 
   return {
     chat: chatModel.model,
     chatGenerationOptions: chatModel.generationOptions,
     chatModelId: chatModel.modelId,
-    documentEmbedding: openrouter.textEmbeddingModel(
-      environment.embeddingModel,
-      embeddingSettings("passage"),
-    ),
-    embeddingModelId: environment.embeddingModel,
     provider: environment.chatProvider,
-    queryEmbedding: openrouter.textEmbeddingModel(
-      environment.embeddingModel,
-      embeddingSettings("query"),
-    ),
     webSearchTools: chatModel.webSearchTools,
   };
 }

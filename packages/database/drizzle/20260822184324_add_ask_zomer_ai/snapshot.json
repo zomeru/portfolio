@@ -1,1457 +1,2248 @@
 {
-  "version": "8",
+  "type": "diff",
+  "version": "10",
   "dialect": "postgres",
   "id": "1af32980-6850-4626-b64c-f21cc932f5ce",
   "prevIds": [
     "da5d53e8-7483-4d72-9240-a4aeccbd588a"
   ],
-  "ddl": [
+  "footprints": [
     {
-      "values": [
-        "user",
-        "assistant"
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "chat_message_role"
       ],
-      "name": "chat_message_role",
-      "entityType": "enums",
-      "schema": "public"
-    },
-    {
-      "values": [
-        "running",
-        "succeeded",
-        "failed"
+      "writes": [
+        "s|enum|public.chat_message_role",
+        "n|enum|public.chat_message_role",
+        "e|enum|public.chat_message_role",
+        "n|type|public.chat_message_role"
       ],
-      "name": "ingestion_status",
-      "entityType": "enums",
-      "schema": "public"
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "values": [
-        "cli",
-        "admin",
-        "scheduled",
-        "webhook"
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "ingestion_status"
       ],
-      "name": "ingestion_trigger",
-      "entityType": "enums",
-      "schema": "public"
-    },
-    {
-      "values": [
-        "profile",
-        "experience",
-        "project",
-        "blog"
+      "writes": [
+        "s|enum|public.ingestion_status",
+        "n|enum|public.ingestion_status",
+        "e|enum|public.ingestion_status",
+        "n|type|public.ingestion_status"
       ],
-      "name": "knowledge_source_type",
-      "entityType": "enums",
-      "schema": "public"
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "values": [
-        "general",
-        "profile",
-        "experience",
-        "project",
-        "blog",
-        "portfolio",
-        "navigation"
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "ingestion_trigger"
       ],
-      "name": "query_intent",
-      "entityType": "enums",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "chat_messages",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "chat_sessions",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "ingestion_runs",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "knowledge_chunks",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "knowledge_documents",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "retrieval_events",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "users",
-      "entityType": "tables",
-      "schema": "public"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_messages"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "session_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_messages"
-    },
-    {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "provider_message_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_messages"
-    },
-    {
-      "type": "chat_message_role",
-      "typeSchema": "public",
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "role",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_messages"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "content",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_messages"
-    },
-    {
-      "type": "query_intent",
-      "typeSchema": "public",
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "intent",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_messages"
-    },
-    {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "model",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_messages"
-    },
-    {
-      "type": "jsonb",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "'[]'",
-      "generated": null,
-      "identity": null,
-      "name": "citations",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_messages"
-    },
-    {
-      "type": "jsonb",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "'[]'",
-      "generated": null,
-      "identity": null,
-      "name": "suggestions",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_messages"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "token_count",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_messages"
-    },
-    {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "created_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_messages"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_sessions"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "session_key",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_sessions"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "summary",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_sessions"
-    },
-    {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "created_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_sessions"
-    },
-    {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "updated_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_sessions"
-    },
-    {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "last_message_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "chat_sessions"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "ingestion_runs"
-    },
-    {
-      "type": "ingestion_status",
-      "typeSchema": "public",
-      "notNull": true,
-      "dimensions": 0,
-      "default": "'running'",
-      "generated": null,
-      "identity": null,
-      "name": "status",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "ingestion_runs"
-    },
-    {
-      "type": "ingestion_trigger",
-      "typeSchema": "public",
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "trigger",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "ingestion_runs"
-    },
-    {
-      "type": "varchar(32)",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "lock_key",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "ingestion_runs"
-    },
-    {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "started_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "ingestion_runs"
-    },
-    {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "completed_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "ingestion_runs"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "documents_seen",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "ingestion_runs"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "documents_created",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "ingestion_runs"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "documents_updated",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "ingestion_runs"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "documents_unchanged",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "ingestion_runs"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "documents_deleted",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "ingestion_runs"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "chunks_created",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "ingestion_runs"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "error",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "ingestion_runs"
-    },
-    {
-      "type": "jsonb",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "'{}'",
-      "generated": null,
-      "identity": null,
-      "name": "metadata",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "ingestion_runs"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_chunks"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "document_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_chunks"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "chunk_index",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_chunks"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "content",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_chunks"
-    },
-    {
-      "type": "vector(2048)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "embedding",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_chunks"
-    },
-    {
-      "type": "tsvector",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": {
-        "as": "to_tsvector('english', coalesce(\"knowledge_chunks\".\"content\", ''))",
-        "type": "stored"
-      },
-      "identity": null,
-      "name": "search",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_chunks"
-    },
-    {
-      "type": "jsonb",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "'{}'",
-      "generated": null,
-      "identity": null,
-      "name": "metadata",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_chunks"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "token_count",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_chunks"
-    },
-    {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "created_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_chunks"
-    },
-    {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "updated_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_chunks"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_documents"
-    },
-    {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "sanity_document_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_documents"
-    },
-    {
-      "type": "knowledge_source_type",
-      "typeSchema": "public",
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "source_type",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_documents"
-    },
-    {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "slug",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_documents"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "title",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_documents"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "canonical_url",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_documents"
-    },
-    {
-      "type": "varchar(64)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "content_hash",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_documents"
-    },
-    {
-      "type": "jsonb",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "'{}'",
-      "generated": null,
-      "identity": null,
-      "name": "metadata",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_documents"
-    },
-    {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "sanity_updated_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_documents"
-    },
-    {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "indexed_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_documents"
-    },
-    {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "created_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_documents"
-    },
-    {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "updated_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "knowledge_documents"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "retrieval_events"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "session_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "retrieval_events"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "message_id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "retrieval_events"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "query",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "retrieval_events"
-    },
-    {
-      "type": "query_intent",
-      "typeSchema": "public",
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "intent",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "retrieval_events"
-    },
-    {
-      "type": "jsonb",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "'[]'",
-      "generated": null,
-      "identity": null,
-      "name": "results",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "retrieval_events"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "latency_ms",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "retrieval_events"
-    },
-    {
-      "type": "timestamp with time zone",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "created_at",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "retrieval_events"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": {
-        "type": "always",
-        "name": "users_id_seq",
-        "increment": "1",
-        "startWith": "1",
-        "minValue": "1",
-        "maxValue": "2147483647",
-        "cache": 1,
-        "cycle": false
-      },
-      "name": "id",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "users"
-    },
-    {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "name",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "users"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "age",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "users"
-    },
-    {
-      "type": "varchar(255)",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "email",
-      "entityType": "columns",
-      "schema": "public",
-      "table": "users"
-    },
-    {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "session_id",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        },
-        {
-          "value": "created_at",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "writes": [
+        "s|enum|public.ingestion_trigger",
+        "n|enum|public.ingestion_trigger",
+        "e|enum|public.ingestion_trigger",
+        "n|type|public.ingestion_trigger"
       ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "chat_messages_session_created_at_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "chat_messages"
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "provider_message_id",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "knowledge_source_type"
       ],
-      "isUnique": true,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "chat_messages_provider_message_id_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "chat_messages"
+      "writes": [
+        "s|enum|public.knowledge_source_type",
+        "n|enum|public.knowledge_source_type",
+        "e|enum|public.knowledge_source_type",
+        "n|type|public.knowledge_source_type"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "session_key",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "public",
+        "query_intent"
       ],
-      "isUnique": true,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "chat_sessions_session_key_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "chat_sessions"
+      "writes": [
+        "s|enum|public.query_intent",
+        "n|enum|public.query_intent",
+        "e|enum|public.query_intent",
+        "n|type|public.query_intent"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "last_message_at",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "chat_messages"
       ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "chat_sessions_last_message_at_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "chat_sessions"
+      "writes": [
+        "s|tbl|public.chat_messages",
+        "n|tbl|public.chat_messages",
+        "e|tbl|public.chat_messages",
+        "n|rel|public.chat_messages",
+        "n|type|public.chat_messages",
+        "n|rel|public.chat_messages_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.chat_message_role",
+        "n|enum|public.query_intent"
+      ]
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "lock_key",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "chat_sessions"
       ],
-      "isUnique": true,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "ingestion_runs_lock_key_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "ingestion_runs"
+      "writes": [
+        "s|tbl|public.chat_sessions",
+        "n|tbl|public.chat_sessions",
+        "e|tbl|public.chat_sessions",
+        "n|rel|public.chat_sessions",
+        "n|type|public.chat_sessions",
+        "n|rel|public.chat_sessions_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "started_at",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "ingestion_runs"
       ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "ingestion_runs_started_at_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "ingestion_runs"
+      "writes": [
+        "s|tbl|public.ingestion_runs",
+        "n|tbl|public.ingestion_runs",
+        "e|tbl|public.ingestion_runs",
+        "n|rel|public.ingestion_runs",
+        "n|type|public.ingestion_runs",
+        "n|rel|public.ingestion_runs_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.ingestion_status",
+        "n|enum|public.ingestion_trigger"
+      ]
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "status",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        },
-        {
-          "value": "started_at",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "knowledge_chunks"
       ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "ingestion_runs_status_started_at_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "ingestion_runs"
+      "writes": [
+        "s|tbl|public.knowledge_chunks",
+        "n|tbl|public.knowledge_chunks",
+        "e|tbl|public.knowledge_chunks",
+        "n|rel|public.knowledge_chunks",
+        "n|type|public.knowledge_chunks",
+        "n|rel|public.knowledge_chunks_pkey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "document_id",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        },
-        {
-          "value": "chunk_index",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "knowledge_documents"
       ],
-      "isUnique": true,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "knowledge_chunks_document_chunk_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "knowledge_chunks"
+      "writes": [
+        "s|tbl|public.knowledge_documents",
+        "n|tbl|public.knowledge_documents",
+        "e|tbl|public.knowledge_documents",
+        "n|rel|public.knowledge_documents",
+        "n|type|public.knowledge_documents",
+        "n|rel|public.knowledge_documents_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.knowledge_source_type"
+      ]
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "document_id",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "retrieval_events"
       ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "knowledge_chunks_document_id_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "knowledge_chunks"
+      "writes": [
+        "s|tbl|public.retrieval_events",
+        "n|tbl|public.retrieval_events",
+        "e|tbl|public.retrieval_events",
+        "n|rel|public.retrieval_events",
+        "n|type|public.retrieval_events",
+        "n|rel|public.retrieval_events_pkey"
+      ],
+      "reads": [
+        "n|sch|public",
+        "n|enum|public.query_intent"
+      ]
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "search",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "chat_messages",
+        "chat_messages_session_created_at_idx"
       ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "gin",
-      "concurrently": false,
-      "name": "knowledge_chunks_search_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "knowledge_chunks"
+      "writes": [
+        "s|idx|public.chat_messages_session_created_at_idx",
+        "n|idx|public.chat_messages_session_created_at_idx",
+        "e|idx|public.chat_messages_session_created_at_idx",
+        "n|rel|public.chat_messages_session_created_at_idx"
+      ],
+      "reads": [
+        "n|tbl|public.chat_messages",
+        "n|sch|public",
+        "n|col|public.chat_messages.session_id",
+        "n|col|public.chat_messages.created_at"
+      ]
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "sanity_document_id",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "chat_messages",
+        "chat_messages_provider_message_id_idx"
       ],
-      "isUnique": true,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "knowledge_documents_sanity_document_id_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "knowledge_documents"
+      "writes": [
+        "s|idx|public.chat_messages_provider_message_id_idx",
+        "n|idx|public.chat_messages_provider_message_id_idx",
+        "e|idx|public.chat_messages_provider_message_id_idx",
+        "n|rel|public.chat_messages_provider_message_id_idx"
+      ],
+      "reads": [
+        "n|tbl|public.chat_messages",
+        "n|sch|public",
+        "n|col|public.chat_messages.provider_message_id"
+      ]
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "source_type",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "chat_sessions",
+        "chat_sessions_session_key_idx"
       ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "knowledge_documents_source_type_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "knowledge_documents"
+      "writes": [
+        "s|idx|public.chat_sessions_session_key_idx",
+        "n|idx|public.chat_sessions_session_key_idx",
+        "e|idx|public.chat_sessions_session_key_idx",
+        "n|rel|public.chat_sessions_session_key_idx"
+      ],
+      "reads": [
+        "n|tbl|public.chat_sessions",
+        "n|sch|public",
+        "n|col|public.chat_sessions.session_key"
+      ]
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "slug",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "chat_sessions",
+        "chat_sessions_last_message_at_idx"
       ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "knowledge_documents_slug_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "knowledge_documents"
+      "writes": [
+        "s|idx|public.chat_sessions_last_message_at_idx",
+        "n|idx|public.chat_sessions_last_message_at_idx",
+        "e|idx|public.chat_sessions_last_message_at_idx",
+        "n|rel|public.chat_sessions_last_message_at_idx"
+      ],
+      "reads": [
+        "n|tbl|public.chat_sessions",
+        "n|sch|public",
+        "n|col|public.chat_sessions.last_message_at"
+      ]
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "session_id",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        },
-        {
-          "value": "created_at",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "ingestion_runs",
+        "ingestion_runs_lock_key_idx"
       ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "retrieval_events_session_created_at_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "retrieval_events"
+      "writes": [
+        "s|idx|public.ingestion_runs_lock_key_idx",
+        "n|idx|public.ingestion_runs_lock_key_idx",
+        "e|idx|public.ingestion_runs_lock_key_idx",
+        "n|rel|public.ingestion_runs_lock_key_idx"
+      ],
+      "reads": [
+        "n|tbl|public.ingestion_runs",
+        "n|sch|public",
+        "n|col|public.ingestion_runs.lock_key"
+      ]
     },
     {
-      "nameExplicit": true,
-      "columns": [
-        {
-          "value": "message_id",
-          "isExpression": false,
-          "asc": true,
-          "nullsFirst": false,
-          "opclass": null
-        }
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "ingestion_runs",
+        "ingestion_runs_started_at_idx"
       ],
-      "isUnique": false,
-      "where": null,
-      "with": "",
-      "method": "btree",
-      "concurrently": false,
-      "name": "retrieval_events_message_id_idx",
-      "entityType": "indexes",
-      "schema": "public",
-      "table": "retrieval_events"
+      "writes": [
+        "s|idx|public.ingestion_runs_started_at_idx",
+        "n|idx|public.ingestion_runs_started_at_idx",
+        "e|idx|public.ingestion_runs_started_at_idx",
+        "n|rel|public.ingestion_runs_started_at_idx"
+      ],
+      "reads": [
+        "n|tbl|public.ingestion_runs",
+        "n|sch|public",
+        "n|col|public.ingestion_runs.started_at"
+      ]
     },
     {
-      "nameExplicit": false,
-      "columns": [
-        "session_id"
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "ingestion_runs",
+        "ingestion_runs_status_started_at_idx"
       ],
-      "schemaTo": "public",
-      "tableTo": "chat_sessions",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|idx|public.ingestion_runs_status_started_at_idx",
+        "n|idx|public.ingestion_runs_status_started_at_idx",
+        "e|idx|public.ingestion_runs_status_started_at_idx",
+        "n|rel|public.ingestion_runs_status_started_at_idx"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "chat_messages_session_id_chat_sessions_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "chat_messages"
+      "reads": [
+        "n|tbl|public.ingestion_runs",
+        "n|sch|public",
+        "n|col|public.ingestion_runs.status",
+        "n|col|public.ingestion_runs.started_at"
+      ]
     },
     {
-      "nameExplicit": false,
-      "columns": [
-        "document_id"
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "knowledge_chunks",
+        "knowledge_chunks_document_chunk_idx"
       ],
-      "schemaTo": "public",
-      "tableTo": "knowledge_documents",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|idx|public.knowledge_chunks_document_chunk_idx",
+        "n|idx|public.knowledge_chunks_document_chunk_idx",
+        "e|idx|public.knowledge_chunks_document_chunk_idx",
+        "n|rel|public.knowledge_chunks_document_chunk_idx"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "knowledge_chunks_document_id_knowledge_documents_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "knowledge_chunks"
+      "reads": [
+        "n|tbl|public.knowledge_chunks",
+        "n|sch|public",
+        "n|col|public.knowledge_chunks.document_id",
+        "n|col|public.knowledge_chunks.chunk_index"
+      ]
     },
     {
-      "nameExplicit": false,
-      "columns": [
-        "session_id"
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "knowledge_chunks",
+        "knowledge_chunks_document_id_idx"
       ],
-      "schemaTo": "public",
-      "tableTo": "chat_sessions",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|idx|public.knowledge_chunks_document_id_idx",
+        "n|idx|public.knowledge_chunks_document_id_idx",
+        "e|idx|public.knowledge_chunks_document_id_idx",
+        "n|rel|public.knowledge_chunks_document_id_idx"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "SET NULL",
-      "name": "retrieval_events_session_id_chat_sessions_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "retrieval_events"
+      "reads": [
+        "n|tbl|public.knowledge_chunks",
+        "n|sch|public",
+        "n|col|public.knowledge_chunks.document_id"
+      ]
     },
     {
-      "nameExplicit": false,
-      "columns": [
-        "message_id"
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "knowledge_chunks",
+        "knowledge_chunks_search_idx"
       ],
-      "schemaTo": "public",
-      "tableTo": "chat_messages",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|idx|public.knowledge_chunks_search_idx",
+        "n|idx|public.knowledge_chunks_search_idx",
+        "e|idx|public.knowledge_chunks_search_idx",
+        "n|rel|public.knowledge_chunks_search_idx"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "SET NULL",
-      "name": "retrieval_events_message_id_chat_messages_id_fkey",
-      "entityType": "fks",
-      "schema": "public",
-      "table": "retrieval_events"
+      "reads": [
+        "n|tbl|public.knowledge_chunks",
+        "n|sch|public",
+        "n|col|public.knowledge_chunks.search"
+      ]
     },
     {
-      "columns": [
-        "id"
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "knowledge_documents",
+        "knowledge_documents_sanity_document_id_idx"
       ],
-      "nameExplicit": false,
-      "name": "chat_messages_pkey",
-      "schema": "public",
-      "table": "chat_messages",
-      "entityType": "pks"
+      "writes": [
+        "s|idx|public.knowledge_documents_sanity_document_id_idx",
+        "n|idx|public.knowledge_documents_sanity_document_id_idx",
+        "e|idx|public.knowledge_documents_sanity_document_id_idx",
+        "n|rel|public.knowledge_documents_sanity_document_id_idx"
+      ],
+      "reads": [
+        "n|tbl|public.knowledge_documents",
+        "n|sch|public",
+        "n|col|public.knowledge_documents.sanity_document_id"
+      ]
     },
     {
-      "columns": [
-        "id"
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "knowledge_documents",
+        "knowledge_documents_source_type_idx"
       ],
-      "nameExplicit": false,
-      "name": "chat_sessions_pkey",
-      "schema": "public",
-      "table": "chat_sessions",
-      "entityType": "pks"
+      "writes": [
+        "s|idx|public.knowledge_documents_source_type_idx",
+        "n|idx|public.knowledge_documents_source_type_idx",
+        "e|idx|public.knowledge_documents_source_type_idx",
+        "n|rel|public.knowledge_documents_source_type_idx"
+      ],
+      "reads": [
+        "n|tbl|public.knowledge_documents",
+        "n|sch|public",
+        "n|col|public.knowledge_documents.source_type"
+      ]
     },
     {
-      "columns": [
-        "id"
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "knowledge_documents",
+        "knowledge_documents_slug_idx"
       ],
-      "nameExplicit": false,
-      "name": "ingestion_runs_pkey",
-      "schema": "public",
-      "table": "ingestion_runs",
-      "entityType": "pks"
+      "writes": [
+        "s|idx|public.knowledge_documents_slug_idx",
+        "n|idx|public.knowledge_documents_slug_idx",
+        "e|idx|public.knowledge_documents_slug_idx",
+        "n|rel|public.knowledge_documents_slug_idx"
+      ],
+      "reads": [
+        "n|tbl|public.knowledge_documents",
+        "n|sch|public",
+        "n|col|public.knowledge_documents.slug"
+      ]
     },
     {
-      "columns": [
-        "id"
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "retrieval_events",
+        "retrieval_events_session_created_at_idx"
       ],
-      "nameExplicit": false,
-      "name": "knowledge_chunks_pkey",
-      "schema": "public",
-      "table": "knowledge_chunks",
-      "entityType": "pks"
+      "writes": [
+        "s|idx|public.retrieval_events_session_created_at_idx",
+        "n|idx|public.retrieval_events_session_created_at_idx",
+        "e|idx|public.retrieval_events_session_created_at_idx",
+        "n|rel|public.retrieval_events_session_created_at_idx"
+      ],
+      "reads": [
+        "n|tbl|public.retrieval_events",
+        "n|sch|public",
+        "n|col|public.retrieval_events.session_id",
+        "n|col|public.retrieval_events.created_at"
+      ]
     },
     {
-      "columns": [
-        "id"
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "public",
+        "retrieval_events",
+        "retrieval_events_message_id_idx"
       ],
-      "nameExplicit": false,
-      "name": "knowledge_documents_pkey",
-      "schema": "public",
-      "table": "knowledge_documents",
-      "entityType": "pks"
+      "writes": [
+        "s|idx|public.retrieval_events_message_id_idx",
+        "n|idx|public.retrieval_events_message_id_idx",
+        "e|idx|public.retrieval_events_message_id_idx",
+        "n|rel|public.retrieval_events_message_id_idx"
+      ],
+      "reads": [
+        "n|tbl|public.retrieval_events",
+        "n|sch|public",
+        "n|col|public.retrieval_events.message_id"
+      ]
     },
     {
-      "columns": [
-        "id"
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "chat_messages"
       ],
-      "nameExplicit": false,
-      "name": "retrieval_events_pkey",
-      "schema": "public",
-      "table": "retrieval_events",
-      "entityType": "pks"
+      "writes": [
+        "s|fk|public.chat_messages.chat_messages_session_id_chat_sessions_id_fkey",
+        "n|fk|public.chat_messages.chat_messages_session_id_chat_sessions_id_fkey",
+        "e|fk|public.chat_messages.chat_messages_session_id_chat_sessions_id_fkey",
+        "n|con|public.chat_messages.chat_messages_session_id_chat_sessions_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.chat_messages",
+        "n|sch|public",
+        "n|tbl|public.chat_sessions",
+        "n|sch|public",
+        "n|col|public.chat_messages.session_id",
+        "n|col|public.chat_sessions.id",
+        "e|uniqueness|public.chat_sessions.id"
+      ]
     },
     {
-      "columns": [
-        "id"
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "knowledge_chunks"
       ],
-      "nameExplicit": false,
-      "name": "users_pkey",
-      "schema": "public",
-      "table": "users",
-      "entityType": "pks"
+      "writes": [
+        "s|fk|public.knowledge_chunks.knowledge_chunks_document_id_knowledge_documents_id_fkey",
+        "n|fk|public.knowledge_chunks.knowledge_chunks_document_id_knowledge_documents_id_fkey",
+        "e|fk|public.knowledge_chunks.knowledge_chunks_document_id_knowledge_documents_id_fkey",
+        "n|con|public.knowledge_chunks.knowledge_chunks_document_id_knowledge_documents_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.knowledge_chunks",
+        "n|sch|public",
+        "n|tbl|public.knowledge_documents",
+        "n|sch|public",
+        "n|col|public.knowledge_chunks.document_id",
+        "n|col|public.knowledge_documents.id",
+        "e|uniqueness|public.knowledge_documents.id"
+      ]
     },
     {
-      "nameExplicit": false,
-      "columns": [
-        "email"
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "retrieval_events"
       ],
-      "nullsNotDistinct": false,
-      "name": "users_email_key",
-      "schema": "public",
-      "table": "users",
-      "entityType": "uniques"
+      "writes": [
+        "s|fk|public.retrieval_events.retrieval_events_session_id_chat_sessions_id_fkey",
+        "n|fk|public.retrieval_events.retrieval_events_session_id_chat_sessions_id_fkey",
+        "e|fk|public.retrieval_events.retrieval_events_session_id_chat_sessions_id_fkey",
+        "n|con|public.retrieval_events.retrieval_events_session_id_chat_sessions_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.retrieval_events",
+        "n|sch|public",
+        "n|tbl|public.chat_sessions",
+        "n|sch|public",
+        "n|col|public.retrieval_events.session_id",
+        "n|col|public.chat_sessions.id",
+        "e|uniqueness|public.chat_sessions.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "retrieval_events"
+      ],
+      "writes": [
+        "s|fk|public.retrieval_events.retrieval_events_message_id_chat_messages_id_fkey",
+        "n|fk|public.retrieval_events.retrieval_events_message_id_chat_messages_id_fkey",
+        "e|fk|public.retrieval_events.retrieval_events_message_id_chat_messages_id_fkey",
+        "n|con|public.retrieval_events.retrieval_events_message_id_chat_messages_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|public.retrieval_events",
+        "n|sch|public",
+        "n|tbl|public.chat_messages",
+        "n|sch|public",
+        "n|col|public.retrieval_events.message_id",
+        "n|col|public.chat_messages.id",
+        "e|uniqueness|public.chat_messages.id"
+      ]
     }
   ],
-  "renames": []
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "chat_messages",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "chat_sessions",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "ingestion_runs",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "knowledge_chunks",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "knowledge_documents",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "retrieval_events",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "chat_message_role",
+        "values": [
+          "user",
+          "assistant"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "ingestion_status",
+        "values": [
+          "running",
+          "succeeded",
+          "failed"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "ingestion_trigger",
+        "values": [
+          "cli",
+          "admin",
+          "scheduled",
+          "webhook"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "knowledge_source_type",
+        "values": [
+          "profile",
+          "experience",
+          "project",
+          "blog"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "query_intent",
+        "values": [
+          "general",
+          "profile",
+          "experience",
+          "project",
+          "blog",
+          "portfolio",
+          "navigation"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_messages",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_messages",
+        "name": "session_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_messages",
+        "name": "provider_message_id",
+        "type": "varchar(255)",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_messages",
+        "name": "role",
+        "type": "chat_message_role",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_messages",
+        "name": "content",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_messages",
+        "name": "intent",
+        "type": "query_intent",
+        "typeSchema": "public",
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_messages",
+        "name": "model",
+        "type": "varchar(255)",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_messages",
+        "name": "citations",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'[]'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_messages",
+        "name": "suggestions",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'[]'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_messages",
+        "name": "token_count",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_messages",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_sessions",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_sessions",
+        "name": "session_key",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_sessions",
+        "name": "summary",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_sessions",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_sessions",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_sessions",
+        "name": "last_message_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "status",
+        "type": "ingestion_status",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'running'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "trigger",
+        "type": "ingestion_trigger",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "lock_key",
+        "type": "varchar(32)",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "started_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "completed_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "documents_seen",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "documents_created",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "documents_updated",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "documents_unchanged",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "documents_deleted",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "chunks_created",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "error",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "metadata",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'{}'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks",
+        "name": "document_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks",
+        "name": "chunk_index",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks",
+        "name": "content",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks",
+        "name": "embedding",
+        "type": "vector(2048)",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks",
+        "name": "search",
+        "type": "tsvector",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": {
+          "as": "to_tsvector('english', coalesce(\"knowledge_chunks\".\"content\", ''))",
+          "type": "stored"
+        },
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks",
+        "name": "metadata",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'{}'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks",
+        "name": "token_count",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "sanity_document_id",
+        "type": "varchar(255)",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "source_type",
+        "type": "knowledge_source_type",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "slug",
+        "type": "varchar(255)",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "title",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "canonical_url",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "content_hash",
+        "type": "varchar(64)",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "metadata",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'{}'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "sanity_updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "indexed_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "updated_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "retrieval_events",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "retrieval_events",
+        "name": "session_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "retrieval_events",
+        "name": "message_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "retrieval_events",
+        "name": "query",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "retrieval_events",
+        "name": "intent",
+        "type": "query_intent",
+        "typeSchema": "public",
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "retrieval_events",
+        "name": "results",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'[]'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "retrieval_events",
+        "name": "latency_ms",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "retrieval_events",
+        "name": "created_at",
+        "type": "timestamp with time zone",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_messages",
+        "name": "chat_messages_session_created_at_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "session_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "created_at",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_messages",
+        "name": "chat_messages_provider_message_id_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "provider_message_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_sessions",
+        "name": "chat_sessions_session_key_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "session_key",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_sessions",
+        "name": "chat_sessions_last_message_at_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "last_message_at",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "ingestion_runs_lock_key_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "lock_key",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "ingestion_runs_started_at_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "started_at",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "ingestion_runs_status_started_at_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "status",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "started_at",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks",
+        "name": "knowledge_chunks_document_chunk_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "document_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "chunk_index",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks",
+        "name": "knowledge_chunks_document_id_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "document_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks",
+        "name": "knowledge_chunks_search_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "search",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "gin",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "knowledge_documents_sanity_document_id_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "sanity_document_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "knowledge_documents_source_type_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "source_type",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "knowledge_documents_slug_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "slug",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "retrieval_events",
+        "name": "retrieval_events_session_created_at_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "session_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          },
+          {
+            "value": "created_at",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "retrieval_events",
+        "name": "retrieval_events_message_id_idx",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "message_id",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_messages",
+        "name": "chat_messages_session_id_chat_sessions_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "session_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "chat_sessions",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks",
+        "name": "knowledge_chunks_document_id_knowledge_documents_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "document_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "knowledge_documents",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "retrieval_events",
+        "name": "retrieval_events_session_id_chat_sessions_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "session_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "chat_sessions",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "SET NULL",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "retrieval_events",
+        "name": "retrieval_events_message_id_chat_messages_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "message_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "chat_messages",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "SET NULL",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_messages",
+        "name": "chat_messages_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "chat_sessions",
+        "name": "chat_sessions_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "ingestion_runs",
+        "name": "ingestion_runs_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_chunks",
+        "name": "knowledge_chunks_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "knowledge_documents",
+        "name": "knowledge_documents_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "retrieval_events",
+        "name": "retrieval_events_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    }
+  ]
 }

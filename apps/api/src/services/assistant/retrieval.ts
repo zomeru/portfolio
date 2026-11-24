@@ -15,12 +15,11 @@ import {
   type KnowledgeCandidate,
   type RetrievalResultMetadata,
 } from "@portfolio/database";
+import { ASSISTANT_EMBEDDING } from "@portfolio/env/embedding";
 
 import { errorLogMetadata, log } from "../../lib/log";
 import type { AskZomerSource, KnowledgeSourceType } from "../../types";
-import { getAssistantModels } from "../ai/models";
 import {
-  ASSISTANT_INDEX_VERSION,
   RECENT_BLOG_DEFAULT_RESULT_LIMIT,
   RECENT_BLOG_MAX_RESULT_LIMIT,
   RETRIEVAL_CANDIDATE_LIMIT,
@@ -546,8 +545,8 @@ export async function searchPortfolioKnowledge(options: {
 }) {
   const startedAt = performance.now();
   const identity = {
-    embeddingModel: getAssistantModels().embeddingModelId,
-    indexVersion: ASSISTANT_INDEX_VERSION,
+    embeddingModel: ASSISTANT_EMBEDDING.model,
+    indexVersion: ASSISTANT_EMBEDDING.indexVersion,
   };
   const structured = await structuredCandidates(
     {

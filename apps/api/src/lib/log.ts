@@ -15,7 +15,6 @@ type SerializedError = {
   status?: number;
   retryable?: boolean;
   providerRequestId?: string;
-  providerMessage?: string;
   cause?: SerializedError;
   errors?: SerializedError[];
 };
@@ -30,7 +29,6 @@ export function withLogBackgroundTasks<T>(
   return logBackgroundTasks.run(waitUntil, callback);
 }
 const MAX_ERROR_MESSAGE_LENGTH = 1_000;
-const MAX_PROVIDER_MESSAGE_LENGTH = 1_000;
 const MAX_ERROR_CAUSE_DEPTH = 3;
 const MAX_STACK_FRAME_LENGTH = 4_096;
 const MAX_STACK_LENGTH = 16_000;
@@ -173,19 +171,6 @@ function errorProviderRequestId(error: Error) {
   return typeof candidate === "string" ? truncate(candidate, 256) : undefined;
 }
 
-function errorProviderMessage(error: Error) {
-  const candidate =
-    (error as Error & { body?: unknown; responseBody?: unknown }).body ??
-    (error as Error & { responseBody?: unknown }).responseBody;
-  if (typeof candidate === "string" && candidate.trim()) {
-    return truncate(candidate.trim(), MAX_PROVIDER_MESSAGE_LENGTH);
-  }
-  if (Buffer.isBuffer(candidate) && candidate.byteLength > 0) {
-    return truncate(candidate.toString("utf8").trim(), MAX_PROVIDER_MESSAGE_LENGTH);
-  }
-  return undefined;
-}
-
 export function serializeError(error: unknown, depth = 0): SerializedError {
   if (!(error instanceof Error)) {
     return {
@@ -202,7 +187,16 @@ export function serializeError(error: unknown, depth = 0): SerializedError {
   const status = errorStatus(error);
   const retryable = errorRetryable(error);
   const providerRequestId = errorProviderRequestId(error);
-  const providerMessage = errorProviderMessage(error);
+  const hasProviderPayload = "responseBody" in error || "body" in error;
+  const message = hasProviderPayload
+    ? "Upstream request failed."
+    : error.message || "No error message provided";
+  const stack = hasProviderPayload
+    ? error.stack
+        ?.split("\n")
+        .filter((line) => /^\s+at /.test(line))
+        .join("\n")
+    : error.stack;
   const cause =
     depth < MAX_ERROR_CAUSE_DEPTH && error.cause !== undefined
       ? serializeError(error.cause, depth + 1)
@@ -214,14 +208,13 @@ export function serializeError(error: unknown, depth = 0): SerializedError {
 
   return {
     type: error.name || "Error",
-    message: truncate(error.message || "No error message provided", MAX_ERROR_MESSAGE_LENGTH),
-    ...(error.stack ? { stack: truncate(error.stack, MAX_STACK_LENGTH) } : {}),
+    message: truncate(message, MAX_ERROR_MESSAGE_LENGTH),
+    ...(stack ? { stack: truncate(stack, MAX_STACK_LENGTH) } : {}),
     ...(origin ? { origin } : {}),
     ...(code !== undefined ? { code } : {}),
     ...(status !== undefined ? { status } : {}),
     ...(retryable !== undefined ? { retryable } : {}),
     ...(providerRequestId ? { providerRequestId } : {}),
-    ...(providerMessage ? { providerMessage } : {}),
     ...(cause ? { cause } : {}),
     ...(errors?.length ? { errors } : {}),
   };

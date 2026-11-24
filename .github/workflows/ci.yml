@@ -47,6 +47,20 @@ jobs:
     if: needs.changes.outputs.should_run == 'true'
 
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:0.8.7-pg18
+        env:
+          POSTGRES_USER: portfolio
+          POSTGRES_PASSWORD: portfolio-test
+          POSTGRES_DB: portfolio_test_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U portfolio -d portfolio_test_ci"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
     steps:
       - name: Checkout repo
         uses: actions/checkout@v7.0.1
@@ -71,6 +85,14 @@ jobs:
 
       - name: Verify and build all workspaces
         run: pnpm run check:all:build
+
+      - name: Test fresh production-format migrations and database queries
+        env:
+          DATABASE_URL: postgresql://portfolio:portfolio-test@127.0.0.1:5432/portfolio_test_ci?sslmode=disable
+        run: |
+          pnpm --filter @portfolio/database run db:check:ci
+          pnpm --filter @portfolio/database run db:migrate:ci
+          pnpm --filter @portfolio/database run test:integration
 
       - name: Check Cloudflare Worker bundles
         run: |

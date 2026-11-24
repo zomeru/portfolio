@@ -1,6 +1,5 @@
 import { withLogBackgroundTasks } from "@portfolio/api/logging";
 import { withPublicPortfolioRequest } from "@portfolio/api/public-portfolio";
-import { getCronEnv } from "@portfolio/env/cron";
 import handler from "@tanstack/react-start/server-entry";
 import { z } from "zod";
 
@@ -14,6 +13,21 @@ z.config({ jitless: true });
 function runWithWorkerContext<T>(env: Env, ctx: ExecutionContext, handle: () => T) {
   return workerContext.run({ env, ctx }, () =>
     withLogBackgroundTasks((task) => ctx.waitUntil(task), handle),
+  );
+}
+
+async function limitChatRequest(request: Request, path: string, limiter: RateLimit) {
+  if (request.method !== "POST" || !/^\/api\/ai\/chat\/?$/.test(path)) return;
+  const key = request.headers.get("CF-Connecting-IP");
+  if (!key || (await limiter.limit({ key })).success) return;
+
+  const requestId = crypto.randomUUID();
+  return Response.json(
+    {
+      error: { code: "AI_RATE_LIMITED", message: "Too many chat requests. Try again in a minute." },
+      requestId,
+    },
+    { status: 429, headers: { "Retry-After": "60", "X-Request-Id": requestId } },
   );
 }
 
@@ -34,7 +48,9 @@ export default {
               ? await import("@/lib/telemetry.server")
               : undefined;
           telemetry?.initializeTelemetry();
-          const response = await handler.fetch(request);
+          const response =
+            (await limitChatRequest(request, path, env.AI_REQUEST_LIMIT)) ??
+            (await handler.fetch(request));
           if (response.status >= 500)
             console.error("Worker request failed", {
               method: request.method,
@@ -74,19 +90,18 @@ export default {
       return localized;
     });
   },
-  async scheduled(_event, env, ctx) {
+  async scheduled(event, env, ctx) {
     await runWithWorkerContext(env, ctx, async () => {
-      const [{ fetchHono }, telemetry] = await Promise.all([
-        import("@/lib/hono.server"),
+      const [{ generateScheduledBlog }, telemetry] = await Promise.all([
+        import("@portfolio/api"),
         import("@/lib/telemetry.server"),
       ]);
       telemetry.initializeTelemetry();
-      const response = await fetchHono("https://portfolio.internal/api/blog/generate", {
-        headers: { Authorization: `Bearer ${getCronEnv().secret}` },
-      });
-      await response.body?.cancel();
-      telemetry.flushTelemetry(ctx);
-      if (!response.ok) throw new Error(`Scheduled blog generation failed (${response.status}).`);
+      try {
+        await generateScheduledBlog(event.scheduledTime);
+      } finally {
+        telemetry.flushTelemetry(ctx);
+      }
     });
   },
 } satisfies ExportedHandler<Env>;

@@ -1,10 +1,9 @@
 import { Resolver } from "node:dns/promises";
 
-import { disposableEmailBlocklistSet } from "disposable-email-domains-js";
+import { isDisposableEmailDomain } from "disposable-email-domains-js";
 import { z } from "zod";
 
 const emailSchema = z.email().max(320);
-const disposableDomains = disposableEmailBlocklistSet();
 const DEFAULT_MX_CACHE_TTL_MS = 10 * 60 * 1_000;
 const DEFAULT_MX_CACHE_SIZE = 500;
 const mxResolver = new Resolver({ timeout: 5_000, tries: 2 });
@@ -83,8 +82,7 @@ function cacheMxResult(
 
 export function createEmailValidator(dependencies: Partial<EmailValidatorDependencies> = {}) {
   const lookupMx = dependencies.resolveMx ?? ((domain: string) => mxResolver.resolveMx(domain));
-  const isDisposableDomain =
-    dependencies.isDisposableDomain ?? ((domain: string) => disposableDomains.has(domain));
+  const isDisposableDomain = dependencies.isDisposableDomain;
   const now = dependencies.now ?? Date.now;
   const mxCacheTtlMs = dependencies.mxCacheTtlMs ?? DEFAULT_MX_CACHE_TTL_MS;
   const mxCacheSize = dependencies.mxCacheSize ?? DEFAULT_MX_CACHE_SIZE;
@@ -95,7 +93,10 @@ export function createEmailValidator(dependencies: Partial<EmailValidatorDepende
     if (!parsed.success) return parsed;
 
     const domain = parsed.email.slice(parsed.email.lastIndexOf("@") + 1);
-    if (isDisposableDomainOrSubdomain(domain, isDisposableDomain)) {
+    const disposable = isDisposableDomain
+      ? isDisposableDomainOrSubdomain(domain, isDisposableDomain)
+      : isDisposableEmailDomain(domain);
+    if (disposable) {
       return { success: false, reason: "disposable_domain", retryable: false };
     }
 

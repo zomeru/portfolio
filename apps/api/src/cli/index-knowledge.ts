@@ -76,7 +76,8 @@ if (unsupported) {
     console.log(`Updated: ${summary.documentsUpdated}`);
     console.log(`Unchanged: ${summary.documentsUnchanged}`);
     console.log(`Deleted: ${summary.documentsDeleted}`);
-    console.log(`Chunks embedded: ${summary.chunksCreated}`);
+    console.log(`Chunks written: ${summary.chunksCreated}`);
+    console.log(`Keyword-only documents: ${summary.documentsWithoutEmbeddings}`);
   } catch (error) {
     progress.stop("Portfolio indexing stopped.", true);
     logError("portfolio indexing CLI failed", error, {

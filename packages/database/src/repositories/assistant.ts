@@ -1,8 +1,22 @@
 import { randomUUID } from "node:crypto";
 
-import { and, asc, count, desc, eq, gte, inArray, lt, notInArray, or, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  cosineDistance,
+  count,
+  desc,
+  eq,
+  gte,
+  inArray,
+  isNotNull,
+  lt,
+  notInArray,
+  or,
+  sql,
+} from "drizzle-orm";
 
-import { db } from "../client";
+import { batch, db } from "../client";
 import {
   type ChatCitation,
   chatMessages,
@@ -19,9 +33,6 @@ export type QueryIntentValue = (typeof chatMessages.$inferInsert)["intent"];
 export type KnowledgeSourceTypeValue = (typeof knowledgeDocuments.$inferSelect)["sourceType"];
 export type IngestionTriggerValue = (typeof ingestionRuns.$inferInsert)["trigger"];
 export type IngestionRun = typeof ingestionRuns.$inferSelect;
-
-const EMBEDDING_DIMENSION = 2048;
-const EMBEDDING_DIMENSION_SQL = sql.raw(String(EMBEDDING_DIMENSION));
 
 export type KnowledgeCandidate = {
   chunkId: string;
@@ -54,7 +65,7 @@ export type KnowledgeDocumentWrite = {
 export type KnowledgeChunkWrite = {
   chunkIndex: number;
   content: string;
-  embedding: number[];
+  embedding: number[] | null;
   metadata: KnowledgeMetadata;
   tokenCount: number;
 };
@@ -127,7 +138,7 @@ export async function createUserChatMessage(options: {
   tokenCount: number;
 }) {
   const now = new Date();
-  const [created] = await db.batch([
+  const [created] = await batch([
     db
       .insert(chatMessages)
       .values({ ...options, role: "user" })
@@ -165,7 +176,7 @@ export async function createAssistantChatMessage(options: {
   tokenCount: number;
 }) {
   const now = new Date();
-  await db.batch([
+  await batch([
     db
       .insert(chatMessages)
       .values({ ...options, role: "assistant" })
@@ -246,12 +257,11 @@ export function findSemanticKnowledgeCandidates(
     limit: number;
   } & KnowledgeIndexFilter,
 ) {
-  const vectorValue = JSON.stringify(options.embedding);
-  const distance = sql<number>`(${knowledgeChunks.embedding}::halfvec(${EMBEDDING_DIMENSION_SQL}) <=> ${vectorValue}::halfvec(${EMBEDDING_DIMENSION_SQL}))`;
+  const distance = cosineDistance(knowledgeChunks.embedding, options.embedding);
   return db
     .select({
       ...candidateSelection,
-      semanticSimilarity: sql<number>`1 - ${distance}`,
+      semanticSimilarity: sql<number>`1 - (${distance})`.mapWith(Number),
     })
     .from(knowledgeChunks)
     .innerJoin(knowledgeDocuments, eq(knowledgeChunks.documentId, knowledgeDocuments.id))
@@ -259,9 +269,10 @@ export function findSemanticKnowledgeCandidates(
       and(
         inArray(knowledgeDocuments.sourceType, options.sourceTypes),
         knowledgeIndexCondition(options),
+        isNotNull(knowledgeChunks.embedding),
       ),
     )
-    .orderBy(distance)
+    .orderBy(distance, knowledgeChunks.id)
     .limit(options.limit);
 }
 
@@ -524,6 +535,8 @@ export function listIndexedKnowledgeDocuments() {
       id: knowledgeDocuments.id,
       sanityDocumentId: knowledgeDocuments.sanityDocumentId,
       contentHash: knowledgeDocuments.contentHash,
+      embeddingRejected: sql<boolean>`coalesce(${knowledgeDocuments.metadata}->>'embeddingRejected' = 'true', false)`,
+      sanityUpdatedAt: knowledgeDocuments.sanityUpdatedAt,
     })
     .from(knowledgeDocuments);
 }
@@ -534,6 +547,8 @@ export async function findIndexedKnowledgeDocumentBySanityId(sanityDocumentId: s
       id: knowledgeDocuments.id,
       sanityDocumentId: knowledgeDocuments.sanityDocumentId,
       contentHash: knowledgeDocuments.contentHash,
+      embeddingRejected: sql<boolean>`coalesce(${knowledgeDocuments.metadata}->>'embeddingRejected' = 'true', false)`,
+      sanityUpdatedAt: knowledgeDocuments.sanityUpdatedAt,
     })
     .from(knowledgeDocuments)
     .where(eq(knowledgeDocuments.sanityDocumentId, sanityDocumentId))
@@ -568,13 +583,9 @@ export async function replaceIndexedKnowledgeDocument(options: {
       .delete(knowledgeChunks)
       .where(eq(knowledgeChunks.documentId, documentId));
     if (chunkValues.length > 0) {
-      await db.batch([
-        updateDocument,
-        deleteChunks,
-        db.insert(knowledgeChunks).values(chunkValues),
-      ]);
+      await batch([updateDocument, deleteChunks, db.insert(knowledgeChunks).values(chunkValues)]);
     } else {
-      await db.batch([updateDocument, deleteChunks]);
+      await batch([updateDocument, deleteChunks]);
     }
     return;
   }
@@ -584,9 +595,9 @@ export async function replaceIndexedKnowledgeDocument(options: {
     ...values,
   });
   if (chunkValues.length > 0) {
-    await db.batch([createDocument, db.insert(knowledgeChunks).values(chunkValues)]);
+    await batch([createDocument, db.insert(knowledgeChunks).values(chunkValues)]);
   } else {
-    await db.batch([createDocument]);
+    await batch([createDocument]);
   }
 }
 
@@ -615,6 +626,7 @@ export async function completeIngestionRun(
     documentsUnchanged: number;
     documentsDeleted: number;
     chunksCreated: number;
+    documentsWithoutEmbeddings: number;
     force: boolean;
     embeddingModel: string;
   },
@@ -631,7 +643,11 @@ export async function completeIngestionRun(
       documentsUnchanged: summary.documentsUnchanged,
       documentsDeleted: summary.documentsDeleted,
       chunksCreated: summary.chunksCreated,
-      metadata: { force: summary.force, embeddingModel: summary.embeddingModel },
+      metadata: {
+        force: summary.force,
+        embeddingModel: summary.embeddingModel,
+        documentsWithoutEmbeddings: summary.documentsWithoutEmbeddings,
+      },
     })
     .where(eq(ingestionRuns.id, runId));
 }

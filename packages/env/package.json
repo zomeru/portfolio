@@ -9,6 +9,7 @@
     "./assistant-server": "./src/assistant-server.ts",
     "./cron": "./src/cron.ts",
     "./database": "./src/database.ts",
+    "./embedding": "./src/embedding.ts",
     "./github-server": "./src/github-server.ts",
     "./langfuse-server": "./src/langfuse-server.ts",
     "./notifications-server": "./src/notifications-server.ts",

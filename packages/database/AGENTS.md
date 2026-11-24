@@ -1,6 +1,6 @@
 # Database guidance
 
-This package owns the lazy Neon HTTP Drizzle client, PostgreSQL schema, assistant repositories, and
+This package owns the lazy Drizzle client, PostgreSQL schema, assistant repositories, and
 Drizzle migrations. Consumers must not issue Drizzle queries directly.
 
 ## Schema and repository invariants
@@ -20,9 +20,9 @@ Drizzle migrations. Consumers must not issue Drizzle queries directly.
 - Preserve lazy database initialization so imports and builds do not connect eagerly.
 - Read `DATABASE_URL` and optional `DATABASE_DIRECT_URL` from `@portfolio/env/database`.
   Application queries use the pooled/application URL; Drizzle CLI prefers the direct URL when supplied.
-- Preserve the generated English `tsvector`, GIN full-text index, 2,048-dimension vector column, and
-  cosine HNSW expression index over `halfvec(2048)`. An embedding-dimension change requires
-  coordinated API constants, schema, migration, index, and forced reindex updates.
+- Preserve the generated English `tsvector`, GIN full-text index, and full-precision 4,096-dimension
+  vector column on the active knowledge tables. A null vector records provider rejection and stays
+  eligible for keyword lookup. The old tables and HNSW index are available for Worker rollback.
 - Preserve foreign-key deletion behavior, message-provider idempotency, the unique ingestion lock, and
   deterministic document/chunk replacement semantics.
 - The knowledge-source enum contains only indexed portfolio sources. Persisted chat citations may also

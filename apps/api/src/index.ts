@@ -13,3 +13,4 @@ export {
   verifyAdminSessionToken,
 } from "./lib/admin-session";
 export type { AppType } from "./types";
+export { generateScheduledBlog } from "./services/blog-generation/service";
