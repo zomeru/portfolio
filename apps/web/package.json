@@ -8,7 +8,7 @@
     "build:production": "pnpm run cf:typegen && CLOUDFLARE_ENV=production vite build --mode production && tsc --noEmit",
     "start": "vite preview",
     "preview": "vite preview",
-    "deploy:production": "pnpm run build:production && wrangler deploy --env production",
+    "deploy:production": "sh scripts/deploy-production.sh",
     "deploy:staging": "pnpm run build && wrangler deploy --env staging",
     "versions:upload": "pnpm run build && wrangler versions upload --env staging",
     "versions:upload:production": "pnpm run build:production && wrangler versions upload --env production",

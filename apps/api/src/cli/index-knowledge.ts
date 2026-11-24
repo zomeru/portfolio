@@ -56,7 +56,7 @@ function createProgressReporter() {
   };
 }
 
-const supportedArguments = new Set(["--force", "--nvidia"]);
+const supportedArguments = new Set(["--force", "--nvidia", "--require-documents"]);
 const argumentsList = process.argv.slice(2);
 const unsupported = argumentsList.find((argument) => !supportedArguments.has(argument));
 
@@ -71,6 +71,7 @@ if (unsupported) {
     const summary = await synchronizePortfolioKnowledge({
       trigger: "cli",
       force: argumentsList.includes("--force"),
+      requireDocuments: argumentsList.includes("--require-documents"),
       ...(useNvidia ? { embedChunks: createNvidiaBackfillEmbedder() } : {}),
       onProgress: (message) => progress.update(message),
     });

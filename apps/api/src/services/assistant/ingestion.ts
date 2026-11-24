@@ -255,6 +255,7 @@ export async function synchronizePortfolioKnowledge(options: {
   trigger: "cli" | "admin" | "scheduled" | "webhook";
   embedChunks?: typeof embedKnowledgeChunks;
   force?: boolean;
+  requireDocuments?: boolean;
   onProgress?: (message: string) => void;
 }): Promise<IngestionSummary> {
   const force = options.force ?? false;
@@ -275,8 +276,8 @@ export async function synchronizePortfolioKnowledge(options: {
 
         options.onProgress?.(`Comparing ${documents.length} documents with the current index…`);
         const existing = await listIndexedKnowledgeDocuments();
-        if (existing.length > 0 && documents.length === 0) {
-          throw new Error("Sanity returned no indexable documents; stale deletion was refused.");
+        if (documents.length === 0 && (options.requireDocuments || existing.length > 0)) {
+          throw new Error("Sanity returned no indexable documents. The index was left intact.");
         }
 
         const existingBySanityId = new Map(existing.map((item) => [item.sanityDocumentId, item]));

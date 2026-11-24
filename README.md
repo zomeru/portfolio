@@ -85,29 +85,43 @@ without invoking the app Worker.
 `apps/web/wrangler.jsonc` defines both deployment targets, their custom domains, and non-sensitive
 runtime variables. Use a Cloudflare account that manages the `zomeru.dev` zone.
 
-### GitHub integration
+### GitHub Actions production release
 
-Connect the same GitHub repository to both Workers in Cloudflare Workers Builds. Configure each
-Worker with its own production branch so pushes to that branch update its custom domain.
-If a Worker is missing, the matching `wrangler secret bulk` command below can provision it before
-you connect GitHub.
+Before pushing this release workflow, disconnect the production `portfolio` Worker's Git
+integration in Cloudflare under **Settings → Build**. GitHub Actions owns the production deploy
+so one job can complete the database work before switching traffic. The repository's production
+deploy script also rejects invocations from Workers Builds.
 
-| Environment | Worker              | Custom domain        | Production branch | Deploy command               |
-| ----------- | ------------------- | -------------------- | ----------------- | ---------------------------- |
-| Production  | `portfolio`         | `zomeru.dev`         | `main`            | `pnpm run deploy:production` |
-| Staging     | `portfolio-staging` | `preview.zomeru.dev` | `dev`             | `pnpm run deploy:staging`    |
+In GitHub, configure the **Production** environment:
 
-Set the root directory to `apps/web` for both Workers. Leave the separate build command blank since
-the deploy command builds the matching environment and uploads that bundle. Disable non-production
-branch builds when using the two fixed domains above.
+| Setting                    | Kind            | Purpose                                                             |
+| -------------------------- | --------------- | ------------------------------------------------------------------- |
+| `DATABASE_URL`             | Secret          | Production Neon application connection for the backfill             |
+| `DATABASE_DIRECT_URL`      | Optional secret | Direct connection to the same database for migrations               |
+| `SANITY_API_TOKEN`         | Secret          | Read access to the published production Sanity dataset              |
+| `NVIDIA_NIM_API_KEY`       | Secret          | Access to the production-authorized embedding endpoint              |
+| `NVIDIA_NIM_EMBEDDING_URL` | Variable        | Full HTTPS `/v1/embeddings` URL serving Nemotron 3.5 Embed 8B BF16  |
+| `CLOUDFLARE_API_TOKEN`     | Secret          | Workers deployment access scoped to the production account and zone |
+| `CLOUDFLARE_ACCOUNT_ID`    | Variable        | Account that owns the production Worker                             |
 
-If Workers Builds stops while installing the pinned Node release, use the build image's preinstalled
-Node as the launcher. Set the build variables `NODE_VERSION=24.22.1` and
-`SKIP_DEPENDENCY_INSTALL=1`. Set the deploy command to `bash scripts/workers-build.sh production`
-or `bash scripts/workers-build.sh staging`. The script downloads and verifies the Node version in
-`.node-version`, enables the pinned pnpm through Corepack, and runs the matching deploy command.
+The endpoint must be reachable from GitHub Actions. The `SANITY_API_TOKEN` can also be supplied
+as a repository secret if it can read the production dataset.
 
-The GitHub Actions CI workflow checks both bundles with `--dry-run`.
+On a relevant push to `main`, CI verifies both Worker bundles with `--dry-run`. The production job
+then applies Drizzle migrations, completes the paced NIM backfill, and deploys `portfolio` to
+`zomeru.dev`. A failed migration or incomplete backfill stops the job before deployment.
+Use **Re-run failed jobs** for the current `main` commit, or select **Run workflow** on `main`
+to release the latest revision. Completed documents are reused on retry. The job uses GitHub
+environment settings in place of a runner-local dotenv file.
+
+Staging uses Cloudflare Workers Builds for `portfolio-staging` from the `dev` branch. Use
+`apps/web` as its root directory and `pnpm run deploy:staging` as its deploy command. Leave the
+separate build command blank and disable non-production branch builds. If Workers Builds cannot
+install the pinned Node release, set `NODE_VERSION=24.22.1` and `SKIP_DEPENDENCY_INSTALL=1`, then use
+`bash scripts/workers-build.sh staging` as the deploy command. The standalone GitHub migration
+workflow automatically handles database changes on `dev` and supports manual migration on either
+branch.
+
 The separate Sanity Studio workflow uses `SANITY_PROJECT_ID` and `SANITY_APP_ID` as optional
 GitHub variable overrides. Set the GitHub Actions secret `SANITY_AUTH_TOKEN` to a Sanity deploy
 token with schema deployment access for both Studio workspaces.
@@ -133,10 +147,10 @@ pnpm exec wrangler secret bulk --env staging /secure/path/staging-secrets.env
 pnpm exec wrangler secret bulk --env production /secure/path/production-secrets.env
 ```
 
-For manual deployment, run `pnpm run deploy:staging` or `pnpm run deploy:production`. Verify the
-custom domain, canonical URLs, and the static `/openapi.json` for each environment. Disable any
-existing Sanity webhook pointed at `/api/revalidate/sanity` after rolling out this change; the
-endpoint and its signing secret are retired.
+Use the production CI release for production deployments or run `pnpm run deploy:staging` for a
+manual staging deploy. Verify the custom domain, canonical URLs, and static `/openapi.json` in
+the target environment. Disable any existing Sanity webhook pointing at the retired
+`/api/revalidate/sanity` endpoint after the release.
 Run `pnpm run versions:upload` or `pnpm run versions:upload:production` to build and upload a Worker
 version for later deployment.
 Only production runs the blog cron at `0 22 * * TUE,THU,SAT` (6:00 a.m. Wednesday, Friday, and
@@ -159,17 +173,12 @@ full-text GIN index. pgvector HNSW supports at most 2,000 dimensions for `vector
 `halfvec`. Exact search preserves recall on the current portfolio corpus. If it becomes a
 measured bottleneck, benchmark a subvector or binary HNSW index with full-vector reranking.
 
-1. Hold automatic Worker deployment until the new index is ready. Apply the additive migrations
-   to the target PostgreSQL instance while the previous Worker serves the legacy index.
-2. Run the new revision's `pnpm ai:index` against the staging database and its development Sanity
-   dataset first. For production, confirm the database and dataset in the private
-   `.env.production.local` and run `pnpm ai:index:prod` from the new revision.
-3. Run the same command again after an interruption or OpenRouter quota reset. Each completed
-   document commits atomically, and the next run skips matching content hashes. Compare the
-   documents scanned to the published portfolio. The summary counts provider-rejected documents
-   separately. Those documents remain available to keyword and structured retrieval.
-4. Verify search and chronology against the new index, then deploy the matching Worker. Roll back
-   with the last Worker version if needed. The legacy tables and vectors remain available.
+Production CI applies the additive migrations and backfills while the previous Worker serves
+the legacy index. A production backfill requires a nonempty published Sanity corpus. Each
+completed document commits atomically and matching content hashes are skipped on retries.
+Provider-rejected documents already retained for keyword search remain available to keyword and
+structured retrieval. Verify search and chronology against the active index after release.
+Roll back with the last Worker version if needed. The legacy tables and vectors remain available.
 
 Use `--force` when intentionally rebuilding the entire active index. For a provider-rejected
 document, an editorial change to published content is picked up on the next incremental run.
@@ -182,12 +191,11 @@ backfill. The CLI batches up to 16 passages and spaces HTTP request starts by at
 seconds. This caps one backfill at about 30 requests per minute. A quota or request failure stops
 the run, and the same command resumes from completed documents.
 
-For a production backfill, use a production-authorized NIM serving
-`nvidia/Nemotron-3.5-Embed-8B-BF16`. Set its `NVIDIA_NIM_EMBEDDING_URL` to the full HTTPS
-`/v1/embeddings` endpoint and set `NVIDIA_NIM_API_KEY` in `.env.production.local`. After
-the migration, run `pnpm ai:index:prod --nvidia` before deploying the Worker. The Worker keeps
-using OpenRouter for query and runtime embeddings. NVIDIA's hosted free endpoint and its
-generated output are restricted to testing and evaluation.
+Production CI runs `pnpm ai:index:prod --nvidia --require-documents` after the migration. If a
+manual backfill is needed, use the same command with the production database, dataset, and
+provider credentials in `.env.production.local`. The Worker uses OpenRouter for query and
+runtime embeddings. NVIDIA's hosted free endpoint and its generated output are restricted to
+testing and evaluation.
 [NVIDIA API trial terms](https://assets.ngc.nvidia.com/products/api-catalog/legal/NVIDIA%20API%20Trial%20Terms%20of%20Service.pdf)
 
 ## Generated articles

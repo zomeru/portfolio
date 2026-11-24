@@ -8,10 +8,11 @@ on:
     branches: [main]
   pull_request:
   merge_group:
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' || github.event_name == 'merge_group' }}
 
 jobs:
   changes:
@@ -27,6 +28,7 @@ jobs:
 
       - uses: dorny/paths-filter@v4.0.3
         id: filter
+        if: github.event_name != 'workflow_dispatch'
         with:
           predicate-quantifier: every
           filters: |
@@ -44,7 +46,7 @@ jobs:
   check-and-build:
     name: Format, Lint, and Build
     needs: changes
-    if: needs.changes.outputs.should_run == 'true'
+    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.should_run == 'true'
 
     runs-on: ubuntu-latest
     services:
@@ -104,3 +106,88 @@ jobs:
 
       - name: Audit production dependencies
         run: pnpm run security:audit
+
+  deploy-production:
+    name: Release production Worker
+    needs: check-and-build
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    environment: Production
+    concurrency:
+      group: migrate-main
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup pnpm (includes Node.js + cache)
+        uses: pnpm/setup@v3.1.2
+        with:
+          cache: true
+          cache-dependency-path: pnpm-lock.yaml
+          install: false
+
+      - name: Check production release settings
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+          NVIDIA_NIM_API_KEY: ${{ secrets.NVIDIA_NIM_API_KEY }}
+          NVIDIA_NIM_EMBEDDING_URL: ${{ vars.NVIDIA_NIM_EMBEDDING_URL }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          : "${DATABASE_URL:?Set the Production database URL.}"
+          : "${SANITY_API_TOKEN:?Set a token with read access to production Sanity.}"
+          : "${NVIDIA_NIM_API_KEY:?Set the key for the production NIM endpoint.}"
+          : "${CLOUDFLARE_ACCOUNT_ID:?Set the Production Cloudflare account ID.}"
+          : "${CLOUDFLARE_API_TOKEN:?Set the Production Cloudflare deploy token.}"
+          node --input-type=module <<'JS'
+          try {
+            const endpoint = new URL(process.env.NVIDIA_NIM_EMBEDDING_URL);
+            if (endpoint.protocol !== "https:" || endpoint.hostname === "integrate.api.nvidia.com") {
+              throw new Error();
+            }
+          } catch {
+            console.error("Set NVIDIA_NIM_EMBEDDING_URL to a production-authorized HTTPS NIM endpoint.");
+            process.exitCode = 1;
+          }
+          JS
+          if [ "$GITHUB_RUN_ATTEMPT" -gt 1 ]; then
+            latest_main=$(git ls-remote --exit-code origin refs/heads/main)
+            if [ "${latest_main%%[[:space:]]*}" != "$GITHUB_SHA" ]; then
+              echo "Start a new CI run from main to release the current revision." >&2
+              exit 1
+            fi
+          fi
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Validate and apply production migrations
+        working-directory: packages/database
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_DIRECT_URL: ${{ secrets.DATABASE_DIRECT_URL }}
+        run: |
+          if [ -z "$DATABASE_DIRECT_URL" ]; then unset DATABASE_DIRECT_URL; fi
+          pnpm run db:check:ci
+          pnpm run db:migrate:ci
+
+      - name: Backfill production embeddings through NVIDIA NIM
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NODE_ENV: production
+          SANITY_API_TOKEN: ${{ secrets.SANITY_API_TOKEN }}
+          SANITY_DATASET: production
+          SITE_URL: https://zomeru.dev
+          NVIDIA_NIM_API_KEY: ${{ secrets.NVIDIA_NIM_API_KEY }}
+          NVIDIA_NIM_EMBEDDING_URL: ${{ vars.NVIDIA_NIM_EMBEDDING_URL }}
+        run: pnpm ai:index:prod --nvidia --require-documents
+
+      - name: Deploy production Worker
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: pnpm run deploy:production

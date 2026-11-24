@@ -39,6 +39,12 @@
 - [ ] Complete the provider-backed development backfill and full live retrieval evaluation after the
       OpenRouter daily quota resets.
 
+## 6. Production release automation
+
+- [x] Put production migrations, the paced NIM backfill, and Worker deployment behind the CI checks.
+- [x] Validate workflow syntax and release settings, rerun migrations on fresh pgvector, and verify both Worker dry runs.
+- [ ] Configure the production NIM and Cloudflare credentials, disconnect the production Workers Builds Git integration, and verify the first GitHub Actions release.
+
 ## Production blog audit
 
 On November 24, 2026 the public Sanity dataset contained 168 published documents at 164 distinct

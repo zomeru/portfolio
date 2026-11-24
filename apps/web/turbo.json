@@ -9,7 +9,12 @@
     },
     "deploy:production": {
       "cache": false,
-      "passThroughEnv": ["CLOUDFLARE_ACCOUNT_ID", "CLOUDFLARE_API_TOKEN", "WRANGLER_SEND_METRICS"]
+      "passThroughEnv": [
+        "CLOUDFLARE_ACCOUNT_ID",
+        "CLOUDFLARE_API_TOKEN",
+        "WORKERS_CI",
+        "WRANGLER_SEND_METRICS"
+      ]
     },
     "deploy:staging": {
       "cache": false,

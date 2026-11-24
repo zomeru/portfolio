@@ -39,8 +39,9 @@ Drizzle migrations. Consumers must not issue Drizzle queries directly.
 - Do not run `db:migrate`, `db:push`, `db:pull`, `db:export`, `db:up`, or
   `db:studio` without explicit authorization and a confirmed database target. Generating or checking
   does not authorize applying.
-- The GitHub migration workflow applies checked migrations on database changes to `dev` and `main`
-  using the corresponding Preview or Production environment.
+- The standalone GitHub migration workflow applies migrations on database changes to `dev` and
+  supports manual runs on `dev` or `main`. The production release job applies migrations before
+  backfilling the production index and deploying the Worker.
 
 ## Verification
 

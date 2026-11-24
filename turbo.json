@@ -41,6 +41,7 @@
     "ai:index:prod": {
       "cache": false,
       "env": [
+        "NODE_ENV",
         "DATABASE_URL",
         "AI_INDEX_SECRET_KEY",
         "AI_CHAT_PROVIDER",

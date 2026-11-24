@@ -2,7 +2,7 @@ name: Migrate Database
 
 on:
   push:
-    branches: [dev, main]
+    branches: [dev]
     paths:
       - "packages/database/**"
       - "pnpm-lock.yaml"
@@ -19,6 +19,7 @@ permissions:
 jobs:
   deploy:
     name: Migrate Database (${{ github.ref_name == 'main' && 'Production' || 'Preview' }})
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
 
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -45,5 +46,6 @@ jobs:
       - name: Validate & apply Drizzle migrations
         working-directory: packages/database
         run: |
+          if [ -z "$DATABASE_DIRECT_URL" ]; then unset DATABASE_DIRECT_URL; fi
           pnpm run db:check:ci
           pnpm run db:migrate:ci
