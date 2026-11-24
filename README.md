@@ -20,6 +20,4 @@ For Ask Zomer, set `DATABASE_URL` to a local PostgreSQL database with pgvector i
 
 Run `pnpm check:all:build` for lint, types, tests, and builds. GitHub Actions also tests migrations on disposable PostgreSQL, checks both Worker bundles, and audits dependencies. [CI workflow](.github/workflows/ci.yml)
 
-- [Deployment and embedding backfill](DEPLOYMENT.md)
-- [Workspace layout and contributor commands](AGENTS.md)
-- [Modernization plan and blog audit](IMPLEMENTATION_PLAN.md)
+[Workspace layout and contributor commands](AGENTS.md)
