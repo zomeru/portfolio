@@ -9,6 +9,7 @@
   "scripts": {
     "check-types": "tsc --noEmit",
     "check-types:watch": "tsc --noEmit --watch",
+    "test": "node --import tsx --test src/client.test.ts",
     "test:integration": "node --import tsx --test src/repositories/modernization.integration.ts",
     "db:generate": "pnpm run with-env drizzle-kit generate",
     "db:migrate": "pnpm run with-env drizzle-kit migrate",
