@@ -9,7 +9,13 @@ function createDatabase() {
   if (host === "localhost" || host === "127.0.0.1" || host === "[::1]") {
     return postgres({ connection: { url, max: 4, idleTimeoutMillis: 1_000 } });
   }
-  return neonHttp(url);
+  return neonHttp({
+    connection: {
+      url,
+      // The Neon driver calls its fetch as a method. Workers fetch expects the global receiver.
+      fetch: (input, init) => globalThis.fetch(input, init),
+    },
+  });
 }
 
 type Database = ReturnType<typeof createDatabase>;
