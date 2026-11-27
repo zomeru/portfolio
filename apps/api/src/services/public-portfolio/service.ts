@@ -383,33 +383,34 @@ function toPublicProject(raw: RawSnapshot["projects"][number], siteUrl: URL) {
   } satisfies PublicProject;
 }
 
-function toPublicBlogSummary(
-  raw: RawSnapshot["blogs"][number],
-  siteUrl: URL,
-): PublicBlogPostSummary | null {
+function readBlogIdentity(raw: RawSnapshot["blogs"][number]) {
   const date = cleanString(raw.date);
   const slug = cleanString(raw.slug);
   const title = cleanString(raw.title);
-  if (!date || !slug || !title) return null;
+  return date && slug && title ? { date, slug, title } : null;
+}
 
+function toPublicBlogSummary(
+  raw: RawSnapshot["blogs"][number],
+  identity: NonNullable<ReturnType<typeof readBlogIdentity>>,
+  siteUrl: URL,
+): PublicBlogPostSummary {
   return {
-    canonicalUrl: new URL(`/blogs/${slug}`, siteUrl).href,
-    date,
+    ...identity,
+    canonicalUrl: new URL(`/blogs/${identity.slug}`, siteUrl).href,
     description: cleanString(raw.description) ?? "",
-    slug,
     tags: cleanStringList(raw.tags),
-    title,
   };
 }
 
 function toPublicBlogPost(raw: RawBlogPost | null, siteUrl: URL): PublicBlogPost | null {
   if (!raw) return null;
-  const summary = toPublicBlogSummary(raw, siteUrl);
+  const identity = readBlogIdentity(raw);
   const body = cleanString(raw.body);
-  if (!summary || !body) return null;
+  if (!identity || !body) return null;
 
   return publicBlogPostSchema.parse({
-    ...summary,
+    ...toPublicBlogSummary(raw, identity, siteUrl),
     body,
     readTimeMinutes: raw.readTime,
     updatedAt: cleanString(raw.updatedAt),
@@ -427,7 +428,7 @@ export function serializePublicSnapshot(value: unknown, siteUrl: URL): PublicPor
   const raw = rawSnapshotSchema.parse(value);
 
   return {
-    blogs: toUniqueBlogSummaries(raw.blogs, siteUrl),
+    blogs: paginateBlogSummaries(raw.blogs, siteUrl).items,
     experience: raw.experience
       .map((experience) => toPublicExperience(experience, siteUrl))
       .filter((item): item is PublicExperience => Boolean(item)),
@@ -471,17 +472,25 @@ function serializePublicProjectList(value: unknown, siteUrl: URL) {
     .filter((item): item is PublicProject => Boolean(item));
 }
 
-function serializePublicBlogPostList(value: unknown, siteUrl: URL) {
-  return toUniqueBlogSummaries(rawBlogSummarySchema.array().parse(value), siteUrl);
-}
-
-function toUniqueBlogSummaries(posts: RawSnapshot["blogs"], siteUrl: URL) {
-  const bySlug = new Map<string, PublicBlogPostSummary>();
+function paginateBlogSummaries(
+  posts: RawSnapshot["blogs"],
+  siteUrl: URL,
+  { offset = 0, limit = posts.length, query = "" }: PublicBlogPostListOptions = {},
+) {
+  const seen = new Set<string>();
+  const items: PublicBlogPostSummary[] = [];
+  let total = 0;
   for (const raw of posts) {
-    const post = toPublicBlogSummary(raw, siteUrl);
-    if (post && !bySlug.has(post.slug)) bySlug.set(post.slug, post);
+    const identity = readBlogIdentity(raw);
+    if (!identity || seen.has(identity.slug)) continue;
+    seen.add(identity.slug);
+    if (query && !identity.title.toLocaleLowerCase("en-US").includes(query)) continue;
+    if (total >= offset && items.length < limit) {
+      items.push(toPublicBlogSummary(raw, identity, siteUrl));
+    }
+    total += 1;
   }
-  return [...bySlug.values()];
+  return { items, total };
 }
 
 function serializePublicTechStack(value: unknown) {
@@ -509,7 +518,11 @@ export function createPublicPortfolioService(
       const [blogs, experience, profile, projects, techStack] = await Promise.all([
         dependencies
           .fetchBlogPosts()
-          .then((value) => serializePublicBlogPostList(value, dependencies.siteUrl)),
+          .then(
+            (value) =>
+              paginateBlogSummaries(rawBlogSummarySchema.array().parse(value), dependencies.siteUrl)
+                .items,
+          ),
         dependencies
           .fetchExperienceList()
           .then((value) => serializePublicExperienceList(value, dependencies.siteUrl)),
@@ -603,10 +616,18 @@ export function createPublicPortfolioService(
     },
     getSnapshot,
     async listBlogPosts({ limit = 10, offset = 0, query = "" } = {}) {
-      const blogs = dependencies.fetchBlogPosts
-        ? serializePublicBlogPostList(await dependencies.fetchBlogPosts(), dependencies.siteUrl)
-        : (await getSnapshot()).blogs;
       const normalizedQuery = query.trim().toLocaleLowerCase("en-US");
+      if (dependencies.fetchBlogPosts) {
+        const posts = rawBlogSummarySchema.array().parse(await dependencies.fetchBlogPosts());
+        const page = paginateBlogSummaries(posts, dependencies.siteUrl, {
+          limit,
+          offset,
+          query: normalizedQuery,
+        });
+        return publicBlogPostListSchema.parse({ ...page, limit, offset });
+      }
+
+      const blogs = (await getSnapshot()).blogs;
       const matches = normalizedQuery
         ? blogs.filter((blog) => blog.title.toLocaleLowerCase("en-US").includes(normalizedQuery))
         : blogs;

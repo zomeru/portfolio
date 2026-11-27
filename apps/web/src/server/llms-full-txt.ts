@@ -11,6 +11,7 @@ export async function GET(): Promise<Response> {
     projects,
     techStack,
   } = await getPublicPortfolioSnapshot();
+  const siteUrl = getSiteUrl();
   const name = profile?.name || "Portfolio";
   const role = profile?.role || "Software Engineer";
   const experienceLines = experience
@@ -51,11 +52,11 @@ export async function GET(): Promise<Response> {
   const postLines = posts
     .map(
       (post) =>
-        `- Title: ${post.title}\n  URL: ${new URL(`/blogs/${post.slug}`, getSiteUrl()).href}\n  Published: ${post.date}\n  Description: ${post.description}${post.tags?.length ? `\n  Tags: ${post.tags.join(", ")}` : ""}`,
+        `- Title: ${post.title}\n  URL: ${post.canonicalUrl}\n  Published: ${post.date}\n  Description: ${post.description}${post.tags?.length ? `\n  Tags: ${post.tags.join(", ")}` : ""}`,
     )
     .join("\n\n");
   const contactLines = [
-    `- Website: ${getSiteUrl()}`,
+    `- Website: ${siteUrl}`,
     profile?.email ? `- Email: ${profile.email}` : null,
     profile ? `- GitHub: ${profile.links.github}` : null,
     profile ? `- LinkedIn: ${profile.links.linkedin}` : null,
@@ -65,8 +66,8 @@ export async function GET(): Promise<Response> {
 
   const content = `# ${name} — Full LLM Content Index
 
-> Complete index of published portfolio content on ${getSiteUrl()}.
-> Generated for AI and LLM ingestion. See ${new URL("/llms.txt", getSiteUrl()).href} for the summary index.
+> Complete index of published portfolio content on ${siteUrl}.
+> Generated for AI and LLM ingestion. See ${new URL("/llms.txt", siteUrl).href} for the summary index.
 
 ## About
 
@@ -75,26 +76,26 @@ export async function GET(): Promise<Response> {
 
 ## Key Sections
 
-- [Home](${getSiteUrl()}): Portfolio overview with professional experience and skills
-- [Projects](${new URL("/projects", getSiteUrl()).href}): Selected work and case studies
-- [Blog](${new URL("/blogs", getSiteUrl()).href}): Technical writing on software engineering and web development
-- [Zomer AI](${new URL("/ask", getSiteUrl()).href}): AI assistant for questions about Zomer's work, experience, projects, and writing
-- [GitHub Contributions](${new URL("/github-contributions", getSiteUrl()).href}): GitHub contribution activity and commit history across owned repositories
-- [Contact](${new URL("/contact", getSiteUrl()).href}): Ways to get in touch
+- [Home](${siteUrl}): Portfolio overview with professional experience and skills
+- [Projects](${new URL("/projects", siteUrl).href}): Selected work and case studies
+- [Blog](${new URL("/blogs", siteUrl).href}): Technical writing on software engineering and web development
+- [Zomer AI](${new URL("/ask", siteUrl).href}): AI assistant for questions about Zomer's work, experience, projects, and writing
+- [GitHub Contributions](${new URL("/github-contributions", siteUrl).href}): GitHub contribution activity and commit history across owned repositories
+- [Contact](${new URL("/contact", siteUrl).href}): Ways to get in touch
 
 ## Structured Agent and Developer Access
 
-- REST API index: ${new URL("/api/v1", getSiteUrl()).href}
-- OpenAPI 3.2: ${new URL("/openapi.json", getSiteUrl()).href}
-- Portfolio MCP (Streamable HTTP): ${new URL("/api/mcp", getSiteUrl()).href}
-- Documentation MCP: ${new URL("/api/mcp/docs", getSiteUrl()).href}
-- RFC 9727 API catalog: ${new URL("/.well-known/api-catalog", getSiteUrl()).href}
-- Portfolio MCP server card: ${new URL("/.well-known/mcp/server-card.json", getSiteUrl()).href}
-- Documentation MCP server card: ${new URL("/.well-known/mcp/docs-server-card.json", getSiteUrl()).href}
-- Agent skills: ${new URL("/.well-known/agent-skills/index.json", getSiteUrl()).href}
-- NLWeb schema map: ${new URL("/schemamap.xml", getSiteUrl()).href}
-- Schema.org JSON Lines feed: ${new URL("/structured-data/portfolio.jsonl", getSiteUrl()).href}
-- Developer guide: ${new URL("/developers.md", getSiteUrl()).href}
+- REST API index: ${new URL("/api/v1", siteUrl).href}
+- OpenAPI 3.2: ${new URL("/openapi.json", siteUrl).href}
+- Portfolio MCP (Streamable HTTP): ${new URL("/api/mcp", siteUrl).href}
+- Documentation MCP: ${new URL("/api/mcp/docs", siteUrl).href}
+- RFC 9727 API catalog: ${new URL("/.well-known/api-catalog", siteUrl).href}
+- Portfolio MCP server card: ${new URL("/.well-known/mcp/server-card.json", siteUrl).href}
+- Documentation MCP server card: ${new URL("/.well-known/mcp/docs-server-card.json", siteUrl).href}
+- Agent skills: ${new URL("/.well-known/agent-skills/index.json", siteUrl).href}
+- NLWeb schema map: ${new URL("/schemamap.xml", siteUrl).href}
+- Schema.org JSON Lines feed: ${new URL("/structured-data/portfolio.jsonl", siteUrl).href}
+- Developer guide: ${new URL("/developers.md", siteUrl).href}
 - Authentication: none; clients SHOULD NOT send credentials
 
 ## Contact

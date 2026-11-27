@@ -1,9 +1,3 @@
-import {
-  disableWebhookSubscription,
-  findWebhookSubscriptionById,
-  getNotificationAdminSummary,
-  listWebhookSubscriptionSummaries,
-} from "@portfolio/database";
 import { getSiteEnv } from "@portfolio/env/site";
 import { type Context, Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
@@ -12,24 +6,11 @@ import { z } from "zod";
 import { verifyAdminSessionToken } from "../lib/admin-session";
 import { requireCronAuthorization } from "../lib/auth";
 import { log, logError, logWarning } from "../lib/log";
-import { retryNotificationDeliveries } from "../services/notifications/delivery";
 import {
-  validateEmailAddress,
-  validateEmailFormat,
-} from "../services/notifications/email-validation";
-import { NotificationDeliveryError } from "../services/notifications/errors";
-import {
-  confirmEmailAddress,
-  enforceNotificationRateLimit,
-  getPushSubscriptionConfig,
+  NotificationDeliveryError,
   NotificationRateLimitError,
-  subscribeEmailAddress,
-  subscribePushDevice,
-  testPushDevice,
-  unsubscribeEmailAddress,
-  unsubscribePushDevice,
-} from "../services/notifications/subscriptions";
-import { registerWebhookSubscription, sendWebhookTest } from "../services/notifications/webhook";
+} from "../services/notifications/errors";
+import { getPushSubscriptionConfig } from "../services/notifications/push-config";
 import type { ApiEnv } from "../types/hono";
 
 const emailInputSchema = z.object({
@@ -166,6 +147,8 @@ export const notificationRoutes = new Hono<ApiEnv>()
     }
     const accepted = () =>
       c.json({ success: true as const, status: "confirmation_sent" as const }, 202);
+    const { validateEmailAddress, validateEmailFormat } =
+      await import("../services/notifications/email-validation");
     const format = validateEmailFormat(parsed.data.email);
     if (!format.success) {
       return c.json(
@@ -177,6 +160,8 @@ export const notificationRoutes = new Hono<ApiEnv>()
       );
     }
     try {
+      const { enforceNotificationRateLimit, subscribeEmailAddress } =
+        await import("../services/notifications/subscriptions");
       const fingerprint = requestFingerprint(c.req.raw.headers);
       await enforceNotificationRateLimit({
         scope: "email-subscribe-ip",
@@ -231,6 +216,8 @@ export const notificationRoutes = new Hono<ApiEnv>()
     const token = tokenSchema.safeParse(c.req.query("token"));
     const redirectUrl = new URL("/blogs", getSiteEnv().siteUrl);
     try {
+      const { confirmEmailAddress, enforceNotificationRateLimit } =
+        await import("../services/notifications/subscriptions");
       await enforceNotificationRateLimit({
         scope: "email-confirm-ip",
         key: requestFingerprint(c.req.raw.headers),
@@ -267,6 +254,7 @@ export const notificationRoutes = new Hono<ApiEnv>()
         400,
       );
     }
+    const { unsubscribeEmailAddress } = await import("../services/notifications/subscriptions");
     const subscription = await unsubscribeEmailAddress(token.data);
     if (!subscription) {
       return c.json(
@@ -295,6 +283,8 @@ export const notificationRoutes = new Hono<ApiEnv>()
       );
     }
     try {
+      const { enforceNotificationRateLimit, subscribePushDevice } =
+        await import("../services/notifications/subscriptions");
       await enforceNotificationRateLimit({
         scope: "push-subscribe-ip",
         key: requestFingerprint(c.req.raw.headers),
@@ -325,6 +315,8 @@ export const notificationRoutes = new Hono<ApiEnv>()
       );
     }
     try {
+      const { enforceNotificationRateLimit, testPushDevice } =
+        await import("../services/notifications/subscriptions");
       await enforceNotificationRateLimit({
         scope: "push-test-ip",
         key: requestFingerprint(c.req.raw.headers),
@@ -362,15 +354,18 @@ export const notificationRoutes = new Hono<ApiEnv>()
         400,
       );
     }
+    const { unsubscribePushDevice } = await import("../services/notifications/subscriptions");
     await unsubscribePushDevice(parsed.data.endpoint);
     return c.json({ success: true as const, status: "unsubscribed" as const });
   })
   .get("/admin/summary", async (c) => {
     requireNotificationAdmin(c.req.header("Authorization"));
+    const { getNotificationAdminSummary } = await import("@portfolio/database");
     return c.json(await getNotificationAdminSummary());
   })
   .get("/webhooks", async (c) => {
     requireNotificationAdmin(c.req.header("Authorization"));
+    const { listWebhookSubscriptionSummaries } = await import("@portfolio/database");
     return c.json({ webhooks: await listWebhookSubscriptionSummaries() });
   })
   .post("/webhooks", async (c) => {
@@ -386,6 +381,7 @@ export const notificationRoutes = new Hono<ApiEnv>()
       );
     }
     try {
+      const { registerWebhookSubscription } = await import("../services/notifications/webhook");
       const webhook = await registerWebhookSubscription(parsed.data);
       return c.json({ success: true as const, webhook }, 201);
     } catch (error) {
@@ -404,6 +400,7 @@ export const notificationRoutes = new Hono<ApiEnv>()
         400,
       );
     }
+    const { findWebhookSubscriptionById } = await import("@portfolio/database");
     const subscription = await findWebhookSubscriptionById(id.data);
     if (subscription?.status !== "active") {
       return c.json(
@@ -415,6 +412,7 @@ export const notificationRoutes = new Hono<ApiEnv>()
       );
     }
     try {
+      const { sendWebhookTest } = await import("../services/notifications/webhook");
       const httpStatus = await sendWebhookTest({ subscription, siteUrl: getSiteEnv().siteUrl });
       log("info", "webhook test delivered", {
         operation: "notifications.testWebhook",
@@ -439,6 +437,7 @@ export const notificationRoutes = new Hono<ApiEnv>()
         400,
       );
     }
+    const { disableWebhookSubscription } = await import("@portfolio/database");
     const webhook = await disableWebhookSubscription(id.data);
     return webhook
       ? c.json({ success: true as const })
@@ -452,5 +451,6 @@ export const notificationRoutes = new Hono<ApiEnv>()
   })
   .post("/retry", async (c) => {
     requireNotificationAdmin(c.req.header("Authorization"));
+    const { retryNotificationDeliveries } = await import("../services/notifications/delivery");
     return c.json({ success: true as const, deliveries: await retryNotificationDeliveries() });
   });

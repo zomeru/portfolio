@@ -5,6 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./admin-auth": "./src/admin-auth.ts",
+    "./blog-generation": "./src/services/blog-generation/service.ts",
     "./public-portfolio": "./src/public-portfolio.ts",
     "./public-portfolio/testing": "./src/public-portfolio-testing.ts",
     "./logging": "./src/logging.ts",

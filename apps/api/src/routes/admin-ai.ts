@@ -1,3 +1,4 @@
+import { ASSISTANT_EMBEDDING } from "@portfolio/env/embedding";
 import { Hono } from "hono";
 import { streamText } from "hono/streaming";
 import { z } from "zod";
@@ -5,12 +6,6 @@ import { z } from "zod";
 import { ApiError } from "../errors";
 import { verifyAdminSessionToken } from "../lib/admin-session";
 import { logError } from "../lib/log";
-import {
-  getKnowledgeIndexStatus,
-  IngestionAlreadyRunningError,
-  listIngestionRuns,
-  synchronizePortfolioKnowledge,
-} from "../services/assistant/ingestion";
 import type { ApiEnv } from "../types/hono";
 
 const reindexSchema = z.object({ force: z.boolean().default(false) });
@@ -40,6 +35,8 @@ async function parseReindexRequest(request: Request) {
 }
 
 async function runReindex(force: boolean, onProgress?: (message: string) => void) {
+  const { IngestionAlreadyRunningError, synchronizePortfolioKnowledge } =
+    await import("../services/assistant/ingestion");
   try {
     return await synchronizePortfolioKnowledge({
       trigger: "admin",
@@ -67,8 +64,18 @@ export const adminAiRoutes = new Hono<ApiEnv>()
     requireAdmin(c.req.header("Authorization"));
     await next();
   })
-  .get("/status", async (c) => c.json(await getKnowledgeIndexStatus()))
-  .get("/ingestion-runs", async (c) => c.json({ runs: await listIngestionRuns() }))
+  .get("/status", async (c) => {
+    const { readKnowledgeIndexStatus } = await import("@portfolio/database");
+    return c.json({
+      ...(await readKnowledgeIndexStatus()),
+      embeddingModel: ASSISTANT_EMBEDDING.model,
+      indexVersion: ASSISTANT_EMBEDDING.indexVersion,
+    });
+  })
+  .get("/ingestion-runs", async (c) => {
+    const { listRecentIngestionRuns } = await import("@portfolio/database");
+    return c.json({ runs: await listRecentIngestionRuns(20) });
+  })
   .post("/reindex", async (c) => {
     const request = await parseReindexRequest(c.req.raw);
     const summary = await runReindex(request.force);

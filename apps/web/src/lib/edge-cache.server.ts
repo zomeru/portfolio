@@ -3,11 +3,21 @@ import { isLocale, localeCookieName, type Locale } from "@/i18n/routing";
 
 const HTML = "text/html";
 const NO_CACHE = "no-cache";
-const PUBLIC_PAGES = new Set(["/", "/ask", "/blogs", "/contact", "/developers", "/projects"]);
+const ANALYTICS_COOKIE = /^_ga(?:_[A-Z0-9]+)?$/;
+const PUBLIC_PAGES = new Set([
+  "/",
+  "/ask",
+  "/blogs",
+  "/contact",
+  "/developers",
+  "/github-contributions",
+  "/projects",
+]);
 const DETAIL_PAGE = /^\/(?:blogs|projects|work)\/[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const SOCIAL_IMAGE =
   /^\/(?:(?:ask|blogs|contact|github-contributions|projects|blogs\/[a-z0-9]+(?:-[a-z0-9]+)*)\/)?(?:opengraph|twitter)-image$/;
 const CONTENT_FEEDS = new Map([
+  ["/.well-known/api-catalog", "application/linkset+json"],
   ["/llms.txt", "text/plain"],
   ["/llms-full.txt", "text/plain"],
   ["/sitemap.xml", "application/xml"],
@@ -31,6 +41,19 @@ function getPolicy(pathname: string) {
   if (PUBLIC_PAGES.has(path) || DETAIL_PAGE.test(path)) return { type: HTML, ttl: 60 };
 }
 
+function hasPrivateCookies(cookie: string | null) {
+  return Boolean(
+    cookie &&
+    cookie.split(";").some((pair) => {
+      const separator = pair.indexOf("=");
+      if (separator < 1) return true;
+      const name = pair.slice(0, separator).trim();
+      if (name === localeCookieName) return !isLocale(pair.slice(separator + 1).trim());
+      return !ANALYTICS_COOKIE.test(name);
+    }),
+  );
+}
+
 export async function servePublicCache(
   request: Request,
   url: URL,
@@ -38,17 +61,13 @@ export async function servePublicCache(
   ctx: ExecutionContext,
   render: () => Promise<Response>,
 ) {
-  const cookie = request.headers.get("Cookie");
-  const localeOnly =
-    cookie?.startsWith(`${localeCookieName}=`) &&
-    isLocale(cookie.slice(localeCookieName.length + 1));
   if (
     import.meta.env.DEV ||
     !version ||
     request.method !== "GET" ||
     url.search ||
     request.headers.has("Authorization") ||
-    (cookie && !localeOnly) ||
+    hasPrivateCookies(request.headers.get("Cookie")) ||
     request.headers.has("Range") ||
     request.headers.has("x-tsr-serverFn") ||
     request.headers.has("If-None-Match") ||

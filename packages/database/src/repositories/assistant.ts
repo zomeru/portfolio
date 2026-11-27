@@ -653,7 +653,7 @@ export async function completeIngestionRun(
 }
 
 export async function readKnowledgeIndexStatus() {
-  const [[documentCount], [chunkCount], [latestRun]] = await Promise.all([
+  const [[documentCount], [chunkCount], [latestRun]] = await batch([
     db.select({ value: count() }).from(knowledgeDocuments),
     db.select({ value: count() }).from(knowledgeChunks),
     db.select().from(ingestionRuns).orderBy(desc(ingestionRuns.startedAt)).limit(1),

@@ -4,7 +4,7 @@ import {
   type AdminCapability,
   createAdminSessionToken,
   verifyAdminSessionToken,
-} from "@portfolio/api";
+} from "@portfolio/api/admin-auth";
 import { getCookie, getRequest, setCookie } from "@tanstack/react-start/server";
 
 const ADMIN_SESSION_COOKIES: Record<AdminCapability, string> = {

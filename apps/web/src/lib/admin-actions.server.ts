@@ -1,7 +1,7 @@
 import "@tanstack/react-start/server-only";
 import { randomUUID } from "node:crypto";
 
-import { type AdminCapability, verifyAdminSecret } from "@portfolio/api";
+import { type AdminCapability, verifyAdminSecret } from "@portfolio/api/admin-auth";
 import { logError } from "@portfolio/api/logging";
 import type { AdminErrorStatus } from "@portfolio/api/types";
 import { getCronEnv } from "@portfolio/env/cron";

@@ -8,8 +8,6 @@ import {
   failIngestionRun,
   findIndexedKnowledgeDocumentBySanityId,
   listIndexedKnowledgeDocuments,
-  listRecentIngestionRuns,
-  readKnowledgeIndexStatus,
   replaceIndexedKnowledgeDocument,
   touchIndexedKnowledgeDocument,
 } from "@portfolio/database";
@@ -376,17 +374,4 @@ export async function synchronizePublishedKnowledgeDocument(options: {
     await safelyMarkRunFailed(run.id, error, "assistant.ingestPublishedDocument");
     throw error;
   }
-}
-
-export async function getKnowledgeIndexStatus() {
-  const status = await readKnowledgeIndexStatus();
-  return {
-    ...status,
-    embeddingModel: ASSISTANT_EMBEDDING.model,
-    indexVersion: ASSISTANT_EMBEDDING.indexVersion,
-  };
-}
-
-export function listIngestionRuns(limit = 20) {
-  return listRecentIngestionRuns(limit);
 }

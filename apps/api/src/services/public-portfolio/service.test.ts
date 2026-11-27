@@ -61,19 +61,17 @@ void test("blog listing searches titles case-insensitively before pagination", a
     async fetchBlogPost() {
       return rawPublicBlogPostFixture;
     },
-    async fetchSnapshot() {
-      return {
-        ...rawPublicSnapshotFixture,
-        blogs: [
-          {
-            ...rawPublicSnapshotFixture.blogs[0],
-            slug: "unrelated-article",
-            title: "Unrelated Article",
-          },
-          rawPublicSnapshotFixture.blogs[0],
-          { ...rawPublicSnapshotFixture.blogs[0], title: "Published Article (older revision)" },
-        ],
-      };
+    async fetchBlogPosts() {
+      return [
+        { ...rawPublicSnapshotFixture.blogs[0], title: " " },
+        {
+          ...rawPublicSnapshotFixture.blogs[0],
+          slug: "unrelated-article",
+          title: "Unrelated Article",
+        },
+        rawPublicSnapshotFixture.blogs[0],
+        { ...rawPublicSnapshotFixture.blogs[0], title: "Published Article (older revision)" },
+      ];
     },
     siteUrl: testSiteUrl,
   });
@@ -83,6 +81,13 @@ void test("blog listing searches titles case-insensitively before pagination", a
   assert.equal(result.total, 1);
   assert.equal(result.items[0]?.title, "Published Article");
   assert.equal((await service.listBlogPosts()).total, 2);
+  const secondPage = await service.listBlogPosts({ limit: 1, offset: 1 });
+  assert.equal(secondPage.total, 2);
+  assert.deepEqual(
+    secondPage.items.map(({ slug }) => slug),
+    ["published-article"],
+  );
+  assert.equal((await service.listBlogPosts({ query: "older revision" })).total, 0);
 });
 
 void test("resume fetches only the profile, experience, and tech-stack domains", async () => {

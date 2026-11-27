@@ -1,3 +1,10 @@
+export class NotificationRateLimitError extends Error {
+  constructor() {
+    super("Too many subscription requests. Try again later.");
+    this.name = "NotificationRateLimitError";
+  }
+}
+
 export class NotificationDeliveryError extends Error {
   readonly code: string;
   readonly httpStatus: number | undefined;

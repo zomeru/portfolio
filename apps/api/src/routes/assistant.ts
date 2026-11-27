@@ -4,12 +4,6 @@ import { validator } from "hono/validator";
 import { z } from "zod";
 
 import { ApiError } from "../errors";
-import { createAssistantChatResponse } from "../services/assistant/chat";
-import {
-  AssistantRateLimitError,
-  decodeChatHistoryCursor,
-  loadChatHistoryPage,
-} from "../services/assistant/conversation";
 import type { ApiEnv } from "../types/hono";
 
 const chatRequestSchema = z.object({
@@ -57,7 +51,9 @@ export const assistantRoutes = new Hono<ApiEnv>()
       const request = chatRequestSchema.safeParse(value);
       if (!request.success) invalidRequest(request.error);
 
+      const { AssistantRateLimitError } = await import("../services/assistant/conversation");
       try {
+        const { createAssistantChatResponse } = await import("../services/assistant/chat");
         return await createAssistantChatResponse({
           sessionKey: request.data.sessionKey,
           messageId: request.data.message.id,
@@ -88,6 +84,8 @@ export const assistantRoutes = new Hono<ApiEnv>()
       const sessionKey = z.string().uuid().safeParse(c.req.param("sessionKey"));
       if (!sessionKey.success) invalidRequest(sessionKey.error);
       const cursorValue = c.req.valid("query").cursor;
+      const { decodeChatHistoryCursor, loadChatHistoryPage } =
+        await import("../services/assistant/conversation");
       const cursor = cursorValue ? decodeChatHistoryCursor(cursorValue) : undefined;
       if (cursorValue && !cursor) invalidRequest();
       return c.json(

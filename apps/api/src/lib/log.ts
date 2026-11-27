@@ -1,8 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import { createHash } from "node:crypto";
 
-import { recordApplicationError } from "@portfolio/database";
-
 type LogLevel = "error" | "info" | "warn";
 type LogMetadata = Record<string, unknown>;
 
@@ -370,6 +368,8 @@ async function persistErrorRecord(error: unknown, metadata: LogMetadata) {
   );
 
   try {
+    // Keep database drivers out of the Worker's startup imports.
+    const { recordApplicationError } = await import("@portfolio/database");
     await recordApplicationError({
       fingerprint,
       severity: "error",

@@ -27,6 +27,11 @@
 
 /robots.txt
   Content-Type: text/plain; charset=utf-8
+
+/schemamap.xml
+  Content-Type: application/xml; charset=utf-8
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=300
   Access-Control-Allow-Origin: *
 
 /openapi.json

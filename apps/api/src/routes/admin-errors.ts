@@ -4,12 +4,6 @@ import { z } from "zod";
 
 import { ApiError } from "../errors";
 import { verifyAdminAccessToken } from "../lib/admin-access";
-import {
-  decodeErrorIssueCursor,
-  loadErrorIssue,
-  loadErrorIssues,
-  setErrorIssueStatus,
-} from "../services/error-monitoring";
 import type { ApiEnv } from "../types/hono";
 
 const listQuerySchema = z.object({
@@ -56,6 +50,8 @@ export const adminErrorRoutes = new Hono<ApiEnv>()
     }),
     async (c) => {
       const query = c.req.valid("query");
+      const { decodeErrorIssueCursor, loadErrorIssues } =
+        await import("../services/error-monitoring");
       const cursor = query.cursor ? decodeErrorIssueCursor(query.cursor) : undefined;
       if (query.cursor && !cursor) invalidRequest();
       return c.json(
@@ -71,6 +67,7 @@ export const adminErrorRoutes = new Hono<ApiEnv>()
   .get("/:id", async (c) => {
     const id = idSchema.safeParse(c.req.param("id"));
     if (!id.success) invalidRequest(id.error);
+    const { loadErrorIssue } = await import("../services/error-monitoring");
     const issue = await loadErrorIssue(id.data);
     if (!issue) {
       return c.json({ error: { code: "NOT_FOUND", message: "Error issue not found." } }, 404);
@@ -87,6 +84,7 @@ export const adminErrorRoutes = new Hono<ApiEnv>()
     async (c) => {
       const id = idSchema.safeParse(c.req.param("id"));
       if (!id.success) invalidRequest(id.error);
+      const { setErrorIssueStatus } = await import("../services/error-monitoring");
       const issue = await setErrorIssueStatus(id.data, c.req.valid("json").status);
       if (!issue) {
         return c.json({ error: { code: "NOT_FOUND", message: "Error issue not found." } }, 404);

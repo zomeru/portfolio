@@ -1,6 +1,6 @@
-import { and, asc, count, desc, eq, gt, gte, inArray, isNull, lt, lte, or, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, isNull, lt, lte, or, sql } from "drizzle-orm";
 
-import { db } from "../client";
+import { batch, db } from "../client";
 import {
   blogEmailSubscriptions,
   blogPushSubscriptions,
@@ -358,52 +358,6 @@ export function findNotificationEventsByIds(ids: string[]) {
     .where(inArray(notificationEvents.id, ids));
 }
 
-export async function listActiveNotificationDestinationIds(
-  channel: NotificationDeliveryChannelValue,
-  options: { afterId?: string; createdBefore: Date; limit: number },
-) {
-  if (channel === "email") {
-    return db
-      .select({ id: blogEmailSubscriptions.id })
-      .from(blogEmailSubscriptions)
-      .where(
-        and(
-          eq(blogEmailSubscriptions.status, "confirmed"),
-          lte(blogEmailSubscriptions.verifiedAt, options.createdBefore),
-          options.afterId ? gt(blogEmailSubscriptions.id, options.afterId) : undefined,
-        ),
-      )
-      .orderBy(asc(blogEmailSubscriptions.id))
-      .limit(options.limit);
-  }
-  if (channel === "push") {
-    return db
-      .select({ id: blogPushSubscriptions.id })
-      .from(blogPushSubscriptions)
-      .where(
-        and(
-          isNull(blogPushSubscriptions.disabledAt),
-          lte(blogPushSubscriptions.createdAt, options.createdBefore),
-          options.afterId ? gt(blogPushSubscriptions.id, options.afterId) : undefined,
-        ),
-      )
-      .orderBy(asc(blogPushSubscriptions.id))
-      .limit(options.limit);
-  }
-  return db
-    .select({ id: blogWebhookSubscriptions.id })
-    .from(blogWebhookSubscriptions)
-    .where(
-      and(
-        eq(blogWebhookSubscriptions.status, "active"),
-        lte(blogWebhookSubscriptions.createdAt, options.createdBefore),
-        options.afterId ? gt(blogWebhookSubscriptions.id, options.afterId) : undefined,
-      ),
-    )
-    .orderBy(asc(blogWebhookSubscriptions.id))
-    .limit(options.limit);
-}
-
 export function listIncompleteNotificationEventMaterializations(limit: number) {
   return db
     .select({
@@ -425,44 +379,75 @@ export function listIncompleteNotificationEventMaterializations(limit: number) {
     .limit(limit);
 }
 
-export async function markNotificationEventChannelMaterialized(
+export async function materializeNotificationDeliveries(
   eventId: string,
   channel: NotificationDeliveryChannelValue,
+  createdBefore: Date,
 ) {
-  const materializedAt = new Date();
-  const values =
-    channel === "email"
-      ? { emailMaterializedAt: materializedAt }
-      : channel === "push"
-        ? { pushMaterializedAt: materializedAt }
-        : { webhookMaterializedAt: materializedAt };
-  await db.update(notificationEvents).set(values).where(eq(notificationEvents.id, eventId));
-}
-
-export async function createNotificationDeliveries(options: {
-  eventId: string;
-  channel: NotificationDeliveryChannelValue;
-  destinationIds: string[];
-}) {
-  if (options.destinationIds.length === 0) return 0;
-  const rows = await db
-    .insert(notificationDeliveries)
-    .values(
-      options.destinationIds.map((destinationId) => ({
-        eventId: options.eventId,
-        channel: options.channel,
-        destinationId,
-      })),
-    )
-    .onConflictDoNothing({
-      target: [
-        notificationDeliveries.eventId,
-        notificationDeliveries.channel,
-        notificationDeliveries.destinationId,
-      ],
+  const source = {
+    email: {
+      table: blogEmailSubscriptions,
+      eligible: and(
+        eq(blogEmailSubscriptions.status, "confirmed"),
+        lte(blogEmailSubscriptions.verifiedAt, createdBefore),
+      ),
+    },
+    push: {
+      table: blogPushSubscriptions,
+      eligible: and(
+        isNull(blogPushSubscriptions.disabledAt),
+        lte(blogPushSubscriptions.createdAt, createdBefore),
+      ),
+    },
+    webhook: {
+      table: blogWebhookSubscriptions,
+      eligible: and(
+        eq(blogWebhookSubscriptions.status, "active"),
+        lte(blogWebhookSubscriptions.createdAt, createdBefore),
+      ),
+    },
+  }[channel];
+  const recipients = db
+    .select({
+      eventId: sql<string>`${eventId}::uuid`.as("event_id"),
+      channel: sql<NotificationDeliveryChannelValue>`${channel}::notification_delivery_channel`.as(
+        "channel",
+      ),
+      destinationId: source.table.id,
     })
-    .returning({ id: notificationDeliveries.id });
-  return rows.length;
+    .from(source.table)
+    .where(source.eligible);
+
+  // Insert recipients and mark the channel in the same statement.
+  const inserted = db.$with("inserted_deliveries").as(
+    db
+      .insert(notificationDeliveries)
+      .select(recipients)
+      .onConflictDoNothing({
+        target: [
+          notificationDeliveries.eventId,
+          notificationDeliveries.channel,
+          notificationDeliveries.destinationId,
+        ],
+      })
+      .returning({ id: notificationDeliveries.id }),
+  );
+  const materializedAt = new Date();
+  const channelTimestamp = {
+    email: { emailMaterializedAt: materializedAt },
+    push: { pushMaterializedAt: materializedAt },
+    webhook: { webhookMaterializedAt: materializedAt },
+  };
+  const marked = db
+    .$with("marked_channel")
+    .as(
+      db
+        .update(notificationEvents)
+        .set(channelTimestamp[channel])
+        .where(eq(notificationEvents.id, eventId)),
+    );
+  const [row] = await db.with(inserted, marked).select({ created: count() }).from(inserted);
+  return row?.created ?? 0;
 }
 
 const readyDeliveryCondition = (now: Date, staleClaimBefore: Date) =>
@@ -629,7 +614,7 @@ export async function deleteExpiredNotificationRateLimits(olderThan: Date) {
 }
 
 export async function getNotificationAdminSummary() {
-  const [emailRows, pushRows, webhookRows, latestEvents] = await Promise.all([
+  const [emailRows, pushRows, webhookRows, latestEvents] = await batch([
     db
       .select({ count: count() })
       .from(blogEmailSubscriptions)
