@@ -4,7 +4,7 @@ import {
   createAdminAccessToken,
   verifyAdminAccessKey,
   verifyAdminAccessToken,
-} from "@portfolio/api";
+} from "@portfolio/api/admin-auth";
 import { getCookie, getRequest, setCookie } from "@tanstack/react-start/server";
 
 const ADMIN_ACCESS_COOKIE = "portfolio-admin-access-session";

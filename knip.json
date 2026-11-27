@@ -8,7 +8,10 @@
     },
     "apps/web": {
       "ignore": ["public/sw.js", "src/lib/sanity/sanity.types.ts"],
-      "entry": ["src/routes/**/*.{ts,tsx}", "src/{router.tsx,server.ts,start.ts}"]
+      "entry": [
+        "src/routes/**/*.{ts,tsx}",
+        "src/{router.tsx,server.ts,start.ts,lib/shiki.server.ts}"
+      ]
     },
     "packages/database": {
       "drizzle": false,

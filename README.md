@@ -20,4 +20,8 @@ For Ask Zomer, set `DATABASE_URL` to a local PostgreSQL database with pgvector i
 
 Run `pnpm check:all:build` for lint, types, tests, and builds. GitHub Actions also tests migrations on disposable PostgreSQL, checks both Worker bundles, and audits dependencies. [CI workflow](.github/workflows/ci.yml)
 
+### Workers Free capacity
+
+Static assets and prerendered discovery documents bypass the Worker. Public cache hits skip SSR, but still use one Worker invocation. Check invocation CPU on both cache hits and misses in Workers Logs. Cold SSR, uncached social images, AI requests, blog generation, full reindexing, and bulk delivery may exceed the Free plan's 10 ms CPU budget. Publication and bulk delivery can also exceed 50 external subrequests. The production reindex already runs on the CI runner via `pnpm ai:index:prod`. [Workers limits](https://developers.cloudflare.com/workers/platform/limits/)
+
 [Workspace layout and contributor commands](AGENTS.md)

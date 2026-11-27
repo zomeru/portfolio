@@ -71,6 +71,8 @@ apiApp.onError(async (error, c) => {
   };
   if (status >= 500) {
     await captureError("request failed", error, metadata);
+  } else if (status === 401) {
+    log("warn", "request failed", metadata);
   } else {
     log("warn", "request failed", { ...metadata, ...errorLogMetadata(error, "api.request") });
   }

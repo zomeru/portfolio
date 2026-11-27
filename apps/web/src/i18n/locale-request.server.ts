@@ -9,9 +9,8 @@ const languageLocales: Partial<Record<string, Locale>> = {
   zh: "zh-CN",
 };
 
-export function localeRedirect(request: Request) {
+export function localeRedirect(request: Request, url: URL) {
   if (request.method !== "GET" && request.method !== "HEAD") return undefined;
-  const url = new URL(request.url);
   const segment = url.pathname.split("/")[1];
   if (segment === "api" || segment === "admin" || url.pathname.includes(".")) return undefined;
   if (/(?:^|\/)(?:opengraph-image|twitter-image)$/.test(url.pathname)) return undefined;

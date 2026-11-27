@@ -47,6 +47,11 @@ export const Route = createFileRoute("/{-$locale}/github-contributions")({
     repo: search.repo ?? "",
   }),
   loader: ({ context, deps }) => getGithub({ data: { ...deps, locale: context.locale } }),
+  headers: ({ loaderData }) => {
+    if (loaderData?.contributions.error || loaderData?.commitHistory.error) {
+      return { "Cache-Control": "private, no-store" };
+    }
+  },
   head: (input) =>
     translatedHead(input, "github", "/github-contributions", {
       imagePath: "/github-contributions/opengraph-image",

@@ -4,19 +4,6 @@ import { generateRequestDetails } from "web-push";
 
 import { NotificationDeliveryError } from "./errors";
 
-export function isWebPushConfigured() {
-  const environment = getNotificationsServerEnv();
-  return Boolean(
-    environment.webPushVapidPublicKey &&
-    environment.webPushVapidPrivateKey &&
-    environment.webPushSubject,
-  );
-}
-
-export function getWebPushPublicKey() {
-  return getNotificationsServerEnv().webPushVapidPublicKey ?? null;
-}
-
 type PushDestination = { endpoint: string; p256dh: string; auth: string };
 
 const PUSH_SERVICE_HOSTS = new Set([

@@ -15,6 +15,7 @@ const staticRoutes = [
   "/developers/llms.txt",
   "/openapi.json",
   "/robots.txt",
+  "/schemamap.xml",
   "/.well-known/agent-skills/index.json",
   "/.well-known/mcp/docs-server-card.json",
   "/.well-known/mcp/server-card.json",
@@ -72,7 +73,7 @@ export default defineConfig(({ command, isPreview, mode }) => ({
     alias: [
       { find: "@", replacement: resolve(import.meta.dirname, "src") },
       // rehype-pretty-code also imports Shiki's default highlighter.
-      { find: /^shiki$/, replacement: "shiki/bundle/web" },
+      { find: /^shiki$/, replacement: resolve(import.meta.dirname, "src/lib/shiki.server.ts") },
     ],
   },
   build: { assetsDir: "_build" },

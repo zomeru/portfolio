@@ -34,23 +34,27 @@ async function limitChatRequest(request: Request, path: string, limiter: RateLim
 export default {
   fetch(request, env, ctx) {
     const url = new URL(request.url);
-    const locale = localeRedirect(request);
+    const locale = localeRedirect(request, url);
     if (locale instanceof Response) return locale;
 
     const render = () =>
       runWithWorkerContext(env, ctx, () =>
         withPublicPortfolioRequest(async () => {
           const path = url.pathname;
+          const limited = await limitChatRequest(request, path, env.AI_REQUEST_LIMIT);
           const telemetry =
-            (request.method === "POST" && path.startsWith("/admin/_serverFn/")) ||
-            /^\/api\/(?:ai\/chat|blog\/generate|admin\/ai\/reindex(?:\/stream)?)\/?$/.test(path) ||
-            path === "/admin/api/ai/reindex"
+            !limited &&
+            env.LANGFUSE_PUBLIC_KEY &&
+            env.LANGFUSE_SECRET_KEY &&
+            ((request.method === "POST" && path.startsWith("/admin/_serverFn/")) ||
+              /^\/api\/(?:ai\/chat|blog\/generate|admin\/ai\/reindex(?:\/stream)?)\/?$/.test(
+                path,
+              ) ||
+              path === "/admin/api/ai/reindex")
               ? await import("@/lib/telemetry.server")
               : undefined;
           telemetry?.initializeTelemetry();
-          const response =
-            (await limitChatRequest(request, path, env.AI_REQUEST_LIMIT)) ??
-            (await handler.fetch(request));
+          const response = limited ?? (await handler.fetch(request));
           if (response.status >= 500)
             console.error("Worker request failed", {
               method: request.method,
@@ -93,14 +97,16 @@ export default {
   async scheduled(event, env, ctx) {
     await runWithWorkerContext(env, ctx, async () => {
       const [{ generateScheduledBlog }, telemetry] = await Promise.all([
-        import("@portfolio/api"),
-        import("@/lib/telemetry.server"),
+        import("@portfolio/api/blog-generation"),
+        env.LANGFUSE_PUBLIC_KEY && env.LANGFUSE_SECRET_KEY
+          ? import("@/lib/telemetry.server")
+          : undefined,
       ]);
-      telemetry.initializeTelemetry();
+      telemetry?.initializeTelemetry();
       try {
         await generateScheduledBlog(event.scheduledTime);
       } finally {
-        telemetry.flushTelemetry(ctx);
+        telemetry?.flushTelemetry(ctx);
       }
     });
   },

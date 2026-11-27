@@ -15,13 +15,9 @@ import { z } from "zod";
 import { log, logError } from "../../lib/log";
 import { createSecretToken, hashToken, keyedHash, parseUnsubscribeToken } from "./crypto";
 import { isEmailConfigured, sendSubscriptionConfirmationEmail } from "./email";
-import { NotificationDeliveryError } from "./errors";
-import {
-  getWebPushPublicKey,
-  isWebPushConfigured,
-  sendPushTestNotification,
-  validatePushServiceEndpoint,
-} from "./push";
+import { NotificationDeliveryError, NotificationRateLimitError } from "./errors";
+import { sendPushTestNotification, validatePushServiceEndpoint } from "./push";
+import { getPushSubscriptionConfig } from "./push-config";
 
 type EmailSubscriptionResult = {
   subscription: { id: string };
@@ -52,13 +48,6 @@ type EmailSubscriptionDependencies = {
   }) => Promise<unknown>;
   now: () => Date;
 };
-
-export class NotificationRateLimitError extends Error {
-  constructor() {
-    super("Too many subscription requests. Try again later.");
-    this.name = "NotificationRateLimitError";
-  }
-}
 
 export async function enforceNotificationRateLimit(options: {
   scope: string;
@@ -167,16 +156,12 @@ export async function unsubscribeEmailAddress(token: string) {
   return unsubscribeEmailSubscription(parsed.subscriptionId, parsed.version);
 }
 
-export function getPushSubscriptionConfig() {
-  return { enabled: isWebPushConfigured(), publicKey: getWebPushPublicKey() };
-}
-
 export async function subscribePushDevice(subscription: {
   endpoint: string;
   keys: { p256dh: string; auth: string };
 }) {
   validatePushServiceEndpoint(subscription.endpoint);
-  if (!isWebPushConfigured()) {
+  if (!getPushSubscriptionConfig().enabled) {
     throw new NotificationDeliveryError("Web Push subscriptions are not configured.", {
       code: "PUSH_NOT_CONFIGURED",
       retryable: false,
@@ -190,12 +175,12 @@ export async function subscribePushDevice(subscription: {
 }
 
 export async function unsubscribePushDevice(endpoint: string) {
-  if (!isWebPushConfigured()) return null;
+  if (!getPushSubscriptionConfig().enabled) return null;
   return disablePushSubscriptionByEndpoint(endpoint);
 }
 
 export async function testPushDevice(endpoint: string) {
-  if (!isWebPushConfigured()) {
+  if (!getPushSubscriptionConfig().enabled) {
     throw new NotificationDeliveryError("Web Push subscriptions are not configured.", {
       code: "PUSH_NOT_CONFIGURED",
       retryable: false,

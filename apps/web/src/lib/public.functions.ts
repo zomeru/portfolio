@@ -56,13 +56,10 @@ export const getBlogList = createServerFn({ method: "GET" })
 export const getBlog = createServerFn({ method: "GET" })
   .validator(slug)
   .handler(async ({ data }) => {
-    const [post, { renderMarkdown }] = await Promise.all([
-      import("@portfolio/api/public-portfolio").then(({ getPublicBlogPost }) =>
-        getPublicBlogPost(data),
-      ),
-      import("@/lib/markdown.server"),
-    ]);
+    const { getPublicBlogPost } = await import("@portfolio/api/public-portfolio");
+    const post = await getPublicBlogPost(data);
     if (!post) throw notFound();
+    const { renderMarkdown } = await import("@/lib/markdown.server");
     const { body, ...summary } = post;
     return { ...summary, html: await renderMarkdown(body) };
   });

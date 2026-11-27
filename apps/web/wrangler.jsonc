@@ -52,7 +52,7 @@
         "AI_EMBEDDING_MODEL": "nvidia/nemotron-3.5-embed-8b:free",
         "LANGFUSE_BASE_URL": "https://jp.cloud.langfuse.com",
         // Fill in each optional integration's values alongside its matching secrets.
-        "EMAIL_FROM": "Zomer Gregorio",
+        "EMAIL_FROM": "hello@zomeru.dev",
         "EMAIL_REPLY_TO": "hello@zomeru.dev",
         "WEB_PUSH_VAPID_PUBLIC_KEY": "BNs9md7LmGcRqNoTegY8Ef_5zKxSvqeC3R04OoT79mOfwejV1bWBOhdVmrR6xiJU2N8g1-am55DrbPVoOf3aENE",
         "WEB_PUSH_SUBJECT": "mailto:hello@zomeru.dev",
@@ -91,7 +91,7 @@
         "AI_EMBEDDING_MODEL": "nvidia/nemotron-3.5-embed-8b:free",
         "LANGFUSE_BASE_URL": "https://jp.cloud.langfuse.com",
         // Fill in each optional integration's values alongside its matching secrets.
-        "EMAIL_FROM": "Zomer Gregorio",
+        "EMAIL_FROM": "hello@zomeru.dev",
         "EMAIL_REPLY_TO": "hello@zomeru.dev",
         "WEB_PUSH_VAPID_PUBLIC_KEY": "BNs9md7LmGcRqNoTegY8Ef_5zKxSvqeC3R04OoT79mOfwejV1bWBOhdVmrR6xiJU2N8g1-am55DrbPVoOf3aENE",
         "WEB_PUSH_SUBJECT": "mailto:hello@zomeru.dev",

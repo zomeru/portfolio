@@ -2,7 +2,6 @@ import {
   abandonNotificationDelivery,
   claimNotificationDelivery,
   completeNotificationDelivery,
-  createNotificationDeliveries,
   createNotificationEvent,
   deleteExpiredNotificationRateLimits,
   disablePushSubscriptionById,
@@ -12,10 +11,9 @@ import {
   findNotificationEventsByIds,
   findPushSubscriptionById,
   findWebhookSubscriptionById,
-  listActiveNotificationDestinationIds,
   listIncompleteNotificationEventMaterializations,
   listReadyNotificationDeliveries,
-  markNotificationEventChannelMaterialized,
+  materializeNotificationDeliveries,
   type NotificationDeliveryChannelValue,
   type StoredBlogPublishedEvent,
 } from "@portfolio/database";
@@ -28,7 +26,6 @@ import { NotificationDeliveryError } from "./errors";
 import { sendBlogPublishedPush } from "./push";
 import { sendBlogPublishedWebhook } from "./webhook";
 
-const DESTINATION_PAGE_SIZE = 100;
 const MAX_IMMEDIATE_DELIVERIES = 100;
 const DELIVERY_CONCURRENCY = 5;
 const CLAIM_LEASE_MS = 10 * 60 * 1_000;
@@ -111,31 +108,6 @@ async function mapWithConcurrency<T, R>(
   return results;
 }
 
-async function materializeDeliveries(
-  eventId: string,
-  channel: NotificationDeliveryChannelValue,
-  createdBefore: Date,
-) {
-  let afterId: string | undefined;
-  let created = 0;
-  do {
-    const destinations = await listActiveNotificationDestinationIds(channel, {
-      ...(afterId ? { afterId } : {}),
-      createdBefore,
-      limit: DESTINATION_PAGE_SIZE,
-    });
-    created += await createNotificationDeliveries({
-      eventId,
-      channel,
-      destinationIds: destinations.map((destination) => destination.id),
-    });
-    afterId = destinations.at(-1)?.id;
-    if (destinations.length < DESTINATION_PAGE_SIZE) break;
-  } while (afterId);
-  await markNotificationEventChannelMaterialized(eventId, channel);
-  return created;
-}
-
 async function recoverIncompleteMaterializations() {
   const events = await listIncompleteNotificationEventMaterializations(100);
   const recovered: Partial<Record<NotificationDeliveryChannelValue, number>> = {};
@@ -143,7 +115,7 @@ async function recoverIncompleteMaterializations() {
     for (const channel of ["email", "push", "webhook"] as const) {
       const materializedAt = event[`${channel}MaterializedAt`];
       if (materializedAt) continue;
-      const created = await materializeDeliveries(event.id, channel, event.createdAt);
+      const created = await materializeNotificationDeliveries(event.id, channel, event.createdAt);
       recovered[channel] = (recovered[channel] ?? 0) + created;
     }
   }
@@ -376,7 +348,7 @@ export async function dispatchBlogPublished(blog: BlogPublishedInput) {
   await Promise.all(
     (["email", "push", "webhook"] as const).map(async (channel) => {
       try {
-        materialized[channel] = await materializeDeliveries(
+        materialized[channel] = await materializeNotificationDeliveries(
           persisted.event.id,
           channel,
           persisted.event.createdAt,

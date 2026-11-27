@@ -2,13 +2,16 @@ import "@tanstack/react-start/server-only";
 import { getPublicBlogPost } from "@portfolio/api/public-portfolio";
 
 import type { Locale } from "@/i18n/routing";
-import { getTranslations } from "@/i18n/server";
-import { createPortfolioOgImage } from "@/lib/og-image";
 
 export async function image(locale: Locale, slug: string) {
-  const postTranslations = await getTranslations({ locale, namespace: "Metadata.og" });
   const post = await getPublicBlogPost(slug);
   if (!post) return new Response(null, { status: 404 });
+  const [{ createPortfolioOgImage }, postTranslations] = await Promise.all([
+    import("@/lib/og-image"),
+    import("@/i18n/server").then(({ getTranslations }) =>
+      getTranslations({ locale, namespace: "Metadata.og" }),
+    ),
+  ]);
 
   return createPortfolioOgImage(locale, {
     index: "03",

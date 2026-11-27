@@ -4,24 +4,9 @@ import { type Context, Hono } from "hono";
 
 import { ApiError } from "../errors";
 import { requireCronAuthorization } from "../lib/auth";
-import { log } from "../lib/log";
-import { generateAndPublishBlog } from "../services/blog-generation/service";
 import type { ApiEnv } from "../types/hono";
 
 const IDEMPOTENCY_KEY_PATTERN = /^[A-Za-z0-9._:-]{8,128}$/;
-
-function requireAuthorization(authorization: string | undefined) {
-  try {
-    requireCronAuthorization(authorization);
-  } catch (error) {
-    if (error instanceof ApiError && error.code === "UNAUTHORIZED") {
-      log("warn", "unauthorized blog generation request", {
-        hasAuthorization: authorization !== undefined,
-      });
-    }
-    throw error;
-  }
-}
 
 function createManualGenerationKey(idempotencyKey: string | undefined) {
   if (idempotencyKey && !IDEMPOTENCY_KEY_PATTERN.test(idempotencyKey)) {
@@ -39,8 +24,9 @@ async function respondWithGeneration(
   input: { generationKey: string; trigger: "manual" | "scheduled" },
 ) {
   c.header("Cache-Control", "no-store");
-  requireAuthorization(c.req.header("Authorization"));
+  requireCronAuthorization(c.req.header("Authorization"));
 
+  const { generateAndPublishBlog } = await import("../services/blog-generation/service");
   const result = await generateAndPublishBlog(input);
   return c.json(
     {
